@@ -3,11 +3,6 @@
 
 #include "SDL.h"
 
-#include <boost/shared_ptr.hpp>
-
-class Palettefile;
-typedef boost::shared_ptr<Palettefile> PalettefilePtr;
-
 class Palettefile
 {
     public:

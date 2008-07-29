@@ -22,10 +22,9 @@
 #include <string>
 #include <SDL_mixer.h>
 
-#include "mmath.h"
 #include "Log.h"
 
-#include "pakfile/Vocfile.h"
+#include "Vocfile.h"
 using namespace std;
 
 #define	VOC_CODE_TERM		0

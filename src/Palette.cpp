@@ -1,6 +1,6 @@
 #include "Log.h"
 
-#include "pakfile/Palette.h"
+#include "Palette.h"
 
 Palettefile::Palettefile(unsigned char* buf, uint16_t bufsize)
 {

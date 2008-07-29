@@ -4,11 +4,10 @@
 
 
 #include "Font.h"
-#include "Gfx.h"
 #include "Log.h"
 
-#include "pakfile/Wsafile.h"
-#include "pakfile/Cpsfile.h"
+#include "Wsafile.h"
+#include "Cpsfile.h"
 
 
 Wsafile::Wsafile(uint8_t * bufFiledata, int bufsize, 
@@ -92,14 +91,13 @@ Wsafile::~Wsafile()
 	free(decodedFrames);
 }
 
-Image * Wsafile::getPicture(Uint32 FrameNumber, SDL_Palette *palette)
+SDL_Surface *Wsafile::getPicture(Uint32 FrameNumber, SDL_Palette *palette)
 {
-	Image* img;
-	if(WsaFilesize == -1){
+/*	if(WsaFilesize == -1){
 		img = new Image(UPoint(1,1));
 		return img;
 	}
-
+*/
 	if(FrameNumber >= NumFrames) {
 		return NULL;
 	}
@@ -133,10 +131,8 @@ Image * Wsafile::getPicture(Uint32 FrameNumber, SDL_Palette *palette)
 	}
 		
 	SDL_UnlockSurface(pic);
-	
-	img = new Image(pic);
 
-	return img;
+	return pic;	
 
 }
 
@@ -154,7 +150,7 @@ Image * Wsafile::getPicture(Uint32 FrameNumber, SDL_Palette *palette)
 Animation* Wsafile::getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey)
 {
 	Animation* tmpAnimation;
-	Image* tmp;
+	SDL_Surface *tmp;
 	
 	if((tmpAnimation = new Animation()) == NULL) {
 		return NULL;

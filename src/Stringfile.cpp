@@ -4,13 +4,12 @@
 #include <string>
 
 #include "Log.h"
-#include "ResMan.h"
-#include "pakfile/Stringfile.h"
+#include "Stringfile.h"
 
-Stringfile::Stringfile(std::string stringFileName) {
+Stringfile::Stringfile(uint8_t *bufFiledata) {
 
-	int bufsize;
-	uint8_t* bufFiledata = ResMan::Instance()->readFile(stringFileName.c_str(), &bufsize);
+//	int bufsize;
+//	uint8_t* bufFiledata = ResMan::Instance()->readFile(stringFileName.c_str(), &bufsize);
 	Uint16* index;
 
 	numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFiledata)[0]))/2 - 1;

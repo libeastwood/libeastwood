@@ -17,7 +17,7 @@
 class Stringfile
 {
 public:
-	Stringfile(std::string stringfileName);
+	Stringfile(uint8_t *bufFiledata);
 	~Stringfile();
 
 	/*!
