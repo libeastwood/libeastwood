@@ -18,7 +18,7 @@ env.Append(CPPPATH="#include")
 
 if sys.platform != "win32":
     env.ParseConfig('pkg-config --cflags sdl samplerate adplug')
-    env.Append(CCFLAGS=["-Wall", "-pedantic", "-O0", "-Wno-long-long", "-Wno-variadic-macros", "-fPIC"]) #, "-Werror"])
+    env.Append(CCFLAGS=["-Wall", "-pedantic", "-O3", "-Wno-long-long", "-Wno-variadic-macros", "-fPIC"]) #, "-Werror"])
     #env.Append(CCFLAGS=["-Wall", "-Werror", "-O2", "-ffast-math", "-funroll-loops"])
     env.Append(CCFLAGS=["-ggdb"])
 
