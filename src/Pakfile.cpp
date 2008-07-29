@@ -4,7 +4,7 @@
 
 
 #include "Log.h"
-#include "pakfile/Pakfile.h"
+#include "Pakfile.h"
 
 Pakfile::Pakfile(const char *Pakfilename)
 {
