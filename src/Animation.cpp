@@ -12,7 +12,7 @@ Animation::Animation() {
 Animation::~Animation() {
 	if(Frame != NULL) {
 		for(int i=0; i < NumFrames; i++) {
-			SDL_FreeSurface(Frame[i]->getSurface());
+			SDL_FreeSurface(Frame[i]);
 //			Frame[i] = NULL;
 		}
 		free(Frame);
@@ -43,7 +43,7 @@ void Animation::addFrame(SDL_Surface * newFrame, bool SetColorKey) {
 		Frame[NumFrames] = newFrame;
 	
 	if(SetColorKey == true) {
-		SDL_SetColorKey((Frame[NumFrames])->getSurface(), SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
+		SDL_SetColorKey(Frame[NumFrames], SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
 	}
 	NumFrames++;
 }
