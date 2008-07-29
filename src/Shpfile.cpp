@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "DataCache.h"
 #include "Log.h"
 
-#include "pakfile/Animation.h"
-#include "pakfile/Shpfile.h"
+#include "Animation.h"
+#include "Shpfile.h"
 
 Shpfile::Shpfile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette) : Decode()
 {
@@ -14,10 +13,7 @@ Shpfile::Shpfile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette
 	ShpFilesize = bufsize;
 	Index = NULL;
 	readIndex();
-	if (palette == NULL)
-		m_palette = DataCache::Instance()->getPalette(IBM_PAL);
-	else
-		m_palette = palette;
+	m_palette = palette;
 }
 
 Shpfile::~Shpfile()
@@ -27,7 +23,7 @@ Shpfile::~Shpfile()
 	}
 }
 
-Image * Shpfile::getPicture(Uint32 IndexOfFile)
+SDL_Surface *Shpfile::getPicture(Uint32 IndexOfFile)
 {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
@@ -135,12 +131,10 @@ Image * Shpfile::getPicture(Uint32 IndexOfFile)
 	if(ImageOut != NULL) {
 		free(ImageOut);
 	}
-	Image * img = new Image(pic);
-	
-	return img;
+	return pic;
 }
 
-Image * Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, ...) {
+SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, ...) {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
 	unsigned char *ImageOut = NULL;
@@ -315,10 +309,9 @@ Image * Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, ...) 
 	free(tiles);
 	
 	SDL_UnlockSurface(pic);
-	Image * img = new Image(pic);
-	img->setColorKey(0);
-	return img;
-
+	SDL_SetColorKey(pic, SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
+//	pic->setColorKey(0);
+	return pic;
 }
 
 /// Returns an animation
@@ -333,8 +326,8 @@ Image * Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, ...) 
 */
 Animation* Shpfile::getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey)
 {
-	Animation* tmpAnimation;
-	Image* tmp;
+	Animation *tmpAnimation;
+	SDL_Surface *tmp;
 	
 	if((tmpAnimation = new Animation()) == NULL) {
 		return NULL;

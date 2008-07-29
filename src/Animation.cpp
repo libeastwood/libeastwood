@@ -1,4 +1,4 @@
-#include "pakfile/Animation.h"
+#include "Animation.h"
 #include <stdio.h>
 #include <stdlib.h>
 Animation::Animation() {
@@ -19,7 +19,7 @@ Animation::~Animation() {
 	}
 }
 
-Image *  Animation::getFrame() {
+SDL_Surface *Animation::getFrame() {
 	if(Frame == NULL) {
 		return NULL;
 	}
@@ -34,8 +34,8 @@ Image *  Animation::getFrame() {
 	return Frame[curFrame];
 }
 
-void Animation::addFrame(Image * newFrame, bool SetColorKey) {
-	if((Frame = (Image **) realloc(Frame,sizeof(Image *) * (NumFrames+1))) == NULL) {
+void Animation::addFrame(SDL_Surface * newFrame, bool SetColorKey) {
+	if((Frame = (SDL_Surface **) realloc(Frame,sizeof(SDL_Surface *) * (NumFrames+1))) == NULL) {
 		perror("Animation::addFrame()");
 		exit(EXIT_FAILURE);
 	}

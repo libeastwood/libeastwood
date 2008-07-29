@@ -2,8 +2,7 @@
 #define SHPFILE_H_INCLUDED
 
 #include "SDL.h"
-#include "pakfile/Decode.h"
-#include <boost/shared_ptr.hpp>
+#include "Decode.h"
 
 #define	TILE_NORMAL		0x00010000
 #define	TILE_FLIPH		0x00100000
@@ -22,7 +21,6 @@ struct ShpfileEntry
 class Animation;
 class Shpfile;
 class SDL_Palette;
-typedef boost::shared_ptr<Shpfile> ShpfilePtr;
 
 class Shpfile : public Decode
 {
@@ -36,7 +34,7 @@ public:
 	@param	IndexOfFile	specifies which picture to return (zero based)
 	@return	nth picture in this shp-File
 */
-	Image * getPicture(Uint32 IndexOfFile);
+	SDL_Surface *getPicture(Uint32 IndexOfFile);
 
 /*!
 	This method returns a SDL_Surface containing an array of pictures from this shp-File.
@@ -60,7 +58,7 @@ public:
 	@param	tilesY	how many pictures in one column
 	@return	picture in this shp-File containing all specified pictures
 */
-	Image * getPictureArray(unsigned int tilesX, unsigned int tilesY, ...);
+	SDL_Surface *getPictureArray(unsigned int tilesX, unsigned int tilesY, ...);
 	/// Returns an animation
 /*!
 	This method returns a new animation object with all pictures from startindex to endindex

@@ -2,7 +2,6 @@
 #define ANIMATION_H_INCLUDED
 
 #include <SDL.h>
-#include "Gfx.h"
 
 class Animation
 {
@@ -10,7 +9,7 @@ public:
 	Animation();
 	~Animation();
 	
-	Image * getFrame();
+	SDL_Surface *getFrame();
 	void setFrameRate(double FrameRate) {
 		if(FrameRate == 0.0) {
 			FrameDurationTime = 1;
@@ -19,14 +18,14 @@ public:
 		}
 	}
 	
-	void addFrame(Image * newFrame, bool SetColorKey = false);
+	void addFrame(SDL_Surface *newFrame, bool SetColorKey = false);
 
 private:
 	Uint32 CurFrameStartTime;
 	Uint32 FrameDurationTime;
 	int curFrame;
 	int NumFrames;
-	Image ** Frame;
+	SDL_Surface **Frame;
 };
 
 #endif // ANIMATION_H_INCLUDED
