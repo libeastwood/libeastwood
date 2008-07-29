@@ -1,5 +1,4 @@
-#include "pakfile/Inifile.h"
-#include "ResMan.h"
+#include "Inifile.h"
 #include <fstream>
 #include <iostream>
 #include <cctype>
@@ -15,14 +14,14 @@ using namespace std;
 	reading the file is closed immediately. If the file does not exist, it is treated as empty.
 	\param	filename	The file to be opened.
 */
-Inifile::Inifile(string filename)
+Inifile::Inifile(uint8_t *bufFiledata)
 {
 	FirstLine = NULL;
 	SectionRoot = NULL;
 	
     int bufsize;
 	
-	uint8_t* bufFiledata = ResMan::Instance()->readFile(filename.c_str(), &bufsize);
+//	uint8_t* bufFiledata = ResMan::Instance()->readFile(filename.c_str(), &bufsize);
 	SDL_RWops* RWopsFile = SDL_RWFromMem(bufFiledata, bufsize);
 	
 	readfile(RWopsFile);

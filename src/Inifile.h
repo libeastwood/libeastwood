@@ -89,7 +89,7 @@ private:
 public:
 	typedef Inifile::KeyEntry* KeyListHandle;		///< A handle to a KeyList opened with KeyList_Open().
 
-	Inifile(string filename);
+	Inifile(uint8_t *bufFiledata);
 	Inifile(SDL_RWops * RWopsFile);
 	~Inifile();
 	
