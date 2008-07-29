@@ -3,10 +3,8 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "Application.h"
 #include "Font.h"
 #include "Log.h"
-#include "ResMan.h"
 
 Font::Font(FNTCharacter* characters, FNTHeader* header)
 {
