@@ -15,7 +15,7 @@ all_sources = [ "Cpsfile.cpp",
                 "Vocfile.cpp",
               ]
 
-libnostalgia = env.Program("../libnostalgia.so", all_sources)
+libnostalgia = env.SharedLibrary("../libnostalgia.so", all_sources)
 #pakview = env.Program("../pakview", ["pakview.cpp"] + pakview_sources + gui_sources + pak_sources )
 
 Default(libnostalgia)
