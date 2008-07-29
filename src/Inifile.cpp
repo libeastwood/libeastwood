@@ -14,12 +14,12 @@ using namespace std;
 	reading the file is closed immediately. If the file does not exist, it is treated as empty.
 	\param	filename	The file to be opened.
 */
-Inifile::Inifile(uint8_t *bufFiledata)
+Inifile::Inifile(uint8_t *bufFiledata, int bufsize)
 {
 	FirstLine = NULL;
 	SectionRoot = NULL;
 	
-    int bufsize;
+//	int bufsize;
 	
 //	uint8_t* bufFiledata = ResMan::Instance()->readFile(filename.c_str(), &bufsize);
 	SDL_RWops* RWopsFile = SDL_RWFromMem(bufFiledata, bufsize);
