@@ -1,8 +1,6 @@
 #ifndef DUNE_FONT_H
 #define DUNE_FONT_H
 
-#include "Gfx.h"
-#include "singleton.h"
 #include "SDL.h"
 #include "SDL_ttf.h"
 
@@ -47,49 +45,13 @@ class Font
         ~Font();
 
         void extents(std::string text, Uint16& w, Uint16& h);
-        void render(std::string text, ImagePtr image, int x, int y, Uint8 paloff);
-        void render(std::string text, SDL_Surface* image, int x, int y, Uint8 paloff);
+        void render(std::string text, SDL_Surface *image, int x, int y, Uint8 paloff);
 
 
     private:
         FNTHeader* m_header;
         FNTCharacter* m_characters;
         word m_nchars;
-};
-
-
-class FontManager : public Singleton<FontManager>
-{
-    friend class Singleton<FontManager>;
-
-    typedef std::map<std::string, Font*> FontList;
-
-    protected:
-        FontManager();
-        ~FontManager();
-
-    public:
-        Font* getFont(std::string fn);
-
-    private:
-        FontList m_fonts;
-
-        Font* loadFont(std::string fn);
-};
-
-class TTFFontManager : public Singleton<TTFFontManager>
-{
-    friend class Singleton<TTFFontManager>;
-
-    protected:
-        TTFFontManager();
-        ~TTFFontManager();
-
-    public:
-        TTF_Font* GetFont(int size);
-
-    private:
-        TTF_Font* m_fonts[FONTS];
 };
 
 #endif // DUNE_FONT_H
