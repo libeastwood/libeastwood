@@ -48,3 +48,19 @@ os.system('mv libeastwood.so libeastwood.so.%s' % ApiVer)
 os.system('ln -s libeastwood.so.%s libeastwood.so.%d' % (ApiVer, major))
 os.system('ln -s libeastwood.so.%s libeastwood.so' % ApiVer)
 
+env.InstallAs(target=os.path.join('/usr/lib64/', 'libeastwood.so'), source='libeastwood.so')
+
+def installPkgconfig(env, target, source):
+        tgt = str(target[0])
+        src = str(source[0])
+        f = open(src)
+        try: txt = f.read()
+        finally: f.close()
+        txt = txt.replace("@prefix@", prefix)
+        txt = txt.replace("@exec_prefix@", prefix)
+        txt = txt.replace("@libdir@", libDir)
+        txt = txt.replace("@includedir@", includeDir)
+        f = open(tgt, "w")
+        try: f.write(txt)
+        finally: f.close()
+#    pkgconfigTgt = "libeastwood.pc")portaudio-%d.0.pc" % int(ApiVer.split(".", 1)[
