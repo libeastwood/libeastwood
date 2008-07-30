@@ -1,5 +1,5 @@
-#ifndef INIFILE_H
-#define INIFILE_H
+#ifndef EASTWOOD_INIFILE_H
+#define EASTWOOD_INIFILE_H
 
 #include <string>
 #include <SDL_rwops.h>
@@ -133,5 +133,4 @@ private:
 	bool isNormalChar(unsigned char s);
 };
 
-#endif // INIFILE_H
-
+#endif // EASTWOOD_INIFILE_H

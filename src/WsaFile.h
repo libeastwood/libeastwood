@@ -1,5 +1,5 @@
-#ifndef WSAFILE_H
-#define WSAFILE_H
+#ifndef EASTWOOD_WSAFILE_H
+#define EASTWOOD_WSAFILE_H
 
 #include "Decode.h"
 #include "Animation.h"
@@ -42,4 +42,4 @@ private:
 	float fps;
 };
 
-#endif // WSAFILE_H
+#endif // EASTWOOD_WSAFILE_H

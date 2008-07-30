@@ -1,5 +1,5 @@
-#ifndef VOCFILE_H
-#define VOCFILE_H
+#ifndef EASTWOOD_VOCFILE_H
+#define EASTWOOD_VOCFILE_H
 
 #include <SDL.h>
 #include <SDL_rwops.h>
@@ -15,5 +15,5 @@
  */
 extern Mix_Chunk* LoadVOC_RW(SDL_RWops* rwop, int freesrc);
 
-#endif // VOCFILE_H
+#endif // EASTWOOD_VOCFILE_H
 

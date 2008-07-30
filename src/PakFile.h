@@ -1,5 +1,5 @@
-#ifndef	PAKFILE_H
-#define	PAKFILE_H
+#ifndef	EASTWOOD_PAKFILE_H
+#define	EASTWOOD_PAKFILE_H
 
 #include <stdio.h>
 
@@ -32,4 +32,4 @@ private:
 	int	NumFileEntry;
 };
 
-#endif // PAKFILE_H
+#endif // EASTWOOD_PAKFILE_H

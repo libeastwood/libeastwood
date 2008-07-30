@@ -1,5 +1,5 @@
-#ifndef STRINGFILE_H
-#define STRINGFILE_H
+#ifndef EASTWOOD_STRINGFILE_H
+#define EASTWOOD_STRINGFILE_H
 
 #include <string>
 
@@ -52,4 +52,4 @@ private:
 	int numStrings;
 };
 
-#endif // STRINGFILE_H
+#endif // EASTWOOD_STRINGFILE_H

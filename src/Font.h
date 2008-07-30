@@ -1,5 +1,5 @@
-#ifndef FONT_H
-#define FONT_H
+#ifndef EASTWOOD_FONT_H
+#define EASTWOOD_FONT_H
 
 #include "SDL.h"
 #include "SDL_ttf.h"
@@ -54,4 +54,4 @@ class Font
         word m_nchars;
 };
 
-#endif // FONT_H
+#endif // EASTWOOD_FONT_H

@@ -1,5 +1,5 @@
-#ifndef ICNFILE_H
-#define ICNFILE_H
+#ifndef EASTWOOD_ICNFILE_H
+#define EASTWOOD_ICNFILE_H
 
 #include "SDL.h"
 
@@ -98,4 +98,4 @@ private:
 
 };
 
-#endif // ICNFILE_H
+#endif // EASTWOOD_ICNFILE_H

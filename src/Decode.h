@@ -1,5 +1,5 @@
-#ifndef DECODE_H
-#define DECODE_H
+#ifndef EASTWOOD_DECODE_H
+#define EASTWOOD_DECODE_H
 
 class Decode
 {
@@ -16,4 +16,4 @@ protected:
 	int decode40(unsigned char *image_in, unsigned char *image_out);
 };
 
-#endif // DECODE_H
+#endif // EASTWOOD_DECODE_H

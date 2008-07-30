@@ -1,5 +1,5 @@
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#ifndef EASTWOOD_ANIMATION_H
+#define EASTWOOD_ANIMATION_H
 
 #include <SDL.h>
 
@@ -28,5 +28,4 @@ private:
 	SDL_Surface **Frame;
 };
 
-#endif // ANIMATION_H
-
+#endif // EASTWOOD_ANIMATION_H

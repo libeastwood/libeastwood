@@ -1,5 +1,5 @@
-#ifndef PALETTE_H
-#define PALETTE_H
+#ifndef EASTWOOD_PALETTE_H
+#define EASTWOOD_PALETTE_H
 
 #include "SDL.h"
 
@@ -16,4 +16,4 @@ class Palettefile
     
 };
 
-#endif // PALETTE_H
+#endif // EASTWOOD_PALETTE_H

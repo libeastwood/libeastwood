@@ -1,5 +1,5 @@
-#ifndef CPSFILE_H
-#define CPSFILE_H
+#ifndef EASTWOOD_CPSFILE_H
+#define EASTWOOD_CPSFILE_H
 
 #include "Decode.h"
 #include "SDL.h"
@@ -18,4 +18,4 @@ private:
 	SDL_Palette *m_palette;
 };
 
-#endif // CPSFILE_H
+#endif // EASTWOOD_CPSFILE_H

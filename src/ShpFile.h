@@ -1,5 +1,5 @@
-#ifndef SHPFILE_H
-#define SHPFILE_H
+#ifndef EASTWOOD_SHPFILE_H
+#define EASTWOOD_SHPFILE_H
 
 #include "SDL.h"
 #include "Decode.h"
@@ -87,4 +87,4 @@ private:
 };
 
 
-#endif //SHPFILE_H
+#endif // EASTWOOD_SHPFILE_H
