@@ -4,9 +4,9 @@
 #include <string>
 
 #include "Log.h"
-#include "Stringfile.h"
+#include "StringFile.h"
 
-Stringfile::Stringfile(uint8_t *bufFiledata) {
+StringFile::StringFile(uint8_t *bufFiledata) {
 
 //	int bufsize;
 //	uint8_t* bufFiledata = ResMan::Instance()->readFile(stringFileName.c_str(), &bufsize);
@@ -29,12 +29,12 @@ Stringfile::Stringfile(uint8_t *bufFiledata) {
 
 }
 
-Stringfile::~Stringfile() {
+StringFile::~StringFile() {
 	delete [] stringArray;
 }
 
 
-std::string Stringfile::decodeString(std::string text) {
+std::string StringFile::decodeString(std::string text) {
 	std::string out = "";
 	unsigned char databyte;
 
@@ -188,7 +188,7 @@ std::string Stringfile::decodeString(std::string text) {
 				// special character
 				i++;
 				if(i == text.length()) {
-					LOG_ERROR("Stringfile", "decodeString: Special character escape sequence at end of string!");
+					LOG_ERROR("StringFile", "decodeString: Special character escape sequence at end of string!");
 					exit(EXIT_FAILURE);
 				}
 

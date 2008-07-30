@@ -14,11 +14,11 @@
 /*!
 	This class can read encoded textfiles and return their content in decoded ANSI Code.
 */
-class Stringfile
+class StringFile
 {
 public:
-	Stringfile(uint8_t *bufFiledata);
-	~Stringfile();
+	StringFile(uint8_t *bufFiledata);
+	~StringFile();
 
 	/*!
 	 * This method returns the briefing/debriefing text for the mission specified by the parameter mission. The second
@@ -33,7 +33,7 @@ public:
 		if(index < numStrings) {
 			return stringArray[index];
 		} else {
-			return "Stringfile::getString(): mission number or text type is invalid!\n";
+			return "StringFile::getString(): mission number or text type is invalid!\n";
 		}
 	}
 	std::string getString(int i){
