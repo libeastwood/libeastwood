@@ -1,5 +1,3 @@
-#include <SDL_mixer.h>
-
 #include "adl/emuopl.h"
 #include "adl/adl.h"
 #include "adl/fmopl.h"
