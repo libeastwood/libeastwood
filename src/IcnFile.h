@@ -10,7 +10,7 @@
 	small 16x16 pixel tiles. The map-file contains the information how to build up a complete picture with
 	this small tiles.
 */
-class Icnfile
+class IcnFile
 {
 private:
     //! Internal structure for the MAP-File.
@@ -20,9 +20,9 @@ private:
 		Uint16* TileIndex;
 	};
 public:
-	Icnfile(unsigned char * bufFiledata, int bufsize, 
+	IcnFile(unsigned char * bufFiledata, int bufsize, 
 	        unsigned char * bufMapdata, int mapsize);
-	~Icnfile();
+	~IcnFile();
 
 
 	SDL_Surface *getSurface(Uint32 IndexOfFile, SDL_Palette *palette);

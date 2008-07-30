@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-#include "Icnfile.h"
+#include "IcnFile.h"
 #include "Log.h"
 
 #define	SIZE_X	16
@@ -11,7 +11,7 @@
 
   
 
-Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize, 
+IcnFile::IcnFile(unsigned char * bufFiledata, int bufsize, 
                  unsigned char * bufMapdata, int mapsize) {
 	Filedata = bufFiledata;
 	IcnFilesize = bufsize;
@@ -22,19 +22,19 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 
 	// now we can start creating the Tilesetindex
 	if(MapFilesize < 2) {
-		LOG_ERROR("Icnfile","Mapfile: This *.map-File is too short!");
+		LOG_ERROR("IcnFile","Mapfile: This *.map-File is too short!");
 		exit(EXIT_FAILURE);		
 	}
 	
 	NumTilesets = SDL_SwapLE16( *((Uint16 *) MapFiledata));
 	
 	if(MapFilesize < NumTilesets * 2) {
-		LOG_ERROR("Icnfile", "Mapfile: This *.map-File is too short!");
+		LOG_ERROR("IcnFile", "Mapfile: This *.map-File is too short!");
 		exit(EXIT_FAILURE);		
 	}	
 	
 	if((Tileset = (MapfileEntry*) malloc(sizeof(MapfileEntry)*NumTilesets)) == NULL) {
-		LOG_ERROR("Icnfile","Mapfile: Allocating memory failed!");
+		LOG_ERROR("IcnFile","Mapfile: Allocating memory failed!");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -50,14 +50,14 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 	for(i = 0; i < NumTilesets; i++) {
 	
 		if((Tileset[i].TileIndex = (Uint16*) malloc(sizeof(Uint16)*Tileset[i].NumTiles)) == NULL) {
-			LOG_ERROR("Icnfile","Mapfile: Allocating memory failed!");
+			LOG_ERROR("IcnFile","Mapfile: Allocating memory failed!");
 			exit(EXIT_FAILURE);
 		}
 		
 		index = SDL_SwapLE16( ((Uint16*) MapFiledata)[i]);
 		
 		if((unsigned int)MapFilesize < (index+Tileset[i].NumTiles)*2 ) {
-			LOG_ERROR("Icnfile","Mapfile: This *.map-File is too short!");
+			LOG_ERROR("IcnFile","Mapfile: This *.map-File is too short!");
 			exit(EXIT_FAILURE);			
 		}
 		
@@ -72,7 +72,7 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 
 	// check if we can access first section;
 	if(IcnFilesize < 0x20) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: No SSET-Section found!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: No SSET-Section found!");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -84,7 +84,7 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 		||	(SSET[1] != 'S')
 		||	(SSET[2] != 'E')
 		||	(SSET[3] != 'T')) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: No SSET-Section found!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: No SSET-Section found!");
 		exit(EXIT_FAILURE);			
 	}
 	
@@ -93,7 +93,7 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 	SSET += 16;
 	
 	if(Filedata + IcnFilesize < SSET + SSET_Length) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: SSET-Section is bigger than ICN-File!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: SSET-Section is bigger than ICN-File!");
 		exit(EXIT_FAILURE);					
 	}
 	
@@ -104,7 +104,7 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 		||	(RPAL[1] != 'P')
 		||	(RPAL[2] != 'A')
 		||	(RPAL[3] != 'L')) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: No RPAL-Section found!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: No RPAL-Section found!");
 		exit(EXIT_FAILURE);			
 	}
 	
@@ -113,7 +113,7 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 	RPAL += 8;
 	
 	if(Filedata + IcnFilesize < RPAL + RPAL_Length) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: RPAL-Section is bigger than ICN-File!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: RPAL-Section is bigger than ICN-File!");
 		exit(EXIT_FAILURE);					
 	}
 	
@@ -124,7 +124,7 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 		||	(RTBL[1] != 'T')
 		||	(RTBL[2] != 'B')
 		||	(RTBL[3] != 'L')) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: No RTBL-Section found!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: No RTBL-Section found!");
 		exit(EXIT_FAILURE);			
 	}
 	
@@ -135,24 +135,24 @@ Icnfile::Icnfile(unsigned char * bufFiledata, int bufsize,
 	RTBL += 8;
 	
 	if(Filedata + IcnFilesize < RTBL + RTBL_Length) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: RTBL-Section is bigger than ICN-File!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: RTBL-Section is bigger than ICN-File!");
 		exit(EXIT_FAILURE);					
 	}
 	
 	NumFiles = SSET_Length / ((SIZE_X * SIZE_Y) / 2);
 		
 	if(RTBL_Length < NumFiles) {
-		LOG_ERROR("Icnfile", "Invalid ICN-File: RTBL-Section is too small!");
+		LOG_ERROR("IcnFile", "Invalid ICN-File: RTBL-Section is too small!");
 		exit(EXIT_FAILURE);			
 	}
 }
 
-Icnfile::~Icnfile()
+IcnFile::~IcnFile()
 {	
 	;
 }
 
-SDL_Surface *Icnfile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
+SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
 	SDL_Surface * pic;
 	
 	if(IndexOfFile >= NumFiles) {
@@ -194,12 +194,12 @@ SDL_Surface *Icnfile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
 		
 	SDL_UnlockSurface(pic);
 	
-	LOG_INFO("Icnfile", "File Nr.: %d (Size: %dx%d)",IndexOfFile,SIZE_X,SIZE_Y);
+	LOG_INFO("IcnFile", "File Nr.: %d (Size: %dx%d)",IndexOfFile,SIZE_X,SIZE_Y);
 
 	return pic;
 }
 
-SDL_Surface *Icnfile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX, int tilesY, int tilesN) {
+SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX, int tilesY, int tilesN) {
 	SDL_Surface * pic;
 	
 	if(MapfileIndex >= NumTilesets) {
@@ -313,7 +313,7 @@ SDL_Surface *Icnfile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette,
 	return pic;
 }
 
-SDL_Surface *Icnfile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette) {
+SDL_Surface *IcnFile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette) {
 	SDL_Surface * pic;
 	
 	if((StartIndex >= NumFiles)||(EndIndex >= NumFiles)||(StartIndex > EndIndex)) {
@@ -363,7 +363,7 @@ SDL_Surface *Icnfile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Pale
 	return pic;
 }
 
-int Icnfile::getNumFiles()
+int IcnFile::getNumFiles()
 {
 	return NumFiles;
 }
