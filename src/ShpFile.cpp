@@ -135,13 +135,7 @@ SDL_Surface *ShpFile::getSurface(Uint32 IndexOfFile)
 }
 
 SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...) {
-	SDL_Surface *pic = NULL;
-	unsigned char *DecodeDestination = NULL;
-	unsigned char *ImageOut = NULL;
-	Uint32 i,j;
-	
-	Uint32* tiles;
-	
+	Uint32 *tiles;
 	if((tilesX == 0) || (tilesY == 0)) {
 		return NULL;
 	}
@@ -150,20 +144,28 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	va_list arg_ptr;
 	va_start(arg_ptr, tilesY);
 	
-	for(i = 0; i < tilesX*tilesY; i++) {
+	for(Uint32 i = 0; i < tilesX*tilesY; i++) {
 		tiles[i] = va_arg( arg_ptr, int );
 		if(TILE_GETINDEX(tiles[i]) >= NumFiles) {
-			free(tiles);
+		free(tiles);
 			LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): There exist only %d files in this *.shp.",NumFiles);
 			return NULL;
 		}
 	}
 	
 	va_end(arg_ptr);
+	return getSurfaceArray(tilesX, tilesY, tiles);
+}
+
+SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, Uint32 *tiles) {
+	SDL_Surface *pic = NULL;
+	unsigned char *DecodeDestination = NULL;
+	unsigned char *ImageOut = NULL;
+	Uint32 i,j;
 	
 	unsigned char sizeY = (Filedata + Index[TILE_GETINDEX(tiles[0])].StartOffset)[2];
 	unsigned char sizeX = (Filedata + Index[TILE_GETINDEX(tiles[0])].StartOffset)[3];

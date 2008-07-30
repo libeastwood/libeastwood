@@ -58,6 +58,8 @@ public:
 	@return	picture in this shp-File containing all specified pictures
 */
 	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...);
+	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, Uint32 *tiles);
+
 	/// Returns an animation
 /*!
 	This method returns a new animation object with all pictures from startindex to endindex
@@ -72,13 +74,15 @@ public:
 
 	inline int getNumFiles() {return (int) NumFiles;};
 
+protected:
+	Uint16 NumFiles;
+
 private:
 	void readIndex();
 
 	ShpFileEntry * Index;
 	unsigned char* Filedata;
 	Uint32 ShpFilesize;
-	Uint16 NumFiles;
 	SDL_Palette * m_palette;
 };
 
