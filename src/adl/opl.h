@@ -59,7 +59,7 @@ class Copl
     }
 
   // Emulation only: fill buffer
-  virtual void update(short *buf, int samples) {}
+  virtual void update(__attribute__((unused)) short *buf, __attribute__((unused)) int samples) {}
 
  protected:
   int		currChip;		// currently selected OPL chip number
