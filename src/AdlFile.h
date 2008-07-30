@@ -1,6 +1,5 @@
 #ifndef EASTWOOD_ADLFILE_H
 #define EASTWOOD_ADLFILE_H
-#include <SDL.h>
 
 class CadlPlayer;
 class Copl;
