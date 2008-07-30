@@ -1,5 +1,5 @@
-#ifndef WSAFILE_H_INCLUDED
-#define WSAFILE_H_INCLUDED
+#ifndef WSAFILE_H
+#define WSAFILE_H
 
 #include "Decode.h"
 #include "Animation.h"
@@ -42,4 +42,4 @@ private:
 	float fps;
 };
 
-#endif // WSAFILE_H_INCLUDED
+#endif // WSAFILE_H

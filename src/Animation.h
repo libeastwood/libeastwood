@@ -1,5 +1,5 @@
-#ifndef ANIMATION_H_INCLUDED
-#define ANIMATION_H_INCLUDED
+#ifndef ANIMATION_H
+#define ANIMATION_H
 
 #include <SDL.h>
 
@@ -28,5 +28,5 @@ private:
 	SDL_Surface **Frame;
 };
 
-#endif // ANIMATION_H_INCLUDED
+#endif // ANIMATION_H
 

@@ -1,5 +1,5 @@
-#ifndef INIFILE_H_INCLUDED
-#define INIFILE_H_INCLUDED
+#ifndef INIFILE_H
+#define INIFILE_H
 
 #include <string>
 #include <SDL_rwops.h>
@@ -133,5 +133,5 @@ private:
 	bool isNormalChar(unsigned char s);
 };
 
-#endif // INIFILE_H_INCLUDED
+#endif // INIFILE_H
 

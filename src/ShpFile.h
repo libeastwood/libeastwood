@@ -1,5 +1,5 @@
-#ifndef SHPFILE_H_INCLUDED
-#define SHPFILE_H_INCLUDED
+#ifndef SHPFILE_H
+#define SHPFILE_H
 
 #include "SDL.h"
 #include "Decode.h"
@@ -83,4 +83,4 @@ private:
 };
 
 
-#endif //SHPFILE_H_INCLUDED
+#endif //SHPFILE_H

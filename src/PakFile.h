@@ -1,5 +1,5 @@
-#ifndef	PAKFILE_H_INCLUDED
-#define	PAKFILE_H_INCLUDED
+#ifndef	PAKFILE_H
+#define	PAKFILE_H
 
 #include <stdio.h>
 
@@ -32,4 +32,4 @@ private:
 	int	NumFileEntry;
 };
 
-#endif // PAKFILE_H_INCLUDED
+#endif // PAKFILE_H

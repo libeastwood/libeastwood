@@ -1,5 +1,5 @@
-#ifndef CPSFILE_H_INCLUDED
-#define CPSFILE_H_INCLUDED
+#ifndef CPSFILE_H
+#define CPSFILE_H
 
 #include "Decode.h"
 #include "SDL.h"
@@ -18,4 +18,4 @@ private:
 	SDL_Palette *m_palette;
 };
 
-#endif // CPSFILE_H_INCLUDED
+#endif // CPSFILE_H

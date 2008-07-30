@@ -1,5 +1,5 @@
-#ifndef DUNE_FONT_H
-#define DUNE_FONT_H
+#ifndef FONT_H
+#define FONT_H
 
 #include "SDL.h"
 #include "SDL_ttf.h"
@@ -54,4 +54,4 @@ class Font
         word m_nchars;
 };
 
-#endif // DUNE_FONT_H
+#endif // FONT_H

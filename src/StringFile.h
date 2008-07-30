@@ -1,5 +1,5 @@
-#ifndef STRINGFILE_H_INCLUDED
-#define STRINGFILE_H_INCLUDED
+#ifndef STRINGFILE_H
+#define STRINGFILE_H
 
 #include <string>
 
@@ -52,4 +52,4 @@ private:
 	int numStrings;
 };
 
-#endif // STRINGFILE_H_INCLUDED
+#endif // STRINGFILE_H

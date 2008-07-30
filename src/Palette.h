@@ -1,5 +1,5 @@
-#ifndef DUNE_PAKFILE_PALETTE_H
-#define DUNE_PAKFILE_PALETTE_H
+#ifndef PALETTE_H
+#define PALETTE_H
 
 #include "SDL.h"
 
@@ -16,4 +16,4 @@ class Palettefile
     
 };
 
-#endif // DUNE_PAKFILE_PALETTE_H
+#endif // PALETTE_H

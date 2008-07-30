@@ -1,5 +1,5 @@
-#ifndef DECODE_H_INCLUDED
-#define DECODE_H_INCLUDED
+#ifndef DECODE_H
+#define DECODE_H
 
 class Decode
 {
@@ -16,4 +16,4 @@ protected:
 	int decode40(unsigned char *image_in, unsigned char *image_out);
 };
 
-#endif // DECODE_H_INCLUDED
+#endif // DECODE_H

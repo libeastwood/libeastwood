@@ -1,5 +1,5 @@
-#ifndef ICNFILE_H_INCLUDED
-#define ICNFILE_H_INCLUDED
+#ifndef ICNFILE_H
+#define ICNFILE_H
 
 #include "SDL.h"
 
@@ -98,4 +98,4 @@ private:
 
 };
 
-#endif // ICNFILE_H_INCLUDED
+#endif // ICNFILE_H
