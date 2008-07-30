@@ -1,6 +1,6 @@
 /*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
- * Copyright (C) 1999 - 2006 Simon Peter, <dn.tlp@gmx.net>, et al.
+ * Copyright (C) 1999 - 2007 Simon Peter, <dn.tlp@gmx.net>, et al.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,8 @@
  * opl.h - OPL base class, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#ifndef H_ADPLUG_OPL
-#define H_ADPLUG_OPL
+#ifndef EASTWOOD_ADL_OPL_H
+#define EASTWOOD_ADL_OPL_H
 
 class Copl
 {
@@ -45,6 +45,11 @@ class Copl
 	currChip = n;
     }
 
+  virtual int getchip()				// returns current OPL chip
+    {
+      return currChip;
+    }
+
   virtual void init(void) = 0;			// reinitialize OPL chip(s)
 
   // return this OPL chip's type
@@ -61,4 +66,4 @@ class Copl
   ChipType	currType;		// this OPL chip's type
 };
 
-#endif
+#endif // EASTWOOD_ADL_OPL_H

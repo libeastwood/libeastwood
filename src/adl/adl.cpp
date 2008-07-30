@@ -51,20 +51,12 @@
 #include <inttypes.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <stdio.h>
-#include <math.h>
+
+#include "Log.h"
+#include "ResMan.h"
 
 #include "pakfile/sound/adl/adl.h"
-#include "pakfile/sound/adl/emuopl.h"
 
-#include <samplerate.h>
-
-#define BUFSIZE 65536     // Sound buffer size in samples
-#define NUM_SAMPLES_OF_SILENCE	10
-
-static inline void warning(const char *str, ...)
-{
-}
 
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -91,50 +83,6 @@ static inline uint16 READ_BE_UINT16(const void *ptr) {
   return (b[0] << 8) + b[1];
 }
 
-inline Uint8 Float2Uint8(float x) {
-	int val = (int) (x*127.0 + 128.0);
-	if(val < 0) {
-		val = 0;
-	} else if (val > 255) {
-		val = 255;
-	}
-	
-	return (Uint8) val;
-}
-
-inline Sint8 Float2Sint8(float x) {
-	int val = (int) (x*127.0);
-	if(val < -128) {
-		val = -128;
-	} else if (val > 127) {
-		val = 127;
-	}
-	
-	return (Sint8) val;
-}
-
-inline Uint16 Float2Uint16(float x) {
-	int val = (int) (x*32767.0 + 32768.0);
-	if(val < 0) {
-		val = 0;
-	} else if (val > 65535) {
-		val = 65535;
-	}
-	
-	return (Uint16) val;
-}
-
-inline Sint16 Float2Sint16(float x) {
-	int val = (int) (x*32767.0);
-	if(val < -32768) {
-		val = -32768;
-	} else if (val > 32767) {
-		val = 32767;
-	}
-	
-	return (Sint16) val;
-}
-
 class AdlibDriver {
 public:
   AdlibDriver(Copl *opl);
@@ -143,8 +91,33 @@ public:
   int callback(int opcode, ...);
   void callback();
 
+  // AudioStream API
+  // 	int readBuffer(int16 *buffer, const int numSamples) {
+  // 		int32 samplesLeft = numSamples;
+  // 		memset(buffer, 0, sizeof(int16) * numSamples);
+  // 		while (samplesLeft) {
+  // 			if (!_samplesTillCallback) {
+  // 				callback();
+  // 				_samplesTillCallback = _samplesPerCallback;
+  // 				_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
+  // 				if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
+  // 					_samplesTillCallback++;
+  // 					_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
+  // 				}
+  // 			}
+
+  // 			int32 render = MIN(samplesLeft, _samplesTillCallback);
+  // 			samplesLeft -= render;
+  // 			_samplesTillCallback -= render;
+  // 			YM3812UpdateOne(_adlib, buffer, render);
+  // 			buffer += render;
+  // 		}
+  // 		return numSamples;
+  // 	}
+
   bool isStereo() const { return false; }
   bool endOfData() const { return false; }
+  // 	int getRate() const { return _mixer->getOutputRate(); }
 
   struct OpcodeEntry {
     typedef int (AdlibDriver::*DriverOpcode)(va_list &list);
@@ -289,12 +262,7 @@ public:
   }
 
   uint8 *getInstrument(int instrumentId) {
-    unsigned short tmp = READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
-    if(tmp == 0xFFFF) {
-       return NULL;
-    } else {
-       return _soundData + tmp;
-    }
+    return _soundData + READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
   }
 
   void setupPrograms();
@@ -463,7 +431,11 @@ AdlibDriver::AdlibDriver(Copl *newopl)
   setupOpcodeList();
   setupParserOpcodeTable();
 
+  // 	_mixer = mixer;
+
   _flags = 0;
+  // 	_adlib = makeAdlibOPL(getRate());
+  // 	assert(_adlib);
 
   memset(_channels, 0, sizeof(_channels));
   _soundData = 0;
@@ -485,25 +457,34 @@ AdlibDriver::AdlibDriver(Copl *newopl)
 
   _tablePtr1 = _tablePtr2 = 0;
 
+  // 	_mixer->setupPremix(this);
+
+  // 	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
+  // 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
   _samplesTillCallback = 0;
   _samplesTillCallbackRemainder = 0;
 }
 
 AdlibDriver::~AdlibDriver() {
-
+  // 	_mixer->setupPremix(0);
+  // 	OPLDestroy(_adlib);
+  // 	_adlib = 0;
 }
 
 int AdlibDriver::callback(int opcode, ...) {
+  // 	lock();
   if (opcode >= _opcodesEntries || opcode < 0) {
-    warning("AdlibDriver: calling unknown opcode '%d'", opcode);
+    LOG_WARNING("AdlibDriver",  "calling unknown opcode '%d'", opcode);
     return 0;
   }
+
+  LOG_INFO("AdlibDriver", "Calling opcode '%s' (%d)", _opcodeList[opcode].name, opcode);
 
   va_list args;
   va_start(args, opcode);
   int returnValue = (this->*(_opcodeList[opcode].function))(args);
   va_end(args);
-
+  // 	unlock();
   return returnValue;
 }
 
@@ -538,7 +519,7 @@ int AdlibDriver::snd_setSoundData(va_list &list) {
 }
 
 int AdlibDriver::snd_unkOpcode1(va_list &list) {
-  warning("unimplemented snd_unkOpcode1");
+  LOG_WARNING("AdlibDriver", "unimplemented snd_unkOpcode1");
   return 0;
 }
 
@@ -567,7 +548,7 @@ int AdlibDriver::snd_startSong(va_list &list) {
 }
 
 int AdlibDriver::snd_unkOpcode2(va_list &list) {
-  warning("unimplemented snd_unkOpcode2");
+  LOG_WARNING("AdlibDriver", "unimplemented snd_unkOpcode2");
   return 0;
 }
 
@@ -617,7 +598,7 @@ int AdlibDriver::snd_getSoundTrigger(va_list &list) {
 }
 
 int AdlibDriver::snd_unkOpcode4(va_list &list) {
-  warning("unimplemented snd_unkOpcode4");
+  LOG_WARNING("AdlibDriver", "unimplemented snd_unkOpcode4");
   return 0;
 }
 
@@ -626,12 +607,12 @@ int AdlibDriver::snd_dummy(va_list &list) {
 }
 
 int AdlibDriver::snd_getNullvar4(va_list &list) {
-  warning("unimplemented snd_getNullvar4");
+  LOG_WARNING("AdlibDriver", "unimplemented snd_getNullvar4");
   return 0;
 }
 
 int AdlibDriver::snd_setNullvar3(va_list &list) {
-  warning("unimplemented snd_setNullvar3");
+  LOG_WARNING("AdlibDriver", "unimplemented snd_setNullvar3");
   return 0;
 }
 
@@ -650,6 +631,7 @@ int AdlibDriver::snd_clearFlag(va_list &list) {
 // timer callback
 
 void AdlibDriver::callback() {
+  // 	lock();
   --_flagTrigger;
   if (_flagTrigger < 0)
     _flags &= ~8;
@@ -664,6 +646,7 @@ void AdlibDriver::callback() {
       ++_unkValue4;
     }
   }
+  // 	unlock();
 }
 
 void AdlibDriver::setupPrograms() {
@@ -771,12 +754,13 @@ void AdlibDriver::executePrograms() {
 	    opcode &= 0x7F;
 	    if (opcode >= _parserOpcodeTableSize)
 	      opcode = _parserOpcodeTableSize - 1;
-
+	    LOG_INFO("AdlibDriver", "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
 	    result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
 	    channel.dataptr = dataptr;
 	    if (result)
 	      break;
 	  } else {
+	    LOG_INFO("AdlibDriver", "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
 	    setupNote(opcode, channel);
 	    noteOn(channel);
 	    setupDuration(param, channel);
@@ -801,6 +785,7 @@ void AdlibDriver::executePrograms() {
 // 
 
 void AdlibDriver::resetAdlibState() {
+  LOG_INFO("AdlibDriver", "resetAdlibState()");
   _rnd = 0x1234;
 
   // Authorize the control of the waveforms
@@ -832,6 +817,7 @@ void AdlibDriver::writeOPL(byte reg, byte val) {
 }
 
 void AdlibDriver::initChannel(Channel &channel) {
+  LOG_INFO("AdlibDriver", "initChannel(%lu)", (long)(&channel - _channels));
   memset(&channel.dataptr, 0, sizeof(Channel) - ((char*)&channel.dataptr - (char*)&channel));
 
   channel.tempo = 0xFF;
@@ -843,8 +829,10 @@ void AdlibDriver::initChannel(Channel &channel) {
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
+  LOG_INFO("AdlibDriver", "noteOff(%lu)", (long)(&channel - _channels));
 
   // The control channel has no corresponding Adlib channel
+
   if (_curChannel >= 9)
     return;
 
@@ -861,6 +849,8 @@ void AdlibDriver::noteOff(Channel &channel) {
 }
 
 void AdlibDriver::unkOutput2(uint8 chan) {
+  LOG_INFO("AdlibDriver", "unkOutput2(%d)", chan);
+
   // The control channel has no corresponding Adlib channel
 
   if (chan >= 9)
@@ -918,6 +908,7 @@ uint16 AdlibDriver::getRandomNr() {
 }
 
 void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
+  LOG_INFO("AdlibDriver", "setupDuration(%d, %lu)", duration, (long)(&channel - _channels));
   if (channel.durationRandomness) {
     channel.duration = duration + (getRandomNr() & channel.durationRandomness);
     return;
@@ -932,6 +923,8 @@ void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 // to noteOn(), which will always play the current note.
 
 void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
+  LOG_INFO("AdlibDriver", "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
+
   channel.rawNote = rawNote;
 
   int8 note = (rawNote & 0x0F) + channel.baseNote;
@@ -984,9 +977,7 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 }
 
 void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &channel) {
-  if(dataptr == NULL) {
-    return;
-  }
+  LOG_INFO("AdlibDriver", "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
   // Amplitude Modulation / Vibrato / Envelope Generator Type /
   // Keyboard Scaling Rate / Modulator Frequency Multiple
   writeOPL(0x20 + regOffset, *dataptr++);
@@ -1033,7 +1024,10 @@ void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &chan
 // primary effect 2.
 
 void AdlibDriver::noteOn(Channel &channel) {
+  LOG_INFO("AdlibDriver", "noteOn(%lu)", (long)(&channel - _channels));
+
   // The "note on" bit is set, and the current note is played.
+
   channel.regBx |= 0x20;
   writeOPL(0xB0 + _curChannel, channel.regBx);
 
@@ -1044,7 +1038,9 @@ void AdlibDriver::noteOn(Channel &channel) {
 }
 
 void AdlibDriver::adjustVolume(Channel &channel) {
+  LOG_INFO("AdlibDriver", "adjustVolume(%lu)", (long)(&channel - _channels));
   // Level Key Scaling / Total Level
+
   writeOPL(0x43 + _regOffset[_curChannel], calculateOpLevel2(channel));
   if (channel.twoChan)
     writeOPL(0x40 + _regOffset[_curChannel], calculateOpLevel1(channel));
@@ -1067,6 +1063,7 @@ void AdlibDriver::adjustVolume(Channel &channel) {
 // unk31 - determines how often the notes are played
 
 void AdlibDriver::primaryEffect1(Channel &channel) {
+  LOG_INFO("AdlibDriver", "Calling primaryEffect1 (channel: %d)", _curChannel);
   uint8 temp = channel.unk31;
   channel.unk31 += channel.unk29;
   if (channel.unk31 >= temp)
@@ -1149,6 +1146,7 @@ void AdlibDriver::primaryEffect1(Channel &channel) {
 // is a bit sloppy.
 
 void AdlibDriver::primaryEffect2(Channel &channel) {
+  LOG_INFO("AdlibDriver", "Calling primaryEffect2 (channel: %d)", _curChannel);
   if (channel.unk38) {
     --channel.unk38;
     return;
@@ -1203,6 +1201,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
 // offset - the offset to the data chunk
 
 void AdlibDriver::secondaryEffect1(Channel &channel) {
+  LOG_INFO("AdlibDriver", "Calling secondaryEffect1 (channel: %d)", _curChannel);
   uint8 temp = channel.unk18;
   channel.unk18 += channel.unk19;
   if (channel.unk18 < temp) {
@@ -2019,16 +2018,10 @@ const uint8 AdlibDriver::_regOffset[] = {
 // F-Numbers (10 bits) for the notes of the 12-tone scale. However, it does not
 // match the table in the Adlib documentation I've seen.
 
-/*
 const uint16 AdlibDriver::_unkTable[] = {
   0x0134, 0x0147, 0x015A, 0x016F, 0x0184, 0x019C, 0x01B4, 0x01CE, 0x01E9,
   0x0207, 0x0225, 0x0246
-};*/
-
-// Some other values to try (taken from Adplug player.cpp)
-const uint16 AdlibDriver::_unkTable[] =
-  {363, 385, 408, 432, 458, 485, 514, 544, 577, 611, 647, 686};
-
+};
 
 // These tables are currently only used by updateCallback46(), which only ever
 // uses the first element of one of the sub-tables.
@@ -2182,304 +2175,46 @@ const uint8 AdlibDriver::_unkTables[][32] = {
     0x36, 0x37, 0x39, 0x3B, 0x3E, 0x41, 0x44, 0x47 }
 };
 
+// #pragma mark -
 
-CadlPlayer::CadlPlayer(SDL_RWops* rwop)
-  : numsubsongs(0), _trackEntries(), _soundDataPtr(0)
+// At the time of writing, the only known case where Kyra 1 uses sound triggers
+// is in the castle, to cycle between three different songs.
+
+const int CadlPlayer::_kyra1SoundTriggers[] = {
+  0, 4, 5, 3
+};
+
+const int CadlPlayer::_kyra1NumSoundTriggers = ARRAYSIZE(CadlPlayer::_kyra1SoundTriggers);
+
+CadlPlayer::CadlPlayer(Copl *newopl)
 {
-  opl = new CEmuopl(8000,true,false);
-  memset(_trackEntries, 0, sizeof(_trackEntries));
-  _driver = new AdlibDriver(opl);
+  opl = newopl;
+
+
+  _driver = new AdlibDriver(newopl);
   assert(_driver);
-
-  _sfxPlayingSound = -1;
-
-  _soundTriggers = NULL;
-  _numSoundTriggers = 0;
+  Mix_QuerySpec(&m_freq, &m_format, &m_channels);
 
   init();
-  load(rwop);
 }
 
 CadlPlayer::~CadlPlayer() {
   delete [] _soundDataPtr;
   delete _driver;
-  delete opl;
 }
-
-
-std::vector<int> CadlPlayer::getSubsongs()
-{
-  std::vector<int> retvector;
-  for(int i = 0; i < 120; i++) {
-    if(_trackEntries[i] != 0xff) {
-      retvector.push_back(i);
-    }
-  }
-  return retvector;
-}
-
-Mix_Chunk* CadlPlayer::getSubsong(int Num) {
-	short*		buf = NULL;
-	unsigned long towrite, write;
-	unsigned long bufsize = 0;
-
-	playTrack(Num);
-
-	while(update()) {
-		for(towrite = (unsigned long) (8000 / getrefresh()); towrite; towrite -= write) {
-			write = (towrite > BUFSIZE ? BUFSIZE : towrite);
-			if((buf = (short*) realloc(buf,(bufsize+write)*sizeof(short))) == NULL) {
-				perror("CadlPlayer::getSubsong(): Cannot allocate memory!\n");
-				exit(EXIT_FAILURE);
-			}
-			opl->update(buf+bufsize, write);
-			bufsize += write;
-		}
-
-		if(bufsize > 1024*1024*8) {
-			fprintf(stderr,"CadlPlayer::getSubsong(): Decoding aborted after 16MB have been decoded.\n");
-			break;		
-		}
-	}
-
-	Mix_Chunk* myChunk;
-	if((myChunk = (Mix_Chunk*) calloc(sizeof(Mix_Chunk),1)) == NULL) {
-		return NULL;
-	}
-
-	myChunk->volume = 128;
-	myChunk->allocated = 1;	
-	myChunk->abuf = (Uint8*) buf;
-	myChunk->alen = bufsize*sizeof(short);
-	return myChunk;	
-}
-
-
-Mix_Chunk* CadlPlayer::getUpsampledSubsong(int Num, int TargetFrequency, Uint16 TargetFormat, int channels) {
-	Mix_Chunk* myChunk = getSubsong(Num);
-	if(myChunk == NULL) {
-		return NULL;
-	}
-
-	// Convert to floats
-	int RawData_Samples = myChunk->alen / 2;
-	Sint16* RawDataSint16 = (Sint16*) myChunk->abuf;
-	float* RawDataFloat;
-	if((RawDataFloat = (float*) malloc((RawData_Samples+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float))) == NULL) {
-		Mix_FreeChunk(myChunk);
-		return NULL;
-	}
-
-	for(int i=0; i < NUM_SAMPLES_OF_SILENCE; i++) {
-		RawDataFloat[i] = 0.0;
-	}
-
-	for(int i=NUM_SAMPLES_OF_SILENCE; i < RawData_Samples+NUM_SAMPLES_OF_SILENCE; i++) {
-		RawDataFloat[i] = ((float) RawDataSint16[i-NUM_SAMPLES_OF_SILENCE])/32768.0;
-	}
-
-	for(int i=RawData_Samples+NUM_SAMPLES_OF_SILENCE; i < RawData_Samples + 2*NUM_SAMPLES_OF_SILENCE; i++) {
-		RawDataFloat[i] = 0.0;
-	}
-
-	RawData_Samples += 2*NUM_SAMPLES_OF_SILENCE;
-
-	// Convert to audio device frequency
-	float ConversionRatio = ((float) TargetFrequency) / 8000.0;
-	Uint32 TargetDataFloat_Samples = (Uint32) ((float) RawData_Samples * ConversionRatio) + 1;
-	float* TargetDataFloat;
-	if((TargetDataFloat = (float*) malloc(TargetDataFloat_Samples*sizeof(float))) == NULL) {
-		Mix_FreeChunk(myChunk);
-		free(RawDataFloat);
-		return NULL;
-	}
-	
-	SRC_DATA src_data;
-	src_data.data_in = RawDataFloat;
-	src_data.input_frames = RawData_Samples;
-	src_data.src_ratio = ConversionRatio;
-	src_data.data_out = TargetDataFloat;
-	src_data.output_frames = TargetDataFloat_Samples;
-
-	if(src_simple(&src_data, SRC_LINEAR, 1) != 0) {
-		Mix_FreeChunk(myChunk);
-		free(RawDataFloat);
-		free(TargetDataFloat);
-		return NULL;
-	}
-	
-	Uint32 TargetData_Samples = src_data.output_frames_gen;
-	free(RawDataFloat);
-
-	// Convert floats back to integers
-	free(myChunk->abuf);
-	myChunk->volume = 128;
-	myChunk->allocated = 1;	
-	
-	switch(TargetFormat) {
-		case AUDIO_U8:
-		{
-			Uint8* TargetData;
-			int SizeOfTargetSample = sizeof(Uint8) * channels;
-			if((TargetData = (Uint8*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-				free(TargetDataFloat);
-				free(myChunk);
-				return NULL;
-			}
-			
-			for(Uint32 i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = Float2Uint8(TargetDataFloat[i/channels]);
-				for(int j = 1; j < channels; j++) {
-					TargetData[i+j] = TargetData[i];
-				}
-				
-			}
-			
-			free(TargetDataFloat);
-			
-			myChunk->abuf = (Uint8*) TargetData;
-			myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-			
-		} break;
-
-		case AUDIO_S8:
-		{
-			Sint8* TargetData;
-			int SizeOfTargetSample = sizeof(Sint8) * channels;
-			if((TargetData = (Sint8*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-				free(TargetDataFloat);
-				free(myChunk);
-				return NULL;
-			}
-			
-			for(Uint32 i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = Float2Sint8(TargetDataFloat[i/channels]);
-				for(int j = 1; j < channels; j++) {
-					TargetData[i+j] = TargetData[i];
-				}
-				
-			}
-			
-			free(TargetDataFloat);
-			
-			myChunk->abuf = (Uint8*) TargetData;
-			myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-			
-		} break;
-
-		case AUDIO_U16LSB:
-		{
-			Uint16* TargetData;
-			int SizeOfTargetSample = sizeof(Uint16) * channels;
-			if((TargetData = (Uint16*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-				free(TargetDataFloat);
-				free(myChunk);
-				return NULL;
-			}
-			
-			for(Uint32 i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SDL_SwapLE16(Float2Uint16(TargetDataFloat[i/channels]));
-				for(int j = 1; j < channels; j++) {
-					TargetData[i+j] = TargetData[i];
-				}
-				
-			}
-			
-			free(TargetDataFloat);
-			
-			myChunk->abuf = (Uint8*) TargetData;
-			myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-			
-		} break;
-				
-        case AUDIO_S16LSB:
-		{
-			Sint16* TargetData;
-			int SizeOfTargetSample = sizeof(Sint16) * channels;
-			if((TargetData = (Sint16*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-				free(TargetDataFloat);
-				free(myChunk);
-				return NULL;
-			}
-			
-			for(Uint32 i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SDL_SwapLE16(Float2Sint16(TargetDataFloat[i/channels]));
-				for(int j = 1; j < channels; j++) {
-					TargetData[i+j] = TargetData[i];
-				}
-				
-			}
-			
-			free(TargetDataFloat);
-			
-			myChunk->abuf = (Uint8*) TargetData;
-			myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-			
-		} break;
-		
-        case AUDIO_U16MSB:
-		{
-			Uint16* TargetData;
-			int SizeOfTargetSample = sizeof(Uint16) * channels;
-			if((TargetData = (Uint16*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-				free(TargetDataFloat);
-				free(myChunk);
-				return NULL;
-			}
-			
-			for(Uint32 i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SDL_SwapBE16(Float2Uint16(TargetDataFloat[i/channels]));
-				for(int j = 1; j < channels; j++) {
-					TargetData[i+j] = TargetData[i];
-				}
-				
-			}
-			
-			free(TargetDataFloat);
-			
-			myChunk->abuf = (Uint8*) TargetData;
-			myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-			
-		} break;
-		
-		case AUDIO_S16MSB:
-		{
-			Sint16* TargetData;
-			int SizeOfTargetSample = sizeof(Sint16) * channels;
-			if((TargetData = (Sint16*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-				free(TargetDataFloat);
-				free(myChunk);
-				return NULL;
-			}
-			
-			for(Uint32 i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SDL_SwapBE16(Float2Sint16(TargetDataFloat[i/channels]));
-				for(int j = 1; j < channels; j++) {
-					TargetData[i+j] = TargetData[i];
-				}
-				
-			}
-			
-			free(TargetDataFloat);
-			
-			myChunk->abuf = (Uint8*) TargetData;
-			myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-
-		} break;
-		
-		default:
-		{
-			free(TargetDataFloat);
-			free(myChunk);
-			return NULL;
-		} break;
-	}
-
-	return myChunk;
-}
-
 
 bool CadlPlayer::init() {
+  numsubsongs = 0;
+  _soundDataPtr= 0;  
+  _numSoundTriggers = _kyra1NumSoundTriggers;
+  memset(_trackEntries, 0, sizeof(_trackEntries));
+
+
+  _sfxPlayingSound = -1;
+  // 	_soundFileLoaded = "";
+
+  _soundTriggers = _kyra1SoundTriggers;
+
   _driver->callback(2);
   _driver->callback(16, int(4));
   return true;
@@ -2495,14 +2230,51 @@ void CadlPlayer::process() {
       playTrack(soundId);
     }
   } else {
-    warning("Unknown sound trigger %d", trigger);
+    LOG_WARNING("AdlibDriver", "Unknown sound trigger %d", trigger);
     // TODO: At this point, we really want to clear the trigger...
   }
 }
 
+void CadlPlayer::callback(void *userdata, Uint8 *audiobuf, int len)
+{
+  CadlPlayer *self = (CadlPlayer *)userdata;
+  static long	minicnt = 0;
+  long		i, towrite = len / self->getsampsize();
+  char		*pos = (char *)audiobuf;
+
+  // Prepare audiobuf with emulator output
+  while(towrite > 0) {
+    while(minicnt < 0) {
+      minicnt += self->m_freq;
+      self->playing = self->update();
+    }
+    i = std::min(towrite, (long)(minicnt / self->getrefresh() + 4) & ~3);
+    self->opl->update((short *)pos, i);
+    pos += i * self->getsampsize(); towrite -= i;
+    minicnt -= (long)(self->getrefresh() * i);
+  }
+}
+
+// void CadlPlayer::setVolume(int volume) {
+// }
+
+// int CadlPlayer::getVolume() {
+// 	return 0;
+// }
+
+// void CadlPlayer::loadMusicFile(const char *file) {
+// 	loadSoundFile(file);
+// }
+
 void CadlPlayer::playTrack(uint8 track) {
   play(track);
 }
+
+// void CadlPlayer::haltTrack() {
+// 	unk1();
+// 	unk2();
+// 	//_engine->_system->delayMillis(3 * 60);
+// }
 
 void CadlPlayer::playSoundEffect(uint8_t track) {
   play(track);
@@ -2510,13 +2282,14 @@ void CadlPlayer::playSoundEffect(uint8_t track) {
 
 void CadlPlayer::play(uint8_t track) {
   uint8 soundId = _trackEntries[track];
-
   if ((int8)soundId == -1 || !_soundDataPtr)
     return;
-
   soundId &= 0xFF;
   _driver->callback(16, 0);
-
+  // 	while ((_driver->callback(16, 0) & 8)) {
+  // We call the system delay and not the game delay to avoid concurrency issues.
+  // 		_engine->_system->delayMillis(10);
+  // 	}
   if (_sfxPlayingSound != -1) {
     // Restore the sounds's normal values.
     _driver->callback(10, _sfxPlayingSound, int(1), int(_sfxPriority));
@@ -2552,34 +2325,18 @@ void CadlPlayer::play(uint8_t track) {
   _driver->callback(6, soundId);
 }
 
-bool CadlPlayer::load(SDL_RWops* rwop)
+// void CadlPlayer::beginFadeOut() {
+// 	playSoundEffect(1);
+// }
+
+bool CadlPlayer::load(const std::string filename)
 {
-  if(rwop == NULL) {
-  	return 0;
-  }
 
-  uint8 *file_data = 0; int file_size = 0;
-
-  if((file_size = SDL_RWseek(rwop,0,SEEK_END)) <= 0) {
-  	fprintf(stderr,"CadlPlayer::load(): Cannot seek in SDL_RWop!\n");
-	return false;
-  }
-
-
+  int file_size;  
+  unsigned char * file_data = ResMan::Instance()->readFile(filename, &file_size);
+  
   unk2();
   unk1();
-
-  if(SDL_RWseek(rwop,0,SEEK_SET) != 0) {
-  	fprintf(stderr,"CadlPlayer::load(): Cannot seek in SDL_RWop!\n");
-	return false;
-  }
-
-  file_data = new uint8[file_size];
-  if(SDL_RWread(rwop,file_data,1,file_size) != file_size) {
-  	fprintf(stderr,"CadlPlayer::load(): Cannot read from SDL_RWop!\n");
-	return false;
-  }
-
 
   _driver->callback(8, int(-1));
   _soundDataPtr = 0;
@@ -2601,11 +2358,11 @@ bool CadlPlayer::load(SDL_RWops* rwop)
 
   _driver->callback(4, _soundDataPtr);
 
-  for(int i = 0; i < 120; i++) {
-    if(_trackEntries[i] != 0xff) {
-      numsubsongs++;
-    }
-  }
+  // 	_soundFileLoaded = file;
+
+  for(int i = 0; i < 200; i++)
+    if(_trackEntries[i] != 0xff)
+      numsubsongs = i + 1;
 
   return true;
 }
@@ -2619,9 +2376,17 @@ void CadlPlayer::rewind(int subsong)
   update();
 }
 
+unsigned int CadlPlayer::getsubsongs()
+{
+  return numsubsongs;
+}
+
 bool CadlPlayer::update()
 {
   bool songend = true;
+
+//   if(_trackEntries[cursubsong] == 0xff)
+//     return false;
 
   _driver->callback();
 
@@ -2634,6 +2399,7 @@ bool CadlPlayer::update()
 
 void CadlPlayer::unk1() {
   playSoundEffect(0);
+  //_engine->_system->delayMillis(5 * 60);
 }
 
 void CadlPlayer::unk2() {

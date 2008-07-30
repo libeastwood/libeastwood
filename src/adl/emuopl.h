@@ -23,7 +23,9 @@
 #define EASTWOOD_ADL_EMUOPL_H
 
 #include "opl.h"
+extern "C" {
 #include "fmopl.h"
+}
 
 class CEmuopl: public Copl
 {
