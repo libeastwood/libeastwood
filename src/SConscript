@@ -14,7 +14,10 @@ all_sources = [ "CpsFile.cpp",
                 "Animation.cpp",
                 "StringFile.cpp",
                 "VocFile.cpp",
-		"Font.cpp"
+		"Font.cpp",
+		"adl/adl.cpp",
+		"adl/emuopl.cpp",
+		"adl/fmopl.c",
               ]
 
 libeastwood = env.SharedLibrary(target='../libeastwood.so', source=all_sources)

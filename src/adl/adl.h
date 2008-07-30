@@ -11,7 +11,7 @@
 #include <string>
 #include <inttypes.h>
 
-#include "pakfile/sound/adl/emuopl.h"
+#include "emuopl.h"
 
 #include "SDL.h"
 #include "SDL_mixer.h"
@@ -25,7 +25,7 @@ class CadlPlayer
   ~CadlPlayer();
 
   static void callback(void *, Uint8 *, int);
-  bool load(const std::string filename);
+  bool load(uint8_t *bufFiledata, int bufsize);
   bool update();
   void rewind(int subsong);
   Copl* get_opl() { return opl; }

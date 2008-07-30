@@ -19,8 +19,8 @@
  * emuopl.cpp - Emulated OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include "pakfile/sound/adl/emuopl.h"
-#include "pakfile/sound/adl/fmopl.h"
+#include "emuopl.h"
+#include "fmopl.h"
 
 CEmuopl::CEmuopl(int rate, bool bit16, bool usestereo)
   : use16bit(bit16), stereo(usestereo), mixbufSamples(0)

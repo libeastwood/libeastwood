@@ -3,8 +3,8 @@
 
 /* --- select emulation chips --- */
 #define BUILD_YM3812 (HAS_YM3812)
-//#define BUILD_YM3526 (HAS_YM3526)
-//#define BUILD_Y8950  (HAS_Y8950)
+/*#define BUILD_YM3526 (HAS_YM3526)
+#define BUILD_Y8950  (HAS_Y8950)*/
 
 /* --- system optimize --- */
 /* select bit size of output : 8 or 16 */
@@ -171,4 +171,4 @@ void YM3812UpdateOne(FM_OPL *OPL, INT16 *buffer, int length);
 
 void Y8950UpdateOne(FM_OPL *OPL, INT16 *buffer, int length);
 
-#endif // EASTWOOD_ADL_FMOPL_H
+#endif /* EASTWOOD_ADL_FMOPL_H */

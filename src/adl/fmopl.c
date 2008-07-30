@@ -39,8 +39,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
-//#include "driver.h"		/* use M.A.M.E. */
-#include "pakfile/sound/adl/fmopl.h"
+#include "fmopl.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -236,10 +235,10 @@ static INT32 feedback2;		/* connect for SLOT 2 */
 #define LOG_WAR  2      /* WARNING     */
 #define LOG_INF  1      /* INFORMATION */
 
-//#define LOG_LEVEL LOG_INF
+/*#define LOG_LEVEL LOG_INF*/
 #define LOG_LEVEL	LOG_ERR
 
-//#define LOG(n,x) if( (n)>=LOG_LEVEL ) logerror x
+/*#define LOG(n,x) if( (n)>=LOG_LEVEL ) logerror x*/
 #define LOG(n,x)
 
 /* --------------------- subroutines  --------------------- */
@@ -313,7 +312,7 @@ INLINE void OPL_KEYOFF(OPL_SLOT *SLOT)
 		/* set envelope counter from envleope output */
 		SLOT->evm = ENV_MOD_RR;
 		if( !(SLOT->evc&EG_DST) )
-			//SLOT->evc = (ENV_CURVE[SLOT->evc>>ENV_BITS]<<ENV_BITS) + EG_DST;
+			/* SLOT->evc = (ENV_CURVE[SLOT->evc>>ENV_BITS]<<ENV_BITS) + EG_DST; */
 			SLOT->evc = EG_DST;
 		SLOT->eve = EG_DED;
 		SLOT->evs = SLOT->evsr;
@@ -545,10 +544,10 @@ INLINE void OPL_CALC_RH( OPL_CH *CH )
 		outd[0] += OP_OUT(SLOT,env_out, feedback2)*2;
 	}
 
-	// SD  (17) = mul14[fnum7] + white noise
-	// TAM (15) = mul15[fnum8]
-	// TOP (18) = fnum6(mul18[fnum8]+whitenoise)
-	// HH  (14) = fnum7(mul18[fnum8]+whitenoise) + white noise
+	/* SD  (17) = mul14[fnum7] + white noise
+	 TAM (15) = mul15[fnum8]
+	 TOP (18) = fnum6(mul18[fnum8]+whitenoise)
+	 HH  (14) = fnum7(mul18[fnum8]+whitenoise) + white noise */
 	env_sd =OPL_CALC_SLOT(SLOT7_2) + whitenoise;
 	env_tam=OPL_CALC_SLOT(SLOT8_1);
 	env_top=OPL_CALC_SLOT(SLOT8_2);
@@ -755,7 +754,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 {
 	OPL_CH *CH;
 	int slot;
-	int block_fnum;
+	UINT32 block_fnum;
 
 	switch(r&0xe0)
 	{
@@ -1343,8 +1342,9 @@ unsigned char OPLRead(FM_OPL *OPL,int a)
 		{
 			if(OPL->keyboardhandler_r)
 				return OPL->keyboardhandler_r(OPL->keyboard_param);
-			else
+			else {
 				LOG(LOG_WAR,("OPL:read unmapped KEYBOARD port\n"));
+			}
 		}
 		return 0;
 #if 0
@@ -1356,8 +1356,9 @@ unsigned char OPLRead(FM_OPL *OPL,int a)
 		{
 			if(OPL->porthandler_r)
 				return OPL->porthandler_r(OPL->port_param);
-			else
+			else {
 				LOG(LOG_WAR,("OPL:read unmapped I/O port\n"));
+			}
 		}
 		return 0;
 	case 0x1a: /* PCM-DATA    */
