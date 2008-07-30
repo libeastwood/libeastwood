@@ -3,17 +3,17 @@ Import('env')
 
 from glob import glob
 
-all_sources = [ "Cpsfile.cpp",
+all_sources = [ "CpsFile.cpp",
                 "Decode.cpp",
-                "Icnfile.cpp",
-                "Inifile.cpp",
-                "Pakfile.cpp",
-                "Shpfile.cpp",
-                "Wsafile.cpp",
+                "IcnFile.cpp",
+                "IniFile.cpp",
+                "PakFile.cpp",
+                "ShpFile.cpp",
+                "WsaFile.cpp",
                 "Palette.cpp",
                 "Animation.cpp",
-                "Stringfile.cpp",
-                "Vocfile.cpp",
+                "StringFile.cpp",
+                "VocFile.cpp",
 		"Font.cpp"
               ]
 
