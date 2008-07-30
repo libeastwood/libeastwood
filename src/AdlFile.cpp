@@ -18,6 +18,16 @@ AdlFile::~AdlFile()
 	delete m_adlPlayer;
 }
 
+bool AdlFile::load(uint8_t *bufFiledata, int bufsize)
+{
+	return m_adlPlayer->load(bufFiledata, bufsize);
+}
+
+void AdlFile::rewind(int subsong)
+{
+	m_adlPlayer->rewind(subsong);
+}
+
 void AdlFile::callback(void *userdata, Uint8 *audiobuf, int len)
 {
 	AdlFile *self = (AdlFile *)userdata;

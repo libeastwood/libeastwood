@@ -13,6 +13,8 @@ class AdlFile
 		int m_freq;
 		Uint16 m_format;
 		bool playing;
+	      	bool load(uint8_t *bufFiledata, int bufsize);
+	      	void rewind(int subsong);
 	
 	private:
 		Copl *m_opl;
