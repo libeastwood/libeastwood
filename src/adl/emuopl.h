@@ -19,8 +19,8 @@
  * emuopl.h - Emulated OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#ifndef H_ADPLUG_EMUOPL
-#define H_ADPLUG_EMUOPL
+#ifndef EASTWOOD_ADL_EMUOPL_H
+#define EASTWOOD_ADL_EMUOPL_H
 
 #include "opl.h"
 #include "fmopl.h"
@@ -44,4 +44,4 @@ class CEmuopl: public Copl
   int		mixbufSamples;
 };
 
-#endif
+#endif // EASTWOOD_ADL_EMUOPL_H

@@ -5,8 +5,8 @@
  * adl.h - ADL player adaption by Simon Peter <dn.tlp@gmx.net>
  */
 
-#ifndef H_ADPLUG_ADLPLAYER
-#define H_ADPLUG_ADLPLAYER
+#ifndef EASTWOOD_ADL_ADL_H
+#define EASTWOOD_ADL_ADL_H
 
 #include <inttypes.h>
 #include <string>
@@ -67,4 +67,4 @@ class CadlPlayer
   void unk2();
 };
 
-#endif
+#endif // EASTWOOD_ADL_ADL_H

@@ -1,5 +1,5 @@
-#ifndef __FMOPL_H_
-#define __FMOPL_H_
+#ifndef EASTWOOD_ADL_FMOPL_H
+#define EASTWOOD_ADL_FMOPL_H
 
 /* --- select emulation chips --- */
 #define BUILD_YM3812 (HAS_YM3812)
@@ -171,4 +171,4 @@ void YM3812UpdateOne(FM_OPL *OPL, INT16 *buffer, int length);
 
 void Y8950UpdateOne(FM_OPL *OPL, INT16 *buffer, int length);
 
-#endif
+#endif // EASTWOOD_ADL_FMOPL_H
