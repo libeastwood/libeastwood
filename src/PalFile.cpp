@@ -1,10 +1,10 @@
 #include "Log.h"
 
-#include "Palette.h"
+#include "PalFile.h"
 
-Palettefile::Palettefile(unsigned char* buf, uint16_t bufsize)
+PalFile::PalFile(unsigned char* buf, uint16_t bufsize)
 {
-    LOG_INFO("Palette", "Loading palette...");
+    LOG_INFO("PalFile", "Loading palette...");
     
     m_palette = new SDL_Palette;
     m_palette->ncolors = bufsize / 3;
@@ -23,7 +23,7 @@ Palettefile::Palettefile(unsigned char* buf, uint16_t bufsize)
     delete [] buf;
 }
 
-Palettefile::~Palettefile()
+PalFile::~PalFile()
 {
     delete m_palette;
 }

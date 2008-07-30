@@ -3,11 +3,11 @@
 
 #include "SDL.h"
 
-class Palettefile
+class PalFile
 {
     public:
-        Palettefile(uint8_t * buf, uint16_t bufsize);
-        ~Palettefile();
+        PalFile(uint8_t * buf, uint16_t bufsize);
+        ~PalFile();
 
         SDL_Palette* getPalette() { return m_palette; }
 
