@@ -12,6 +12,12 @@ AdlFile::AdlFile()
 	m_adlPlayer = new CadlPlayer(m_opl);
 }
 
+AdlFile::~AdlFile()
+{
+	delete m_opl;
+	delete m_adlPlayer;
+}
+
 void AdlFile::callback(void *userdata, Uint8 *audiobuf, int len)
 {
 	AdlFile *self = (AdlFile *)userdata;
