@@ -6,28 +6,28 @@
 #include "Font.h"
 #include "Log.h"
 
-#include "Wsafile.h"
+#include "WsaFile.h"
 
 
-Wsafile::Wsafile(uint8_t * bufFiledata, int bufsize, 
+WsaFile::WsaFile(uint8_t * bufFiledata, int bufsize, 
                 SDL_Surface* lastframe, float setFps ) : Decode()
 {
 	Filedata = bufFiledata;
 	WsaFilesize = bufsize;
 	
-    LOG_INFO("Wsafile", "Loading wsa with size %d...", bufsize);
+    LOG_INFO("WsaFile", "Loading wsa with size %d...", bufsize);
         
 	if(WsaFilesize < 10) {
-		LOG_ERROR("Wsafile", "No valid WSA-File: File too small!");
+		LOG_ERROR("WsaFile", "No valid WSA-File: File too small!");
 		exit(EXIT_FAILURE);
 	}
 	
 	NumFrames = SDL_SwapLE16(*((Uint16*) Filedata) );
-    LOG_INFO("Wsafile", "numframes = %d", NumFrames);
+    LOG_INFO("WsaFile", "numframes = %d", NumFrames);
 
 	SizeX = SDL_SwapLE16(*((Uint16*) (Filedata + 2)) );
 	SizeY = SDL_SwapLE16(*((Uint16*) (Filedata + 4)) );
-    LOG_INFO("Wsafile", "size %d x %d", SizeX, SizeY);
+    LOG_INFO("WsaFile", "size %d x %d", SizeX, SizeY);
 	
 	if( ((unsigned short *) Filedata)[4] == 0) {
 		Index = (Uint32 *) (Filedata + 10);
@@ -45,8 +45,8 @@ Wsafile::Wsafile(uint8_t * bufFiledata, int bufsize,
 	else
 		fps = (FramesPer1024ms / 1024.0f) / 100.0f;
 
-    LOG_INFO("Wsafile", "FramesPer1024ms = %d", FramesPer1024ms);
-    LOG_INFO("Wsafile", "FPS = %.3f", fps);
+    LOG_INFO("WsaFile", "FramesPer1024ms = %d", FramesPer1024ms);
+    LOG_INFO("WsaFile", "FPS = %.3f", fps);
 	
 	if(Index[0] == 0) {
 		Index++;
@@ -54,12 +54,12 @@ Wsafile::Wsafile(uint8_t * bufFiledata, int bufsize,
 	}
 	
 	if(Filedata + WsaFilesize < (((unsigned char *) Index) + 4 * NumFrames)) {
-		LOG_ERROR("Wsafile", "No valid WSA-File: File too small -2-!");
+		LOG_ERROR("WsaFile", "No valid WSA-File: File too small -2-!");
 		exit(EXIT_FAILURE);		
 	}
 	
 	if( (decodedFrames = (unsigned char*) calloc(1,SizeX*SizeY*NumFrames)) == NULL) {
-		LOG_ERROR("Wsafile", "Unable to allocate memory for decoded WSA-Frames!");
+		LOG_ERROR("WsaFile", "Unable to allocate memory for decoded WSA-Frames!");
 		exit(EXIT_FAILURE);				
 	}
 
@@ -71,26 +71,26 @@ Wsafile::Wsafile(uint8_t * bufFiledata, int bufsize,
 	decodeFrames();
 }
 
-Wsafile::Wsafile() : Decode()
+WsaFile::WsaFile() : Decode()
 {
 	WsaFilesize = -1;
 
-    LOG_INFO("Wsafile", "Loading empty image as wsa...");
+    LOG_INFO("WsaFile", "Loading empty image as wsa...");
 	
 	NumFrames = 1;
 	fps = 0.1;
 
-    LOG_INFO("Wsafile", "FramesPer1024ms = %d", FramesPer1024ms);
-    LOG_INFO("Wsafile", "FPS = %.3f", fps);
+    LOG_INFO("WsaFile", "FramesPer1024ms = %d", FramesPer1024ms);
+    LOG_INFO("WsaFile", "FPS = %.3f", fps);
 	decodedFrames = NULL;
 }
 
-Wsafile::~Wsafile()
+WsaFile::~WsaFile()
 {
 	free(decodedFrames);
 }
 
-SDL_Surface *Wsafile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
+SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 {
 /*	if(WsaFilesize == -1){
 		img = new Image(UPoint(1,1));
@@ -146,7 +146,7 @@ SDL_Surface *Wsafile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 	\param	SetColorKey	if true, black is set as transparency
 	\return	a new animation object or NULL on error
 */
-Animation* Wsafile::getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey)
+Animation* WsaFile::getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey)
 {
 	Animation* tmpAnimation;
 	SDL_Surface *tmp;
@@ -165,7 +165,7 @@ Animation* Wsafile::getAnimation(unsigned int startindex, unsigned int endindex,
 	return tmpAnimation;
 }
 
-void Wsafile::decodeFrames()
+void WsaFile::decodeFrames()
 {
 	unsigned char *dec80;
 	
@@ -173,7 +173,7 @@ void Wsafile::decodeFrames()
 	{
 		if( (dec80 = (unsigned char*) calloc(1,SizeX*SizeY*2)) == NULL) 
 		{
-			LOG_ERROR("Wsafile", "Unable to allocate memory for decoded WSA-Frames!");
+			LOG_ERROR("WsaFile", "Unable to allocate memory for decoded WSA-Frames!");
 			exit(EXIT_FAILURE);	
 		}
 

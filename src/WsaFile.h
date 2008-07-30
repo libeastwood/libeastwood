@@ -6,14 +6,14 @@
 #include "SDL.h"
 #include <string>
 
-class Wsafile : public Decode
+class WsaFile : public Decode
 {
 public:
-	Wsafile(uint8_t * bufFiledata, int bufsize, 
+	WsaFile(uint8_t * bufFiledata, int bufsize, 
                 SDL_Surface* lastframe = NULL, float setFps = 0 );
-	Wsafile();
+	WsaFile();
 
-	~Wsafile();
+	~WsaFile();
 
 	SDL_Surface *getSurface(Uint32 FrameNumber, SDL_Palette *palette);
 
