@@ -38,7 +38,7 @@ Cpsfile::~Cpsfile()
 	;
 }
 
-SDL_Surface *Cpsfile::getPicture()
+SDL_Surface *Cpsfile::getSurface()
 {
 	unsigned char * ImageOut;
 	SDL_Surface *pic = NULL;

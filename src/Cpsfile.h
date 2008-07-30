@@ -10,7 +10,7 @@ public:
 	Cpsfile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette = NULL);
 	~Cpsfile();
 
-	SDL_Surface *getPicture();
+	SDL_Surface *getSurface();
 
 private:
 	unsigned char *Filedata;

@@ -7,7 +7,6 @@
 #include "Log.h"
 
 #include "Wsafile.h"
-#include "Cpsfile.h"
 
 
 Wsafile::Wsafile(uint8_t * bufFiledata, int bufsize, 
@@ -91,7 +90,7 @@ Wsafile::~Wsafile()
 	free(decodedFrames);
 }
 
-SDL_Surface *Wsafile::getPicture(Uint32 FrameNumber, SDL_Palette *palette)
+SDL_Surface *Wsafile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 {
 /*	if(WsaFilesize == -1){
 		img = new Image(UPoint(1,1));
@@ -157,7 +156,7 @@ Animation* Wsafile::getAnimation(unsigned int startindex, unsigned int endindex,
 	}
 	
 	for(unsigned int i = startindex; i <= endindex; i++) {
-		if((tmp = getPicture(i, palette)) == NULL) {
+		if((tmp = getSurface(i, palette)) == NULL) {
 			delete tmpAnimation;
 			return NULL;
 		}

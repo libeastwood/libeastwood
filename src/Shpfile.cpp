@@ -23,7 +23,7 @@ Shpfile::~Shpfile()
 	}
 }
 
-SDL_Surface *Shpfile::getPicture(Uint32 IndexOfFile)
+SDL_Surface *Shpfile::getSurface(Uint32 IndexOfFile)
 {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
@@ -134,7 +134,7 @@ SDL_Surface *Shpfile::getPicture(Uint32 IndexOfFile)
 	return pic;
 }
 
-SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, ...) {
+SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...) {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
 	unsigned char *ImageOut = NULL;
@@ -147,7 +147,7 @@ SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, 
 	}
 	
 	if((tiles = (Uint32*) malloc(tilesX*tilesY*sizeof(Uint32))) == NULL) {
-		LOG_ERROR("Shpfile","Shpfile::getPictureArray(): Cannot allocate memory!");
+		LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -158,7 +158,7 @@ SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, 
 		tiles[i] = va_arg( arg_ptr, int );
 		if(TILE_GETINDEX(tiles[i]) >= NumFiles) {
 			free(tiles);
-			LOG_ERROR("Shpfile","Shpfile::getPictureArray(): There exist only %d files in this *.shp.",NumFiles);
+			LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): There exist only %d files in this *.shp.",NumFiles);
 			return NULL;
 		}
 	}
@@ -172,14 +172,14 @@ SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, 
 		if(((Filedata + Index[TILE_GETINDEX(tiles[i])].StartOffset)[2] != sizeY)
 		 || ((Filedata + Index[TILE_GETINDEX(tiles[i])].StartOffset)[3] != sizeX)) {
 			free(tiles);
-			LOG_ERROR("Shpfile","Shpfile::getPictureArray(): Not all pictures have the same size!");
+			LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Not all pictures have the same size!");
 			exit(EXIT_FAILURE);
 		 }
 	}
 	
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_HWSURFACE,sizeX*tilesX,sizeY*tilesY,8,0,0,0,0)) == NULL) {
-		LOG_ERROR("Shpfile","Shpfile::getPictureArray(): Cannot create Surface.");
+		LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot create Surface.");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -197,7 +197,7 @@ SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, 
 		
 			if((ImageOut = (unsigned char*) calloc(1,sizeX*sizeY)) == NULL) {
 				free(tiles);
-				LOG_ERROR("Shpfile","Shpfile::getPictureArray(): Cannot allocate memory!");
+				LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
 				exit(EXIT_FAILURE);
 			}
 		
@@ -208,7 +208,7 @@ SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, 
 					if( (DecodeDestination = (unsigned char*) calloc(1,size)) == NULL) {
 						free(ImageOut);
 						free(tiles);
-						LOG_ERROR("Shpfile","Shpfile::getPictureArray(): Cannot allocate memory!");
+						LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
 						exit(EXIT_FAILURE);
 					}
 				
@@ -226,7 +226,7 @@ SDL_Surface *Shpfile::getPictureArray(unsigned int tilesX, unsigned int tilesY, 
 					if( (DecodeDestination = (unsigned char*) calloc(1,size)) == NULL) {
 						free(ImageOut);
 						free(tiles);
-						LOG_ERROR("Shpfile","Shpfile::getPictureArray(): Cannot allocate memory!");
+						LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
 						exit(EXIT_FAILURE);
 					}
 				
@@ -334,7 +334,7 @@ Animation* Shpfile::getAnimation(unsigned int startindex, unsigned int endindex,
 	}
 	
 	for(unsigned int i = startindex; i <= endindex; i++) {
-		if((tmp = getPicture(i)) == NULL) {
+		if((tmp = getSurface(i)) == NULL) {
 			delete tmpAnimation;
 			return NULL;
 		}

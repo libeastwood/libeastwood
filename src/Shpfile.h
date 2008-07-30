@@ -34,7 +34,7 @@ public:
 	@param	IndexOfFile	specifies which picture to return (zero based)
 	@return	nth picture in this shp-File
 */
-	SDL_Surface *getPicture(Uint32 IndexOfFile);
+	SDL_Surface *getSurface(Uint32 IndexOfFile);
 
 /*!
 	This method returns a SDL_Surface containing an array of pictures from this shp-File.
@@ -49,7 +49,7 @@ public:
 
 	Example:
 	@code
-	picture = myShpfile->getPictureArray(4,1, TILE_NORMAL | 20, TILE_FLIPH | 23, TILE_ROTATE | 67, TILE_NORMAL | 68);
+	picture = myShpfile->getSurfaceArray(4,1, TILE_NORMAL | 20, TILE_FLIPH | 23, TILE_ROTATE | 67, TILE_NORMAL | 68);
 	@endcode
 	This example would create a surface with four pictures in it. From the left to the right there are
 	picture 20,23,67 and 68. picture 23 is mirrored horizontally, 67 is rotated.<br><br>
@@ -58,7 +58,7 @@ public:
 	@param	tilesY	how many pictures in one column
 	@return	picture in this shp-File containing all specified pictures
 */
-	SDL_Surface *getPictureArray(unsigned int tilesX, unsigned int tilesY, ...);
+	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...);
 	/// Returns an animation
 /*!
 	This method returns a new animation object with all pictures from startindex to endindex

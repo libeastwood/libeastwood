@@ -152,7 +152,7 @@ Icnfile::~Icnfile()
 	;
 }
 
-SDL_Surface *Icnfile::getPicture(Uint32 IndexOfFile, SDL_Palette *palette) {
+SDL_Surface *Icnfile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
 	SDL_Surface * pic;
 	
 	if(IndexOfFile >= NumFiles) {
@@ -199,7 +199,7 @@ SDL_Surface *Icnfile::getPicture(Uint32 IndexOfFile, SDL_Palette *palette) {
 	return pic;
 }
 
-SDL_Surface *Icnfile::getPictureArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX, int tilesY, int tilesN) {
+SDL_Surface *Icnfile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX, int tilesY, int tilesN) {
 	SDL_Surface * pic;
 	
 	if(MapfileIndex >= NumTilesets) {
@@ -313,7 +313,7 @@ SDL_Surface *Icnfile::getPictureArray(Uint32 MapfileIndex, SDL_Palette *palette,
 	return pic;
 }
 
-SDL_Surface *Icnfile::getPictureRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette) {
+SDL_Surface *Icnfile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette) {
 	SDL_Surface * pic;
 	
 	if((StartIndex >= NumFiles)||(EndIndex >= NumFiles)||(StartIndex > EndIndex)) {

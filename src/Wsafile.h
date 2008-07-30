@@ -6,8 +6,6 @@
 #include "SDL.h"
 #include <string>
 
-class Cpsfile;
-
 class Wsafile : public Decode
 {
 public:
@@ -17,7 +15,7 @@ public:
 
 	~Wsafile();
 
-	SDL_Surface *getPicture(Uint32 FrameNumber, SDL_Palette *palette);
+	SDL_Surface *getSurface(Uint32 FrameNumber, SDL_Palette *palette);
 
 	Animation* getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey=true);
 
@@ -28,7 +26,6 @@ public:
 private:
 	void decodeFrames();
 	std::string m_text;
-	Cpsfile* m_cpsFile;
 
 	uint8_t* decodedFrames;
 

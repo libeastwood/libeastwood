@@ -25,7 +25,7 @@ public:
 	~Icnfile();
 
 
-	SDL_Surface *getPicture(Uint32 IndexOfFile, SDL_Palette *palette);
+	SDL_Surface *getSurface(Uint32 IndexOfFile, SDL_Palette *palette);
 
 /// Returns an array of pictures in the icn-File
 /*!
@@ -54,7 +54,7 @@ public:
 	@param	tilesN			how many tilesX*tilesY blocks in a row
 	@return	the result surface with tilesX*tilesY*tilesN tiles
 */
-  	SDL_Surface *getPictureArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX = 0, int tilesY = 0, int tilesN = 0);
+  	SDL_Surface *getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX = 0, int tilesY = 0, int tilesN = 0);
 
 /*!
 	This method returns a SDL_Surface containing multiple tiles/pictures. The returned surface contains all
@@ -64,7 +64,7 @@ public:
 	@param	EndIndex		The last tile to use
 	@return	the result surface with (EndIndex-StartIndex+1) tiles. NULL on errors.
 */
-	SDL_Surface *getPictureRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette);
+	SDL_Surface *getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette);
 
 	/// Returns the number of tiles
 /*!
