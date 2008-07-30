@@ -14,7 +14,7 @@ else:
 
 env.Append(CPPPATH="#include")
 
-ApiVer = '0.0.0'
+ApiVer = '0.0.1'
 
 if sys.platform != "win32":
     env.ParseConfig('pkg-config --cflags sdl samplerate adplug')
