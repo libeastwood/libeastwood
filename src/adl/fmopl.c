@@ -128,51 +128,51 @@ static const int slot_array[32]=
 static const UINT32 KSL_TABLE[8*16]=
 {
 	/* OCT 0 */
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),
+	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
 	/* OCT 1 */
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),
-	 (UINT32) (0.000/DV),(UINT32) (0.750/DV),(UINT32) (1.125/DV),(UINT32) (1.500/DV),
-	 (UINT32) (1.875/DV),(UINT32) (2.250/DV),(UINT32) (2.625/DV),(UINT32) (3.000/DV),
+	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	 0.000/DV, 0.750/DV, 1.125/DV, 1.500/DV,
+	 1.875/DV, 2.250/DV, 2.625/DV, 3.000/DV,
 	/* OCT 2 */
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),
-	 (UINT32) (0.000/DV),(UINT32) (1.125/DV),(UINT32) (1.875/DV),(UINT32) (2.625/DV),
-	 (UINT32) (3.000/DV),(UINT32) (3.750/DV),(UINT32) (4.125/DV),(UINT32) (4.500/DV),
-	 (UINT32) (4.875/DV),(UINT32) (5.250/DV),(UINT32) (5.625/DV),(UINT32) (6.000/DV),
+	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	 0.000/DV, 1.125/DV, 1.875/DV, 2.625/DV,
+	 3.000/DV, 3.750/DV, 4.125/DV, 4.500/DV,
+	 4.875/DV, 5.250/DV, 5.625/DV, 6.000/DV,
 	/* OCT 3 */
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (1.875/DV),
-	 (UINT32) (3.000/DV),(UINT32) (4.125/DV),(UINT32) (4.875/DV),(UINT32) (5.625/DV),
-	 (UINT32) (6.000/DV),(UINT32) (6.750/DV),(UINT32) (7.125/DV),(UINT32) (7.500/DV),
-	 (UINT32) (7.875/DV),(UINT32) (8.250/DV),(UINT32) (8.625/DV),(UINT32) (9.000/DV),
+	 0.000/DV, 0.000/DV, 0.000/DV, 1.875/DV,
+	 3.000/DV, 4.125/DV, 4.875/DV, 5.625/DV,
+	 6.000/DV, 6.750/DV, 7.125/DV, 7.500/DV,
+	 7.875/DV, 8.250/DV, 8.625/DV, 9.000/DV,
 	/* OCT 4 */
-	 (UINT32) (0.000/DV),(UINT32) (0.000/DV),(UINT32) (3.000/DV),(UINT32) (4.875/DV),
-	 (UINT32) (6.000/DV),(UINT32) (7.125/DV),(UINT32) (7.875/DV),(UINT32) (8.625/DV),
-	 (UINT32) (9.000/DV),(UINT32) (9.750/DV),(UINT32)(10.125/DV),(UINT32)(10.500/DV),
-	(UINT32) (10.875/DV),(UINT32)(11.250/DV),(UINT32)(11.625/DV),(UINT32)(12.000/DV),
+	 0.000/DV, 0.000/DV, 3.000/DV, 4.875/DV,
+	 6.000/DV, 7.125/DV, 7.875/DV, 8.625/DV,
+	 9.000/DV, 9.750/DV,10.125/DV,10.500/DV,
+	10.875/DV,11.250/DV,11.625/DV,12.000/DV,
 	/* OCT 5 */
-	 (UINT32) (0.000/DV),(UINT32) (3.000/DV),(UINT32) (6.000/DV),(UINT32) (7.875/DV),
-	 (UINT32) (9.000/DV),(UINT32)(10.125/DV),(UINT32)(10.875/DV),(UINT32)(11.625/DV),
-	(UINT32) (12.000/DV),(UINT32)(12.750/DV),(UINT32)(13.125/DV),(UINT32)(13.500/DV),
-	(UINT32) (13.875/DV),(UINT32)(14.250/DV),(UINT32)(14.625/DV),(UINT32)(15.000/DV),
+	 0.000/DV, 3.000/DV, 6.000/DV, 7.875/DV,
+	 9.000/DV,10.125/DV,10.875/DV,11.625/DV,
+	12.000/DV,12.750/DV,13.125/DV,13.500/DV,
+	13.875/DV,14.250/DV,14.625/DV,15.000/DV,
 	/* OCT 6 */
-	 (UINT32) (0.000/DV),(UINT32) (6.000/DV),(UINT32) (9.000/DV),(UINT32)(10.875/DV),
-	(UINT32) (12.000/DV),(UINT32)(13.125/DV),(UINT32)(13.875/DV),(UINT32)(14.625/DV),
-	(UINT32) (15.000/DV),(UINT32)(15.750/DV),(UINT32)(16.125/DV),(UINT32)(16.500/DV),
-	(UINT32) (16.875/DV),(UINT32)(17.250/DV),(UINT32)(17.625/DV),(UINT32)(18.000/DV),
+	 0.000/DV, 6.000/DV, 9.000/DV,10.875/DV,
+	12.000/DV,13.125/DV,13.875/DV,14.625/DV,
+	15.000/DV,15.750/DV,16.125/DV,16.500/DV,
+	16.875/DV,17.250/DV,17.625/DV,18.000/DV,
 	/* OCT 7 */
-	 (UINT32) (0.000/DV),(UINT32) (9.000/DV),(UINT32)(12.000/DV),(UINT32)(13.875/DV),
-	(UINT32) (15.000/DV),(UINT32)(16.125/DV),(UINT32)(16.875/DV),(UINT32)(17.625/DV),
-	(UINT32) (18.000/DV),(UINT32)(18.750/DV),(UINT32)(19.125/DV),(UINT32)(19.500/DV),
-	(UINT32) (19.875/DV),(UINT32)(20.250/DV),(UINT32)(20.625/DV),(UINT32)(21.000/DV)
+	 0.000/DV, 9.000/DV,12.000/DV,13.875/DV,
+	15.000/DV,16.125/DV,16.875/DV,17.625/DV,
+	18.000/DV,18.750/DV,19.125/DV,19.500/DV,
+	19.875/DV,20.250/DV,20.625/DV,21.000/DV
 };
 #undef DV
 
 /* sustain lebel table (3db per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
-#define SC(db) ((INT32)((db*((3/EG_STEP)*(1<<ENV_BITS)))+EG_DST))
+#define SC(db) (db*((3/EG_STEP)*(1<<ENV_BITS)))+EG_DST
 static const INT32 SL_TABLE[16]={
  SC( 0),SC( 1),SC( 2),SC(3 ),SC(4 ),SC(5 ),SC(6 ),SC( 7),
  SC( 8),SC( 9),SC(10),SC(11),SC(12),SC(13),SC(14),SC(31)
@@ -200,8 +200,8 @@ static INT32 ENV_CURVE[2*EG_ENT+1];
 #define ML 2
 static const UINT32 MUL_TABLE[16]= {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15 */
-   ((UINT32) 0.50*ML), ((UINT32) 1.00*ML), ((UINT32) 2.00*ML),((UINT32)  3.00*ML),((UINT32)  4.00*ML),((UINT32)  5.00*ML),((UINT32)  6.00*ML),((UINT32)  7.00*ML),
-   ((UINT32) 8.00*ML), ((UINT32) 9.00*ML),((UINT32) 10.00*ML),((UINT32) 10.00*ML),((UINT32) 12.00*ML),((UINT32) 12.00*ML),((UINT32) 15.00*ML),((UINT32) 15.00*ML)
+   0.50*ML, 1.00*ML, 2.00*ML, 3.00*ML, 4.00*ML, 5.00*ML, 6.00*ML, 7.00*ML,
+   8.00*ML, 9.00*ML,10.00*ML,10.00*ML,12.00*ML,12.00*ML,15.00*ML,15.00*ML
 };
 #undef ML
 
@@ -409,7 +409,7 @@ INLINE void set_ksl_tl(FM_OPL *OPL,int slot,int v)
 	int ksl = v>>6; /* 0 / 1.5 / 3 / 6 db/OCT */
 
 	SLOT->ksl = ksl ? 3-ksl : 31;
-	SLOT->TL  = (INT32) ((v&0x3f)*(0.75/EG_STEP)); /* 0.75db step */
+	SLOT->TL  = (v&0x3f)*(0.75/EG_STEP); /* 0.75db step */
 
 	if( !(OPL->mode&0x80) )
 	{	/* not CSM latch total level */
@@ -500,7 +500,7 @@ INLINE void OPL_CALC_CH( OPL_CH *CH )
 INLINE void OPL_CALC_RH( OPL_CH *CH )
 {
 	UINT32 env_tam,env_sd,env_top,env_hh;
-	int whitenoise = (int) ((rand()&1)*(WHITE_NOISE_db/EG_STEP));
+	int whitenoise = (rand()&1)*(WHITE_NOISE_db/EG_STEP);
 	INT32 tone8;
 
 	OPL_SLOT *SLOT;
@@ -593,8 +593,8 @@ static void init_timetables( FM_OPL *OPL , int ARRATE , int DRRATE )
 		if( i < 60 ) rate *= 1.0+(i&3)*0.25;		/* b0-1 : x1 , x1.25 , x1.5 , x1.75 */
 		rate *= 1<<((i>>2)-1);						/* b2-5 : shift bit */
 		rate *= (double)(EG_ENT<<ENV_BITS);
-		OPL->AR_TABLE[i] = (INT32) (rate / ARRATE);
-		OPL->DR_TABLE[i] = (INT32) (rate / DRRATE);
+		OPL->AR_TABLE[i] = rate / ARRATE;
+		OPL->DR_TABLE[i] = rate / DRRATE;
 	}
 	for (i = 60;i < 76;i++)
 	{
@@ -619,20 +619,20 @@ static int OPLOpenTable( void )
 	double pom;
 
 	/* allocate dynamic tables */
-	if( (TL_TABLE = (INT32*) malloc(TL_MAX*2*sizeof(INT32))) == NULL)
+	if( (TL_TABLE = malloc(TL_MAX*2*sizeof(INT32))) == NULL)
 		return 0;
-	if( (SIN_TABLE = (INT32**) malloc(SIN_ENT*4 *sizeof(INT32 *))) == NULL)
+	if( (SIN_TABLE = malloc(SIN_ENT*4 *sizeof(INT32 *))) == NULL)
 	{
 		free(TL_TABLE);
 		return 0;
 	}
-	if( (AMS_TABLE = (INT32*) malloc(AMS_ENT*2 *sizeof(INT32))) == NULL)
+	if( (AMS_TABLE = malloc(AMS_ENT*2 *sizeof(INT32))) == NULL)
 	{
 		free(TL_TABLE);
 		free(SIN_TABLE);
 		return 0;
 	}
-	if( (VIB_TABLE = (INT32*) malloc(VIB_ENT*2 *sizeof(INT32))) == NULL)
+	if( (VIB_TABLE = malloc(VIB_ENT*2 *sizeof(INT32))) == NULL)
 	{
 		free(TL_TABLE);
 		free(SIN_TABLE);
@@ -657,7 +657,7 @@ static int OPLOpenTable( void )
 	for (s = 1;s <= SIN_ENT/4;s++){
 		pom = sin(2*PI*s/SIN_ENT); /* sin     */
 		pom = 20*log10(1/pom);	   /* decibel */
-		j = (int) (pom / EG_STEP);         /* TL_TABLE steps */
+		j = pom / EG_STEP;         /* TL_TABLE steps */
 
         /* degree 0   -  90    , degree 180 -  90 : plus section */
 		SIN_TABLE[          s] = SIN_TABLE[SIN_ENT/2-s] = &TL_TABLE[j];
@@ -688,16 +688,16 @@ static int OPLOpenTable( void )
 	for (i=0; i<AMS_ENT; i++)
 	{
 		pom = (1.0+sin(2*PI*i/AMS_ENT))/2; /* sin */
-		AMS_TABLE[i]         = (int) ((1.0/EG_STEP)*pom); /* 1dB   */
-		AMS_TABLE[AMS_ENT+i] = (int) ((4.8/EG_STEP)*pom); /* 4.8dB */
+		AMS_TABLE[i]         = (1.0/EG_STEP)*pom; /* 1dB   */
+		AMS_TABLE[AMS_ENT+i] = (4.8/EG_STEP)*pom; /* 4.8dB */
 	}
 	/* make LFO vibrate table */
 	for (i=0; i<VIB_ENT; i++)
 	{
 		/* 100cent = 1seminote = 6% ?? */
 		pom = (double)VIB_RATE*0.06*sin(2*PI*i/VIB_ENT); /* +-100sect step */
-		VIB_TABLE[i]         = (int) (VIB_RATE + (pom*0.07)); /* +- 7cent */
-		VIB_TABLE[VIB_ENT+i] = (int) (VIB_RATE + (pom*0.14)); /* +-14cent */
+		VIB_TABLE[i]         = VIB_RATE + (pom*0.07); /* +- 7cent */
+		VIB_TABLE[VIB_ENT+i] = VIB_RATE + (pom*0.14); /* +-14cent */
 		/* LOG(LOG_INF,("vib %d=%d\n",i,VIB_TABLE[VIB_ENT+i])); */
 	}
 	return 1;
@@ -743,11 +743,11 @@ static void OPL_initalize(FM_OPL *OPL)
 	/* make fnumber -> increment counter table */
 	for( fn=0 ; fn < 1024 ; fn++ )
 	{
-		OPL->FN_TABLE[fn] = (UINT32) (OPL->freqbase * fn * FREQ_RATE * (1<<7) / 2);
+		OPL->FN_TABLE[fn] = OPL->freqbase * fn * FREQ_RATE * (1<<7) / 2;
 	}
 	/* LFO freq.table */
-	OPL->amsIncr = (INT32) (OPL->rate ? (double)AMS_ENT*(1<<AMS_SHIFT) / OPL->rate * 3.7 * ((double)OPL->clock/3600000) : 0);
-	OPL->vibIncr = (INT32) (OPL->rate ? (double)VIB_ENT*(1<<VIB_SHIFT) / OPL->rate * 6.4 * ((double)OPL->clock/3600000) : 0);
+	OPL->amsIncr = OPL->rate ? (double)AMS_ENT*(1<<AMS_SHIFT) / OPL->rate * 3.7 * ((double)OPL->clock/3600000) : 0;
+	OPL->vibIncr = OPL->rate ? (double)VIB_ENT*(1<<VIB_SHIFT) / OPL->rate * 6.4 * ((double)OPL->clock/3600000) : 0;
 }
 
 /* ---------- write a OPL registers ---------- */
@@ -755,7 +755,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 {
 	OPL_CH *CH;
 	int slot;
-	unsigned int block_fnum;
+	int block_fnum;
 
 	switch(r&0xe0)
 	{
@@ -1221,7 +1221,7 @@ FM_OPL *OPLCreate(int type, int clock, int rate)
 	if(type&OPL_TYPE_ADPCM) state_size+= sizeof(YM_DELTAT);
 #endif
 	/* allocate memory block */
-	ptr = (char*) malloc(state_size);
+	ptr = malloc(state_size);
 	if(ptr==NULL) return NULL;
 	/* clear */
 	memset(ptr,0,state_size);
