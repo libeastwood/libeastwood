@@ -4,34 +4,34 @@
 
 
 #include "Log.h"
-#include "Pakfile.h"
+#include "PakFile.h"
 
-Pakfile::Pakfile(const char *Pakfilename)
+PakFile::PakFile(const char *PakFilename)
 {
 	FileEntry = NULL;
 	NumFileEntry = 0;
 	
-	if(Pakfilename == NULL) {
-		LOG_ERROR("Pakfile", "Pakfile::Pakfile(): Pakfilename == NULL\n");
+	if(PakFilename == NULL) {
+		LOG_ERROR("PakFile", "PakFile::PakFile(): PakFilename == NULL\n");
 		exit(EXIT_FAILURE);
 	}
 	
-	if((Filename = (char*) malloc(strlen(Pakfilename)+1)) == NULL) {
-		LOG_ERROR("Pakfile", "Pakfile::Pakfile()");
+	if((Filename = (char*) malloc(strlen(PakFilename)+1)) == NULL) {
+		LOG_ERROR("PakFile", "PakFile::PakFile()");
 		exit(EXIT_FAILURE);
 	}
 	
-	strcpy(Filename,Pakfilename);
+	strcpy(Filename,PakFilename);
 	
 	if( (fPakFile = fopen(Filename, "rb")) == NULL) {
-		LOG_ERROR("Pakfile", "Pakfile::Pakfile()");
+		LOG_ERROR("PakFile", "PakFile::PakFile()");
 		exit(EXIT_FAILURE);	
 	}
 	
 	readIndex();	
 }
 
-Pakfile::~Pakfile()
+PakFile::~PakFile()
 {
 	if(fPakFile != NULL) {
 		fclose(fPakFile);
@@ -44,7 +44,7 @@ Pakfile::~Pakfile()
 	free(FileEntry);
 }
 
-void Pakfile::readIndex()
+void PakFile::readIndex()
 {
 	int i;
 	int startoffset;
@@ -85,7 +85,7 @@ void Pakfile::readIndex()
 			}
 			
 			if(i >= 256) {
-				LOG_ERROR("Pakfile", "readIndex(): Filename in Pakfile too long");
+				LOG_ERROR("PakFile", "readIndex(): Filename in PakFile too long");
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -96,7 +96,7 @@ void Pakfile::readIndex()
 		}
 		
 		strcpy(FileEntry[NumFileEntry].Filename,name);
-        LOG_INFO("Pakfile", "Found file %s", name);
+        LOG_INFO("PakFile", "Found file %s", name);
 		
 		if(NumFileEntry > 0) {
 			FileEntry[NumFileEntry - 1].EndOffset = startoffset - 1;
@@ -116,14 +116,14 @@ void Pakfile::readIndex()
 	}
 }
 
-char * Pakfile::getFilename(int index) {
+char * PakFile::getFilename(int index) {
 	if((index >= NumFileEntry) || (index < 0))
 		return NULL;
 	
 	return FileEntry[index].Filename;
 }
 
-unsigned char *Pakfile::getFile(const char *fname, int *size)
+unsigned char *PakFile::getFile(const char *fname, int *size)
 {
 	int Index = -1;
 	

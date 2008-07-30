@@ -9,11 +9,11 @@ struct PakFileEntry {
 	char *Filename; // dunk - better to be const char* ? ( or even std::string ? )
 };
 
-class Pakfile
+class PakFile
 {
 public:
-	Pakfile(const char * Pakfilename);
-	~Pakfile();
+	PakFile(const char * PakFilename);
+	~PakFile();
 
 	char *getFilename(int index);
 
