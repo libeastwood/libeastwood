@@ -21,7 +21,7 @@ using namespace std;
 		key3 = value3<br>
 		key4 = value4<br>
 */
-class Inifile
+class IniFile
 {
 private:
 	//\cond
@@ -87,11 +87,11 @@ private:
 	//\endcond 
 
 public:
-	typedef Inifile::KeyEntry* KeyListHandle;		///< A handle to a KeyList opened with KeyList_Open().
+	typedef IniFile::KeyEntry* KeyListHandle;		///< A handle to a KeyList opened with KeyList_Open().
 
-	Inifile(uint8_t *bufFiledata, int bufsize);
-	Inifile(SDL_RWops * RWopsFile);
-	~Inifile();
+	IniFile(uint8_t *bufFiledata, int bufsize);
+	IniFile(SDL_RWops * RWopsFile);
+	~IniFile();
 	
 	string getStringValue(string section, string key, string defaultValue = "");
 	int getIntValue(string section, string key, int defaultValue = 0);

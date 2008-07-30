@@ -1,4 +1,4 @@
-#include "Inifile.h"
+#include "IniFile.h"
 #include <fstream>
 #include <iostream>
 #include <cctype>
@@ -14,7 +14,7 @@ using namespace std;
 	reading the file is closed immediately. If the file does not exist, it is treated as empty.
 	\param	filename	The file to be opened.
 */
-Inifile::Inifile(uint8_t *bufFiledata, int bufsize)
+IniFile::IniFile(uint8_t *bufFiledata, int bufsize)
 {
 	FirstLine = NULL;
 	SectionRoot = NULL;
@@ -33,13 +33,13 @@ Inifile::Inifile(uint8_t *bufFiledata, int bufsize)
 	This constructor reads the INI-File from RWopsFile. The RWopsFile can be readonly.
 	\param	RWopsFile	Pointer to RWopsFile (can be readonly)
 */
-Inifile::Inifile(SDL_RWops * RWopsFile)
+IniFile::IniFile(SDL_RWops * RWopsFile)
 {
 	FirstLine = NULL;
 	SectionRoot = NULL;
 	
 	if(RWopsFile == NULL) {
-		cerr << "Inifile: RWopsFile == NULL!" << endl;
+		cerr << "IniFile: RWopsFile == NULL!" << endl;
 		exit(EXIT_FAILURE);
 	}
 	
@@ -48,9 +48,9 @@ Inifile::Inifile(SDL_RWops * RWopsFile)
 
 ///	Destructor.
 /**
-	This is the destructor. Changes to the INI-Files are not automaticly saved. Call Inifile::SaveChangesTo() for that purpose.
+	This is the destructor. Changes to the INI-Files are not automaticly saved. Call IniFile::SaveChangesTo() for that purpose.
 */
-Inifile::~Inifile()
+IniFile::~IniFile()
 {
 	CommentEntry* curEntry = FirstLine;
 	CommentEntry* tmp;
@@ -74,7 +74,7 @@ Inifile::~Inifile()
 	\param	defaultValue	default value for defaultValue is ""
 	\return	The read value or default
 */
-string Inifile::getStringValue(string section, string key, string defaultValue)
+string IniFile::getStringValue(string section, string key, string defaultValue)
 {
 	SectionEntry* curSection = getSection(section);
 	if(curSection == NULL) {
@@ -100,7 +100,7 @@ string Inifile::getStringValue(string section, string key, string defaultValue)
 	\param	defaultValue	default value for defaultValue is 0
 	\return	The read number, defaultValue or 0
 */
-int Inifile::getIntValue(string section, string key, int defaultValue )
+int IniFile::getIntValue(string section, string key, int defaultValue )
 {
 	string value = getStringValue(section,key,"");
 	if(value.size() == 0) {
@@ -130,7 +130,7 @@ int Inifile::getIntValue(string section, string key, int defaultValue )
 	\param	defaultValue	default value for defaultValue is 0
 	\return	true for "true", "enabled", "on" and "1"<br>false for "false", "disabled", "off" and "0"
 */
-bool Inifile::getBoolValue(string section, string key, bool defaultValue)
+bool IniFile::getBoolValue(string section, string key, bool defaultValue)
 {
 	string value = getStringValue(section,key,"");
 	if(value.size() == 0) {
@@ -158,7 +158,7 @@ bool Inifile::getBoolValue(string section, string key, bool defaultValue)
 	\param	key				keyname
 	\param	value			value that should be set
 */
-void Inifile::setStringValue(string section, string key, string value)
+void IniFile::setStringValue(string section, string key, string value)
 {
 	CommentEntry* curEntry = NULL;
 	SectionEntry* curSection = getSection(section);
@@ -179,13 +179,13 @@ void Inifile::setStringValue(string section, string key, string value)
 		}
 		
 		if(NonNormalCharFound == true) {
-			cerr << "Inifile: Cannot create section with name " << section << "!" << endl;
+			cerr << "IniFile: Cannot create section with name " << section << "!" << endl;
 			return;
 		}
 		
 		string completeLine = "[" + section + "]";
 		if((curSection = new SectionEntry(completeLine,1,section.size())) == NULL) {
-			cerr << "Inifile: Cannot allocate memory for new section line!" << endl;
+			cerr << "IniFile: Cannot allocate memory for new section line!" << endl;
 			exit(EXIT_FAILURE);
 		}
 			
@@ -222,7 +222,7 @@ void Inifile::setStringValue(string section, string key, string value)
 		}
 		
 		if(NonNormalCharFound == true) {
-			cerr << "Inifile: Cannot create key with name " << key << "!" << endl;
+			cerr << "IniFile: Cannot create key with name " << key << "!" << endl;
 			return;
 		}
 
@@ -262,7 +262,7 @@ void Inifile::setStringValue(string section, string key, string value)
 			}
 		}
 		if((curKey = new KeyEntry(completeLine,KeyStringStart,KeyStringLength,ValueStringStart,ValueStringLength)) == NULL) {
-			cerr << "Inifile: Cannot allocate memory for new key/value line!" << endl;
+			cerr << "IniFile: Cannot allocate memory for new key/value line!" << endl;
 			exit(EXIT_FAILURE);
 		}
 		
@@ -320,7 +320,7 @@ void Inifile::setStringValue(string section, string key, string value)
 	\param	key				keyname
 	\param	value			value that should be set
 */
-void Inifile::setIntValue(string section, string key, int value)
+void IniFile::setIntValue(string section, string key, int value)
 {
 	char tmp[20];
 	sprintf(tmp,"%d",value);
@@ -336,7 +336,7 @@ void Inifile::setIntValue(string section, string key, int value)
 	\param	key				keyname
 	\param	value			value that should be set
 */
-void Inifile::setBoolValue(string section, string key, bool value)
+void IniFile::setBoolValue(string section, string key, bool value)
 {
 	if(value == true) {
 		setStringValue(section, key, "true");
@@ -345,26 +345,26 @@ void Inifile::setBoolValue(string section, string key, bool value)
 	}
 }
 
-/// Opens a Inifile::KeyListHandle.
+/// Opens a IniFile::KeyListHandle.
 /**
-	A Inifile::KeyListHandle can be used to list all keys of one section. This method opens the #Inifile::KeyListHandle.
-	To iterate all keys use KeyList_GetNextKey(). #Inifile::KeyListHandle should be closed by KeyList_Close().
-	If the section is empty Inifile::KeyList_EOF on the returned handle of Inifile::KeyList_Open(sectionname) is true.<br>
+	A IniFile::KeyListHandle can be used to list all keys of one section. This method opens the #IniFile::KeyListHandle.
+	To iterate all keys use KeyList_GetNextKey(). #IniFile::KeyListHandle should be closed by KeyList_Close().
+	If the section is empty IniFile::KeyList_EOF on the returned handle of IniFile::KeyList_Open(sectionname) is true.<br>
 	<br>
 	Example:<br>
-	&nbsp;&nbsp;Inifile::KeyListHandle myHandle;<br>
-	&nbsp;&nbsp;myHandle = myInifile.KeyList_Open("Section1");<br>
+	&nbsp;&nbsp;IniFile::KeyListHandle myHandle;<br>
+	&nbsp;&nbsp;myHandle = myIniFile.KeyList_Open("Section1");<br>
 	<br>
-	&nbsp;&nbsp;while(!myInifile.KeyList_EOF(myHandle)) {<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout << myInifile.KeyList_GetNextKey(&myHandle) << std::endl;<br>
+	&nbsp;&nbsp;while(!myIniFile.KeyList_EOF(myHandle)) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout << myIniFile.KeyList_GetNextKey(&myHandle) << std::endl;<br>
 	&nbsp;&nbsp;}<br>
 	<br>
-	&nbsp;&nbsp;myInifile.KeyList_Close(&myHandle);
+	&nbsp;&nbsp;myIniFile.KeyList_Close(&myHandle);
 	\param	sectionname	The name of the section
 	\return	handle to this section
 	\see	KeyList_Close, KeyList_GetNextKey, KeyList_EOF
 */
-Inifile::KeyListHandle Inifile::KeyList_Open(string sectionname) {
+IniFile::KeyListHandle IniFile::KeyList_Open(string sectionname) {
 	SectionEntry* curSection = getSection(sectionname);
 	if(curSection == NULL) {
 		return NULL;
@@ -375,13 +375,13 @@ Inifile::KeyListHandle Inifile::KeyList_Open(string sectionname) {
 
 /// Tests if handle is at the end of the KeyList.
 /**
-	Tests if handle is at the end of the KeyList. If the section is empty Inifile::KeyList_EOF on the returned
-	handle of Inifile::KeyList_Open(sectionname) is true.
+	Tests if handle is at the end of the KeyList. If the section is empty IniFile::KeyList_EOF on the returned
+	handle of IniFile::KeyList_Open(sectionname) is true.
 	\param	handle	The handle to the KeyList
 	\return	true if the handle is at the end of the list, otherwise false
 	\see	KeyList_Open
 */
-bool Inifile::KeyList_EOF(KeyListHandle handle) {
+bool IniFile::KeyList_EOF(KeyListHandle handle) {
 	if(handle == NULL) {
 		return true;
 	} else {
@@ -396,7 +396,7 @@ bool Inifile::KeyList_EOF(KeyListHandle handle) {
 	\return	The keyname or "" if the list is empty
 	\see	KeyList_Open, KeyList_EOF
 */
-string Inifile::KeyList_GetNextKey(KeyListHandle* handle) {
+string IniFile::KeyList_GetNextKey(KeyListHandle* handle) {
 	if(handle == NULL) {
 		return "";
 	} else {
@@ -412,7 +412,7 @@ string Inifile::KeyList_GetNextKey(KeyListHandle* handle) {
 	\param	handle	Pointer to the handle to the KeyList
 	\see	KeyList_Open
 */
-void Inifile::KeyList_Close(KeyListHandle* handle) {
+void IniFile::KeyList_Close(KeyListHandle* handle) {
 	if(handle != NULL)
 		*handle = NULL;
 }
@@ -424,7 +424,7 @@ void Inifile::KeyList_Close(KeyListHandle* handle) {
 	\param	filename	Filename of the file. This file is opened for writing.
 	\return	true on success otherwise false.
 */
-bool Inifile::SaveChangesTo(string filename) {
+bool IniFile::SaveChangesTo(string filename) {
 	SDL_RWops * file;
 	if((file = SDL_RWFromFile(filename.c_str(),"w")) == NULL) {
 		return false;
@@ -442,7 +442,7 @@ bool Inifile::SaveChangesTo(string filename) {
 	\param	file	SDL_RWops that is used for writing. (Cannot be readonly)
 	\return	true on success otherwise false.
 */
-bool Inifile::SaveChangesTo(SDL_RWops * file) {
+bool IniFile::SaveChangesTo(SDL_RWops * file) {
 	CommentEntry* curEntry = FirstLine;
 	
 	bool error = false;
@@ -464,7 +464,7 @@ bool Inifile::SaveChangesTo(SDL_RWops * file) {
 
 // private methods
 
-void Inifile::flush()
+void IniFile::flush()
 {
 	
 	cout << "Flush:" << endl;
@@ -477,10 +477,10 @@ void Inifile::flush()
 
 }
 
-void Inifile::readfile(SDL_RWops * file)
+void IniFile::readfile(SDL_RWops * file)
 {	
 	if((SectionRoot = new SectionEntry("",0,0)) == NULL) {
-		cerr << "Inifile: Cannot allocate memory for a new section!" << endl;
+		cerr << "IniFile: Cannot allocate memory for a new section!" << endl;
 		exit(EXIT_FAILURE);
 	}
 	
@@ -524,7 +524,7 @@ void Inifile::readfile(SDL_RWops * file)
 		if(ret == -1) {
 			// empty line or comment
 			if((newCommentEntry = new CommentEntry(completeLine)) == NULL) {
-				cerr << "Inifile: Cannot allocate memory for new comment line!" << endl;
+				cerr << "IniFile: Cannot allocate memory for new comment line!" << endl;
 				exit(EXIT_FAILURE);
 			}
 			
@@ -548,7 +548,7 @@ void Inifile::readfile(SDL_RWops * file)
 				} else {
 					// valid section line
 					if((newSectionEntry = new SectionEntry(completeLine,sectionstart,sectionend-sectionstart)) == NULL) {
-						cerr << "Inifile: Cannot allocate memory for new section line!" << endl;
+						cerr << "IniFile: Cannot allocate memory for new section line!" << endl;
 						exit(EXIT_FAILURE);
 					}
 			
@@ -592,7 +592,7 @@ void Inifile::readfile(SDL_RWops * file)
 								} else {
 									// valid key/value line
 									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart+1,valueend-valuestart-1)) == NULL) {
-										cerr << "Inifile: Cannot allocate memory for new key/value line!" << endl;
+										cerr << "IniFile: Cannot allocate memory for new key/value line!" << endl;
 										exit(EXIT_FAILURE);
 									}
 			
@@ -616,7 +616,7 @@ void Inifile::readfile(SDL_RWops * file)
 								} else {
 									// valid key/value line
 									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart,valueend-valuestart)) == NULL) {
-										cerr << "Inifile: Cannot allocate memory for new key/value line!" << endl;
+										cerr << "IniFile: Cannot allocate memory for new key/value line!" << endl;
 										exit(EXIT_FAILURE);
 									}
 			
@@ -643,11 +643,11 @@ void Inifile::readfile(SDL_RWops * file)
 			if(completeLine.size() < 100) {
 				// there are some buggy ini-files which have a lot of waste at the end of the file
 				// and it makes no sense to print all this stuff out. just skip it
-				cerr << "Inifile: Syntax-Error in line " << lineNum << ":" << completeLine << " !" << endl;
+				cerr << "IniFile: Syntax-Error in line " << lineNum << ":" << completeLine << " !" << endl;
 			}
 			// save this line as a comment
 			if((newCommentEntry = new CommentEntry(completeLine)) == NULL) {
-				cerr << "Inifile: Cannot allocate memory for new comment line!" << endl;
+				cerr << "IniFile: Cannot allocate memory for new comment line!" << endl;
 				exit(EXIT_FAILURE);
 			}
 			
@@ -666,7 +666,7 @@ void Inifile::readfile(SDL_RWops * file)
 	}
 }
 
-void Inifile::InsertSection(SectionEntry* newSection) {
+void IniFile::InsertSection(SectionEntry* newSection) {
 	if(SectionRoot == NULL) {
 		// New root element
 		SectionRoot = newSection;
@@ -682,7 +682,7 @@ void Inifile::InsertSection(SectionEntry* newSection) {
 	}
 }
 
-void Inifile::InsertKey(SectionEntry* section, KeyEntry* newKeyEntry) {
+void IniFile::InsertKey(SectionEntry* section, KeyEntry* newKeyEntry) {
 	if(section->KeyRoot == NULL) {
 		// New root element
 		section->KeyRoot = newKeyEntry;
@@ -699,7 +699,7 @@ void Inifile::InsertKey(SectionEntry* section, KeyEntry* newKeyEntry) {
 }
 
 
-Inifile::SectionEntry* Inifile::getSection(string sectionname) {
+IniFile::SectionEntry* IniFile::getSection(string sectionname) {
 	SectionEntry* curSection = SectionRoot;
 	int sectionnameSize = sectionname.size(); 
 	
@@ -716,7 +716,7 @@ Inifile::SectionEntry* Inifile::getSection(string sectionname) {
 	return NULL;
 }
 
-Inifile::KeyEntry* Inifile::getKey(SectionEntry* sectionentry, string keyname) {
+IniFile::KeyEntry* IniFile::getKey(SectionEntry* sectionentry, string keyname) {
 	KeyEntry* curKey = sectionentry->KeyRoot;
 	int keynameSize = keyname.size(); 
 	
@@ -734,7 +734,7 @@ Inifile::KeyEntry* Inifile::getKey(SectionEntry* sectionentry, string keyname) {
 }
 
 
-int Inifile::getNextChar(const unsigned char* line, int startpos) {
+int IniFile::getNextChar(const unsigned char* line, int startpos) {
 	while(line[startpos] != '\0') {
 		if((line[startpos] == ';') || (line[startpos] == '#')) {
 			// comment
@@ -747,7 +747,7 @@ int Inifile::getNextChar(const unsigned char* line, int startpos) {
 	return -1;
 }
 
-int Inifile::skipName(const unsigned char* line,int startpos) {
+int IniFile::skipName(const unsigned char* line,int startpos) {
 	while(line[startpos] != '\0') {
 		if(isNormalChar(line[startpos])) {
 			startpos++;
@@ -758,7 +758,7 @@ int Inifile::skipName(const unsigned char* line,int startpos) {
 	return startpos;
 }
 
-int Inifile::skipValue(const unsigned char* line,int startpos) {
+int IniFile::skipValue(const unsigned char* line,int startpos) {
 	int i = startpos;
 	while(line[i] != '\0') {
 		if(isNormalChar(line[i]) || isWhitespace(line[i])) {
@@ -782,7 +782,7 @@ int Inifile::skipValue(const unsigned char* line,int startpos) {
 	return startpos+1;
 }
 
-int Inifile::skipKey(const unsigned char* line,int startpos) {
+int IniFile::skipKey(const unsigned char* line,int startpos) {
 	int i = startpos;
 	while(line[i] != '\0') {
 		if(isNormalChar(line[i]) || isWhitespace(line[i])) {
@@ -806,7 +806,7 @@ int Inifile::skipKey(const unsigned char* line,int startpos) {
 	return startpos+1;
 }
 
-int Inifile::getNextQuote(const unsigned char* line,int startpos) {
+int IniFile::getNextQuote(const unsigned char* line,int startpos) {
 	while(line[startpos] != '\0') {
 		if(line[startpos] != '"') {
 			startpos++;
@@ -817,7 +817,7 @@ int Inifile::getNextQuote(const unsigned char* line,int startpos) {
 	return -1;
 }
 
-bool Inifile::isWhitespace(unsigned char s) {
+bool IniFile::isWhitespace(unsigned char s) {
 	if((s == ' ') || (s == '\t') || (s == '\n') || (s == '\r')) {
 		return true;
 	} else {
@@ -825,7 +825,7 @@ bool Inifile::isWhitespace(unsigned char s) {
 	}
 }
 
-bool Inifile::isNormalChar(unsigned char s) {
+bool IniFile::isNormalChar(unsigned char s) {
 	if((!isWhitespace(s)) && (s >= 33) && (s != '"') && (s != ';') && (s != '#') && (s != '[') && (s != ']') && (s != '=')) {
 		return true;
 	} else {
