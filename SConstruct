@@ -1,5 +1,4 @@
-import sys
-import os
+import sys, os
 opts = Options('config.py')
 
 # default to using sdl-config if not on windows
@@ -15,11 +14,12 @@ else:
 
 env.Append(CPPPATH="#include")
 
+ApiVer = '0.0.0'
 
 if sys.platform != "win32":
     env.ParseConfig('pkg-config --cflags sdl samplerate adplug')
-    env.Append(CCFLAGS=["-Wall", "-Wextra", "-pedantic", "-O3", "-Wno-long-long", "-Wno-variadic-macros", "-fPIC"]) #, "-Werror"])
-    #env.Append(CCFLAGS=["-Wall", "-Werror", "-O2", "-ffast-math", "-funroll-loops"])
+    env.Append(CCFLAGS=["-Wall", "-Wextra", "-pedantic", "-O3", "-Wno-long-long", "-Wno-variadic-macros", "-fPIC", "-Werror"])
+    env.Append(SHLINKFLAGS="-Wl,-soname=libeastwood.so.%d" % int(ApiVer.split(".")[0]))
     env.Append(CCFLAGS=["-ggdb"])
 
 else:
@@ -28,17 +28,9 @@ else:
     env.Append(CCFLAGS = ["/O2", "/EHsc", "/MD", "/DEBUG", "/Zi", "/GR"])
 
     env.Append(CPPPATH = [ "${SDL_INCLUDE_PATH}",
-        "${SDLNET_INCLUDE_PATH}",
-        "${SDLMIXER_INCLUDE_PATH}",
-        "${SDLTTF_INCLUDE_PATH}",
-        "${BOOST_INCLUDE_PATH}",
         "${SAMPLERATE_INCLUDE_PATH}"])
       
     env.Append(LIBPATH = [ "${SDL_LIB_PATH}",
-        "${SDLNET_LIB_PATH}",
-        "${SDLMIXER_LIB_PATH}",
-        "${SDLTTF_LIB_PATH}",
-        "${BOOST_LIB_PATH}",
         "${SAMPLERATE_LIB_PATH}"])
 
 env.Append(LIBS = [ "SDL",
@@ -47,8 +39,12 @@ env.Append(LIBS = [ "SDL",
 
 
 
-#env.Append(CCFLAGS=["-DLOG_DISABLED"])
-
 Export('env')
 
-SConscript("src/SConscript")
+SConscript('src/SConscript')
+
+major, minor, micro = [int(c) for c in ApiVer.split('.')]
+os.system('mv libeastwood.so libeastwood.so.%s' % ApiVer)
+os.system('ln -s libeastwood.so.%s libeastwood.so.%d' % (ApiVer, major))
+os.system('ln -s libeastwood.so.%s libeastwood.so' % ApiVer)
+

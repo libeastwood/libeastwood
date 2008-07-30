@@ -1,3 +1,4 @@
+import sys
 Import('env')
 
 from glob import glob
@@ -13,11 +14,10 @@ all_sources = [ "Cpsfile.cpp",
                 "Animation.cpp",
                 "Stringfile.cpp",
                 "Vocfile.cpp",
+		"Font.cpp"
               ]
 
-libnostalgia = env.SharedLibrary("../libnostalgia.so", all_sources)
-#pakview = env.Program("../pakview", ["pakview.cpp"] + pakview_sources + gui_sources + pak_sources )
+libeastwood = env.SharedLibrary(target='../libeastwood.so', source=all_sources)
 
-Default(libnostalgia)
-#Default(pakview)
+Return('libeastwood')
 
