@@ -12,21 +12,20 @@
 #define TILE_GETINDEX(x)	(x & 0x0000FFFF)
 #define TILE_GETTYPE(x)		(x & 0xFFFF0000)
 
-struct ShpfileEntry
+struct ShpFileEntry
 {
 	Uint32 StartOffset;
 	Uint32 EndOffset;
 };
 
 class Animation;
-class Shpfile;
 class SDL_Palette;
 
-class Shpfile : public Decode
+class ShpFile : public Decode
 {
 public:
-	Shpfile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette = NULL);
-	~Shpfile();
+	ShpFile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette = NULL);
+	~ShpFile();
 
 /*!
 	This method returns a SDL_Surface containing the nth picture in this shp-File.
@@ -76,7 +75,7 @@ public:
 private:
 	void readIndex();
 
-	ShpfileEntry * Index;
+	ShpFileEntry * Index;
 	unsigned char* Filedata;
 	Uint32 ShpFilesize;
 	Uint16 NumFiles;

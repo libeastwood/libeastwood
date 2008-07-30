@@ -5,9 +5,9 @@
 #include "Log.h"
 
 #include "Animation.h"
-#include "Shpfile.h"
+#include "ShpFile.h"
 
-Shpfile::Shpfile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette) : Decode()
+ShpFile::ShpFile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette) : Decode()
 {
 	Filedata = bufFiledata;
 	ShpFilesize = bufsize;
@@ -16,14 +16,14 @@ Shpfile::Shpfile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette
 	m_palette = palette;
 }
 
-Shpfile::~Shpfile()
+ShpFile::~ShpFile()
 {
 	if(Index != NULL) {
 		free(Index);
 	}
 }
 
-SDL_Surface *Shpfile::getSurface(Uint32 IndexOfFile)
+SDL_Surface *ShpFile::getSurface(Uint32 IndexOfFile)
 {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
@@ -44,7 +44,7 @@ SDL_Surface *Shpfile::getSurface(Uint32 IndexOfFile)
 	Uint16 size = SDL_SwapLE16(*((Uint16*) (Fileheader + 8)));
 	
 	
-	LOG_INFO("Shpfile", "File Nr.: %d (Size: %dx%d)",IndexOfFile,sizeX,sizeY);
+	LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",IndexOfFile,sizeX,sizeY);
 	/*
 	printf("Type: %d\n",type);
 	printf("SizeX: %d SizeY: %d\n",sizeX,sizeY);
@@ -66,7 +66,7 @@ SDL_Surface *Shpfile::getSurface(Uint32 IndexOfFile)
 			}
 			
 			if(decode80(Fileheader + 10,DecodeDestination,size) == -1) {
-				LOG_WARNING("Shpfile","Checksum-Error in Shp-File");
+				LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 			}
 						
 			shp_correct_lf(DecodeDestination,ImageOut, size);
@@ -82,7 +82,7 @@ SDL_Surface *Shpfile::getSurface(Uint32 IndexOfFile)
 			}
 			
 			if(decode80(Fileheader + 10 + 16,DecodeDestination,size) == -1) {
-				LOG_WARNING("Shpfile", "Checksum-Error in Shp-File");
+				LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
 			}
 			
 			shp_correct_lf(DecodeDestination, ImageOut, size);
@@ -107,7 +107,7 @@ SDL_Surface *Shpfile::getSurface(Uint32 IndexOfFile)
 		
 		default:
 		{
-			LOG_ERROR("Shpfile","Type %d in SHP-Files not supported!",type);
+			LOG_ERROR("ShpFile","Type %d in SHP-Files not supported!",type);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -134,7 +134,7 @@ SDL_Surface *Shpfile::getSurface(Uint32 IndexOfFile)
 	return pic;
 }
 
-SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...) {
+SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...) {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
 	unsigned char *ImageOut = NULL;
@@ -147,7 +147,7 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 	}
 	
 	if((tiles = (Uint32*) malloc(tilesX*tilesY*sizeof(Uint32))) == NULL) {
-		LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
+		LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -158,7 +158,7 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		tiles[i] = va_arg( arg_ptr, int );
 		if(TILE_GETINDEX(tiles[i]) >= NumFiles) {
 			free(tiles);
-			LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): There exist only %d files in this *.shp.",NumFiles);
+			LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): There exist only %d files in this *.shp.",NumFiles);
 			return NULL;
 		}
 	}
@@ -172,14 +172,14 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		if(((Filedata + Index[TILE_GETINDEX(tiles[i])].StartOffset)[2] != sizeY)
 		 || ((Filedata + Index[TILE_GETINDEX(tiles[i])].StartOffset)[3] != sizeX)) {
 			free(tiles);
-			LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Not all pictures have the same size!");
+			LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Not all pictures have the same size!");
 			exit(EXIT_FAILURE);
 		 }
 	}
 	
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_HWSURFACE,sizeX*tilesX,sizeY*tilesY,8,0,0,0,0)) == NULL) {
-		LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot create Surface.");
+		LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot create Surface.");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -197,7 +197,7 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		
 			if((ImageOut = (unsigned char*) calloc(1,sizeX*sizeY)) == NULL) {
 				free(tiles);
-				LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
+				LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
 				exit(EXIT_FAILURE);
 			}
 		
@@ -208,12 +208,12 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 					if( (DecodeDestination = (unsigned char*) calloc(1,size)) == NULL) {
 						free(ImageOut);
 						free(tiles);
-						LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
+						LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
 						exit(EXIT_FAILURE);
 					}
 				
 					if(decode80(Fileheader + 10,DecodeDestination,size) == -1) {
-						LOG_WARNING("Shpfile","Checksum-Error in Shp-File");
+						LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 					}
 							
 					shp_correct_lf(DecodeDestination,ImageOut, size);
@@ -226,12 +226,12 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 					if( (DecodeDestination = (unsigned char*) calloc(1,size)) == NULL) {
 						free(ImageOut);
 						free(tiles);
-						LOG_ERROR("Shpfile","Shpfile::getSurfaceArray(): Cannot allocate memory!");
+						LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
 						exit(EXIT_FAILURE);
 					}
 				
 					if(decode80(Fileheader + 10 + 16,DecodeDestination,size) == -1) {
-						LOG_WARNING("Shpfile","Checksum-Error in Shp-File");
+						LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 					}
 				
 					shp_correct_lf(DecodeDestination, ImageOut, size);
@@ -254,7 +254,7 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 			
 				default:
 				{
-					LOG_ERROR("Shpfile","Shpfile: Type %d in SHP-Files not supported!",type);
+					LOG_ERROR("ShpFile","ShpFile: Type %d in SHP-Files not supported!",type);
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -295,7 +295,7 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 				
 				default:
 				{
-					LOG_ERROR("Shpfile","Shpfile: Invalid type for this parameter. Must be one of TILE_NORMAL, TILE_FLIPH, TILE_FLIPV or TILE_ROTATE!");
+					LOG_ERROR("ShpFile","ShpFile: Invalid type for this parameter. Must be one of TILE_NORMAL, TILE_FLIPH, TILE_FLIPV or TILE_ROTATE!");
 					exit(EXIT_FAILURE);				
 				} break;
 			}
@@ -324,7 +324,7 @@ SDL_Surface *Shpfile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 	\param	SetColorKey	if true, black is set as transparency
 	\return	a new animation object or NULL on error
 */
-Animation* Shpfile::getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey)
+Animation* ShpFile::getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey)
 {
 	Animation *tmpAnimation;
 	SDL_Surface *tmp;
@@ -343,13 +343,13 @@ Animation* Shpfile::getAnimation(unsigned int startindex, unsigned int endindex,
 	return tmpAnimation;
 }
 
-void Shpfile::readIndex()
+void ShpFile::readIndex()
 {
 	// First get number of files in shp-file
 	NumFiles = SDL_SwapLE16( ((Uint16*) Filedata)[0]);
 	
 	if(NumFiles == 0) {
-		LOG_ERROR("Shpfile", "There is no file in this shp-File!");
+		LOG_ERROR("ShpFile", "There is no file in this shp-File!");
 		exit(EXIT_FAILURE);
 	}
 	
@@ -357,8 +357,8 @@ void Shpfile::readIndex()
 		/* files with only one image might be different */
 		
 		// create array with one entry
-		if((Index = (ShpfileEntry*) malloc(sizeof(ShpfileEntry) * 1)) == NULL) {
-			LOG_ERROR("Shpfile", "readIndex");
+		if((Index = (ShpFileEntry*) malloc(sizeof(ShpFileEntry) * 1)) == NULL) {
+			LOG_ERROR("ShpFile", "readIndex");
 			exit(EXIT_FAILURE);
 		}
 		
@@ -379,13 +379,13 @@ void Shpfile::readIndex()
 		/* File contains more than one image */
 	
 		if( ShpFilesize < (Uint32) ((NumFiles * 4) + 2 + 2)) {
-			LOG_ERROR("Shpfile", "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(NumFiles * 4) + 2 + 2,ShpFilesize);
+			LOG_ERROR("ShpFile", "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(NumFiles * 4) + 2 + 2,ShpFilesize);
 			exit(EXIT_FAILURE);				
 		}
 		
 		// create array
-		if((Index = (ShpfileEntry*) malloc(sizeof(ShpfileEntry) * NumFiles)) == NULL) {
-			LOG_ERROR("Shpfile", "readIndex");
+		if((Index = (ShpFileEntry*) malloc(sizeof(ShpFileEntry) * NumFiles)) == NULL) {
+			LOG_ERROR("ShpFile", "readIndex");
 			exit(EXIT_FAILURE);
 		}
 		
@@ -397,7 +397,7 @@ void Shpfile::readIndex()
 				Index[i-1].EndOffset = Index[i].StartOffset - 1;
 				
 				if(Index[i-1].EndOffset > ShpFilesize) {
-					LOG_ERROR("Shpfile", "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",i,Index[i-1].EndOffset,ShpFilesize);
+					LOG_ERROR("ShpFile", "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",i,Index[i-1].EndOffset,ShpFilesize);
 					exit(EXIT_FAILURE);						
 				}
 			}
