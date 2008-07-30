@@ -4,11 +4,11 @@
 #include "Decode.h"
 #include "SDL.h"
 
-class Cpsfile : public Decode
+class CpsFile : public Decode
 {
 public:
-	Cpsfile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette = NULL);
-	~Cpsfile();
+	CpsFile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette = NULL);
+	~CpsFile();
 
 	SDL_Surface *getSurface();
 

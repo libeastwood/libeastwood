@@ -2,18 +2,18 @@
 #include <string>
 
 #include <SDL_endian.h>
-#include "Cpsfile.h"
+#include "CpsFile.h"
 #include "Log.h"
 
 #define	SIZE_X	320
 #define SIZE_Y	240
 
-Cpsfile::Cpsfile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette) : Decode()
+CpsFile::CpsFile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette) : Decode()
 {
 	Filedata = bufFiledata;
 	CpsFilesize = bufsize;
 	if(*(unsigned char *)(bufFiledata + 9) == 3){
-		LOG_INFO("Cpsfile", "CPS has embedded palette, loading...");
+		LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 		m_palette = new SDL_Palette;
 		m_palette->ncolors = bufsize / 3;
 		m_palette->colors = new SDL_Color[m_palette->ncolors];
@@ -33,12 +33,12 @@ Cpsfile::Cpsfile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette)
 	}
 }
 
-Cpsfile::~Cpsfile()
+CpsFile::~CpsFile()
 {	
 	;
 }
 
-SDL_Surface *Cpsfile::getSurface()
+SDL_Surface *CpsFile::getSurface()
 {
 	unsigned char * ImageOut;
 	SDL_Surface *pic = NULL;
@@ -59,7 +59,7 @@ SDL_Surface *Cpsfile::getSurface()
 	}
 	
 	if(decode80(Filedata + 10 + PaletteSize,ImageOut,0) == -2) {
-		LOG_ERROR("Cpsfile", "Cannot decode Cps-File");
+		LOG_ERROR("CpsFile", "Cannot decode Cps-File");
 	}
 	
 	// create new picture surface
