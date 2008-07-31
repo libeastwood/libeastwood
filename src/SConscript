@@ -16,7 +16,6 @@ all_sources = [ "CpsFile.cpp",
                 "VocFile.cpp",
 		"Font.cpp",
 		"AdlFile.cpp",
-		"adl/adl.cpp",
 		"adl/emuopl.cpp",
 		"adl/fmopl.c",
               ]
