@@ -6,7 +6,7 @@
 #include "Log.h"
 
 #define	SIZE_X	320
-#define SIZE_Y	240
+#define SIZE_Y	200
 
 CpsFile::CpsFile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette) : Decode()
 {
