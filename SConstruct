@@ -18,7 +18,7 @@ ApiVer = '0.0.1'
 
 if sys.platform != "win32":
     env.ParseConfig('pkg-config --cflags sdl samplerate adplug')
-    env.Append(CCFLAGS=["-Wall", "-Wextra", "-pedantic", "-O3", "-Wno-long-long", "-Wno-variadic-macros", "-fPIC", "-Werror"])
+    env.Append(CCFLAGS=["-Wall", "-Wextra", "-pedantic", "-O3", "-Wno-long-long", "-Wno-variadic-macros", "-fPIC"])
     env.Append(SHLINKFLAGS="-Wl,-soname=libeastwood.so.%d" % int(ApiVer.split(".")[0]))
     env.Append(CCFLAGS=["-ggdb"])
 

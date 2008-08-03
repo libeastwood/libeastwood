@@ -10,7 +10,7 @@ public:
 	~Animation();
 	
 	SDL_Surface *getFrame();
-	void setFrameRate(double FrameRate) {
+	void setFrameRate(float FrameRate) {
 		if(FrameRate == 0.0) {
 			FrameDurationTime = 1;
 		} else {
