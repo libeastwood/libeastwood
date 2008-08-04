@@ -9,21 +9,21 @@
 #define	SIZE_X	320
 #define SIZE_Y	200
 
-CpsFile::CpsFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette) : Decode()
+CpsFile::CpsFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette) : Decode()
 {
-	Filedata = bufFiledata;
+	Filedata = bufFileData;
 	CpsFilesize = bufSize;
-	if(*(unsigned char *)(bufFiledata + 9) == 3){
+	if(*(unsigned char *)(bufFileData + 9) == 3){
 		LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 		m_palette = new SDL_Palette;
 		m_palette->ncolors = bufSize / 3;
 		m_palette->colors = new SDL_Color[m_palette->ncolors];
 
-		bufFiledata += 10;
+		bufFileData += 10;
 		for (int i = 0; i < m_palette->ncolors; i++){
-			m_palette->colors[i].r = *bufFiledata++ <<2;
-			m_palette->colors[i].g = *bufFiledata++ <<2;
-			m_palette->colors[i].b = *bufFiledata++ <<2;
+			m_palette->colors[i].r = *bufFileData++ <<2;
+			m_palette->colors[i].g = *bufFileData++ <<2;
+			m_palette->colors[i].b = *bufFileData++ <<2;
 			m_palette->colors[i].unused = 0;
 		}
 	}else{
