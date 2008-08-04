@@ -41,7 +41,7 @@ struct FNTCharacter
 class Font 
 {
     public:
-        Font(FNTCharacter* characters, FNTHeader* header);
+        Font(FNTCharacter *characters, FNTHeader *header);
         ~Font();
 
         void extents(std::string text, Uint16& w, Uint16& h);
@@ -49,8 +49,8 @@ class Font
 
 
     private:
-        FNTHeader* m_header;
-        FNTCharacter* m_characters;
+        FNTHeader *m_header;
+        FNTCharacter *m_characters;
         word m_nchars;
 };
 

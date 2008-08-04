@@ -7,10 +7,10 @@
 #include "Animation.h"
 #include "ShpFile.h"
 
-ShpFile::ShpFile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette) : Decode()
+ShpFile::ShpFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette) : Decode()
 {
 	Filedata = bufFiledata;
-	ShpFilesize = bufsize;
+	ShpFilesize = bufSize;
 	Index = NULL;
 	readIndex();
 	m_palette = palette;
@@ -33,7 +33,7 @@ SDL_Surface *ShpFile::getSurface(Uint32 IndexOfFile)
 		return NULL;
 	}
 	
-	unsigned char * Fileheader = Filedata + Index[IndexOfFile].StartOffset;
+	unsigned char *Fileheader = Filedata + Index[IndexOfFile].StartOffset;
 	
 	unsigned char type = Fileheader[0];
 	
@@ -191,7 +191,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 	for(j = 0; j < tilesY; j++)	{
 		for(i = 0; i < tilesX; i++) {
 	
-			unsigned char * Fileheader = Filedata + Index[TILE_GETINDEX(tiles[j*tilesX+i])].StartOffset;	
+			unsigned char *Fileheader = Filedata + Index[TILE_GETINDEX(tiles[j*tilesX+i])].StartOffset;	
 			unsigned char type = Fileheader[0];
 		
 			/* size and also checksum */

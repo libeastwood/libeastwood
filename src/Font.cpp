@@ -6,7 +6,7 @@
 #include "Font.h"
 #include "Log.h"
 
-Font::Font(FNTCharacter* characters, FNTHeader* header)
+Font::Font(FNTCharacter *characters, FNTHeader *header)
 {
 	m_characters = characters;
 	m_header = header;
@@ -20,7 +20,7 @@ Font::~Font()
 
 void Font::extents(std::string text, Uint16& w, Uint16& h)
 {
-	FNTCharacter* ch;
+	FNTCharacter *ch;
 	w = 0;
     	h = m_header->height;
 
@@ -34,10 +34,10 @@ void Font::extents(std::string text, Uint16& w, Uint16& h)
 void Font::render(std::string text, SDL_Surface *image, int offx, int offy, Uint8 paloff)
 {
 	std::string test = text;
-	FNTCharacter* ch;
-	byte* bitmap;
+	FNTCharacter *ch;
+	byte *bitmap;
 
-	SDL_Surface * surface = image;
+	SDL_Surface *surface = image;
 	Uint8* pixels = (Uint8*)surface->pixels;
 
     	for (unsigned int c=0; c!=text.length(); c++)

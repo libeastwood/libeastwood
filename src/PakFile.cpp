@@ -116,7 +116,7 @@ void PakFile::readIndex()
 	}
 }
 
-char * PakFile::getFilename(int index) {
+char *PakFile::getFilename(int index) {
 	if((index >= NumFileEntry) || (index < 0))
 		return NULL;
 	
@@ -144,7 +144,7 @@ unsigned char *PakFile::getFile(const char *fname, int *size)
 		return NULL;
 	}
 	
-	unsigned char * content;
+	unsigned char *content;
 	
 	if( (content = (unsigned char*) malloc(filesize)) == NULL) {
 		return NULL;

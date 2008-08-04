@@ -12,7 +12,7 @@ struct PakFileEntry {
 class PakFile
 {
 public:
-	PakFile(const char * PakFilename);
+	PakFile(const char *PakFilename);
 	~PakFile();
 
 	char *getFilename(int index);

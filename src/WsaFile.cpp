@@ -1,21 +1,19 @@
-#include <SDL_endian.h>
-#include <stdlib.h>
-#include <string>
-
-
 #include "Font.h"
 #include "Log.h"
 
 #include "WsaFile.h"
 
+#include <SDL_endian.h>
+#include <stdlib.h>
+#include <string>
 
-WsaFile::WsaFile(uint8_t * bufFiledata, int bufsize, 
-                SDL_Surface* lastframe, float setFps ) : Decode()
+WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, 
+                SDL_Surface *lastframe, float setFps ) : Decode()
 {
-	Filedata = bufFiledata;
-	WsaFilesize = bufsize;
+	Filedata = bufFileData;
+	WsaFilesize = bufSize;
 	
-    LOG_INFO("WsaFile", "Loading wsa with size %d...", bufsize);
+    LOG_INFO("WsaFile", "Loading wsa with size %d...", bufSize);
         
 	if(WsaFilesize < 10) {
 		LOG_ERROR("WsaFile", "No valid WSA-File: File too small!");
@@ -102,7 +100,7 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 	}
 	
 	SDL_Surface * pic;
-	uint8_t * Frame = decodedFrames + (FrameNumber * SizeX * SizeY);
+	unsigned char *Frame = decodedFrames + (FrameNumber * SizeX * SizeY);
 	
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SizeX,SizeY,8,0,0,0,0))== NULL) 
@@ -126,7 +124,7 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 	//Now we can copy line by line
 	for(int y = 0; y < SizeY;y++) 
 	{
-		memcpy(	((uint8_t*) (pic->pixels)) + y * pic->pitch , Frame + y * SizeX, SizeX);
+		memcpy(	((unsigned char*) (pic->pixels)) + y * pic->pitch , Frame + y * SizeX, SizeX);
 	}
 		
 	SDL_UnlockSurface(pic);
@@ -146,7 +144,7 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 	\param	SetColorKey	if true, black is set as transparency
 	\return	a new animation object or NULL on error
 */
-Animation* WsaFile::getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey)
+Animation *WsaFile::getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey)
 {
 	Animation* tmpAnimation;
 	SDL_Surface *tmp;

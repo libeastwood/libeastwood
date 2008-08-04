@@ -39,8 +39,8 @@ private:
 		};
 
 		string CompleteLine;
-		CommentEntry* nextEntry;
-		CommentEntry* prevEntry;
+		CommentEntry *nextEntry;
+		CommentEntry *prevEntry;
 	};
 
 
@@ -58,9 +58,9 @@ private:
 
 		int SectionStringBegin;
 		int SectionStringLength;
-		SectionEntry* nextSection;
-		SectionEntry* prevSection;
-		KeyEntry* KeyRoot;
+		SectionEntry *nextSection;
+		SectionEntry *prevSection;
+		KeyEntry *KeyRoot;
 	};
 
 
@@ -81,16 +81,16 @@ private:
 		int KeyStringLength;
 		int ValueStringBegin;
 		int ValueStringLength;
-		KeyEntry* nextKey;
-		KeyEntry* prevKey;
+		KeyEntry *nextKey;
+		KeyEntry *prevKey;
 	};
 	//\endcond 
 
 public:
 	typedef IniFile::KeyEntry* KeyListHandle;		///< A handle to a KeyList opened with KeyList_Open().
 
-	IniFile(uint8_t *bufFiledata, int bufsize);
-	IniFile(SDL_RWops * RWopsFile);
+	IniFile(unsigned char *bufFiledata, int bufsize);
+	IniFile(SDL_RWops *RWopsFile);
 	~IniFile();
 	
 	string getStringValue(string section, string key, string defaultValue = "");
@@ -103,31 +103,31 @@ public:
 	
 	KeyListHandle KeyList_Open(string sectionname);
 	bool KeyList_EOF(KeyListHandle handle);
-	string KeyList_GetNextKey(KeyListHandle* handle);
-	void KeyList_Close(KeyListHandle* handle);
+	string KeyList_GetNextKey(KeyListHandle *handle);
+	void KeyList_Close(KeyListHandle *handle);
 	
 	bool SaveChangesTo(string filename);
-	bool SaveChangesTo(SDL_RWops * file);
+	bool SaveChangesTo(SDL_RWops *file);
 	
 	
 private:
-	CommentEntry* FirstLine;
-	SectionEntry* SectionRoot;
+	CommentEntry *FirstLine;
+	SectionEntry *SectionRoot;
 	
 	void flush();
-	void readfile(SDL_RWops * file);
+	void readfile(SDL_RWops *file);
 	
-	void InsertSection(SectionEntry* newSection);
-	void InsertKey(SectionEntry* section, KeyEntry* newKeyEntry);
+	void InsertSection(SectionEntry *newSection);
+	void InsertKey(SectionEntry *section, KeyEntry *newKeyEntry);
 
-	SectionEntry* getSection(string sectionname);
-	KeyEntry* getKey(SectionEntry* sectionentry, string keyname);
+	SectionEntry *getSection(string sectionname);
+	KeyEntry *getKey(SectionEntry* sectionentry, string keyname);
 		
-	int getNextChar(const unsigned char* line, int startpos);
-	int skipName(const unsigned char* line,int startpos);
-	int skipValue(const unsigned char* line,int startpos);
-	int skipKey(const unsigned char* line,int startpos);
-	int getNextQuote(const unsigned char* line,int startpos);
+	int getNextChar(const unsigned char *line, int startpos);
+	int skipName(const unsigned char *line, int startpos);
+	int skipValue(const unsigned char *line, int startpos);
+	int skipKey(const unsigned char *line, int startpos);
+	int getNextQuote(const unsigned char *line, int startpos);
 	
 	bool isWhitespace(unsigned char s);
 	bool isNormalChar(unsigned char s);

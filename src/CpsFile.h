@@ -2,12 +2,13 @@
 #define EASTWOOD_CPSFILE_H
 
 #include "Decode.h"
-#include "SDL.h"
+
+#include <SDL.h>
 
 class CpsFile : public Decode
 {
 public:
-	CpsFile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette = NULL);
+	CpsFile(unsigned char *bufFiledata, int bufsize, SDL_Palette *palette = NULL);
 	~CpsFile();
 
 	SDL_Surface *getSurface();

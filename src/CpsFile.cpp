@@ -1,21 +1,22 @@
+#include "CpsFile.h"
+#include "Log.h"
+
 #include <iostream>
 #include <string>
 
 #include <SDL_endian.h>
-#include "CpsFile.h"
-#include "Log.h"
 
 #define	SIZE_X	320
 #define SIZE_Y	200
 
-CpsFile::CpsFile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette) : Decode()
+CpsFile::CpsFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette) : Decode()
 {
 	Filedata = bufFiledata;
-	CpsFilesize = bufsize;
+	CpsFilesize = bufSize;
 	if(*(unsigned char *)(bufFiledata + 9) == 3){
 		LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 		m_palette = new SDL_Palette;
-		m_palette->ncolors = bufsize / 3;
+		m_palette->ncolors = bufSize / 3;
 		m_palette->colors = new SDL_Color[m_palette->ncolors];
 
 		bufFiledata += 10;
@@ -26,21 +27,17 @@ CpsFile::CpsFile(unsigned char * bufFiledata, int bufsize, SDL_Palette* palette)
 			m_palette->colors[i].unused = 0;
 		}
 	}else{
-//		if (palette == NULL)
-//			m_palette = DataCache::Instance()->getPalette(IBM_PAL);
-//		else
 			m_palette = palette;
 	}
 }
 
 CpsFile::~CpsFile()
 {	
-	;
 }
 
 SDL_Surface *CpsFile::getSurface()
 {
-	unsigned char * ImageOut;
+	unsigned char *ImageOut;
 	SDL_Surface *pic = NULL;
 
 	// check for valid file

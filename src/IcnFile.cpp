@@ -11,13 +11,13 @@
 
   
 
-IcnFile::IcnFile(unsigned char * bufFiledata, int bufsize, 
-                 unsigned char * bufMapdata, int mapsize) {
+IcnFile::IcnFile(unsigned char *bufFiledata, int bufSize, 
+                 unsigned char *bufMapdata, int mapSize) {
 	Filedata = bufFiledata;
-	IcnFilesize = bufsize;
+	IcnFilesize = bufSize;
 
-    int MapFilesize = mapsize;
-    unsigned char * MapFiledata = bufMapdata;
+    int MapFilesize = mapSize;
+    unsigned char *MapFiledata = bufMapdata;
     int i;
 
 	// now we can start creating the Tilesetindex
@@ -149,11 +149,10 @@ IcnFile::IcnFile(unsigned char * bufFiledata, int bufsize,
 
 IcnFile::~IcnFile()
 {	
-	;
 }
 
 SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
-	SDL_Surface * pic;
+	SDL_Surface *pic;
 	
 	if(IndexOfFile >= NumFiles) {
 		return NULL;
@@ -166,7 +165,7 @@ SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
 	
 	unsigned char* palettestart = RPAL + (16 * RTBL[IndexOfFile]);
 		
-	unsigned char * filestart = SSET + (IndexOfFile * ((SIZE_X * SIZE_Y)/2));
+	unsigned char *filestart = SSET + (IndexOfFile * ((SIZE_X * SIZE_Y)/2));
 	
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SIZE_X,SIZE_Y,8,0,0,0,0))== NULL) {
@@ -200,7 +199,7 @@ SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
 }
 
 SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX, int tilesY, int tilesN) {
-	SDL_Surface * pic;
+	SDL_Surface *pic;
 	
 	if(MapfileIndex >= NumTilesets) {
 		return NULL;
@@ -284,8 +283,8 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette,
 					return NULL;
 				}
 	
-				unsigned char* palettestart = RPAL + (16 * RTBL[IndexOfFile]);
-				unsigned char * filestart = SSET + (IndexOfFile * ((SIZE_X * SIZE_Y)/2));
+				unsigned char *palettestart = RPAL + (16 * RTBL[IndexOfFile]);
+				unsigned char *filestart = SSET + (IndexOfFile * ((SIZE_X * SIZE_Y)/2));
 
 				//Now we can copy to surface
 				unsigned char *dest = (unsigned char*) (pic->pixels) + (pic->pitch)*y*SIZE_Y + (x+n*tilesX) * SIZE_X;
@@ -314,7 +313,7 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette,
 }
 
 SDL_Surface *IcnFile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette) {
-	SDL_Surface * pic;
+	SDL_Surface *pic;
 	
 	if((StartIndex >= NumFiles)||(EndIndex >= NumFiles)||(StartIndex > EndIndex)) {
 		return NULL;
@@ -339,8 +338,8 @@ SDL_Surface *IcnFile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Pale
 			return NULL;
 		}
 	
-		unsigned char* palettestart = RPAL + (16 * RTBL[IndexOfFile]);
-		unsigned char * filestart = SSET + (IndexOfFile * ((SIZE_X * SIZE_Y)/2));
+		unsigned char *palettestart = RPAL + (16 * RTBL[IndexOfFile]);
+		unsigned char *filestart = SSET + (IndexOfFile * ((SIZE_X * SIZE_Y)/2));
 
 		//Now we can copy to surface
 		unsigned char *dest = (unsigned char*) (pic->pixels) + i*SIZE_X;

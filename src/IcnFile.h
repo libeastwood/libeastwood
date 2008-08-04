@@ -20,8 +20,8 @@ private:
 		Uint16* TileIndex;
 	};
 public:
-	IcnFile(unsigned char * bufFiledata, int bufsize, 
-	        unsigned char * bufMapdata, int mapsize);
+	IcnFile(unsigned char *bufFiledata, int bufSize, 
+	        unsigned char *bufMapdata, int mapsize);
 	~IcnFile();
 
 
@@ -81,19 +81,19 @@ public:
 	int getNumTilesets() { return NumTilesets; };
 
 private:
-	unsigned char* Filedata;
+	unsigned char *Filedata;
 	Uint32 IcnFilesize;
 
 	Uint32 NumFiles;
 
 	Uint16	NumTilesets;
-	MapfileEntry* Tileset;
+	MapfileEntry *Tileset;
 	
-	unsigned char* SSET;
+	unsigned char *SSET;
 	Uint32 SSET_Length;
-	unsigned char* RPAL;
+	unsigned char *RPAL;
 	Uint32 RPAL_Length;
-	unsigned char* RTBL;
+	unsigned char *RTBL;
 	Uint32 RTBL_Length;
 
 };

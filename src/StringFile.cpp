@@ -1,19 +1,17 @@
+#include "Log.h"
+#include "StringFile.h"
+
 #include <iostream>
 #include <SDL_endian.h>
 #include <SDL.h>
 #include <string>
 
-#include "Log.h"
-#include "StringFile.h"
+StringFile::StringFile(unsigned char *bufFileData) {
 
-StringFile::StringFile(uint8_t *bufFiledata) {
-
-//	int bufsize;
-//	uint8_t* bufFiledata = ResMan::Instance()->readFile(stringFileName.c_str(), &bufsize);
 	Uint16* index;
 
-	numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFiledata)[0]))/2 - 1;
-	index = (Uint16*) bufFiledata;
+	numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFileData)[0]))/2 - 1;
+	index = (Uint16*) bufFileData;
 	for(int i=0; i <= numStrings; i++) {
 		index[i] = SDL_SwapLE16(index[i]);
 	}
@@ -21,11 +19,11 @@ StringFile::StringFile(uint8_t *bufFiledata) {
 	stringArray = new std::string[numStrings];
 	
 	for(int i=0; i < numStrings;i++) {
-		std::string tmp = (const char*) (bufFiledata+index[i]);
+		std::string tmp = (const char*) (bufFileData+index[i]);
 		stringArray[i] = decodeString(tmp);
 	}
 	
-	delete bufFiledata;
+	delete bufFileData;
 
 }
 

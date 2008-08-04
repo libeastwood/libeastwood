@@ -1,8 +1,9 @@
 #ifndef EASTWOOD_SHPFILE_H
 #define EASTWOOD_SHPFILE_H
 
-#include "SDL.h"
 #include "Decode.h"
+
+#include <SDL.h>
 
 #define	TILE_NORMAL		0x00010000
 #define	TILE_FLIPH		0x00100000
@@ -24,7 +25,7 @@ class SDL_Palette;
 class ShpFile : public Decode
 {
 public:
-	ShpFile(unsigned char * bufFiledata, int bufsize, SDL_Palette * palette = NULL);
+	ShpFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette = NULL);
 	~ShpFile();
 
 /*!
@@ -80,10 +81,10 @@ protected:
 private:
 	void readIndex();
 
-	ShpFileEntry * Index;
-	unsigned char* Filedata;
+	ShpFileEntry *Index;
+	unsigned char *Filedata;
 	Uint32 ShpFilesize;
-	SDL_Palette * m_palette;
+	SDL_Palette *m_palette;
 };
 
 

@@ -17,7 +17,7 @@
 class StringFile
 {
 public:
-	StringFile(uint8_t *bufFiledata);
+	StringFile(unsigned char *bufFileData);
 	~StringFile();
 
 	/*!

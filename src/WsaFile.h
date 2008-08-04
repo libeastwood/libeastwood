@@ -3,14 +3,15 @@
 
 #include "Decode.h"
 #include "Animation.h"
-#include "SDL.h"
+
+#include <SDL.h>
 #include <string>
 
 class WsaFile : public Decode
 {
 public:
-	WsaFile(uint8_t * bufFiledata, int bufsize, 
-                SDL_Surface* lastframe = NULL, float setFps = 0 );
+	WsaFile(unsigned char *bufFileData, int bufSize, 
+                SDL_Surface *lastframe = NULL, float setFps = 0 );
 	WsaFile();
 
 	~WsaFile();
@@ -27,12 +28,12 @@ private:
 	void decodeFrames();
 	std::string m_text;
 
-	uint8_t* decodedFrames;
+	unsigned char *decodedFrames;
 
-	uint8_t* Filedata;
-	uint8_t m_textColor;
+	unsigned char *Filedata;
+	unsigned char *m_textColor;
 
-	Uint32* Index;
+	Uint32 *Index;
 	int WsaFilesize;
 
 	Uint16 NumFrames;
