@@ -16,8 +16,6 @@ PalFile::PalFile(unsigned char *bufFileData, int bufSize)
 	    m_palette->colors[i].g = *bufFileData++ <<2;
 	    m_palette->colors[i].b = *bufFileData++ <<2;
     }
-
-    delete [] bufFileData;
 }
 
 PalFile::~PalFile()
