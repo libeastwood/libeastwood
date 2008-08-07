@@ -1,6 +1,5 @@
 #include "Animation.h"
-#include <stdio.h>
-#include <stdlib.h>
+
 Animation::Animation() {
 	CurFrameStartTime = SDL_GetTicks();
 	FrameDurationTime = 1;
