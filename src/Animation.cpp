@@ -1,48 +1,48 @@
 #include "Animation.h"
 
 Animation::Animation() {
-	CurFrameStartTime = SDL_GetTicks();
-	FrameDurationTime = 1;
-	NumFrames = 0;
-	curFrame = 0;
-	Frame = NULL;
+	m_curFrameStartTime = SDL_GetTicks();
+	m_frameDurationTime = 1;
+	m_numFrames = 0;
+	m_curFrame = 0;
+	m_frame = NULL;
 }
 
 Animation::~Animation() {
-	if(Frame != NULL) {
-		for(int i=0; i < NumFrames; i++) {
-			SDL_FreeSurface(Frame[i]);
-//			Frame[i] = NULL;
+	if(m_frame != NULL) {
+		for(Uint32 i=0; i < m_numFrames; i++) {
+			SDL_FreeSurface(m_frame[i]);
+//			m_frame[i] = NULL;
 		}
-		free(Frame);
+		free(m_frame);
 	}
 }
 
 SDL_Surface *Animation::getFrame() {
-	if(Frame == NULL) {
+	if(m_frame == NULL) {
 		return NULL;
 	}
 	
-	if((SDL_GetTicks() - CurFrameStartTime) > FrameDurationTime) {
-		CurFrameStartTime = SDL_GetTicks();
-		curFrame++;
-		if(curFrame >= NumFrames) {
-			curFrame = 0;
+	if((SDL_GetTicks() - m_curFrameStartTime) > m_frameDurationTime) {
+		m_curFrameStartTime = SDL_GetTicks();
+		m_curFrame++;
+		if(m_curFrame >= m_numFrames) {
+			m_curFrame = 0;
 		}
 	}
-	return Frame[curFrame];
+	return m_frame[m_curFrame];
 }
 
 void Animation::addFrame(SDL_Surface * newFrame, bool SetColorKey) {
-	if((Frame = (SDL_Surface **) realloc(Frame,sizeof(SDL_Surface *) * (NumFrames+1))) == NULL) {
+	if((m_frame = (SDL_Surface **) realloc(m_frame,sizeof(SDL_Surface *) * (m_numFrames+1))) == NULL) {
 		perror("Animation::addFrame()");
 		exit(EXIT_FAILURE);
 	}
 	
-		Frame[NumFrames] = newFrame;
+		m_frame[m_numFrames] = newFrame;
 	
 	if(SetColorKey == true) {
-		SDL_SetColorKey(Frame[NumFrames], SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
+		SDL_SetColorKey(m_frame[m_numFrames], SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
 	}
-	NumFrames++;
+	m_numFrames++;
 }
