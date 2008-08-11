@@ -3,15 +3,17 @@
 
 #include "WsaFile.h"
 
+#include <SDL.h>
 #include <SDL_endian.h>
 #include <stdlib.h>
 #include <string>
 
-WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, 
+WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
                 SDL_Surface *lastframe, float setFps ) : Decode()
 {
 	Filedata = bufFileData;
 	WsaFilesize = bufSize;
+	m_palette = palette;
 	
     LOG_INFO("WsaFile", "Loading wsa with size %d...", bufSize);
         
@@ -88,7 +90,7 @@ WsaFile::~WsaFile()
 	free(decodedFrames);
 }
 
-SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
+SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber)
 {
 /*	if(WsaFilesize == -1){
 		img = new Image(UPoint(1,1));
@@ -111,12 +113,12 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 	//printf("Frame Nr.: %d (Size: %dx%d)\n",FrameNumber,SizeX,SizeY);
 			
     /*
-        printf("%u %u %u\n", palette->colors[12].r,
-                             palette->colors[12].g,
-                             palette->colors[12].b);
+        printf("%u %u %u\n", m_palette->colors[12].r,
+                             m_palette->colors[12].g,
+                             m_palette->colors[12].b);
     */
         
-	SDL_SetColors(pic, palette->colors, 0, palette->ncolors);
+	SDL_SetColors(pic, m_palette->colors, 0, m_palette->ncolors);
 	SDL_LockSurface(pic);
 
         //printf("%u\n", Image[0]);
@@ -144,7 +146,7 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber, SDL_Palette *palette)
 	\param	SetColorKey	if true, black is set as transparency
 	\return	a new animation object or NULL on error
 */
-Animation *WsaFile::getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey)
+Animation *WsaFile::getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey)
 {
 	Animation* tmpAnimation;
 	SDL_Surface *tmp;
@@ -154,7 +156,7 @@ Animation *WsaFile::getAnimation(unsigned int startindex, unsigned int endindex,
 	}
 	
 	for(unsigned int i = startindex; i <= endindex; i++) {
-		if((tmp = getSurface(i, palette)) == NULL) {
+		if((tmp = getSurface(i)) == NULL) {
 			delete tmpAnimation;
 			return NULL;
 		}

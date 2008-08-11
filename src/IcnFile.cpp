@@ -1,3 +1,4 @@
+#include <SDL.h>
 #include <SDL_endian.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,9 +13,11 @@
   
 
 IcnFile::IcnFile(unsigned char *bufFiledata, int bufSize, 
-                 unsigned char *bufMapdata, int mapSize) {
+                 unsigned char *bufMapdata, int mapSize,
+				 SDL_Palette *palette) {
 	Filedata = bufFiledata;
 	IcnFilesize = bufSize;
+	m_palette = palette;
 
     int MapFilesize = mapSize;
     unsigned char *MapFiledata = bufMapdata;
@@ -151,7 +154,7 @@ IcnFile::~IcnFile()
 {	
 }
 
-SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
+SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile) {
 	SDL_Surface *pic;
 	
 	if(IndexOfFile >= NumFiles) {
@@ -172,7 +175,7 @@ SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
 		return NULL;
 	}
 			
-	SDL_SetColors(pic, palette->colors, 0, palette->ncolors);
+	SDL_SetColors(pic, m_palette->colors, 0, m_palette->ncolors);
 	SDL_LockSurface(pic);	
 
 	//Now we can copy to surface
@@ -198,7 +201,7 @@ SDL_Surface *IcnFile::getSurface(Uint32 IndexOfFile, SDL_Palette *palette) {
 	return pic;
 }
 
-SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX, int tilesY, int tilesN) {
+SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, int tilesX, int tilesY, int tilesN) {
 	SDL_Surface *pic;
 	
 	if(MapfileIndex >= NumTilesets) {
@@ -267,7 +270,7 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette,
 		return NULL;
 	}
 	
-	SDL_SetColors(pic, palette->colors, 0, palette->ncolors);
+	SDL_SetColors(pic, m_palette->colors, 0, m_palette->ncolors);
 	SDL_LockSurface(pic);
 	
 	int Tileidx=0;
@@ -312,7 +315,7 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette,
 	return pic;
 }
 
-SDL_Surface *IcnFile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette) {
+SDL_Surface *IcnFile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex) {
 	SDL_Surface *pic;
 	
 	if((StartIndex >= NumFiles)||(EndIndex >= NumFiles)||(StartIndex > EndIndex)) {
@@ -325,7 +328,7 @@ SDL_Surface *IcnFile::getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Pale
 		return NULL;
 	}
 	
-	SDL_SetColors(pic, palette->colors, 0, palette->ncolors);
+	SDL_SetColors(pic, m_palette->colors, 0, m_palette->ncolors);
 	SDL_LockSurface(pic);	
 
 	for(unsigned int i = 0; i < NumTiles; i++) {

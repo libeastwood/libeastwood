@@ -25,7 +25,7 @@ class SDL_Palette;
 class ShpFile : public Decode
 {
 public:
-	ShpFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette = NULL);
+	ShpFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette);
 	~ShpFile();
 
 /*!

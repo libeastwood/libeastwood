@@ -4,21 +4,22 @@
 #include "Decode.h"
 #include "Animation.h"
 
-#include <SDL.h>
 #include <string>
 
+class SDL_Palette;
+class SDL_Surface;
 class WsaFile : public Decode
 {
 public:
-	WsaFile(unsigned char *bufFileData, int bufSize, 
+	WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
                 SDL_Surface *lastframe = NULL, float setFps = 0 );
 	WsaFile();
 
 	~WsaFile();
 
-	SDL_Surface *getSurface(Uint32 FrameNumber, SDL_Palette *palette);
+	SDL_Surface *getSurface(Uint32 FrameNumber);
 
-	Animation* getAnimation(unsigned int startindex, unsigned int endindex, SDL_Palette *palette, bool SetColorKey=true);
+	Animation* getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey=true);
 
 	inline int getNumFrames() { return (int) NumFrames; };
 	inline Uint32 getFramesPer1024ms() { return FramesPer1024ms; };
@@ -32,6 +33,8 @@ private:
 
 	unsigned char *Filedata;
 	unsigned char *m_textColor;
+
+	SDL_Palette *m_palette;
 
 	Uint32 *Index;
 	int WsaFilesize;

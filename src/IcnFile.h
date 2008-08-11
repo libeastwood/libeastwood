@@ -1,8 +1,6 @@
 #ifndef EASTWOOD_ICNFILE_H
 #define EASTWOOD_ICNFILE_H
 
-#include "SDL.h"
-
 /*!
     A class for loading a *.ICN-File and the corresponding *.MAP-File.
     
@@ -10,6 +8,7 @@
 	small 16x16 pixel tiles. The map-file contains the information how to build up a complete picture with
 	this small tiles.
 */
+class SDL_Surface;
 class IcnFile
 {
 private:
@@ -19,13 +18,16 @@ private:
 		Uint32 NumTiles;
 		Uint16* TileIndex;
 	};
+
+	SDL_Palette *m_palette;
 public:
 	IcnFile(unsigned char *bufFiledata, int bufSize, 
-	        unsigned char *bufMapdata, int mapsize);
+	        unsigned char *bufMapdata, int mapsize,
+			SDL_Palette *palette);
 	~IcnFile();
 
 
-	SDL_Surface *getSurface(Uint32 IndexOfFile, SDL_Palette *palette);
+	SDL_Surface *getSurface(Uint32 IndexOfFile);
 
 /// Returns an array of pictures in the icn-File
 /*!
@@ -54,7 +56,7 @@ public:
 	@param	tilesN			how many tilesX*tilesY blocks in a row
 	@return	the result surface with tilesX*tilesY*tilesN tiles
 */
-  	SDL_Surface *getSurfaceArray(Uint32 MapfileIndex, SDL_Palette *palette, int tilesX = 0, int tilesY = 0, int tilesN = 0);
+  	SDL_Surface *getSurfaceArray(Uint32 MapfileIndex, int tilesX = 0, int tilesY = 0, int tilesN = 0);
 
 /*!
 	This method returns a SDL_Surface containing multiple tiles/pictures. The returned surface contains all
@@ -64,7 +66,7 @@ public:
 	@param	EndIndex		The last tile to use
 	@return	the result surface with (EndIndex-StartIndex+1) tiles. NULL on errors.
 */
-	SDL_Surface *getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex, SDL_Palette *palette);
+	SDL_Surface *getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex);
 
 	/// Returns the number of tiles
 /*!
