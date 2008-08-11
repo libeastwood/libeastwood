@@ -39,7 +39,7 @@ using namespace std;
 #define VOC_CODE_DATA_16	9
 
 
-#define NUM_SAMPLES_OF_SILENCE	160
+#define NUM_SAMPLES_OF_SILENCE	250
 
 
 /**
