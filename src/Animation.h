@@ -21,6 +21,7 @@ public:
 	void addFrame(SDL_Surface *newFrame, bool SetColorKey = false);
 	Uint32 getNumFrames() { return m_numFrames; }
 	Uint32 getFrameDurationTime() { return m_frameDurationTime; }
+	Uint32 getCurFrame() { return m_curFrame; }
 
 private:
 	Uint32 m_curFrameStartTime;
