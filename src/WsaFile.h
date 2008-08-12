@@ -19,9 +19,9 @@ public:
 
 	SDL_Surface *getSurface(Uint32 FrameNumber);
 
-	Animation* getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey=true);
+	Animation* getAnimation(Uint32 startindex, Uint32 endindex, bool SetColorKey=true);
 
-	inline int getNumFrames() { return (int) NumFrames; };
+	inline Uint32 getNumFrames() { return (Uint32) NumFrames; };
 	inline Uint32 getFramesPer1024ms() { return FramesPer1024ms; };
 	inline float getFPS() { return fps; }
 

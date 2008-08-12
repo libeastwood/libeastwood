@@ -92,16 +92,11 @@ WsaFile::~WsaFile()
 
 SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber)
 {
-/*	if(WsaFilesize == -1){
-		img = new Image(UPoint(1,1));
-		return img;
-	}
-*/
 	if(FrameNumber >= NumFrames) {
 		return NULL;
 	}
 	
-	SDL_Surface * pic;
+	SDL_Surface *pic;
 	unsigned char *Frame = decodedFrames + (FrameNumber * SizeX * SizeY);
 	
 	// create new picture surface
@@ -110,21 +105,13 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber)
 		return NULL;
 	}
 	
-	//printf("Frame Nr.: %d (Size: %dx%d)\n",FrameNumber,SizeX,SizeY);
-			
-    /*
-        printf("%u %u %u\n", m_palette->colors[12].r,
-                             m_palette->colors[12].g,
-                             m_palette->colors[12].b);
-    */
-        
 	SDL_SetColors(pic, m_palette->colors, 0, m_palette->ncolors);
 	SDL_LockSurface(pic);
 
         //printf("%u\n", Image[0]);
 
 	//Now we can copy line by line
-	for(int y = 0; y < SizeY;y++) 
+	for(Uint16 y = 0; y < SizeY;y++) 
 	{
 		memcpy(	((unsigned char*) (pic->pixels)) + y * pic->pitch , Frame + y * SizeX, SizeX);
 	}
@@ -146,7 +133,7 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber)
 	\param	SetColorKey	if true, black is set as transparency
 	\return	a new animation object or NULL on error
 */
-Animation *WsaFile::getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey)
+Animation *WsaFile::getAnimation(Uint32 startindex, Uint32 endindex, bool SetColorKey)
 {
 	Animation* tmpAnimation;
 	SDL_Surface *tmp;
@@ -155,7 +142,7 @@ Animation *WsaFile::getAnimation(unsigned int startindex, unsigned int endindex,
 		return NULL;
 	}
 	
-	for(unsigned int i = startindex; i <= endindex; i++) {
+	for(Uint32 i = startindex; i <= endindex; i++) {
 		if((tmp = getSurface(i)) == NULL) {
 			delete tmpAnimation;
 			return NULL;
@@ -169,7 +156,7 @@ void WsaFile::decodeFrames()
 {
 	unsigned char *dec80;
 	
-	for(int i=0;i<NumFrames;i++) 
+	for(Uint16 i=0;i<NumFrames;i++) 
 	{
 		if( (dec80 = (unsigned char*) calloc(1,SizeX*SizeY*2)) == NULL) 
 		{
