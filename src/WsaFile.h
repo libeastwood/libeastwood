@@ -2,7 +2,6 @@
 #define EASTWOOD_WSAFILE_H
 
 #include "Decode.h"
-#include "Animation.h"
 
 #include <string>
 
@@ -18,8 +17,6 @@ public:
 	~WsaFile();
 
 	SDL_Surface *getSurface(Uint32 FrameNumber);
-
-	Animation* getAnimation(Uint32 startindex, Uint32 endindex, bool SetColorKey=true);
 
 	inline Uint32 getNumFrames() { return (Uint32) NumFrames; };
 	inline Uint32 getFramesPer1024ms() { return FramesPer1024ms; };

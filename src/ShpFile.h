@@ -19,7 +19,6 @@ struct ShpFileEntry
 	Uint32 EndOffset;
 };
 
-class Animation;
 class SDL_Palette;
 
 class ShpFile : public Decode
@@ -60,18 +59,6 @@ public:
 */
 	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...);
 	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, Uint32 *tiles);
-
-	/// Returns an animation
-/*!
-	This method returns a new animation object with all pictures from startindex to endindex
-	in it. The returned pointer should be freed with delete if no longer needed. If an error
-	occured, NULL is returned.
-	@param	startindex	index of the first picture
-	@param	endindex		index of the last picture
-	@param	SetColorKey	if true, black is set as transparency
-	@return	a new animation object or NULL on error
-*/
-	Animation* getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey=true);	
 
 	inline int getNumFiles() {return (int) NumFiles;};
 

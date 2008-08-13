@@ -4,7 +4,6 @@
 
 #include "Log.h"
 
-#include "Animation.h"
 #include "ShpFile.h"
 
 ShpFile::ShpFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette) : Decode()
@@ -312,37 +311,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 	
 	SDL_UnlockSurface(pic);
 	SDL_SetColorKey(pic, SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
-//	pic->setColorKey(0);
 	return pic;
-}
-
-/// Returns an animation
-/**
-	This method returns a new animation object with all pictures from startindex to endindex
-	in it. The returned pointer should be freed with delete if no longer needed. If an error
-	occured, NULL is returned.
-	\param startindex	index of the first picture
-	\param endindex		index of the last picture
-	\param	SetColorKey	if true, black is set as transparency
-	\return	a new animation object or NULL on error
-*/
-Animation* ShpFile::getAnimation(unsigned int startindex, unsigned int endindex, bool SetColorKey)
-{
-	Animation *tmpAnimation;
-	SDL_Surface *tmp;
-	
-	if((tmpAnimation = new Animation()) == NULL) {
-		return NULL;
-	}
-	
-	for(unsigned int i = startindex; i <= endindex; i++) {
-		if((tmp = getSurface(i)) == NULL) {
-			delete tmpAnimation;
-			return NULL;
-		}
-		tmpAnimation->addFrame(tmp,SetColorKey);
-	}
-	return tmpAnimation;
 }
 
 void ShpFile::readIndex()
