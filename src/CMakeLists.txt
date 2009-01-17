@@ -13,6 +13,8 @@ SET( LIBEASTWOOD_SRCS
   StringFile.cpp
   VocFile.cpp
   WsaFile.cpp
+  adl/emuopl.cpp
+  adl/fmopl.c
 )
 
 SET( LIBEASTWOOD_HEADERS
@@ -29,6 +31,9 @@ SET( LIBEASTWOOD_HEADERS
   StringFile.h
   VocFile.h
   WsaFile.h
+  adl/emuopl.h
+  adl/fmopl.h
+  adl/opl.h
 )
 
 INSTALL( FILES ${LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood" )
