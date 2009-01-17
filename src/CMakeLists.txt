@@ -1,4 +1,4 @@
-SET( libeastwood_SRCS
+SET( LIBEASTWOOD_SRCS
   AdlFile.cpp
   CpsFile.cpp
   Decode.cpp
@@ -13,7 +13,7 @@ SET( libeastwood_SRCS
   WsaFile.cpp
 )
 
-SET( libeastwood_HEADERS
+SET( LIBEASTWOOD_HEADERS
   AdlFile.h
   CpsFile.h
   Decode.h
@@ -29,7 +29,7 @@ SET( libeastwood_HEADERS
   WsaFile.h
 )
 
-ADD_LIBRARY( eastwood SHARED ${libeastwood_SRCS} )
+ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
 
 TARGET_LINK_LIBRARIES(eastwood ${SDLMAIN_LIBRARY} )
 TARGET_LINK_LIBRARIES(eastwood ${SDLMIXER_LIBRARY} )
