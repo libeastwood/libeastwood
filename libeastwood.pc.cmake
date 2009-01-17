@@ -3,10 +3,10 @@ exec_prefix=@LIB_INSTALL_DIR@
 libdir=@LIB_INSTALL_DIR@
 includedir=@CMAKE_INSTALL_PREFIX@/include
 
-Name: libeastwood
+Name: @PACKAGE@
 Description: libeastwood game data library
-Version: 0.1
+Version: @VERSION@
 URL: https://launchpad.net/doonlunacy
 Cflags: -I${includedir}
-Libs: -L${libdir} -lSDL -lsamplerate
+Libs: -L${libdir} -lSDL -lSDL_mixer -lsamplerate
 
