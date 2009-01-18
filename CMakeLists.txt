@@ -57,7 +57,7 @@ MESSAGE(STATUS "version: ${VERSION}")
 CONFIGURE_FILE(${LIBEASTWOOD_SOURCE_DIR}/libeastwood.pc.cmake ${LIBEASTWOOD_BINARY_DIR}/libeastwood.pc @ONLY)
 INSTALL( FILES ${LIBEASTWOOD_BINARY_DIR}/libeastwood.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig )
 
-INSTALL( FILES ${LIBEASTWOOD_SOURCE_DIR}/cmake/modules/FindLibEastwood.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/share/apps/cmake/modules )
+#INSTALL( FILES ${LIBEASTWOOD_SOURCE_DIR}/cmake/modules/FindLibEastwood.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/share/apps/cmake/modules )
 
 ADD_SUBDIRECTORY( src )
 
