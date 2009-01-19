@@ -1,0 +1,117 @@
+=================================
+   DUNEII FILE SPECIFICATIONS 
+=================================
+
+Started:
+14.01.2001 22:37:32
+
+by Joachim Schiele <js@dune2.de>
+
+This docu explains the file formats used by "dune2 - the battle for arrakis"
+
+"dune is a trademark of dino de laurentiis corp. & licensed by MCA UNIVERSAL
+MARCHANDISING, INC.
+"dune2 - the battle for arrakis" is Copyright (C)1992 Westwood Studios, Inc.
+All rights reserved.
+
+The information provided here is meant for programmers that want to make
+editor and utilites for "dune2 - the battle for arrakis".
+
+A lot of work had already be done by Vladano Bato (bat22@geocities.com) 
+with his document "COMMAND AND CONQUEROR FILE FORMATS" so i want to thank
+him very much.
+
+I put some example c-code in. And everything mentioned about coding is c.
+
+So here a list of what can be found here:
+------------------------------------------
+
+ 1. pak files
+ 2. cps files
+ 3. shp files 
+ 4. pal files
+ 6. emc files
+ 7. fnt files
+ 8. tbl files 
+ 9. voc files
+ 10. code 80/40/20
+
+==========================
+ 1. The pak-files
+==========================
+
+The PAK-files are devided up into a HEAD and a BODY.
+The HEAD could be like this:
+
+aa 02 00 00 34 23 34 34  24 34 34 23 34 34 23 12 | ................ 
+00 aa 02 10 00 34 23 34  34 24 34 34 23 34 34 23 | ................ 
+52 4d 59 2e 56 4f 43 00  d9 c9 05 00 41 43 41 50 | ................ 
+54 55 52 45 2e 56 4f 43  00 fb e9 05 00 41 4e 45 | ................
+58 54 2e 56 4f 43 00 dd  03 06 00 41 4e 45 58 54 | ................
+32 2e 56 4f 43 00 00 00  00 00 43 72 65 61 74 69 | ................
+76 65 20 56 6f 69 63 65  20 46 69 6c 65 1a 1a 00 | ................
+0a 01 29 11 01 c3 4b 00  ab 00 83 83 83 83 83 83 | ................ 
+83 83 83 83 83 83 83 83  83 83 83 83 83 83 83 83 | ................
+83 83 83 83 83 83 83 83  83 83 83 83 83 83 83 83 | ................
+83 83 83 83 83 83 83 83  83 83 83 83 83 83 83 83 | ................
+
+StartOffsets:
+You can see the "aa 02 00 00" -> read it with "unsigned long" then you
+will get "00 00 02 aa" as hexaddress in the file - now set your fd
+to this offset you can read out the contence of the IDEFIXII.VOC. After
+the filename there is always a seperator "00" so you know how
+to seperate the names and the offsets. Then you can read the next offset
+of the file ASTERIX.VOC it is "00 10 02 aa" so you get the startoffset of
+it.
+
+EndOffsets:
+The endoffsets of a file "IDEFIXII.VOC" would be just one byte before the
+startoffset of "ASTERIX.VOC".
+So the offsets of "IDEFIXII.VOC" would be:
+ StartOffset: "00 00 02 aa"
+ EndOffset  : "00 10 02 aa" - 1  so "00 10 02 A9"
+But the last file in the pak doesn't have these method to generate it's
+endoffset because there isn't any file afterwards the get the startoffset form.
+So the last file in the HEADER has it's endoffset at the fileend of the
+pakfile.
+
+The head is seperated from the body with 5x00 you can see this in my
+example "00 00 00 00 00 43 72 65 .. .. .." this is like the "00" after
+a filename to seperate it from the next and then there would be the next
+offset of the next filename .... and so on.
+
+see /src/pakextract.c for more informations on this. i have put some
+comments in the code so you are not on you own :)
+
+==========================
+ 2. The cps-files
+==========================
+These files are very much like those from CNC.
+Format80 compression is used 
+
+==========================
+ 3. The shp-files
+==========================
+==========================
+ 4. pal files
+==========================
+==========================
+ 6. emc files
+==========================
+==========================
+ 7. fnt files
+==========================
+==========================
+ 8. tbl files 
+==========================
+==========================
+ 9. voc files
+==========================
+voc files are compressed audio files for duneii usually in mono format 
+and with a very low encoding rate
+linux: there is a tool called sox which is able to convert this format to wav
+
+==========================
+ 10. code 80/40/20
+==========================
+
