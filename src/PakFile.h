@@ -1,23 +1,26 @@
 #ifndef	EASTWOOD_PAKFILE_H
 #define	EASTWOOD_PAKFILE_H
 
-#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <boost/shared_ptr.hpp>
 
 struct PakFileEntry {
-	long StartOffset;
-	long EndOffset;
-	char *Filename; // dunk - better to be const char* ? ( or even std::string ? )
+	size_t StartOffset;
+	size_t EndOffset;
+	std::string Filename;
 };
 
 class PakFile
 {
 public:
-	PakFile(const char *PakFilename);
+	PakFile(std::string PakFilename);
 	~PakFile();
 
-	char *getFilename(int index);
+	std::string getFilename(int index);
 
-	unsigned char *getFile(const char *fname, int *size);
+	unsigned char *getFile(std::string fname, size_t *size);
 
 	inline int getNumFiles() {return NumFileEntry;};
 
@@ -25,11 +28,12 @@ private:
 
 	void readIndex();
 
-	FILE *fPakFile;
-	char *Filename;
+	boost::shared_ptr<std::ifstream> fPakFile;
+	FILE *File;
+	std::string Filename;
 
-	PakFileEntry *FileEntry;
-	int	NumFileEntry;
+	std::vector<PakFileEntry> FileEntry;
+	int NumFileEntry;
 };
 
 #endif // EASTWOOD_PAKFILE_H
