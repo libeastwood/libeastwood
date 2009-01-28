@@ -6,9 +6,7 @@
 PakFile::PakFile(std::string PakFilename)
 {
 	NumFileEntry = 0;
-	
 	Filename = PakFilename;
-	
 	fPakFile.reset(new std::ifstream(Filename.c_str()));
 	
 	readIndex();
@@ -61,34 +59,29 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
 	unsigned char *content;
 
 	for(std::vector<PakFileEntry>::iterator it = FileEntry.begin(); it < FileEntry.end(); it++ )
-	{
 		if((fileEntry = *it).Filename.compare(fname) == 0)
 			break;
 		else if(fileEntry.EndOffset == FileEntry.back().EndOffset)
 			return NULL;
-	}
 	
-	int filesize = fileEntry.EndOffset - fileEntry.StartOffset + 1;
+	size_t filesize = fileEntry.EndOffset - fileEntry.StartOffset + 1;
 	
-	if(filesize == 0) {
+	if(filesize == 0)
 		return NULL;
-	}
 	
-	if( (content = (unsigned char*) malloc(filesize)) == NULL) {
+	if( (content = (unsigned char*) malloc(filesize)) == NULL)
 		return NULL;
-	}
 	
-	fPakFile->seekg(fileEntry.StartOffset, std::ios_base::cur);
+	fPakFile->seekg(fileEntry.StartOffset, std::ios::beg);
+	if(fPakFile->fail())
+		return NULL;
+
+	fPakFile->read((char*)content, filesize);
 	if(fPakFile->fail())
 		return NULL;
 	
-	fPakFile->read((char*)&content, filesize);
-	if(fPakFile->fail())
-		return NULL;
-	
-	if(size != NULL) {
+	if(size != NULL)
 		*size = filesize;
-	}
 	
 	return content;	
 }

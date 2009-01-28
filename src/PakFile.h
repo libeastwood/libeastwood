@@ -25,11 +25,9 @@ public:
 	inline int getNumFiles() {return NumFileEntry;};
 
 private:
-
 	void readIndex();
 
 	boost::shared_ptr<std::ifstream> fPakFile;
-	FILE *File;
 	std::string Filename;
 
 	std::vector<PakFileEntry> FileEntry;
