@@ -25,7 +25,7 @@ void PakFile::readIndex()
     char name[256];
 
     while(1) {
-        PakFileEntry fileEntry;
+        PakFileEntry fileEntry = { 0, 0, ""};
         fPakFile->read((char*)&fileEntry.StartOffset, sizeof(int));
 
         // pak-files are always little endian encoded
@@ -54,12 +54,13 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
     PakFileEntry fileEntry;
     unsigned char *content;
     size_t fileSize;
-    for(std::vector<PakFileEntry>::iterator it = FileEntry.begin(); it < FileEntry.end(); it++ )
+    for(std::vector<PakFileEntry>::iterator it = FileEntry.begin(); it <= FileEntry.end(); it++ )
     {
+        if(it == FileEntry.end())
+            throw(FileNotFoundException(fname));
+
         if((fileEntry = *it).Filename.compare(fname) == 0)
             break;
-        else if(fileEntry.EndOffset == FileEntry.back().EndOffset)
-            throw(FileNotFoundException(fname));
     }
 
     fileSize = fileEntry.EndOffset - fileEntry.StartOffset + 1;
