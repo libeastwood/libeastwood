@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 
 struct PakFileEntry {
 	size_t StartOffset;
@@ -29,10 +28,11 @@ public:
 private:
 	void readIndex();
 
-	boost::shared_ptr<std::ifstream> fPakFile;
+        std::ifstream *fPakFile;
 	std::string Filename;
 
 	std::vector<PakFileEntry> FileEntry;
 };
 
 #endif // EASTWOOD_PAKFILE_H
+// vim:ts=8:sw=4:et

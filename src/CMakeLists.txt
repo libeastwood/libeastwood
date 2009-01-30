@@ -4,6 +4,7 @@ SET( LIBEASTWOOD_SRCS
   AdlFile.cpp
   CpsFile.cpp
   Decode.cpp
+  EastwoodException.cpp
   Font.cpp
   IcnFile.cpp
   IniFile.cpp
@@ -21,6 +22,7 @@ SET( LIBEASTWOOD_HEADERS
   AdlFile.h
   CpsFile.h
   Decode.h
+  EastwoodException.h
   Font.h
   IcnFile.h
   IniFile.h
