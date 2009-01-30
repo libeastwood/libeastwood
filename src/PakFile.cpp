@@ -5,7 +5,6 @@
 
 PakFile::PakFile(std::string PakFilename)
 {
-	NumFileEntry = 0;
 	Filename = PakFilename;
 	fPakFile.reset(new std::ifstream(Filename.c_str()));
 	
@@ -33,7 +32,7 @@ void PakFile::readIndex()
 			
 		LOG_INFO("PakFile", "Found file %s", name);
 		
-		if(NumFileEntry++ > 0)
+		if(FileEntry.size() > 0)
 			FileEntry.back().EndOffset = fileEntry.StartOffset - 1;
 
 		FileEntry.push_back(fileEntry);
@@ -46,8 +45,8 @@ void PakFile::readIndex()
 	}
 }
 
-std::string PakFile::getFilename(int index) {
-	if((index >= NumFileEntry) || (index < 0))
+std::string PakFile::getFilename(unsigned int index) {
+	if((index >= FileEntry.size()))
 		return NULL;
 	
 	return FileEntry[index].Filename;
@@ -57,31 +56,33 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
 {
 	PakFileEntry fileEntry;
 	unsigned char *content;
-
+	size_t fileSize;
 	for(std::vector<PakFileEntry>::iterator it = FileEntry.begin(); it < FileEntry.end(); it++ )
+	{
 		if((fileEntry = *it).Filename.compare(fname) == 0)
 			break;
 		else if(fileEntry.EndOffset == FileEntry.back().EndOffset)
 			return NULL;
+	}
+
+	fileSize = fileEntry.EndOffset - fileEntry.StartOffset + 1;
 	
-	size_t filesize = fileEntry.EndOffset - fileEntry.StartOffset + 1;
-	
-	if(filesize == 0)
+	if(fileSize == 0)
 		return NULL;
 	
-	if( (content = (unsigned char*) malloc(filesize)) == NULL)
+	if( (content = (unsigned char*) malloc(fileSize)) == NULL)
 		return NULL;
 	
 	fPakFile->seekg(fileEntry.StartOffset, std::ios::beg);
 	if(fPakFile->fail())
 		return NULL;
 
-	fPakFile->read((char*)content, filesize);
+	fPakFile->read((char*)content, fileSize);
 	if(fPakFile->fail())
 		return NULL;
 	
 	if(size != NULL)
-		*size = filesize;
+		*size = fileSize;
 	
 	return content;	
 }

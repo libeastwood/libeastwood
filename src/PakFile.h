@@ -18,11 +18,13 @@ public:
 	PakFile(std::string PakFilename);
 	~PakFile();
 
-	std::string getFilename(int index);
+	std::string getFilename(unsigned int index);
 
 	unsigned char *getFile(std::string fname, size_t *size);
 
-	inline int getNumFiles() {return NumFileEntry;};
+	inline unsigned int getNumFiles() {
+		return FileEntry.size();
+	};
 
 private:
 	void readIndex();
@@ -31,7 +33,6 @@ private:
 	std::string Filename;
 
 	std::vector<PakFileEntry> FileEntry;
-	int NumFileEntry;
 };
 
 #endif // EASTWOOD_PAKFILE_H
