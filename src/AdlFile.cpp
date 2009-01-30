@@ -2368,7 +2368,7 @@ bool CadlPlayer::load(uint8_t *bufFiledata, int bufsize)
 
   // 	_soundFileLoaded = file;
 
-  for(int i = 0; i < 200; i++)
+  for(int i = 0; i < 120; i++)
     if(_trackEntries[i] != 0xff)
       numsubsongs = i + 1;
 
