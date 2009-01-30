@@ -49,13 +49,6 @@ void PakFile::readIndex()
     }
 }
 
-    std::string PakFile::getFilename(unsigned int index) {
-        if((index >= FileEntry.size()))
-            return NULL;
-
-        return FileEntry[index].Filename;
-    }
-
 unsigned char *PakFile::getFile(std::string fname, size_t *size)
 {
     PakFileEntry fileEntry;
