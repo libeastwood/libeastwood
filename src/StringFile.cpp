@@ -23,8 +23,6 @@ StringFile::StringFile(unsigned char *bufFileData) {
 		stringArray[i] = decodeString(tmp);
 	}
 	
-	delete bufFileData;
-
 }
 
 StringFile::~StringFile() {

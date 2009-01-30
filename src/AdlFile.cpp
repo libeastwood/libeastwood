@@ -2361,7 +2361,6 @@ bool CadlPlayer::load(uint8_t *bufFiledata, int bufsize)
 
   memcpy(_soundDataPtr, p, soundDataSize*sizeof(uint8));
 
-  delete [] bufFiledata;
   bufFiledata = p = 0;
   bufsize = 0;
 

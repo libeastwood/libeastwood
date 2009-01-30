@@ -307,8 +307,6 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		}
 	}
 	
-	free(tiles);
-	
 	SDL_UnlockSurface(pic);
 	SDL_SetColorKey(pic, SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
 	return pic;
