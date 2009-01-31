@@ -9,7 +9,9 @@ PalFile::PalFile(unsigned char *bufFileData, int bufSize)
     m_palette = new SDL_Palette;
     m_palette->ncolors = bufSize / 3;
 
-    m_palette->colors = new SDL_Color[m_palette->ncolors];
+    // FIXME: Why won't this properly initialize?
+    // m_palette->colors = new SDL_Color[m_palette->ncolors];
+    m_palette->colors = (SDL_Color*)calloc(m_palette->ncolors, sizeof(SDL_Color));
 
     for (int i = 0; i < m_palette->ncolors; i++){
 	    m_palette->colors[i].r = *bufFileData++ <<2;
@@ -20,5 +22,6 @@ PalFile::PalFile(unsigned char *bufFileData, int bufSize)
 
 PalFile::~PalFile()
 {
+    free(m_palette->colors);
     delete m_palette;
 }
