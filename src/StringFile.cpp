@@ -6,27 +6,16 @@
 #include <SDL.h>
 #include <string>
 
-StringFile::StringFile(unsigned char *bufFileData) {
-
-	Uint16* index;
-
-	numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFileData)[0]))/2 - 1;
-	index = (Uint16*) bufFileData;
-	for(int i=0; i <= numStrings; i++) {
-		index[i] = SDL_SwapLE16(index[i]);
+StringFile::StringFile(const char *bufFileData) {
+	int numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFileData)[0]))/2 - 1;
+	strings.resize(numStrings);
+	for(int i = 0; i < numStrings; i++) {
+		Uint16 index = SDL_SwapLE16(((Uint16*)bufFileData)[i]);
+		strings[i] = decodeString(bufFileData+index);
 	}
-	
-	stringArray = new std::string[numStrings];
-	
-	for(int i=0; i < numStrings;i++) {
-		std::string tmp = (const char*) (bufFileData+index[i]);
-		stringArray[i] = decodeString(tmp);
-	}
-	
 }
 
 StringFile::~StringFile() {
-	delete [] stringArray;
 }
 
 

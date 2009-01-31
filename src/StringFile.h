@@ -2,10 +2,11 @@
 #define EASTWOOD_STRINGFILE_H
 
 #include <string>
+#include <vector>
 
 
 #define MISSION_DESCRIPTION		0
-#define MISSION_WIN				1
+#define MISSION_WIN			1
 #define MISSION_LOSE			2
 #define MISSION_ADVICE			3
 
@@ -17,7 +18,7 @@
 class StringFile
 {
 public:
-	StringFile(unsigned char *bufFileData);
+	StringFile(const char *bufFileData);
 	~StringFile();
 
 	/*!
@@ -27,17 +28,12 @@ public:
 	 *  @param texttype one of MISSION_DESCRIPTION, MISSION_WIN, MISSION_LOSE, MISSION_ADVICE
 	 *  @return the text for this mission and of this type.
 	*/
-	std::string getString(unsigned int mission, unsigned int texttype) {
-		int index = mission*4+texttype;
-		
-		if(index < numStrings) {
-			return stringArray[index];
-		} else {
-			return "StringFile::getString(): mission number or text type is invalid!\n";
-		}
+	inline std::string getString(unsigned int mission, unsigned int texttype) {
+		return strings[mission*4+texttype];
 	}
-	std::string getString(int i){
-		return stringArray[i];
+
+	inline std::string getString(int i){
+		return strings[i];
 	}
 
 private:
@@ -48,8 +44,7 @@ private:
      *  @return The decoded text
      */
 	std::string decodeString(std::string text);
-	std::string *stringArray;
-	int numStrings;
+	std::vector<std::string> strings;
 };
 
 #endif // EASTWOOD_STRINGFILE_H
