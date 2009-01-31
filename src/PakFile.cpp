@@ -1,5 +1,4 @@
 #include <SDL_endian.h>
-#include <new>
 
 #include "EastwoodException.h"
 #include "Log.h"
