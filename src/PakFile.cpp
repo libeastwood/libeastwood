@@ -56,7 +56,7 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
     for(std::vector<PakFileEntry>::iterator it = FileEntry.begin(); it <= FileEntry.end(); it++ )
     {
         if(it == FileEntry.end())
-            throw(FileNotFoundException(fname));
+            throw(FileNotFoundException(LOG_ERROR, "PakFile", fname));
 
         if((fileEntry = *it).Filename.compare(fname) == 0)
             break;
@@ -65,7 +65,7 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
     fileSize = fileEntry.EndOffset - fileEntry.StartOffset + 1;
 
     if(fileSize == 0)
-        throw(NullSizeException(fname));
+        throw(NullSizeException(LOG_ERROR, "PakFile", fname));
 
     if( (content = (unsigned char*) malloc(fileSize)) == NULL)
         throw(std::bad_alloc());

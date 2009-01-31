@@ -1,14 +1,14 @@
 #include "EastwoodException.h"
 
-EastwoodException::EastwoodException(std::string message)
+EastwoodException::EastwoodException(logLevel level, std::string location, std::string message)
 {
 }
 
-FileNotFoundException::FileNotFoundException(std::string filename) : EastwoodException(filename)
+FileNotFoundException::FileNotFoundException(logLevel level, std::string location, std::string message) : EastwoodException(level, location, message)
 {
 }
 
-NullSizeException::NullSizeException(std::string filename) : EastwoodException(filename)
+NullSizeException::NullSizeException(logLevel level, std::string location, std::string message) : EastwoodException(level, location, message)
 {
 }
 

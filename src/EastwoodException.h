@@ -4,22 +4,24 @@
 #include <sstream>
 #include <string>
 
+#include "Log.h"
+
 class EastwoodException {
     public:
-        EastwoodException(std::string message);
-        inline std::string getMessage() { return message; };
-        inline int getErrorCode() { return errorCode; };
-        inline bool isFatal() { return fatal; };
+        EastwoodException(logLevel level, std::string location, std::string message);
+        inline logLevel getLogLevel() { return level; }
+        inline std::string getLocation() { return location; }
+        inline std::string getMessage() { return message; }
 
     private:
+        logLevel level;
+        std::string location;
         std::string message;
-        int errorCode;
-        bool fatal;
 };
 
 class FileNotFoundException : public EastwoodException {
     public:
-        FileNotFoundException( std::string filename );
+        FileNotFoundException(logLevel level, std::string location, std::string message);
         inline std::string getFilename() { return filename; };
 
         inline std::string getMessage() {
@@ -36,7 +38,7 @@ class FileNotFoundException : public EastwoodException {
 
 class NullSizeException : public EastwoodException {
     public:
-        NullSizeException(std::string message);
+        NullSizeException(logLevel level, std::string location, std::string message);
 };
 #endif // EASTWOOD_EASTWOODEXCEPTION_H
 // vim:ts=8:sw=4:et
