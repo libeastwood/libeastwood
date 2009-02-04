@@ -74,8 +74,7 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
 
     fPakFile->read((char*)content, fileSize);
 
-    if(size != NULL)
-        *size = fileSize;
+    *size = fileSize;
 
     return content;	
 }
