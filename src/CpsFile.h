@@ -3,8 +3,9 @@
 
 #include "Decode.h"
 
-#include <SDL.h>
 
+class SDL_Palette;
+class SDL_Surface
 class CpsFile : public Decode
 {
 public:
@@ -14,8 +15,8 @@ public:
 	SDL_Surface *getSurface();
 
 private:
-	unsigned char *Filedata;
-	Uint32 CpsFilesize;
+	const unsigned char *m_filedata;
+	Uint32 m_cpsFilesize;
 	SDL_Palette *m_palette;
 };
 
