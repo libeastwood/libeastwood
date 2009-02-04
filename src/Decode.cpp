@@ -163,7 +163,7 @@ void Decode::shp_correct_lf(const unsigned char *in, unsigned char *out, int siz
 }
 
 
-void Decode::apply_pal_offsets(unsigned char *offsets, unsigned char *data,unsigned int length)
+void Decode::apply_pal_offsets(const unsigned char *offsets, unsigned char *data,unsigned int length)
 {
 	Uint16 i;
 	for (i = 0; i < length; i ++)
