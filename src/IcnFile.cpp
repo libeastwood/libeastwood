@@ -153,7 +153,7 @@ SDL_Surface *IcnFile::getSurface(Uint32 indexOfFile) {
 	
 	unsigned char* paletteStart = m_RPAL + (16 * m_RTBL[indexOfFile]);
 		
-	unsigned char *filestart = m_SSET + (indexOfFile * ((SIZE_X * SIZE_Y)/2));
+	unsigned char *fileStart = m_SSET + (indexOfFile * ((SIZE_X * SIZE_Y)/2));
 	
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SIZE_X,SIZE_Y,8,0,0,0,0))== NULL) {
@@ -165,15 +165,13 @@ SDL_Surface *IcnFile::getSurface(Uint32 indexOfFile) {
 
 	//Now we can copy to surface
 	unsigned char *dest = (unsigned char*) (pic->pixels);
-	unsigned char pixel;
 	for(int y = 0; y < SIZE_Y;y++) {
 		for(int x = 0; x < SIZE_X; x+=2) {
-			pixel = filestart[ (y*SIZE_X + x) / 2];
-			pixel = pixel >> 4;
+			const unsigned char startPix = fileStart[ (y*SIZE_X + x) / 2];
+			unsigned char pixel = startPix >> 4;
 			dest[x] = paletteStart[pixel];
 			
-			pixel = filestart[ (y*SIZE_X + x) / 2];
-			pixel = pixel & 0x0F;
+			pixel = startPix & 0x0F;
 			dest[x+1] = paletteStart[pixel];
 		}
 		dest += pic->pitch;
