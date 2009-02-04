@@ -167,12 +167,9 @@ SDL_Surface *IcnFile::getSurface(Uint32 indexOfFile) {
 	unsigned char *dest = (unsigned char*) (pic->pixels);
 	for(int y = 0; y < SIZE_Y;y++) {
 		for(int x = 0; x < SIZE_X; x+=2) {
-			const unsigned char startPix = fileStart[ (y*SIZE_X + x) / 2];
-			unsigned char pixel = startPix >> 4;
-			dest[x] = paletteStart[pixel];
-			
-			pixel = startPix & 0x0F;
-			dest[x+1] = paletteStart[pixel];
+			const unsigned char startPixel = fileStart[ (y*SIZE_X + x) / 2];
+			dest[x] = paletteStart[startPixel >> 4];
+			dest[x+1] = paletteStart[startPixel & 0x0F];
 		}
 		dest += pic->pitch;
 	}
@@ -274,16 +271,11 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 mapFileIndex, int tilesX, int tiles
 
 				//Now we can copy to surface
 				unsigned char *dest = (unsigned char*) (pic->pixels) + (pic->pitch)*y*SIZE_Y + (x+n*tilesX) * SIZE_X;
-				unsigned char pixel;
 				for(int y = 0; y < SIZE_Y;y++) {
 					for(int x = 0; x < SIZE_X; x+=2) {
-						pixel = fileStart[ (y*SIZE_X + x) / 2];
-						pixel = pixel >> 4;
-						dest[x] = paletteStart[pixel];
-			
-						pixel = fileStart[ (y*SIZE_X + x) / 2];
-						pixel = pixel & 0x0F;
-						dest[x+1] = paletteStart[pixel];
+						const unsigned char startPixel = fileStart[ (y*SIZE_X + x) / 2];
+						dest[x] = paletteStart[startPixel >> 4];
+						dest[x+1] = paletteStart[startPixel & 0x0F];
 					}
 					dest += pic->pitch;
 				}
@@ -329,16 +321,11 @@ SDL_Surface *IcnFile::getSurfaceRow(Uint32 startIndex, Uint32 endIndex) {
 
 		//Now we can copy to surface
 		unsigned char *dest = (unsigned char*) (pic->pixels) + i*SIZE_X;
-		unsigned char pixel;
 		for(int y = 0; y < SIZE_Y;y++) {
 			for(int x = 0; x < SIZE_X; x+=2) {
-				pixel = fileStart[ (y*SIZE_X + x) / 2];
-				pixel = pixel >> 4;
-				dest[x] = paletteStart[pixel];
-		
-				pixel = fileStart[ (y*SIZE_X + x) / 2];
-				pixel = pixel & 0x0F;
-				dest[x+1] = paletteStart[pixel];
+				const unsigned char startPixel = fileStart[ (y*SIZE_X + x) / 2];
+				dest[x] = paletteStart[startPixel >> 4];
+				dest[x+1] = paletteStart[startPixel & 0x0F];
 			}
 			dest += pic->pitch;
 		}
