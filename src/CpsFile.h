@@ -8,14 +8,13 @@
 class CpsFile : public Decode
 {
 public:
-	CpsFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette = NULL);
+	CpsFile(const unsigned char *bufFiledata, int bufSize, SDL_Palette *palette = NULL);
 	~CpsFile();
 
 	SDL_Surface *getSurface();
 
 private:
-	unsigned char *Filedata;
-	Uint32 CpsFilesize;
+	const unsigned char *m_filedata;
 	SDL_Palette *m_palette;
 };
 

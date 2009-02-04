@@ -9,10 +9,9 @@
 #define	SIZE_X	320
 #define SIZE_Y	200
 
-CpsFile::CpsFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette) : Decode()
+CpsFile::CpsFile(const unsigned char *bufFileData, int bufSize, SDL_Palette *palette) : Decode()
 {
-	Filedata = bufFileData;
-	CpsFilesize = bufSize;
+	m_filedata = bufFileData;
 	if(*(unsigned char *)(bufFileData + 9) == 3){
 		LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 		m_palette = new SDL_Palette;
@@ -41,21 +40,21 @@ SDL_Surface *CpsFile::getSurface()
 	SDL_Surface *pic = NULL;
 
 	// check for valid file
-	if( SDL_SwapLE16(*(unsigned short *)(Filedata + 2)) != 0x0004) {
+	if( SDL_SwapLE16(*(unsigned short *)(m_filedata + 2)) != 0x0004) {
 		return NULL;
 	}
 	
-	if( SDL_SwapLE16(*(unsigned short *)(Filedata + 4)) != 0xFA00) {
+	if( SDL_SwapLE16(*(unsigned short *)(m_filedata + 4)) != 0xFA00) {
 		return NULL;
 	}
 	
-	Uint16 PaletteSize = SDL_SwapLE16(*((unsigned short *)(Filedata + 8)));
+	Uint16 PaletteSize = SDL_SwapLE16(*((unsigned short *)(m_filedata + 8)));
 	
 	if( (ImageOut = (unsigned char*) calloc(1,SIZE_X*SIZE_Y)) == NULL) {
 		return NULL;
 	}
 	
-	if(decode80(Filedata + 10 + PaletteSize,ImageOut,0) == -2) {
+	if(decode80(m_filedata + 10 + PaletteSize,ImageOut,0) == -2) {
 		LOG_ERROR("CpsFile", "Cannot decode Cps-File");
 	}
 	

@@ -15,13 +15,13 @@ Decode::~Decode()
 
 }
 
-int Decode::decode80(unsigned char *image_in, unsigned char *image_out,unsigned int checksum)
+int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,unsigned int checksum)
 {
 	//
 	// should decode all the format80 stuff ;-) 
 	//
 
-	unsigned char *readp = image_in;
+	const unsigned char *readp = image_in;
 	unsigned char *writep = image_out;
 
 	Uint16 a = 0;
@@ -58,7 +58,7 @@ int Decode::decode80(unsigned char *image_in, unsigned char *image_out,unsigned 
 				break;
 			}
 			readp++;
-			my_memcpy(writep, readp, count);
+			my_memcpy(writep, (unsigned char*)readp, count);
 			readp += count;
 			writep += count;
 			a++;
@@ -138,9 +138,9 @@ void Decode::my_memcpy(unsigned char *dst, unsigned char *src, unsigned cnt)
 	};
 }
 
-void Decode::shp_correct_lf(unsigned char *in, unsigned char *out, int size)
+void Decode::shp_correct_lf(const unsigned char *in, unsigned char *out, int size)
 {
-	unsigned char *end = in + size;
+	const unsigned char *end = in + size;
 	while (in < end) {
 		unsigned char val = *in;
 		in++;
@@ -170,7 +170,7 @@ void Decode::apply_pal_offsets(unsigned char *offsets, unsigned char *data,unsig
 		data[i] = offsets[data[i]];
 }
 
-int Decode::decode40(unsigned char *image_in, unsigned char *image_out)
+int Decode::decode40(const unsigned char *image_in, unsigned char *image_out)
 {
 	/*
 	0 fill 00000000 c v
