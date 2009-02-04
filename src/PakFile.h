@@ -6,35 +6,35 @@
 #include <vector>
 
 struct PakFileEntry {
-    size_t StartOffset;
-    size_t EndOffset;
-    std::string Filename;
+    size_t startOffset;
+    size_t endOffset;
+    std::string fileName;
 };
 
 class PakFile
 {
     public:
-        PakFile(std::string PakFilename);
+        PakFile(std::string pakFileName);
         ~PakFile();
 
-        unsigned char *getFile(std::string fname, size_t *size);
+        unsigned char *getFile(std::string fileName, size_t *size);
 
-        inline std::string getFilename(unsigned int index) {
-            return FileEntry.at(index).Filename;
+        inline std::string getFileName(unsigned int index) {
+            return m_fileEntry[index].fileName;
         };
 
         inline unsigned int getNumFiles() {
-            return FileEntry.size();
+            return m_fileEntry.size();
         };
 
     private:
         void readIndex();
 
-        std::ifstream *fPakFile;
+        std::ifstream *m_pakFile;
 
-        std::string Filename;
+        std::string m_fileName;
 
-        std::vector<PakFileEntry> FileEntry;
+        std::vector<PakFileEntry> m_fileEntry;
 };
 
 #endif // EASTWOOD_PAKFILE_H

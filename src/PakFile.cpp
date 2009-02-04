@@ -4,19 +4,19 @@
 #include "Log.h"
 #include "PakFile.h"
 
-PakFile::PakFile(std::string PakFilename)
+PakFile::PakFile(std::string pakFileName)
 {
-    Filename = PakFilename;
-    fPakFile = new std::ifstream(Filename.c_str());
-    fPakFile->exceptions ( std::ifstream::eofbit | std::ifstream::failbit | std::ifstream::badbit );
+    m_fileName = pakFileName;
+    m_pakFile = new std::ifstream(m_fileName.c_str());
+    m_pakFile->exceptions ( std::ifstream::eofbit | std::ifstream::failbit | std::ifstream::badbit );
 
     readIndex();
 }
 
 PakFile::~PakFile()
 {
-    fPakFile->close();
-    delete fPakFile;
+    m_pakFile->close();
+    delete m_pakFile;
 }
 
 void PakFile::readIndex()
@@ -25,53 +25,53 @@ void PakFile::readIndex()
 
     while(1) {
         PakFileEntry fileEntry = { 0, 0, ""};
-        fPakFile->read((char*)&fileEntry.StartOffset, sizeof(int));
+        m_pakFile->read((char*)&fileEntry.startOffset, sizeof(int));
 
         // pak-files are always little endian encoded
-        fileEntry.StartOffset = SDL_SwapLE32(fileEntry.StartOffset);
+        fileEntry.startOffset = SDL_SwapLE32(fileEntry.startOffset);
 
-        fPakFile->getline(name, 256, 0);
-        fileEntry.Filename = name;
+        m_pakFile->getline(name, 256, 0);
+        fileEntry.fileName = name;
 
         LOG_INFO("PakFile", "Found file %s", name);
 
-        if(FileEntry.size() > 0)
-            FileEntry.back().EndOffset = fileEntry.StartOffset - 1;
+        if(m_fileEntry.size() > 0)
+            m_fileEntry.back().endOffset = fileEntry.startOffset - 1;
 
-        FileEntry.push_back(fileEntry);
-        if(fPakFile->peek() == 0x0)
+        m_fileEntry.push_back(fileEntry);
+        if(m_pakFile->peek() == 0x0)
         {
-            fPakFile->seekg(0, std::ios::end);
-            FileEntry.back().EndOffset = (size_t)fPakFile->tellg() - 1;
+            m_pakFile->seekg(0, std::ios::end);
+            m_fileEntry.back().endOffset = (size_t)m_pakFile->tellg() - 1;
             break;
         }
     }
 }
 
-unsigned char *PakFile::getFile(std::string fname, size_t *size)
+unsigned char *PakFile::getFile(std::string fileName, size_t *size)
 {
     PakFileEntry fileEntry;
     unsigned char *content;
-    for(std::vector<PakFileEntry>::iterator it = FileEntry.begin(); it <= FileEntry.end(); it++ )
+    for(std::vector<PakFileEntry>::iterator it = m_fileEntry.begin(); it <= m_fileEntry.end(); it++ )
     {
-        if(it == FileEntry.end())
-            throw(FileNotFoundException(LOG_ERROR, "PakFile", fname));
+        if(it == m_fileEntry.end())
+            throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
 
-        if((fileEntry = *it).Filename.compare(fname) == 0)
+        if((fileEntry = *it).fileName.compare(fileName) == 0)
             break;
     }
 
-    *size = fileEntry.EndOffset - fileEntry.StartOffset + 1;
+    *size = fileEntry.endOffset - fileEntry.startOffset + 1;
 
     if(*size == 0)
-        throw(NullSizeException(LOG_ERROR, "PakFile", fname));
+        throw(NullSizeException(LOG_ERROR, "PakFile", fileName));
 
     if( (content = (unsigned char*) malloc(*size)) == NULL)
         throw(std::bad_alloc());
 
-    fPakFile->seekg(fileEntry.StartOffset, std::ios::beg);
+    m_pakFile->seekg(fileEntry.startOffset, std::ios::beg);
 
-    fPakFile->read((char*)content, *size);
+    m_pakFile->read((char*)content, *size);
 
 
     return content;	
