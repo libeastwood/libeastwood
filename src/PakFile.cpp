@@ -52,7 +52,6 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
 {
     PakFileEntry fileEntry;
     unsigned char *content;
-    size_t fileSize;
     for(std::vector<PakFileEntry>::iterator it = FileEntry.begin(); it <= FileEntry.end(); it++ )
     {
         if(it == FileEntry.end())
@@ -62,19 +61,18 @@ unsigned char *PakFile::getFile(std::string fname, size_t *size)
             break;
     }
 
-    fileSize = fileEntry.EndOffset - fileEntry.StartOffset + 1;
+    *size = fileEntry.EndOffset - fileEntry.StartOffset + 1;
 
-    if(fileSize == 0)
+    if(*size == 0)
         throw(NullSizeException(LOG_ERROR, "PakFile", fname));
 
-    if( (content = (unsigned char*) malloc(fileSize)) == NULL)
+    if( (content = (unsigned char*) malloc(*size)) == NULL)
         throw(std::bad_alloc());
 
     fPakFile->seekg(fileEntry.StartOffset, std::ios::beg);
 
-    fPakFile->read((char*)content, fileSize);
+    fPakFile->read((char*)content, *size);
 
-    *size = fileSize;
 
     return content;	
 }
