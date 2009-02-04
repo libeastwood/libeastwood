@@ -8,16 +8,15 @@
 	small 16x16 pixel tiles. The map-file contains the information how to build up a complete picture with
 	this small tiles.
 */
+
+#include <vector>
+
+class SDL_Palette;
 class SDL_Surface;
 class IcnFile
 {
 private:
     //! Internal structure for the MAP-File.
-	struct MapfileEntry
-	{
-		Uint32 numTiles;
-		Uint16* tileIndex;
-	};
 
 	SDL_Palette *m_palette;
 public:
@@ -80,7 +79,7 @@ public:
 	Returns the number of tileSets in the map-File.
 	@return	Number of tileSets
 */
-	int getNumTileSets() { return m_numTileSets; };
+	inline Uint32 getNumTileSets() { return m_tileSet->size(); };
 
 private:
 	const unsigned char *m_fileData;
@@ -88,8 +87,8 @@ private:
 
 	Uint32 m_numFiles;
 
-	Uint16 m_numTileSets;
-	MapfileEntry *m_tileSet;
+	typedef std::vector<Uint16> Uint16Vect;
+	std::vector<Uint16Vect> *m_tileSet;
 	
 	unsigned char *m_SSET;
 	Uint32 m_SSET_Length;

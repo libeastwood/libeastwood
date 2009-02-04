@@ -25,44 +25,34 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 		exit(EXIT_FAILURE);		
 	}
 	
-	m_numTileSets = SDL_SwapLE16( *((Uint16 *) bufMapData));
+	int numTileSets = SDL_SwapLE16( *((Uint16 *) bufMapData));
 	
-	if(mapSize < (Uint16)(m_numTileSets * 2)) {
+	if(mapSize < (Uint16)(numTileSets * 2)) {
 		LOG_ERROR("IcnFile", "Mapfile: This *.map-File is too short!");
 		exit(EXIT_FAILURE);		
 	}	
 	
-	if((m_tileSet = (MapfileEntry*) malloc(sizeof(MapfileEntry)*m_numTileSets)) == NULL) {
-		LOG_ERROR("IcnFile","Mapfile: Allocating memory failed!");
-		exit(EXIT_FAILURE);
-	}
+	m_tileSet = new std::vector<Uint16Vect>(numTileSets);
 	
 	// calculate size for all entries
-	Uint16 index = SDL_SwapLE16( ((Uint16*) bufMapData)[0]);
-	for(int i = 1; i < m_numTileSets; i++) {
-		Uint16 tmp = SDL_SwapLE16( ((Uint16*) bufMapData)[i]);
-		m_tileSet[i-1].numTiles = tmp - index;
-		index = tmp;
-	}
-	m_tileSet[m_numTileSets-1].numTiles = (mapSize/2) - index;
+	for(int i = 0; i < numTileSets; i++) {
+		Uint16 index, index2;
+		if(i == numTileSets - 1)
+			index = (mapSize/2);
+		else
+			index = SDL_SwapLE16( ((Uint16*) bufMapData)[i+1]);
+		index -= index2 = SDL_SwapLE16( ((Uint16*) bufMapData)[i]);
 	
-	for(int i = 0; i < m_numTileSets; i++) {
-	
-		if((m_tileSet[i].tileIndex = (Uint16*) malloc(sizeof(Uint16)*m_tileSet[i].numTiles)) == NULL) {
-			LOG_ERROR("IcnFile","Mapfile: Allocating memory failed!");
-			exit(EXIT_FAILURE);
-		}
+		(*m_tileSet)[i] = Uint16Vect(index);
 		
-		index = SDL_SwapLE16( ((Uint16*) bufMapData)[i]);
-		
-		if(mapSize < (index+m_tileSet[i].numTiles)*2 ) {
+		if(mapSize < (index2+(*m_tileSet)[i].size())*2 ) {
 			LOG_ERROR("IcnFile","Mapfile: This *.map-File is too short!");
 			exit(EXIT_FAILURE);			
 		}
 		
 		// now we can read in
-		for(unsigned int j = 0; j < m_tileSet[i].numTiles; j++) {
-			m_tileSet[i].tileIndex[j] = SDL_SwapLE16( ((Uint16*) bufMapData)[index+j]);
+		for(unsigned int j = 0; j < (*m_tileSet)[i].size(); j++) {
+			(*m_tileSet)[i][j] = SDL_SwapLE16( ((Uint16*) bufMapData)[index2+j]);
 		}
 	}
 	// reading MAP-File is now finished
@@ -199,13 +189,13 @@ SDL_Surface *IcnFile::getSurface(Uint32 indexOfFile) {
 SDL_Surface *IcnFile::getSurfaceArray(Uint32 mapFileIndex, int tilesX, int tilesY, int tilesN) {
 	SDL_Surface *pic;
 	
-	if(mapFileIndex >= m_numTileSets) {
+	if(mapFileIndex >= getNumTileSets()) {
 		return NULL;
 	}
 	
 	if((tilesX == 0) && (tilesY == 0) && (tilesN == 0)) {
 		// guest what is best
-		int tmp = m_tileSet[mapFileIndex].numTiles;
+		int tmp = (*m_tileSet)[mapFileIndex].size();
 		if(tmp == 24) {
 			// special case (radar station and light factory)
 			tilesX = 2;
@@ -237,9 +227,9 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 mapFileIndex, int tilesX, int tiles
 		// not possible
 		return NULL;		
 	} else if((tilesX == 0) && (tilesY == 0) && (tilesN != 0)) {
-		if(m_tileSet[mapFileIndex].numTiles % tilesN == 0) {
+		if((*m_tileSet)[mapFileIndex].size() % tilesN == 0) {
 			// guest what is best
-			int tmp = m_tileSet[mapFileIndex].numTiles / tilesN;
+			int tmp = (*m_tileSet)[mapFileIndex].size() / tilesN;
 			if((tmp % 3) == 0) {
 				tilesX = tmp/3;
 				tilesY = 3;
@@ -255,7 +245,7 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 mapFileIndex, int tilesX, int tiles
 			return NULL;
 		}
 	} else {
-		if((unsigned int)tilesX*tilesY*tilesN != m_tileSet[mapFileIndex].numTiles) {
+		if((unsigned int)tilesX*tilesY*tilesN != (*m_tileSet)[mapFileIndex].size()) {
 			return NULL;
 		}
 	}
@@ -272,7 +262,7 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 mapFileIndex, int tilesX, int tiles
 	for(int n = 0; n < tilesN; n++) {
 		for(int y = 0; y < tilesY; y++) {
 			for(int x = 0; x < tilesX; x++) {
-				int indexOfFile = m_tileSet[mapFileIndex].tileIndex[tileIdx];
+				int indexOfFile = (*m_tileSet)[mapFileIndex][tileIdx];
 			
 				// check if palette is in range
 				if(m_RTBL[indexOfFile] >= m_RPAL_Length / 16) {
