@@ -6,12 +6,12 @@
 #include "EastwoodException.h"
 #include "StringFile.h"
 
-StringFile::StringFile(const char *bufFileData) {
+StringFile::StringFile(const unsigned char *bufFileData) {
     int numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFileData)[0]))/2 - 1;
     strings.resize(numStrings);
     for(int i = 0; i < numStrings; i++) {
         Uint16 index = SDL_SwapLE16(((Uint16*)bufFileData)[i]);
-        strings[i] = decodeString(bufFileData+index);
+        strings[i] = decodeString((const char*)(bufFileData+index));
     }
 }
 

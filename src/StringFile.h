@@ -18,7 +18,7 @@
 class StringFile
 {
 public:
-	StringFile(const char *bufFileData);
+	StringFile(const unsigned char *bufFileData);
 	~StringFile();
 
 	/*!
