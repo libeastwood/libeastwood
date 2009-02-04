@@ -15,14 +15,14 @@ private:
     //! Internal structure for the MAP-File.
 	struct MapfileEntry
 	{
-		Uint32 NumTiles;
-		Uint16* TileIndex;
+		Uint32 numTiles;
+		Uint16* tileIndex;
 	};
 
 	SDL_Palette *m_palette;
 public:
-	IcnFile(unsigned char *bufFiledata, int bufSize, 
-	        unsigned char *bufMapdata, int mapsize,
+	IcnFile(const unsigned char *bufFileData, size_t bufSize, 
+	        const unsigned char *bufMapData, size_t mapsize,
 			SDL_Palette *palette);
 	~IcnFile();
 
@@ -32,16 +32,16 @@ public:
 /// Returns an array of pictures in the icn-File
 /*!
 	This method returns a SDL_Surface containing multiple tiles/pictures. Which tiles to include is specified by MapfileIndex. The
-	MapfileIndex specifies the tileset. One tileset constists of multiple tiles of the icn-File.
+	MapfileIndex specifies the tileSet. One tileset constists of multiple tiles of the icn-File.
 	The last 3 parameters specify how to arrange the tiles:
 	 - If all 3 parameters are 0 then a "random" layout is choosen, which should look good.
 	 - If tilesX and tilesY is set to non-zero values then the result surface contains tilesX*tilesY tiles and this tilesN-times side by side.
 	 - If all there parameters are non-zero then the result surface is exactly in this arrangement.
 
-	tilesX*tilesY*tilesN must always the number of tiles in this tileset. Otherwise NULL is returned.<br><br>
+	tilesX*tilesY*tilesN must always the number of tiles in this tileSet. Otherwise NULL is returned.<br><br>
 	Example:
 	@code
-	Tileset = 10,11,12,13,14,15,16,17,18,19,20,21
+	TileSet = 10,11,12,13,14,15,16,17,18,19,20,21
 	tilesX = 2; tilesY = 2; tilesN = 3
 
 	returned picture:
@@ -50,7 +50,7 @@ public:
 	@endcode
 	<br>
 	The returned SDL_Surface should be freed with SDL_FreeSurface() if no longer needed.
-	@param	MapfileIndex	specifies which tileset to use (zero based)
+	@param	MapfileIndex	specifies which tileSet to use (zero based)
 	@param	tilesX			how many tiles in x direction
 	@param	tilesY			how many tiles in y direction
 	@param	tilesN			how many tilesX*tilesY blocks in a row
@@ -75,28 +75,28 @@ public:
 */
 	int getNumFiles();
 	
-	/// Returns the number of tilesets
+	/// Returns the number of tileSets
 /*!
-	Returns the number of tilesets in the map-File.
-	@return	Number of tilesets
+	Returns the number of tileSets in the map-File.
+	@return	Number of tileSets
 */
-	int getNumTilesets() { return NumTilesets; };
+	int getNumTileSets() { return m_numTileSets; };
 
 private:
-	unsigned char *Filedata;
-	Uint32 IcnFilesize;
+	const unsigned char *m_fileData;
+	size_t m_icnFileSize;
 
-	Uint32 NumFiles;
+	Uint32 m_numFiles;
 
-	Uint16	NumTilesets;
-	MapfileEntry *Tileset;
+	Uint16 m_numTileSets;
+	MapfileEntry *m_tileSet;
 	
-	unsigned char *SSET;
-	Uint32 SSET_Length;
-	unsigned char *RPAL;
-	Uint32 RPAL_Length;
-	unsigned char *RTBL;
-	Uint32 RTBL_Length;
+	unsigned char *m_SSET;
+	Uint32 m_SSET_Length;
+	unsigned char *m_RPAL;
+	Uint32 m_RPAL_Length;
+	unsigned char *m_RTBL;
+	Uint32 m_RTBL_Length;
 
 };
 
