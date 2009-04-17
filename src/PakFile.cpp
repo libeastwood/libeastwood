@@ -1,8 +1,10 @@
 #include <SDL_endian.h>
 
-#include "EastwoodException.h"
+#include "Exception.h"
 #include "Log.h"
 #include "PakFile.h"
+
+using namespace eastwood;
 
 PakFile::PakFile(std::string pakFileName)
 {

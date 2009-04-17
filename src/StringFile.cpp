@@ -3,8 +3,10 @@
 #include <SDL.h>
 #include <string>
 
-#include "EastwoodException.h"
+#include "Exception.h"
 #include "StringFile.h"
+
+using namespace eastwood;
 
 StringFile::StringFile(const unsigned char *bufFileData) {
     int numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFileData)[0]))/2 - 1;
@@ -173,7 +175,7 @@ std::string StringFile::decodeString(std::string text) {
                            // special character
                            i++;
                            if(i == text.length())
-                               throw (EastwoodException(LOG_ERROR, "StringFile", "decodeString: Special character escape sequence at end of string!"));
+                               throw (Exception(LOG_ERROR, "StringFile", "decodeString: Special character escape sequence at end of string!"));
 
                            unsigned char special = text[i];
                            switch(special) {
