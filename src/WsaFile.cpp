@@ -1,12 +1,14 @@
-#include "Font.h"
-#include "Log.h"
-
-#include "WsaFile.h"
-
 #include <SDL.h>
 #include <SDL_endian.h>
 #include <stdlib.h>
 #include <string>
+
+#include "Exception.h"
+#include "Font.h"
+#include "Log.h"
+#include "WsaFile.h"
+
+using namespace eastwood;
 
 WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
                 SDL_Surface *lastframe, float setFps ) : Decode()
@@ -17,10 +19,8 @@ WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
 	
     LOG_INFO("WsaFile", "Loading wsa with size %d...", bufSize);
         
-	if(WsaFilesize < 10) {
-		LOG_ERROR("WsaFile", "No valid WSA-File: File too small!");
-		exit(EXIT_FAILURE);
-	}
+	if(WsaFilesize < 10)
+		throw(Exception(LOG_ERROR, "WsaFile", "No valid WSA-File: File too small!"));
 	
 	NumFrames = SDL_SwapLE16(*((Uint16*) Filedata) );
     LOG_INFO("WsaFile", "numframes = %d", NumFrames);
@@ -53,15 +53,11 @@ WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
 		NumFrames--;
 	}
 	
-	if(Filedata + WsaFilesize < (((unsigned char *) Index) + 4 * NumFrames)) {
-		LOG_ERROR("WsaFile", "No valid WSA-File: File too small -2-!");
-		exit(EXIT_FAILURE);		
-	}
+	if(Filedata + WsaFilesize < (((unsigned char *) Index) + 4 * NumFrames))
+		throw(Exception(LOG_ERROR, "WsaFile", "No valid WSA-File: File too small -2-!"));
 	
-	if( (decodedFrames = (unsigned char*) calloc(1,SizeX*SizeY*NumFrames)) == NULL) {
-		LOG_ERROR("WsaFile", "Unable to allocate memory for decoded WSA-Frames!");
-		exit(EXIT_FAILURE);				
-	}
+	if( (decodedFrames = (unsigned char*) calloc(1,SizeX*SizeY*NumFrames)) == NULL)
+    	    throw(std::bad_alloc());
 
     if (lastframe != NULL)
     {
@@ -129,10 +125,7 @@ void WsaFile::decodeFrames()
 	for(Uint16 i=0;i<NumFrames;i++) 
 	{
 		if( (dec80 = (unsigned char*) calloc(1,SizeX*SizeY*2)) == NULL) 
-		{
-			LOG_ERROR("WsaFile", "Unable to allocate memory for decoded WSA-Frames!");
-			exit(EXIT_FAILURE);	
-		}
+	    	    throw(std::bad_alloc());
 
 		decode80(Filedata + SDL_SwapLE32(Index[i]), dec80, 0);
 	

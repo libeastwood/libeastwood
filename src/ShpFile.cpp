@@ -4,7 +4,10 @@
 
 #include "Log.h"
 
+#include "Exception.h"
 #include "ShpFile.h"
+
+using namespace eastwood;
 
 ShpFile::ShpFile(unsigned char *bufFiledata, int bufSize, SDL_Palette *palette) : Decode()
 {
@@ -106,8 +109,9 @@ SDL_Surface *ShpFile::getSurface(Uint32 IndexOfFile)
 		
 		default:
 		{
-			LOG_ERROR("ShpFile","Type %d in SHP-Files not supported!",type);
-			exit(EXIT_FAILURE);
+			char error[256];
+			sprintf(error, "Type %d in SHP-Files not supported!", type);
+			throw(Exception(LOG_ERROR, "ShpFile", error));
 		}
 	}
 	
@@ -139,10 +143,8 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		return NULL;
 	}
 	
-	if((tiles = (Uint32*) malloc(tilesX*tilesY*sizeof(Uint32))) == NULL) {
-		LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
-		exit(EXIT_FAILURE);
-	}
+	if((tiles = (Uint32*) malloc(tilesX*tilesY*sizeof(Uint32))) == NULL)
+    	    throw(std::bad_alloc());
 
 	va_list arg_ptr;
 	va_start(arg_ptr, tilesY);
@@ -150,9 +152,10 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 	for(Uint32 i = 0; i < tilesX*tilesY; i++) {
 		tiles[i] = va_arg( arg_ptr, int );
 		if(TILE_GETINDEX(tiles[i]) >= NumFiles) {
-		free(tiles);
-			LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): There exist only %d files in this *.shp.",NumFiles);
-			return NULL;
+    		    free(tiles);
+    		    char error[256];
+    		    sprintf(error, "getSurfaceArray(): There exist only %d files in this *.shp.",NumFiles);
+    		    throw(Exception(LOG_ERROR, "ShpFile", error));
 		}
 	}
 	
@@ -173,15 +176,13 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		if(((Filedata + Index[TILE_GETINDEX(tiles[i])].StartOffset)[2] != sizeY)
 		 || ((Filedata + Index[TILE_GETINDEX(tiles[i])].StartOffset)[3] != sizeX)) {
 			free(tiles);
-			LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Not all pictures have the same size!");
-			exit(EXIT_FAILURE);
+			throw(Exception(LOG_ERROR, "ShpFile", "getSurfaceArray(): Not all pictures have the same size!"));
 		 }
 	}
 	
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_HWSURFACE,sizeX*tilesX,sizeY*tilesY,8,0,0,0,0)) == NULL) {
-		LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot create Surface.");
-		exit(EXIT_FAILURE);
+		throw(Exception(LOG_ERROR, "ShpFile","getSurfaceArray(): Cannot create Surface."));
 	}
 	
 	SDL_SetColors(pic, m_palette->colors, 0, m_palette->ncolors);
@@ -198,8 +199,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 		
 			if((ImageOut = (unsigned char*) calloc(1,sizeX*sizeY)) == NULL) {
 				free(tiles);
-				LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
-				exit(EXIT_FAILURE);
+				throw(std::bad_alloc());
 			}
 		
 			switch(type) {
@@ -209,12 +209,11 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 					if( (DecodeDestination = (unsigned char*) calloc(1,size)) == NULL) {
 						free(ImageOut);
 						free(tiles);
-						LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
-						exit(EXIT_FAILURE);
+						throw(std::bad_alloc());
 					}
 				
 					if(decode80(Fileheader + 10,DecodeDestination,size) == -1) {
-						LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
+						throw(Exception(LOG_WARNING, "ShpFile","Checksum-Error in Shp-File"));
 					}
 							
 					shp_correct_lf(DecodeDestination,ImageOut, size);
@@ -227,8 +226,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 					if( (DecodeDestination = (unsigned char*) calloc(1,size)) == NULL) {
 						free(ImageOut);
 						free(tiles);
-						LOG_ERROR("ShpFile","ShpFile::getSurfaceArray(): Cannot allocate memory!");
-						exit(EXIT_FAILURE);
+						throw(std::bad_alloc());
 					}
 				
 					if(decode80(Fileheader + 10 + 16,DecodeDestination,size) == -1) {
@@ -254,10 +252,10 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 				} break;
 			
 				default:
-				{
-					LOG_ERROR("ShpFile","ShpFile: Type %d in SHP-Files not supported!",type);
-					exit(EXIT_FAILURE);
-				}
+				char error[256];
+	    			sprintf(error, "Type %d in SHP-Files not supported!",type);
+	    			throw(Exception(LOG_ERROR, "ShpFile", error));
+	    			break;		    
 			}
 	
 			//Now we can copy line by line
@@ -295,10 +293,8 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 				} break;
 				
 				default:
-				{
-					LOG_ERROR("ShpFile","ShpFile: Invalid type for this parameter. Must be one of TILE_NORMAL, TILE_FLIPH, TILE_FLIPV or TILE_ROTATE!");
-					exit(EXIT_FAILURE);				
-				} break;
+	    			    throw(Exception(LOG_ERROR, "ShpFile", "Invalid type for this parameter. Must be one of TILE_NORMAL, TILE_FLIPH, TILE_FLIPV or TILE_ROTATE!"));
+   				    break;
 			}
 		
 			if(ImageOut != NULL) {
@@ -318,8 +314,7 @@ void ShpFile::readIndex()
 	NumFiles = SDL_SwapLE16( ((Uint16*) Filedata)[0]);
 	
 	if(NumFiles == 0) {
-		LOG_ERROR("ShpFile", "There is no file in this shp-File!");
-		exit(EXIT_FAILURE);
+	    throw(Exception(LOG_ERROR, "ShpFile", "There is no file in this shp-File!"));
 	}
 	
 	if(NumFiles == 1) {
@@ -327,8 +322,7 @@ void ShpFile::readIndex()
 		
 		// create array with one entry
 		if((Index = (ShpFileEntry*) malloc(sizeof(ShpFileEntry) * 1)) == NULL) {
-			LOG_ERROR("ShpFile", "readIndex");
-			exit(EXIT_FAILURE);
+			throw(Exception(LOG_ERROR, "ShpFile", "readIndex"));
 		}
 		
 		if (((Uint16*) Filedata)[2] != 0) {
@@ -348,14 +342,14 @@ void ShpFile::readIndex()
 		/* File contains more than one image */
 	
 		if( ShpFilesize < (Uint32) ((NumFiles * 4) + 2 + 2)) {
-			LOG_ERROR("ShpFile", "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(NumFiles * 4) + 2 + 2,ShpFilesize);
-			exit(EXIT_FAILURE);				
+		    char error[256];
+		    sprintf(error, "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(NumFiles * 4) + 2 + 2,ShpFilesize);
+		    throw(Exception(LOG_ERROR, "ShpFile", error));
 		}
 		
 		// create array
 		if((Index = (ShpFileEntry*) malloc(sizeof(ShpFileEntry) * NumFiles)) == NULL) {
-			LOG_ERROR("ShpFile", "readIndex");
-			exit(EXIT_FAILURE);
+			throw(Exception(LOG_ERROR, "ShpFile", "readIndex"));
 		}
 		
 		// now fill Index with start and end-offsets
@@ -363,12 +357,12 @@ void ShpFile::readIndex()
 			Index[i].StartOffset = SDL_SwapLE32( ((Uint32*)(Filedata+2))[i]) + 2;
 			
 			if(i > 0) {
+				char error[256];
 				Index[i-1].EndOffset = Index[i].StartOffset - 1;
-				
-				if(Index[i-1].EndOffset > ShpFilesize) {
-					LOG_ERROR("ShpFile", "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",i,Index[i-1].EndOffset,ShpFilesize);
-					exit(EXIT_FAILURE);						
-				}
+				sprintf(error, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
+						    i,Index[i-1].EndOffset,ShpFilesize);
+				if(Index[i-1].EndOffset > ShpFilesize)
+				        throw(Exception(LOG_ERROR, "ShpFile", error));
 			}
 		}
 		

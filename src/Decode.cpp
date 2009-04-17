@@ -1,9 +1,13 @@
-#include "Decode.h"
 #include <SDL_endian.h>
 #include <stdlib.h>
 #include <string>
 
 #include <SDL.h>
+
+#include "Decode.h"
+#include "Exception.h"
+
+using namespace eastwood;
 
 Decode::Decode()
 {
@@ -112,8 +116,9 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 			writep += count;
 			c++;
 		} else {
-			fprintf(stderr,"file contains unknown format80 command: %x\n",*readp);
-			exit(EXIT_FAILURE);
+			char error[256];
+			sprintf(error,"file contains unknown format80 command: %x\n",*readp);
+			throw(Exception(LOG_ERROR, "Decode", error));
 		}
 	};
 	if ((unsigned)(megacounta + megacountb + megacountc + megacountd + megacounte)

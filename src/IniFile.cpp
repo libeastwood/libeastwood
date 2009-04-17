@@ -1,10 +1,13 @@
-#include "IniFile.h"
 #include <fstream>
 #include <iostream>
 #include <cctype>
 #include <algorithm>
 #include <stdio.h>
-using namespace std;
+
+#include "IniFile.h"
+#include "Exception.h"
+
+using namespace eastwood;
 
 // public methods
 
@@ -35,10 +38,8 @@ IniFile::IniFile(SDL_RWops *RWopsFile)
 	FirstLine = NULL;
 	SectionRoot = NULL;
 	
-	if(RWopsFile == NULL) {
-		cerr << "IniFile: RWopsFile == NULL!" << endl;
-		exit(EXIT_FAILURE);
-	}
+	if(RWopsFile == NULL)
+	    throw(Exception(LOG_ERROR, "IniFile", "RWopsFile == NULL!"));
 	
 	readfile(RWopsFile);
 }
@@ -181,11 +182,9 @@ void IniFile::setStringValue(string section, string key, string value)
 		}
 		
 		string completeLine = "[" + section + "]";
-		if((curSection = new SectionEntry(completeLine,1,section.size())) == NULL) {
-			cerr << "IniFile: Cannot allocate memory for new section line!" << endl;
-			exit(EXIT_FAILURE);
-		}
-			
+		if((curSection = new SectionEntry(completeLine,1,section.size())) == NULL)
+	    	    throw(std::bad_alloc());
+
 		if(FirstLine == NULL) {
 			FirstLine = curSection;
 		} else {
@@ -258,10 +257,8 @@ void IniFile::setStringValue(string section, string key, string value)
 				ValueStringLength = value.size();			
 			}
 		}
-		if((curKey = new KeyEntry(completeLine,KeyStringStart,KeyStringLength,ValueStringStart,ValueStringLength)) == NULL) {
-			cerr << "IniFile: Cannot allocate memory for new key/value line!" << endl;
-			exit(EXIT_FAILURE);
-		}
+		if((curKey = new KeyEntry(completeLine,KeyStringStart,KeyStringLength,ValueStringStart,ValueStringLength)) == NULL)
+	    	    throw(std::bad_alloc());
 		
 		if(curEntry != NULL) {
 			curEntry->nextEntry = curKey;
@@ -446,13 +443,11 @@ bool IniFile::SaveChangesTo(SDL_RWops *file) {
 	unsigned int written;
 	while(curEntry != NULL) {
 		written = SDL_RWwrite(file, curEntry->CompleteLine.c_str(), 1, curEntry->CompleteLine.size());
-		if(written != curEntry->CompleteLine.size()) {
-			cout << SDL_GetError() << endl; 
+		if(written != curEntry->CompleteLine.size())
+			throw(Exception(LOG_ERROR, "IniFile", SDL_GetError()));
+
+		if((written = SDL_RWwrite(file,"\n",1,1)) != 1)
 			error = true;
-		}
-		if((written = SDL_RWwrite(file,"\n",1,1)) != 1) {
-			error = true;
-		}
 		curEntry = curEntry->nextEntry;
 	}
 	
@@ -464,11 +459,11 @@ bool IniFile::SaveChangesTo(SDL_RWops *file) {
 void IniFile::flush()
 {
 	
-	cout << "Flush:" << endl;
+	//cout << "Flush:" << endl;
 	CommentEntry* curEntry = FirstLine;
 	
 	while(curEntry != NULL) {
-		cout << curEntry->CompleteLine << endl;
+		//cout << curEntry->CompleteLine << endl;
 		curEntry = curEntry->nextEntry;
 	}
 
@@ -476,10 +471,8 @@ void IniFile::flush()
 
 void IniFile::readfile(SDL_RWops *file)
 {	
-	if((SectionRoot = new SectionEntry("",0,0)) == NULL) {
-		cerr << "IniFile: Cannot allocate memory for a new section!" << endl;
-		exit(EXIT_FAILURE);
-	}
+	if((SectionRoot = new SectionEntry("",0,0)) == NULL)
+    	    throw(std::bad_alloc());
 	
 	SectionEntry *curSectionEntry = SectionRoot;
 		
@@ -520,10 +513,8 @@ void IniFile::readfile(SDL_RWops *file)
 		
 		if(ret == -1) {
 			// empty line or comment
-			if((newCommentEntry = new CommentEntry(completeLine)) == NULL) {
-				cerr << "IniFile: Cannot allocate memory for new comment line!" << endl;
-				exit(EXIT_FAILURE);
-			}
+			if((newCommentEntry = new CommentEntry(completeLine)) == NULL)
+		    	    throw(std::bad_alloc());
 			
 			if(curEntry == NULL) {
 				FirstLine = newCommentEntry;
@@ -544,10 +535,8 @@ void IniFile::readfile(SDL_RWops *file)
 					SyntaxError = true;
 				} else {
 					// valid section line
-					if((newSectionEntry = new SectionEntry(completeLine,sectionstart,sectionend-sectionstart)) == NULL) {
-						cerr << "IniFile: Cannot allocate memory for new section line!" << endl;
-						exit(EXIT_FAILURE);
-					}
+					if((newSectionEntry = new SectionEntry(completeLine,sectionstart,sectionend-sectionstart)) == NULL)
+				    	    throw(std::bad_alloc());
 			
 					if(curEntry == NULL) {
 						FirstLine = newSectionEntry;
@@ -588,11 +577,9 @@ void IniFile::readfile(SDL_RWops *file)
 									SyntaxError = true;
 								} else {
 									// valid key/value line
-									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart+1,valueend-valuestart-1)) == NULL) {
-										cerr << "IniFile: Cannot allocate memory for new key/value line!" << endl;
-										exit(EXIT_FAILURE);
-									}
-			
+									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart+1,valueend-valuestart-1)) == NULL)
+								    	    throw(std::bad_alloc());
+
 									if(FirstLine == NULL) {
 										FirstLine = newKeyEntry;
 										curEntry = newKeyEntry;
@@ -612,11 +599,10 @@ void IniFile::readfile(SDL_RWops *file)
 									SyntaxError = true;
 								} else {
 									// valid key/value line
-									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart,valueend-valuestart)) == NULL) {
-										cerr << "IniFile: Cannot allocate memory for new key/value line!" << endl;
-										exit(EXIT_FAILURE);
-									}
-			
+									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart,valueend-valuestart)) == NULL)
+								    	    throw(std::bad_alloc());
+
+
 									if(FirstLine == NULL) {
 										FirstLine = newKeyEntry;
 										curEntry = newKeyEntry;
@@ -643,10 +629,8 @@ void IniFile::readfile(SDL_RWops *file)
 				cerr << "IniFile: Syntax-Error in line " << lineNum << ":" << completeLine << " !" << endl;
 			}
 			// save this line as a comment
-			if((newCommentEntry = new CommentEntry(completeLine)) == NULL) {
-				cerr << "IniFile: Cannot allocate memory for new comment line!" << endl;
-				exit(EXIT_FAILURE);
-			}
+			if((newCommentEntry = new CommentEntry(completeLine)) == NULL)
+		    	    throw(std::bad_alloc());
 			
 			if(curEntry == NULL) {
 				FirstLine = newCommentEntry;
