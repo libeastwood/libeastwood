@@ -1,4 +1,4 @@
-#include <SDL_endian.h>
+#include "StdDef.h"
 
 #include "Exception.h"
 #include "Log.h"
@@ -30,7 +30,7 @@ void PakFile::readIndex()
         m_pakFile->read((char*)&fileEntry.startOffset, sizeof(int));
 
         // pak-files are always little endian encoded
-        fileEntry.startOffset = SDL_SwapLE32(fileEntry.startOffset);
+        fileEntry.startOffset = SwapLE32(fileEntry.startOffset);
 
         m_pakFile->getline(name, 256, 0);
         fileEntry.fileName = name;

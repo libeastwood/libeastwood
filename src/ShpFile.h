@@ -3,8 +3,6 @@
 
 #include "Decode.h"
 
-#include <SDL.h>
-
 #define	TILE_NORMAL		0x00010000
 #define	TILE_FLIPH		0x00100000
 #define	TILE_FLIPV		0x01000000
@@ -15,11 +13,12 @@
 
 struct ShpFileEntry
 {
-	Uint32 StartOffset;
-	Uint32 EndOffset;
+	uint32_t StartOffset;
+	uint32_t EndOffset;
 };
 
 class SDL_Palette;
+class SDL_Surface;
 
 class ShpFile : public Decode
 {
@@ -33,7 +32,7 @@ public:
 	@param	IndexOfFile	specifies which picture to return (zero based)
 	@return	nth picture in this shp-File
 */
-	SDL_Surface *getSurface(Uint32 IndexOfFile);
+	SDL_Surface *getSurface(uint32_t IndexOfFile);
 
 /*!
 	This method returns a SDL_Surface containing an array of pictures from this shp-File.
@@ -58,19 +57,19 @@ public:
 	@return	picture in this shp-File containing all specified pictures
 */
 	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...);
-	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, Uint32 *tiles);
+	SDL_Surface *getSurfaceArray(unsigned int tilesX, unsigned int tilesY, uint32_t *tiles);
 
 	inline int getNumFiles() {return (int) NumFiles;};
 
 protected:
-	Uint16 NumFiles;
+	uint16_t NumFiles;
 
 private:
 	void readIndex();
 
 	ShpFileEntry *Index;
 	unsigned char *Filedata;
-	Uint32 ShpFilesize;
+	uint32_t ShpFilesize;
 	SDL_Palette *m_palette;
 };
 

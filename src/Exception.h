@@ -4,7 +4,13 @@
 #include <sstream>
 #include <string>
 
-#include "Log.h"
+typedef enum logLevel_e
+{
+    LOG_FATAL,
+    LOG_ERROR,
+    LOG_WARNING,
+    LOG_INFO
+} logLevel;
 
 namespace eastwood {
     class Exception {

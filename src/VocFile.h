@@ -1,9 +1,8 @@
 #ifndef EASTWOOD_VOCFILE_H
 #define EASTWOOD_VOCFILE_H
 
-#include <SDL.h>
-#include <SDL_rwops.h>
-#include <SDL_mixer.h>
+class Mix_Chunk;
+class SDL_RWops;
 
 /**
  Try to load a VOC from the RWop. Returns a pointer to Mix_Chunk.

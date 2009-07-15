@@ -26,7 +26,7 @@ public:
 	~IcnFile();
 
 
-	SDL_Surface *getSurface(Uint32 IndexOfFile);
+	SDL_Surface *getSurface(uint32_t IndexOfFile);
 
 /// Returns an array of pictures in the icn-File
 /*!
@@ -55,7 +55,7 @@ public:
 	@param	tilesN			how many tilesX*tilesY blocks in a row
 	@return	the result surface with tilesX*tilesY*tilesN tiles
 */
-  	SDL_Surface *getSurfaceArray(Uint32 MapfileIndex, int tilesX = 0, int tilesY = 0, int tilesN = 0);
+  	SDL_Surface *getSurfaceArray(uint32_t MapfileIndex, int tilesX = 0, int tilesY = 0, int tilesN = 0);
 
 /*!
 	This method returns a SDL_Surface containing multiple tiles/pictures. The returned surface contains all
@@ -65,7 +65,7 @@ public:
 	@param	EndIndex		The last tile to use
 	@return	the result surface with (EndIndex-StartIndex+1) tiles. NULL on errors.
 */
-	SDL_Surface *getSurfaceRow(Uint32 StartIndex, Uint32 EndIndex);
+	SDL_Surface *getSurfaceRow(uint32_t StartIndex, uint32_t EndIndex);
 
 	/// Returns the number of tiles
 /*!
@@ -79,23 +79,22 @@ public:
 	Returns the number of tileSets in the map-File.
 	@return	Number of tileSets
 */
-	inline Uint32 getNumTileSets() { return m_tileSet->size(); };
+	inline uint32_t getNumTileSets() { return m_tileSet->size(); };
 
 private:
 	const unsigned char *m_fileData;
 	size_t m_icnFileSize;
 
-	Uint32 m_numFiles;
+	uint32_t m_numFiles;
 
-	typedef std::vector<Uint16> Uint16Vect;
-	std::vector<Uint16Vect> *m_tileSet;
+	std::vector<std::vector<uint16_t> > *m_tileSet;
 	
 	unsigned char *m_SSET;
-	Uint32 m_SSET_Length;
+	uint32_t m_SSET_Length;
 	unsigned char *m_RPAL;
-	Uint32 m_RPAL_Length;
+	uint32_t m_RPAL_Length;
 	unsigned char *m_RTBL;
-	Uint32 m_RTBL_Length;
+	uint32_t m_RTBL_Length;
 
 };
 

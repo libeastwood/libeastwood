@@ -1,6 +1,6 @@
-#include <SDL_endian.h>
-#include <stdlib.h>
-#include <string.h>
+#include <SDL.h>
+
+#include "StdDef.h"
 
 #include "Log.h"
 
@@ -25,7 +25,7 @@ ShpFile::~ShpFile()
 	}
 }
 
-SDL_Surface *ShpFile::getSurface(Uint32 IndexOfFile)
+SDL_Surface *ShpFile::getSurface(uint32_t IndexOfFile)
 {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
@@ -43,7 +43,7 @@ SDL_Surface *ShpFile::getSurface(Uint32 IndexOfFile)
 	unsigned char sizeX = Fileheader[3];
 	
 	/* size and also checksum */
-	Uint16 size = SDL_SwapLE16(*((Uint16*) (Fileheader + 8)));
+	uint16_t size = SwapLE16(*((uint16_t*) (Fileheader + 8)));
 	
 	
 	LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",IndexOfFile,sizeX,sizeY);
@@ -138,18 +138,18 @@ SDL_Surface *ShpFile::getSurface(Uint32 IndexOfFile)
 }
 
 SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, ...) {
-	Uint32 *tiles;
+	uint32_t *tiles;
 	if((tilesX == 0) || (tilesY == 0)) {
 		return NULL;
 	}
 	
-	if((tiles = (Uint32*) malloc(tilesX*tilesY*sizeof(Uint32))) == NULL)
+	if((tiles = (uint32_t*) malloc(tilesX*tilesY*sizeof(uint32_t))) == NULL)
     	    throw(std::bad_alloc());
 
 	va_list arg_ptr;
 	va_start(arg_ptr, tilesY);
 	
-	for(Uint32 i = 0; i < tilesX*tilesY; i++) {
+	for(uint32_t i = 0; i < tilesX*tilesY; i++) {
 		tiles[i] = va_arg( arg_ptr, int );
 		if(TILE_GETINDEX(tiles[i]) >= NumFiles) {
     		    free(tiles);
@@ -163,11 +163,11 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 	return getSurfaceArray(tilesX, tilesY, tiles);
 }
 
-SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, Uint32 *tiles) {
+SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, uint32_t *tiles) {
 	SDL_Surface *pic = NULL;
 	unsigned char *DecodeDestination = NULL;
 	unsigned char *ImageOut = NULL;
-	Uint32 i,j;
+	uint32_t i,j;
 	
 	unsigned char sizeY = (Filedata + Index[TILE_GETINDEX(tiles[0])].StartOffset)[2];
 	unsigned char sizeX = (Filedata + Index[TILE_GETINDEX(tiles[0])].StartOffset)[3];
@@ -195,7 +195,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 			unsigned char type = Fileheader[0];
 		
 			/* size and also checksum */
-			Uint16 size = SDL_SwapLE16(*((Uint16*) (Fileheader + 8)));
+			uint16_t size = SwapLE16(*((uint16_t*) (Fileheader + 8)));
 		
 			if((ImageOut = (unsigned char*) calloc(1,sizeX*sizeY)) == NULL) {
 				free(tiles);
@@ -311,7 +311,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 void ShpFile::readIndex()
 {
 	// First get number of files in shp-file
-	NumFiles = SDL_SwapLE16( ((Uint16*) Filedata)[0]);
+	NumFiles = SwapLE16( ((uint16_t*) Filedata)[0]);
 	
 	if(NumFiles == 0) {
 	    throw(Exception(LOG_ERROR, "ShpFile", "There is no file in this shp-File!"));
@@ -325,23 +325,23 @@ void ShpFile::readIndex()
 			throw(Exception(LOG_ERROR, "ShpFile", "readIndex"));
 		}
 		
-		if (((Uint16*) Filedata)[2] != 0) {
+		if (((uint16_t*) Filedata)[2] != 0) {
 			/* File has special header with only 2 byte offset */
 			
-			Index[0].StartOffset = ((Uint32) SDL_SwapLE16(((Uint16*) Filedata)[1]));
-			Index[0].EndOffset = ((Uint32) SDL_SwapLE16(((Uint16*) Filedata)[2])) - 1;
+			Index[0].StartOffset = ((uint32_t) SwapLE16(((uint16_t*) Filedata)[1]));
+			Index[0].EndOffset = ((uint32_t) SwapLE16(((uint16_t*) Filedata)[2])) - 1;
 
 
 		} else {
 			/* File has normal 4 byte offsets */
-			Index[0].StartOffset = ((Uint32) SDL_SwapLE32(*((Uint32*) (Filedata+2)))) + 2;
-			Index[0].EndOffset = ((Uint32) SDL_SwapLE16(((Uint16*) Filedata)[3])) - 1 + 2;
+			Index[0].StartOffset = ((uint32_t) SwapLE32(*((uint32_t*) (Filedata+2)))) + 2;
+			Index[0].EndOffset = ((uint32_t) SwapLE16(((uint16_t*) Filedata)[3])) - 1 + 2;
 		}
 
 	} else {
 		/* File contains more than one image */
 	
-		if( ShpFilesize < (Uint32) ((NumFiles * 4) + 2 + 2)) {
+		if( ShpFilesize < (uint32_t) ((NumFiles * 4) + 2 + 2)) {
 		    char error[256];
 		    sprintf(error, "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(NumFiles * 4) + 2 + 2,ShpFilesize);
 		    throw(Exception(LOG_ERROR, "ShpFile", error));
@@ -354,7 +354,7 @@ void ShpFile::readIndex()
 		
 		// now fill Index with start and end-offsets
 		for(int i = 0; i < NumFiles; i++) {
-			Index[i].StartOffset = SDL_SwapLE32( ((Uint32*)(Filedata+2))[i]) + 2;
+			Index[i].StartOffset = SwapLE32( ((uint32_t*)(Filedata+2))[i]) + 2;
 			
 			if(i > 0) {
 				char error[256];
@@ -367,6 +367,6 @@ void ShpFile::readIndex()
 		}
 		
 		// Add the EndOffset for the last file
-		Index[NumFiles-1].EndOffset = ((Uint32) SDL_SwapLE16( *((Uint16*) (Filedata + 2 + (NumFiles * 4))))) - 1 + 2;
+		Index[NumFiles-1].EndOffset = ((uint32_t) SwapLE16( *((uint16_t*) (Filedata + 2 + (NumFiles * 4))))) - 1 + 2;
 	}
 }

@@ -2246,7 +2246,7 @@ void CadlPlayer::process() {
   }
 }
 
-void CadlPlayer::callback(void *userdata, Uint8 *audiobuf, int len)
+void CadlPlayer::callback(void *userdata, uint8_t *audiobuf, int len)
 {
   CadlPlayer *self = (CadlPlayer *)userdata;
   static long	minicnt = 0;

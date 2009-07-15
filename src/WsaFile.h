@@ -16,10 +16,10 @@ public:
 
 	~WsaFile();
 
-	SDL_Surface *getSurface(Uint32 FrameNumber);
+	SDL_Surface *getSurface(uint32_t FrameNumber);
 
-	inline Uint32 getNumFrames() { return (Uint32) NumFrames; };
-	inline Uint32 getFramesPer1024ms() { return FramesPer1024ms; };
+	inline uint32_t getNumFrames() { return (uint32_t) NumFrames; };
+	inline uint32_t getFramesPer1024ms() { return FramesPer1024ms; };
 	inline float getFPS() { return fps; }
 
 private:
@@ -33,13 +33,13 @@ private:
 
 	SDL_Palette *m_palette;
 
-	Uint32 *Index;
+	uint32_t *Index;
 	int WsaFilesize;
 
-	Uint16 NumFrames;
-	Uint16 SizeX;
-	Uint16 SizeY;
-	Uint32 FramesPer1024ms;
+	uint16_t NumFrames;
+	uint16_t SizeX;
+	uint16_t SizeY;
+	uint32_t FramesPer1024ms;
 	float fps;
 };
 

@@ -24,7 +24,7 @@ class CadlPlayer
   CadlPlayer();
   ~CadlPlayer();
 
-  static void callback(void *, Uint8 *, int);
+  static void callback(void *, uint8_t *, int);
   bool load(uint8_t *bufFiledata, int bufsize);
   bool update();
   void rewind(int subsong);
@@ -57,7 +57,7 @@ class CadlPlayer
   
   int m_channels;
   int m_freq;
-  Uint16 m_format;
+  uint16_t m_format;
   
   bool playing; //FIXME: It could be used for something, I hope.
 

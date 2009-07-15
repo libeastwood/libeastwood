@@ -1,7 +1,6 @@
 #include <SDL.h>
-#include <SDL_endian.h>
-#include <stdlib.h>
-#include <string>
+
+#include "StdDef.h"
 
 #include "Exception.h"
 #include "Font.h"
@@ -22,21 +21,21 @@ WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
 	if(WsaFilesize < 10)
 		throw(Exception(LOG_ERROR, "WsaFile", "No valid WSA-File: File too small!"));
 	
-	NumFrames = SDL_SwapLE16(*((Uint16*) Filedata) );
+	NumFrames = SwapLE16(*((uint16_t*) Filedata) );
     LOG_INFO("WsaFile", "numframes = %d", NumFrames);
 
-	SizeX = SDL_SwapLE16(*((Uint16*) (Filedata + 2)) );
-	SizeY = SDL_SwapLE16(*((Uint16*) (Filedata + 4)) );
+	SizeX = SwapLE16(*((uint16_t*) (Filedata + 2)) );
+	SizeY = SwapLE16(*((uint16_t*) (Filedata + 4)) );
     LOG_INFO("WsaFile", "size %d x %d", SizeX, SizeY);
 	
 	if( ((unsigned short *) Filedata)[4] == 0) {
-		Index = (Uint32 *) (Filedata + 10);
-		FramesPer1024ms = SDL_SwapLE32( *((Uint32*) (Filedata+6)) );
+		Index = (uint32_t *) (Filedata + 10);
+		FramesPer1024ms = SwapLE32( *((uint32_t*) (Filedata+6)) );
 	} 
 	else 
 	{
-		Index = (Uint32 *) (Filedata + 8);
-		FramesPer1024ms = SDL_SwapLE16( *((Uint16*) (Filedata+6)) );
+		Index = (uint32_t *) (Filedata + 8);
+		FramesPer1024ms = SwapLE16( *((uint16_t*) (Filedata+6)) );
 	}
 
     // surely /1000.0f not 100?!
@@ -86,7 +85,7 @@ WsaFile::~WsaFile()
 	free(decodedFrames);
 }
 
-SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber)
+SDL_Surface *WsaFile::getSurface(uint32_t FrameNumber)
 {
 	if(FrameNumber >= NumFrames) {
 		return NULL;
@@ -107,7 +106,7 @@ SDL_Surface *WsaFile::getSurface(Uint32 FrameNumber)
         //printf("%u\n", Image[0]);
 
 	//Now we can copy line by line
-	for(Uint16 y = 0; y < SizeY;y++) 
+	for(uint16_t y = 0; y < SizeY;y++) 
 	{
 		memcpy(	((unsigned char*) (pic->pixels)) + y * pic->pitch , Frame + y * SizeX, SizeX);
 	}
@@ -122,12 +121,12 @@ void WsaFile::decodeFrames()
 {
 	unsigned char *dec80;
 	
-	for(Uint16 i=0;i<NumFrames;i++) 
+	for(uint16_t i=0;i<NumFrames;i++) 
 	{
 		if( (dec80 = (unsigned char*) calloc(1,SizeX*SizeY*2)) == NULL) 
 	    	    throw(std::bad_alloc());
 
-		decode80(Filedata + SDL_SwapLE32(Index[i]), dec80, 0);
+		decode80(Filedata + SwapLE32(Index[i]), dec80, 0);
 	
 		decode40(dec80, decodedFrames + i * SizeX * SizeY);
 

@@ -1,10 +1,10 @@
-#include "CpsFile.h"
-#include "Log.h"
-
 #include <iostream>
 #include <string>
 
-#include <SDL_endian.h>
+#include "StdDef.h"
+
+#include "CpsFile.h"
+#include "Log.h"
 
 #define	SIZE_X	320
 #define SIZE_Y	200
@@ -40,15 +40,15 @@ SDL_Surface *CpsFile::getSurface()
 	SDL_Surface *pic = NULL;
 
 	// check for valid file
-	if( SDL_SwapLE16(*(unsigned short *)(m_filedata + 2)) != 0x0004) {
+	if( SwapLE16(*(unsigned short *)(m_filedata + 2)) != 0x0004) {
 		return NULL;
 	}
 	
-	if( SDL_SwapLE16(*(unsigned short *)(m_filedata + 4)) != 0xFA00) {
+	if( SwapLE16(*(unsigned short *)(m_filedata + 4)) != 0xFA00) {
 		return NULL;
 	}
 	
-	Uint16 PaletteSize = SDL_SwapLE16(*((unsigned short *)(m_filedata + 8)));
+	uint16_t PaletteSize = SwapLE16(*((unsigned short *)(m_filedata + 8)));
 	
 	if( (ImageOut = (unsigned char*) calloc(1,SIZE_X*SIZE_Y)) == NULL) {
 		return NULL;

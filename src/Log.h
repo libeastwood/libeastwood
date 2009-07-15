@@ -1,12 +1,5 @@
 #ifndef EASTWOOD_LOG_H
 #define EASTWOOD_LOG_H
-typedef enum logLevel_e
-{
-    LOG_FATAL,
-    LOG_ERROR,
-    LOG_WARNING,
-    LOG_INFO
-} logLevel;
 
 #define LOG(...)           ((void)(0))
 #define LOG_FATAL(...)     ((void)(0))

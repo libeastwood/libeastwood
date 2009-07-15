@@ -1,7 +1,6 @@
 #include <SDL.h>
-#include <SDL_endian.h>
-#include <stdlib.h>
-#include <string.h>
+
+#include "StdDef.h"
 
 #include "Exception.h"
 #include "IcnFile.h"
@@ -24,30 +23,30 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if(mapSize < 2)
 		throw(Exception(LOG_ERROR, "IcnFile","Mapfile: This *.map-File is too short!"));
 	
-	int numTileSets = SDL_SwapLE16( *((Uint16 *) bufMapData));
+	int numTileSets = SwapLE16( *((uint16_t *) bufMapData));
 	
-	if(mapSize < (Uint16)(numTileSets * 2))
+	if(mapSize < (uint16_t)(numTileSets * 2))
 		throw(Exception(LOG_ERROR, "IcnFile","Mapfile: This *.map-File is too short!"));
 	
-	m_tileSet = new std::vector<Uint16Vect>(numTileSets);
+	m_tileSet = new std::vector<std::vector<uint16_t> >(numTileSets);
 	
 	// calculate size for all entries
 	for(int i = 0; i < numTileSets; i++) {
-		Uint16 index, index2;
+		uint16_t index, index2;
 		if(i == numTileSets - 1)
 			index = (mapSize/2);
 		else
-			index = SDL_SwapLE16( ((Uint16*) bufMapData)[i+1]);
-		index -= index2 = SDL_SwapLE16( ((Uint16*) bufMapData)[i]);
+			index = SwapLE16( ((uint16_t*) bufMapData)[i+1]);
+		index -= index2 = SwapLE16( ((uint16_t*) bufMapData)[i]);
 	
-		(*m_tileSet)[i] = Uint16Vect(index);
+		(*m_tileSet)[i] = std::vector<uint16_t>(index);
 		
 		if(mapSize < (index2+(*m_tileSet)[i].size())*2 )
 			throw(Exception(LOG_ERROR, "IcnFile", "Mapfile: This *.map-File is too short!"));
 
 		// now we can read in
 		for(unsigned int j = 0; j < (*m_tileSet)[i].size(); j++)
-			(*m_tileSet)[i][j] = SDL_SwapLE16( ((Uint16*) bufMapData)[index2+j]);
+			(*m_tileSet)[i][j] = SwapLE16( ((uint16_t*) bufMapData)[index2+j]);
 
 	}
 	// reading MAP-File is now finished
@@ -63,7 +62,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if((m_SSET[0] != 'S') || (m_SSET[1] != 'S') || (m_SSET[2] != 'E') || (m_SSET[3] != 'T'))
 		throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found!"));
 
-	m_SSET_Length = SDL_SwapBE32( *((Uint32*) (m_SSET + 4))) - 8;
+	m_SSET_Length = SwapBE32( *((uint32_t*) (m_SSET + 4))) - 8;
 	
 	m_SSET += 16;
 	
@@ -76,7 +75,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if((m_RPAL[0] != 'R') || (m_RPAL[1] != 'P') || (m_RPAL[2] != 'A') || (m_RPAL[3] != 'L'))
 		throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL-Section found!"));
 
-	m_RPAL_Length = SDL_SwapBE32( *((Uint32*) (m_RPAL + 4)));
+	m_RPAL_Length = SwapBE32( *((uint32_t*) (m_RPAL + 4)));
 	
 	m_RPAL += 8;
 	
@@ -89,7 +88,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if((m_RTBL[0] != 'R') || (m_RTBL[1] != 'T') || (m_RTBL[2] != 'B') || (m_RTBL[3] != 'L'))
 		throw(Exception(LOG_ERROR, "IcnFile",  "Invalid ICN-File: No RTBL-Section found!"));
 
-	m_RTBL_Length = SDL_SwapBE32( *((Uint32*) (m_RTBL + 4)));
+	m_RTBL_Length = SwapBE32( *((uint32_t*) (m_RTBL + 4)));
 	
 	m_RTBL += 8;
 	
@@ -106,7 +105,7 @@ IcnFile::~IcnFile()
 {	
 }
 
-SDL_Surface *IcnFile::getSurface(Uint32 indexOfFile) {
+SDL_Surface *IcnFile::getSurface(uint32_t indexOfFile) {
 	SDL_Surface *pic;
 	
 	if(indexOfFile >= m_numFiles) {
@@ -148,7 +147,7 @@ SDL_Surface *IcnFile::getSurface(Uint32 indexOfFile) {
 	return pic;
 }
 
-SDL_Surface *IcnFile::getSurfaceArray(Uint32 mapFileIndex, int tilesX, int tilesY, int tilesN) {
+SDL_Surface *IcnFile::getSurfaceArray(uint32_t mapFileIndex, int tilesX, int tilesY, int tilesN) {
 	SDL_Surface *pic;
 	
 	if(mapFileIndex >= getNumTileSets()) {
@@ -257,14 +256,14 @@ SDL_Surface *IcnFile::getSurfaceArray(Uint32 mapFileIndex, int tilesX, int tiles
 	return pic;
 }
 
-SDL_Surface *IcnFile::getSurfaceRow(Uint32 startIndex, Uint32 endIndex) {
+SDL_Surface *IcnFile::getSurfaceRow(uint32_t startIndex, uint32_t endIndex) {
 	SDL_Surface *pic;
 	
 	if((startIndex >= m_numFiles)||(endIndex >= m_numFiles)||(startIndex > endIndex)) {
 		return NULL;
 	}
 	
-	Uint32 numTiles = endIndex - startIndex + 1;
+	uint32_t numTiles = endIndex - startIndex + 1;
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_HWSURFACE,SIZE_X*numTiles,SIZE_Y,8,0,0,0,0))== NULL) {
 		return NULL;

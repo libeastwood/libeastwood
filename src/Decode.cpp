@@ -1,8 +1,4 @@
-#include <SDL_endian.h>
-#include <stdlib.h>
-#include <string>
-
-#include <SDL.h>
+#include "StdDef.h"
 
 #include "Decode.h"
 #include "Exception.h"
@@ -28,17 +24,17 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 	const unsigned char *readp = image_in;
 	unsigned char *writep = image_out;
 
-	Uint16 a = 0;
-	Uint16 b = 0;
-	Uint16 c = 0;
-	Uint16 d = 0;
-	Uint16 e = 0;
-//	Uint16 relposcount = 0;
-	Uint16 megacounta = 0;
-	Uint16 megacountb = 0;
-	Uint16 megacountc = 0;
-	Uint16 megacountd = 0;
-	Uint16 megacounte = 0;
+	uint16_t a = 0;
+	uint16_t b = 0;
+	uint16_t c = 0;
+	uint16_t d = 0;
+	uint16_t e = 0;
+//	uint16_t relposcount = 0;
+	uint16_t megacounta = 0;
+	uint16_t megacountb = 0;
+	uint16_t megacountc = 0;
+	uint16_t megacountd = 0;
+	uint16_t megacounte = 0;
 	/*
 	   1 10cccccc
 	   2 0cccpppp p
@@ -82,8 +78,8 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 			// 
 			// 11111111 c c p p (5)
 			//
-			unsigned short count = SDL_SwapLE16(*((unsigned short *) (readp + 1)));
-			unsigned short pos = SDL_SwapLE16(*((unsigned short *) (readp + 3)));
+			unsigned short count = SwapLE16(*((unsigned short *) (readp + 1)));
+			unsigned short pos = SwapLE16(*((unsigned short *) (readp + 3)));
 			//printf("Cmd 5, count: %d, pos: %d\n", count, pos);
 			readp += 5;
 			megacounte += count;
@@ -94,7 +90,7 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 			//
 			// 11111110 c c v(4) 
 			//
-			unsigned short count = SDL_SwapLE16(*((unsigned short *) (readp + 1)));
+			unsigned short count = SwapLE16(*((unsigned short *) (readp + 1)));
 			unsigned char color = readp[3];
 			//printf("Cmd 4, count: %d, color: %d\n", count, color);
 			readp += 4;
@@ -108,7 +104,7 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 			//
 			
 			unsigned short count = (*readp & 0x3f) + 3;
-			unsigned short pos = SDL_SwapLE16(*((unsigned short *) (readp + 1)));
+			unsigned short pos = SwapLE16(*((unsigned short *) (readp + 1)));
 			//printf("Cmd 3, count: %d, pos: %d\n", count, pos);
 			readp += 3;
 			megacountc += count;
@@ -170,7 +166,7 @@ void Decode::shp_correct_lf(const unsigned char *in, unsigned char *out, int siz
 
 void Decode::apply_pal_offsets(const unsigned char *offsets, unsigned char *data,unsigned int length)
 {
-	for (Uint16 i = 0; i < length; i ++)
+	for (uint16_t i = 0; i < length; i ++)
 		data[i] = offsets[data[i]];
 }
 
@@ -187,8 +183,8 @@ int Decode::decode40(const unsigned char *image_in, unsigned char *image_out)
 
 	const unsigned char* readp = image_in;
 	unsigned char* writep = image_out;
-	Uint16 code;
-	Uint16 count;
+	uint16_t code;
+	uint16_t count;
 	while (1)
 	{
 		code = *readp++;
@@ -217,7 +213,7 @@ int Decode::decode40(const unsigned char *image_in, unsigned char *image_out)
 			//bit 7 = 1
 			if (!(count = code & 0x7f))
 			{
-				count =  SDL_SwapLE16(*((Uint16*)readp));
+				count =  SwapLE16(*((uint16_t*)readp));
 				readp += 2;
 				code = count >> 8;
 				if (~code & 0x80)

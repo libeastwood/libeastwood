@@ -1,18 +1,17 @@
 #include <iostream>
-#include <SDL_endian.h>
-#include <SDL.h>
 #include <string>
 
+#include "StdDef.h"
 #include "Exception.h"
 #include "StringFile.h"
 
 using namespace eastwood;
 
 StringFile::StringFile(const unsigned char *bufFileData) {
-    int numStrings = ((int)SDL_SwapLE16(((Uint16*) bufFileData)[0]))/2 - 1;
+    int numStrings = ((int)SwapLE16(((uint16_t*) bufFileData)[0]))/2 - 1;
     strings.resize(numStrings);
     for(int i = 0; i < numStrings; i++) {
-        Uint16 index = SDL_SwapLE16(((Uint16*)bufFileData)[i]);
+        uint16_t index = SwapLE16(((uint16_t*)bufFileData)[i]);
         strings[i] = decodeString((const char*)(bufFileData+index));
     }
 }
