@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <SDL.h>
 
 #include "StdDef.h"
 
@@ -9,10 +10,10 @@
 #define	SIZE_X	320
 #define SIZE_Y	200
 
-CpsFile::CpsFile(const unsigned char *bufFileData, int bufSize, SDL_Palette *palette) : Decode()
+CpsFile::CpsFile(const uint8_t *bufFileData, int bufSize, SDL_Palette *palette) : Decode()
 {
 	m_filedata = bufFileData;
-	if(*(unsigned char *)(bufFileData + 9) == 3){
+	if(*(uint8_t *)(bufFileData + 9) == 3){
 		LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 		m_palette = new SDL_Palette;
 		m_palette->ncolors = bufSize / 3;
@@ -36,21 +37,21 @@ CpsFile::~CpsFile()
 
 SDL_Surface *CpsFile::getSurface()
 {
-	unsigned char *ImageOut;
+	uint8_t *ImageOut;
 	SDL_Surface *pic = NULL;
 
 	// check for valid file
-	if( SwapLE16(*(unsigned short *)(m_filedata + 2)) != 0x0004) {
+	if( SwapLE16(*(uint16_t *)(m_filedata + 2)) != 0x0004) {
 		return NULL;
 	}
 	
-	if( SwapLE16(*(unsigned short *)(m_filedata + 4)) != 0xFA00) {
+	if( SwapLE16(*(uint16_t *)(m_filedata + 4)) != 0xFA00) {
 		return NULL;
 	}
 	
-	uint16_t PaletteSize = SwapLE16(*((unsigned short *)(m_filedata + 8)));
+	uint16_t PaletteSize = SwapLE16(*((uint16_t *)(m_filedata + 8)));
 	
-	if( (ImageOut = (unsigned char*) calloc(1,SIZE_X*SIZE_Y)) == NULL) {
+	if( (ImageOut = (uint8_t*) calloc(1,SIZE_X*SIZE_Y)) == NULL) {
 		return NULL;
 	}
 	
@@ -69,7 +70,7 @@ SDL_Surface *CpsFile::getSurface()
 
 	//Now we can copy line by line
 	for(int y = 0; y < SIZE_Y;y++) {
-		memcpy(	((char*) (pic->pixels)) + y * pic->pitch , ImageOut + y * SIZE_X, SIZE_X);
+		memcpy(	((uint8_t*) (pic->pixels)) + y * pic->pitch , ImageOut + y * SIZE_X, SIZE_X);
 	}
 		
 	SDL_UnlockSurface(pic);
