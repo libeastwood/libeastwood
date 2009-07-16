@@ -21,21 +21,21 @@ WsaFile::WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
 	if(WsaFilesize < 10)
 		throw(Exception(LOG_ERROR, "WsaFile", "No valid WSA-File: File too small!"));
 	
-	NumFrames = SwapLE16(*((uint16_t*) Filedata) );
+	NumFrames = htole16(*((uint16_t*) Filedata) );
     LOG_INFO("WsaFile", "numframes = %d", NumFrames);
 
-	SizeX = SwapLE16(*((uint16_t*) (Filedata + 2)) );
-	SizeY = SwapLE16(*((uint16_t*) (Filedata + 4)) );
+	SizeX = htole16(*((uint16_t*) (Filedata + 2)) );
+	SizeY = htole16(*((uint16_t*) (Filedata + 4)) );
     LOG_INFO("WsaFile", "size %d x %d", SizeX, SizeY);
 	
 	if( ((unsigned short *) Filedata)[4] == 0) {
 		Index = (uint32_t *) (Filedata + 10);
-		FramesPer1024ms = SwapLE32( *((uint32_t*) (Filedata+6)) );
+		FramesPer1024ms = htole32( *((uint32_t*) (Filedata+6)) );
 	} 
 	else 
 	{
 		Index = (uint32_t *) (Filedata + 8);
-		FramesPer1024ms = SwapLE16( *((uint16_t*) (Filedata+6)) );
+		FramesPer1024ms = htole16( *((uint16_t*) (Filedata+6)) );
 	}
 
     // surely /1000.0f not 100?!
@@ -126,7 +126,7 @@ void WsaFile::decodeFrames()
 		if( (dec80 = (unsigned char*) calloc(1,SizeX*SizeY*2)) == NULL) 
 	    	    throw(std::bad_alloc());
 
-		decode80(Filedata + SwapLE32(Index[i]), dec80, 0);
+		decode80(Filedata + htole32(Index[i]), dec80, 0);
 	
 		decode40(dec80, decodedFrames + i * SizeX * SizeY);
 

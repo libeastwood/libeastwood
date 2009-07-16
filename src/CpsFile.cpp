@@ -41,15 +41,15 @@ SDL_Surface *CpsFile::getSurface()
 	SDL_Surface *pic = NULL;
 
 	// check for valid file
-	if( SwapLE16(*(uint16_t *)(m_filedata + 2)) != 0x0004) {
+	if( htole16(*(uint16_t *)(m_filedata + 2)) != 0x0004) {
 		return NULL;
 	}
 	
-	if( SwapLE16(*(uint16_t *)(m_filedata + 4)) != 0xFA00) {
+	if( htole16(*(uint16_t *)(m_filedata + 4)) != 0xFA00) {
 		return NULL;
 	}
 	
-	uint16_t PaletteSize = SwapLE16(*((uint16_t *)(m_filedata + 8)));
+	uint16_t PaletteSize = htole16(*((uint16_t *)(m_filedata + 8)));
 	
 	if( (ImageOut = (uint8_t*) calloc(1,SIZE_X*SIZE_Y)) == NULL) {
 		return NULL;

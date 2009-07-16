@@ -105,19 +105,19 @@ static uint8_t *LoadVOC_RW(SDL_RWops* rwop, uint32_t &size, uint32_t &rate) {
 		LOG_ERROR("VocFile", "loadVOCFromStream: Invalid header!");
 		return NULL;
 	}
-	offset = SwapLE16(offset);
+	offset = htole16(offset);
 	
 	if(SDL_RWread(rwop,&version,sizeof(version),1) != 1) {
 		LOG_ERROR("VocFile", "loadVOCFromStream: Invalid header!");
 		return NULL;
 	}
-	version = SwapLE16(version);
+	version = htole16(version);
 	
 	if(SDL_RWread(rwop,&id,sizeof(id),1) != 1) {
 		LOG_ERROR("VocFile", "loadVOCFromStream: Invalid header!");
 		return NULL;
 	}
-	id = SwapLE16(id);
+	id = htole16(id);
 	
 	if(offset != sizeof(description) + sizeof(offset) + sizeof(version) + sizeof(id)) {
 		LOG_ERROR("VocFile", "loadVOCFromStream: Invalid datablock offset in header!");
@@ -202,7 +202,7 @@ static uint8_t *LoadVOC_RW(SDL_RWops* rwop, uint32_t &size, uint32_t &rate) {
 					LOG_ERROR("VocFile", "loadVOCFromStream: Cannot read silence length!");
 					return ret_sound;
 				}
-				SilenceLength = SwapLE16(SilenceLength);
+				SilenceLength = htole16(SilenceLength);
 				
 				uint8_t time_constant;
 				if(SDL_RWread(rwop,&time_constant,sizeof(uint8_t),1) != 1) {
@@ -485,7 +485,7 @@ Mix_Chunk* LoadVOC_RW(SDL_RWops* rwop, int freesrc) {
 			}
 			
 			for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SwapLE16(Float2uint16_t(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
+				TargetData[i] = htole16(Float2uint16_t(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
 				for(int j = 1; j < channels; j++) {
 					TargetData[i+j] = TargetData[i];
 				}
@@ -513,7 +513,7 @@ Mix_Chunk* LoadVOC_RW(SDL_RWops* rwop, int freesrc) {
 			}
 			
 			for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SwapLE16(Float2Sint16(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
+				TargetData[i] = htole16(Float2Sint16(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
 				for(int j = 1; j < channels; j++) {
 					TargetData[i+j] = TargetData[i];
 				}
@@ -541,7 +541,7 @@ Mix_Chunk* LoadVOC_RW(SDL_RWops* rwop, int freesrc) {
 			}
 			
 			for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SwapBE16(Float2uint16_t(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
+				TargetData[i] = htobe16(Float2uint16_t(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
 				for(int j = 1; j < channels; j++) {
 					TargetData[i+j] = TargetData[i];
 				}
@@ -569,7 +569,7 @@ Mix_Chunk* LoadVOC_RW(SDL_RWops* rwop, int freesrc) {
 			}
 			
 			for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-				TargetData[i] = SwapBE16(Float2Sint16(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
+				TargetData[i] = htobe16(Float2Sint16(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
 				for(int j = 1; j < channels; j++) {
 					TargetData[i+j] = TargetData[i];
 				}

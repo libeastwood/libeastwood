@@ -23,7 +23,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if(mapSize < 2)
 		throw(Exception(LOG_ERROR, "IcnFile","Mapfile: This *.map-File is too short!"));
 	
-	int numTileSets = SwapLE16( *((uint16_t *) bufMapData));
+	int numTileSets = htole16( *((uint16_t *) bufMapData));
 	
 	if(mapSize < (uint16_t)(numTileSets * 2))
 		throw(Exception(LOG_ERROR, "IcnFile","Mapfile: This *.map-File is too short!"));
@@ -36,8 +36,8 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 		if(i == numTileSets - 1)
 			index = (mapSize/2);
 		else
-			index = SwapLE16( ((uint16_t*) bufMapData)[i+1]);
-		index -= index2 = SwapLE16( ((uint16_t*) bufMapData)[i]);
+			index = htole16( ((uint16_t*) bufMapData)[i+1]);
+		index -= index2 = htole16( ((uint16_t*) bufMapData)[i]);
 	
 		(*m_tileSet)[i] = std::vector<uint16_t>(index);
 		
@@ -46,7 +46,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 
 		// now we can read in
 		for(unsigned int j = 0; j < (*m_tileSet)[i].size(); j++)
-			(*m_tileSet)[i][j] = SwapLE16( ((uint16_t*) bufMapData)[index2+j]);
+			(*m_tileSet)[i][j] = htole16( ((uint16_t*) bufMapData)[index2+j]);
 
 	}
 	// reading MAP-File is now finished
@@ -62,7 +62,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if((m_SSET[0] != 'S') || (m_SSET[1] != 'S') || (m_SSET[2] != 'E') || (m_SSET[3] != 'T'))
 		throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found!"));
 
-	m_SSET_Length = SwapBE32( *((uint32_t*) (m_SSET + 4))) - 8;
+	m_SSET_Length = htobe32( *((uint32_t*) (m_SSET + 4))) - 8;
 	
 	m_SSET += 16;
 	
@@ -75,7 +75,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if((m_RPAL[0] != 'R') || (m_RPAL[1] != 'P') || (m_RPAL[2] != 'A') || (m_RPAL[3] != 'L'))
 		throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL-Section found!"));
 
-	m_RPAL_Length = SwapBE32( *((uint32_t*) (m_RPAL + 4)));
+	m_RPAL_Length = htobe32( *((uint32_t*) (m_RPAL + 4)));
 	
 	m_RPAL += 8;
 	
@@ -88,7 +88,7 @@ IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
 	if((m_RTBL[0] != 'R') || (m_RTBL[1] != 'T') || (m_RTBL[2] != 'B') || (m_RTBL[3] != 'L'))
 		throw(Exception(LOG_ERROR, "IcnFile",  "Invalid ICN-File: No RTBL-Section found!"));
 
-	m_RTBL_Length = SwapBE32( *((uint32_t*) (m_RTBL + 4)));
+	m_RTBL_Length = htobe32( *((uint32_t*) (m_RTBL + 4)));
 	
 	m_RTBL += 8;
 	

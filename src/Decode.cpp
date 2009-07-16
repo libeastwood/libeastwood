@@ -78,8 +78,8 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 			// 
 			// 11111111 c c p p (5)
 			//
-			unsigned short count = SwapLE16(*((unsigned short *) (readp + 1)));
-			unsigned short pos = SwapLE16(*((unsigned short *) (readp + 3)));
+			unsigned short count = htole16(*((unsigned short *) (readp + 1)));
+			unsigned short pos = htole16(*((unsigned short *) (readp + 3)));
 			//printf("Cmd 5, count: %d, pos: %d\n", count, pos);
 			readp += 5;
 			megacounte += count;
@@ -90,7 +90,7 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 			//
 			// 11111110 c c v(4) 
 			//
-			unsigned short count = SwapLE16(*((unsigned short *) (readp + 1)));
+			unsigned short count = htole16(*((unsigned short *) (readp + 1)));
 			unsigned char color = readp[3];
 			//printf("Cmd 4, count: %d, color: %d\n", count, color);
 			readp += 4;
@@ -104,7 +104,7 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 			//
 			
 			unsigned short count = (*readp & 0x3f) + 3;
-			unsigned short pos = SwapLE16(*((unsigned short *) (readp + 1)));
+			unsigned short pos = htole16(*((unsigned short *) (readp + 1)));
 			//printf("Cmd 3, count: %d, pos: %d\n", count, pos);
 			readp += 3;
 			megacountc += count;
@@ -213,7 +213,7 @@ int Decode::decode40(const unsigned char *image_in, unsigned char *image_out)
 			//bit 7 = 1
 			if (!(count = code & 0x7f))
 			{
-				count =  SwapLE16(*((uint16_t*)readp));
+				count =  htole16(*((uint16_t*)readp));
 				readp += 2;
 				code = count >> 8;
 				if (~code & 0x80)

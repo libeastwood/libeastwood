@@ -8,10 +8,10 @@
 using namespace eastwood;
 
 StringFile::StringFile(const unsigned char *bufFileData) {
-    int numStrings = ((int)SwapLE16(((uint16_t*) bufFileData)[0]))/2 - 1;
+    int numStrings = ((int)htole16(((uint16_t*) bufFileData)[0]))/2 - 1;
     strings.resize(numStrings);
     for(int i = 0; i < numStrings; i++) {
-        uint16_t index = SwapLE16(((uint16_t*)bufFileData)[i]);
+        uint16_t index = htole16(((uint16_t*)bufFileData)[i]);
         strings[i] = decodeString((const char*)(bufFileData+index));
     }
 }

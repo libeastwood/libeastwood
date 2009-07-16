@@ -43,7 +43,7 @@ SDL_Surface *ShpFile::getSurface(uint32_t IndexOfFile)
 	unsigned char sizeX = Fileheader[3];
 	
 	/* size and also checksum */
-	uint16_t size = SwapLE16(*((uint16_t*) (Fileheader + 8)));
+	uint16_t size = htole16(*((uint16_t*) (Fileheader + 8)));
 	
 	
 	LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",IndexOfFile,sizeX,sizeY);
@@ -195,7 +195,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 			unsigned char type = Fileheader[0];
 		
 			/* size and also checksum */
-			uint16_t size = SwapLE16(*((uint16_t*) (Fileheader + 8)));
+			uint16_t size = htole16(*((uint16_t*) (Fileheader + 8)));
 		
 			if((ImageOut = (unsigned char*) calloc(1,sizeX*sizeY)) == NULL) {
 				free(tiles);
@@ -311,7 +311,7 @@ SDL_Surface *ShpFile::getSurfaceArray(unsigned int tilesX, unsigned int tilesY, 
 void ShpFile::readIndex()
 {
 	// First get number of files in shp-file
-	NumFiles = SwapLE16( ((uint16_t*) Filedata)[0]);
+	NumFiles = htole16( ((uint16_t*) Filedata)[0]);
 	
 	if(NumFiles == 0) {
 	    throw(Exception(LOG_ERROR, "ShpFile", "There is no file in this shp-File!"));
@@ -328,14 +328,14 @@ void ShpFile::readIndex()
 		if (((uint16_t*) Filedata)[2] != 0) {
 			/* File has special header with only 2 byte offset */
 			
-			Index[0].StartOffset = ((uint32_t) SwapLE16(((uint16_t*) Filedata)[1]));
-			Index[0].EndOffset = ((uint32_t) SwapLE16(((uint16_t*) Filedata)[2])) - 1;
+			Index[0].StartOffset = ((uint32_t) htole16(((uint16_t*) Filedata)[1]));
+			Index[0].EndOffset = ((uint32_t) htole16(((uint16_t*) Filedata)[2])) - 1;
 
 
 		} else {
 			/* File has normal 4 byte offsets */
-			Index[0].StartOffset = ((uint32_t) SwapLE32(*((uint32_t*) (Filedata+2)))) + 2;
-			Index[0].EndOffset = ((uint32_t) SwapLE16(((uint16_t*) Filedata)[3])) - 1 + 2;
+			Index[0].StartOffset = ((uint32_t) htole32(*((uint32_t*) (Filedata+2)))) + 2;
+			Index[0].EndOffset = ((uint32_t) htole16(((uint16_t*) Filedata)[3])) - 1 + 2;
 		}
 
 	} else {
@@ -354,7 +354,7 @@ void ShpFile::readIndex()
 		
 		// now fill Index with start and end-offsets
 		for(int i = 0; i < NumFiles; i++) {
-			Index[i].StartOffset = SwapLE32( ((uint32_t*)(Filedata+2))[i]) + 2;
+			Index[i].StartOffset = htole32( ((uint32_t*)(Filedata+2))[i]) + 2;
 			
 			if(i > 0) {
 				char error[256];
@@ -367,6 +367,6 @@ void ShpFile::readIndex()
 		}
 		
 		// Add the EndOffset for the last file
-		Index[NumFiles-1].EndOffset = ((uint32_t) SwapLE16( *((uint16_t*) (Filedata + 2 + (NumFiles * 4))))) - 1 + 2;
+		Index[NumFiles-1].EndOffset = ((uint32_t) htole16( *((uint16_t*) (Filedata + 2 + (NumFiles * 4))))) - 1 + 2;
 	}
 }

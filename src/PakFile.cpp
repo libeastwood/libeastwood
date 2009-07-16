@@ -30,7 +30,7 @@ void PakFile::readIndex()
         m_pakFile->read((char*)&fileEntry.startOffset, sizeof(int));
 
         // pak-files are always little endian encoded
-        fileEntry.startOffset = SwapLE32(fileEntry.startOffset);
+        fileEntry.startOffset = htole32(fileEntry.startOffset);
 
         m_pakFile->getline(name, 256, 0);
         fileEntry.fileName = name;
