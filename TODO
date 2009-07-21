@@ -3,3 +3,4 @@
 * Update adlib player from scummvm
 * Implement python bindings
 * Implement scale2x support
+* Implement complete exception handling
