@@ -63,7 +63,7 @@ IniFile::~IniFile()
 }
 
 
-/// Reads the string that is adressed by the section/key pair.
+/// Reads the std::string that is adressed by the section/key pair.
 /**
 	Returns the value that is adressed by the section/key pair as a string. If the key could not be found in
 	this section defaultValue is returned. If no defaultValue is specified then "" is returned.
@@ -72,7 +72,7 @@ IniFile::~IniFile()
 	\param	defaultValue	default value for defaultValue is ""
 	\return	The read value or default
 */
-string IniFile::getStringValue(string section, string key, string defaultValue)
+std::string IniFile::getStringValue(std::string section, std::string key, std::string defaultValue)
 {
 	SectionEntry *curSection = getSection(section);
 	if(curSection == NULL) {
@@ -98,9 +98,9 @@ string IniFile::getStringValue(string section, string key, string defaultValue)
 	\param	defaultValue	default value for defaultValue is 0
 	\return	The read number, defaultValue or 0
 */
-int IniFile::getIntValue(string section, string key, int defaultValue )
+int IniFile::getIntValue(std::string section, std::string key, int defaultValue )
 {
-	string value = getStringValue(section,key,"");
+	std::string value = getStringValue(section,key,"");
 	if(value.size() == 0) {
 		return defaultValue;
 	}
@@ -128,14 +128,14 @@ int IniFile::getIntValue(string section, string key, int defaultValue )
 	\param	defaultValue	default value for defaultValue is 0
 	\return	true for "true", "enabled", "on" and "1"<br>false for "false", "disabled", "off" and "0"
 */
-bool IniFile::getBoolValue(string section, string key, bool defaultValue)
+bool IniFile::getBoolValue(std::string section, std::string key, bool defaultValue)
 {
-	string value = getStringValue(section,key,"");
+	std::string value = getStringValue(section,key,"");
 	if(value.size() == 0) {
 		return defaultValue;
 	}
 	
-	// convert string to lower case
+	// convert std::string to lower case
 	transform(value.begin(),value.end(), value.begin(), (int(*)(int)) tolower);
 	
 	if((value == "true") || (value == "enabled") || (value == "on") || (value == "1")) {
@@ -147,16 +147,16 @@ bool IniFile::getBoolValue(string section, string key, bool defaultValue)
 	}
 }
 
-/// Sets the string that is adressed by the section/key pair.
+/// Sets the std::string that is adressed by the section/key pair.
 /**
-	Sets the string that is adressed by the section/key pair to value. If the section and/or the key does not exist it will
+	Sets the std::string that is adressed by the section/key pair to value. If the section and/or the key does not exist it will
 	be created. A valid sectionname/keyname is not allowed to contain '[',']',';' or '#' and can not start or end with
 	whitespaces (' ' or '\\t').
 	\param	section			sectionname
 	\param	key				keyname
 	\param	value			value that should be set
 */
-void IniFile::setStringValue(string section, string key, string value)
+void IniFile::setStringValue(std::string section, std::string key, std::string value)
 {
 	CommentEntry *curEntry = NULL;
 	SectionEntry *curSection = getSection(section);
@@ -177,11 +177,11 @@ void IniFile::setStringValue(string section, string key, string value)
 		}
 		
 		if(NonNormalCharFound == true) {
-			cerr << "IniFile: Cannot create section with name " << section << "!" << endl;
+		    std::cerr << "IniFile: Cannot create section with name " << section << "!" << std::endl;
 			return;
 		}
 		
-		string completeLine = "[" + section + "]";
+		std::string completeLine = "[" + section + "]";
 		if((curSection = new SectionEntry(completeLine,1,section.size())) == NULL)
 	    	    throw(std::bad_alloc());
 
@@ -218,11 +218,11 @@ void IniFile::setStringValue(string section, string key, string value)
 		}
 		
 		if(NonNormalCharFound == true) {
-			cerr << "IniFile: Cannot create key with name " << key << "!" << endl;
+		    std::cerr << "IniFile: Cannot create key with name " << key << "!" << std::endl;
 			return;
 		}
 
-		string completeLine;
+		std::string completeLine;
 		int KeyStringStart;
 		int KeyStringLength;
 		int ValueStringStart;
@@ -314,7 +314,7 @@ void IniFile::setStringValue(string section, string key, string value)
 	\param	key				keyname
 	\param	value			value that should be set
 */
-void IniFile::setIntValue(string section, string key, int value)
+void IniFile::setIntValue(std::string section, std::string key, int value)
 {
 	char tmp[20];
 	sprintf(tmp,"%d",value);
@@ -330,7 +330,7 @@ void IniFile::setIntValue(string section, string key, int value)
 	\param	key				keyname
 	\param	value			value that should be set
 */
-void IniFile::setBoolValue(string section, string key, bool value)
+void IniFile::setBoolValue(std::string section, std::string key, bool value)
 {
 	if(value == true) {
 		setStringValue(section, key, "true");
@@ -358,7 +358,7 @@ void IniFile::setBoolValue(string section, string key, bool value)
 	\return	handle to this section
 	\see	KeyList_Close, KeyList_GetNextKey, KeyList_EOF
 */
-IniFile::KeyListHandle IniFile::KeyList_Open(string sectionname) {
+IniFile::KeyListHandle IniFile::KeyList_Open(std::string sectionname) {
 	SectionEntry *curSection = getSection(sectionname);
 	if(curSection == NULL) {
 		return NULL;
@@ -390,11 +390,11 @@ bool IniFile::KeyList_EOF(KeyListHandle handle) {
 	\return	The keyname or "" if the list is empty
 	\see	KeyList_Open, KeyList_EOF
 */
-string IniFile::KeyList_GetNextKey(KeyListHandle* handle) {
+std::string IniFile::KeyList_GetNextKey(KeyListHandle* handle) {
 	if(handle == NULL) {
 		return "";
 	} else {
-		string ret = (*handle)->CompleteLine.substr((*handle)->KeyStringBegin,(*handle)->KeyStringLength);
+		std::string ret = (*handle)->CompleteLine.substr((*handle)->KeyStringBegin,(*handle)->KeyStringLength);
 		*handle = (*handle)->nextKey;
 		return ret;
 	}
@@ -418,7 +418,7 @@ void IniFile::KeyList_Close(KeyListHandle *handle) {
 	\param	filename	Filename of the file. This file is opened for writing.
 	\return	true on success otherwise false.
 */
-bool IniFile::SaveChangesTo(string filename) {
+bool IniFile::SaveChangesTo(std::string filename) {
 	SDL_RWops *file;
 	if((file = SDL_RWFromFile(filename.c_str(),"w")) == NULL) {
 		return false;
@@ -463,7 +463,7 @@ void IniFile::flush()
 	CommentEntry* curEntry = FirstLine;
 	
 	while(curEntry != NULL) {
-		//cout << curEntry->CompleteLine << endl;
+		//cout << curEntry->CompleteLine << std::endl;
 		curEntry = curEntry->nextEntry;
 	}
 
@@ -476,7 +476,7 @@ void IniFile::readfile(SDL_RWops *file)
 	
 	SectionEntry *curSectionEntry = SectionRoot;
 		
-	string completeLine;
+	std::string completeLine;
 	int lineNum = 0;
 	bool SyntaxError = false;
 	CommentEntry *curEntry = NULL;
@@ -626,7 +626,7 @@ void IniFile::readfile(SDL_RWops *file)
 			if(completeLine.size() < 100) {
 				// there are some buggy ini-files which have a lot of waste at the end of the file
 				// and it makes no sense to print all this stuff out. just skip it
-				cerr << "IniFile: Syntax-Error in line " << lineNum << ":" << completeLine << " !" << endl;
+			    std::cerr << "IniFile: Syntax-Error in line " << lineNum << ":" << completeLine << " !" << std::endl;
 			}
 			// save this line as a comment
 			if((newCommentEntry = new CommentEntry(completeLine)) == NULL)
@@ -680,7 +680,7 @@ void IniFile::InsertKey(SectionEntry *section, KeyEntry *newKeyEntry) {
 }
 
 
-IniFile::SectionEntry *IniFile::getSection(string sectionname) {
+IniFile::SectionEntry *IniFile::getSection(std::string sectionname) {
 	SectionEntry *curSection = SectionRoot;
 	int sectionnameSize = sectionname.size(); 
 	
@@ -697,7 +697,7 @@ IniFile::SectionEntry *IniFile::getSection(string sectionname) {
 	return NULL;
 }
 
-IniFile::KeyEntry *IniFile::getKey(SectionEntry *sectionentry, string keyname) {
+IniFile::KeyEntry *IniFile::getKey(SectionEntry *sectionentry, std::string keyname) {
 	KeyEntry *curKey = sectionentry->KeyRoot;
 	int keynameSize = keyname.size(); 
 	

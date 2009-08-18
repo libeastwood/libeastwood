@@ -4,8 +4,6 @@
 #include <string>
 #include <SDL_rwops.h>
 #include <SDL.h>
-using namespace std;
-
 
 //!  A class for reading and writing *.ini configuration files. 
 /*!
@@ -32,13 +30,13 @@ private:
 	class CommentEntry
 	{
 	public:
-		CommentEntry(string completeLine) {
+		CommentEntry(std::string completeLine) {
 			CompleteLine = completeLine;
 			nextEntry = NULL;
 			prevEntry = NULL;
 		};
 
-		string CompleteLine;
+		std::string CompleteLine;
 		CommentEntry *nextEntry;
 		CommentEntry *prevEntry;
 	};
@@ -47,7 +45,7 @@ private:
 	class SectionEntry : public CommentEntry
 	{
 	public:
-		SectionEntry(string completeLine, int sectionstringbegin, int sectionstringlength)
+		SectionEntry(std::string completeLine, int sectionstringbegin, int sectionstringlength)
 		: CommentEntry(completeLine) {
 			nextSection = NULL;
 			prevSection = NULL;
@@ -67,7 +65,7 @@ private:
 	class KeyEntry : public CommentEntry
 	{
 	public:
-		KeyEntry(string completeLine, int keystringbegin, int keystringlength, int valuestringbegin, int valuestringlength)
+		KeyEntry(std::string completeLine, int keystringbegin, int keystringlength, int valuestringbegin, int valuestringlength)
 		: CommentEntry(completeLine) {
 			nextKey = NULL;
 			prevKey = NULL;
@@ -93,20 +91,20 @@ public:
 	IniFile(SDL_RWops *RWopsFile);
 	~IniFile();
 	
-	string getStringValue(string section, string key, string defaultValue = "");
-	int getIntValue(string section, string key, int defaultValue = 0);
-	bool getBoolValue(string section, string key, bool defaultValue = false);
+	std::string getStringValue(std::string section, std::string key, std::string defaultValue = "");
+	int getIntValue(std::string section, std::string key, int defaultValue = 0);
+	bool getBoolValue(std::string section, std::string key, bool defaultValue = false);
 	
-	void setStringValue(string section, string key, string value);
-	void setIntValue(string section, string key, int value);
-	void setBoolValue(string section, string key, bool value);
+	void setStringValue(std::string section, std::string key, std::string value);
+	void setIntValue(std::string section, std::string key, int value);
+	void setBoolValue(std::string section, std::string key, bool value);
 	
-	KeyListHandle KeyList_Open(string sectionname);
+	KeyListHandle KeyList_Open(std::string sectionname);
 	bool KeyList_EOF(KeyListHandle handle);
-	string KeyList_GetNextKey(KeyListHandle *handle);
+	std::string KeyList_GetNextKey(KeyListHandle *handle);
 	void KeyList_Close(KeyListHandle *handle);
 	
-	bool SaveChangesTo(string filename);
+	bool SaveChangesTo(std::string filename);
 	bool SaveChangesTo(SDL_RWops *file);
 	
 	
@@ -120,8 +118,8 @@ private:
 	void InsertSection(SectionEntry *newSection);
 	void InsertKey(SectionEntry *section, KeyEntry *newKeyEntry);
 
-	SectionEntry *getSection(string sectionname);
-	KeyEntry *getKey(SectionEntry* sectionentry, string keyname);
+	SectionEntry *getSection(std::string sectionname);
+	KeyEntry *getKey(SectionEntry* sectionentry, std::string keyname);
 		
 	int getNextChar(const unsigned char *line, int startpos);
 	int skipName(const unsigned char *line, int startpos);
