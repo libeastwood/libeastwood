@@ -1,3 +1,6 @@
+#ifndef EASTWOOD_EMC_STDAFX_H
+#define EASTWOOD_EMC_STDAFX_H 1
+
 /* DST  -  Dune 2 Script Tools
  *  
  * Copyright (C) 2009 segra		<segra@strobs.com>
@@ -46,3 +49,5 @@ extern const char *nameHouses[0x06];
 extern const char *nameStructures[0x13];
 extern const char *nameUnits[0x1B];
 extern const char *nameUnitDetails[0x14];
+
+#endif // EASTWOOD_EMC_STDAFX_H
