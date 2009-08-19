@@ -98,4 +98,4 @@ namespace script {
 		void			 o_execute_House_Null(  );
 	};
 
-};
+}

@@ -28,7 +28,7 @@ namespace script {
 
 	_scriptHandlerDecompiler::_scriptHandlerDecompiler( const char *fileName ) : _scriptHandler(fileName) {
 		std::string	sourceFilename = std::string(_fileName), targetFilename;
-		int		posPeriod = sourceFilename.find(".");
+		size_t		posPeriod = sourceFilename.find(".");
 
 		// Prepare output filename
 		if(posPeriod == std::string::npos)

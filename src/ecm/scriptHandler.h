@@ -102,13 +102,13 @@ namespace script {
 
 		inline void scriptLabelAdd( std::string label, uint16_t position ) {
 			labelPosition	LP;
-			int				labelPos	= scriptLabel( position );
-			int				labelEndPos = label.find(":");
+			size_t				labelPos	= scriptLabel( position );
+			size_t				labelEndPos = label.find(":");
 
 			if(labelEndPos == std::string::npos)
 				labelEndPos = label.length();
 
-			if( labelPos == -1 ) {
+			if( labelPos == (size_t)-1 ) {
 				LP._name		= label.substr( 0, labelEndPos);
 				LP._scriptPos	= position;
 
@@ -189,4 +189,4 @@ namespace script {
 			virtual void	 o_execute_House_Null(  )				= 0;
 		};
 
-};
+}
