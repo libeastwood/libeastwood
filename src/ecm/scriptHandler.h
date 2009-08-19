@@ -1,7 +1,7 @@
 /* DST  -  Dune 2 Script Tools
  *  
  * Copyright (C) 2009 segra		<segra@strobs.com>
- 
+
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -21,170 +21,170 @@
  */
 
 
-	struct labelPosition {
-		uint16_t	_scriptPos;
-		std::string	_name;
+struct labelPosition {
+    uint16_t	_scriptPos;
+    std::string	_name;
+};
+
+class _scriptHandler {
+    protected:
+	// Opcode Definitions
+	typedef void (_scriptHandler::*opcodefuncPtr)(  );
+
+	struct _Opcode {
+	    const char		*description;
+	    opcodefuncPtr	 function;
 	};
 
-	class _scriptHandler {
-	protected:
-		// Opcode Definitions
-		typedef void (_scriptHandler::*opcodefuncPtr)(  );
-
-		struct _Opcode {
-			const char		*description;
-			opcodefuncPtr	 function;
-		};
-
-		// Opcode Functions
-		const _Opcode	*_opcodes;					// Script Opcodes
-		const _Opcode	*_opcodesEvaluate;			// Evaluate Command Opcodes
-		const _Opcode	*_opcodesExecute;			// Execute Functions
+	// Opcode Functions
+	const _Opcode	*_opcodes;					// Script Opcodes
+	const _Opcode	*_opcodesEvaluate;			// Evaluate Command Opcodes
+	const _Opcode	*_opcodesExecute;			// Execute Functions
 
 
-		const char		*_fileName;					// Open File
-		uint16_t			*_headerPointers;			// function pointers
+	const char		*_fileName;					// Open File
+	uint16_t			*_headerPointers;			// function pointers
 
-		unsigned short int	 _pointerCount;			// Number of script "function" pointers
-		size_t				 _scriptSize;			// Size of script
+	unsigned short int	 _pointerCount;			// Number of script "function" pointers
+	size_t				 _scriptSize;			// Size of script
 
-		volatile bool			 _modePreProcess;			// In Pre-Process mode?
+	volatile bool			 _modePreProcess;			// In Pre-Process mode?
 
-		const char	   **_objectNames;				// Pointer to current script object names
-		const char	   **_objectFunctions;			// Pointer to current script executable functions
+	const char	   **_objectNames;				// Pointer to current script object names
+	const char	   **_objectFunctions;			// Pointer to current script executable functions
 
-		size_t			 _lineCount;				
-		const uint8_t		*_scriptBuffer;				// script uint8_t stream
-		uint16_t			*_scriptPtr;				// Pointer in _scriptBuffer to current opcode
-		uint16_t			 _scriptPos;				// Line number of current opcode
-		const uint8_t		*_scriptStart;				// pointer in _scriptBuffer to start of actual script
-		_scriptTypes	 _scriptType;				// Type of script (BUILD/TEAM/UNIT)
+	size_t			 _lineCount;				
+	const uint8_t		*_scriptBuffer;				// script uint8_t stream
+	uint16_t			*_scriptPtr;				// Pointer in _scriptBuffer to current opcode
+	uint16_t			 _scriptPos;				// Line number of current opcode
+	const uint8_t		*_scriptStart;				// pointer in _scriptBuffer to start of actual script
+	_scriptTypes	 _scriptType;				// Type of script (BUILD/TEAM/UNIT)
 
-		std::vector<labelPosition> _scriptLabels;		// List of memory locations which can/are jumped to
+	std::vector<labelPosition> _scriptLabels;		// List of memory locations which can/are jumped to
 
-		inline int scriptLabelGet( std::string label ) {
-			int pos = scriptLabel( label );
-		
-			if(pos == -1)
-				return -1;
+	inline int scriptLabelGet( std::string label ) {
+	    int pos = scriptLabel( label );
 
-			return _scriptLabels[pos]._scriptPos;
-		}
+	    if(pos == -1)
+		return -1;
 
-		inline int scriptLabel( std::string label ) {
-			static  std::vector<labelPosition>::iterator		labelIT;
-			int											pos = 0;
+	    return _scriptLabels[pos]._scriptPos;
+	}
 
-			for( labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++ ) {
-				
-				if( label.compare((*labelIT)._name) == 0 )
-					return pos;
-			}
+	inline int scriptLabel( std::string label ) {
+	    static  std::vector<labelPosition>::iterator		labelIT;
+	    int											pos = 0;
 
-			// No labels here
-			return -1;
-		}
+	    for( labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++ ) {
 
-		inline int scriptLabel( uint16_t position ) {
-			static std::vector<labelPosition>::iterator		labelIT;
-			int											pos = 0;
+		if( label.compare((*labelIT)._name) == 0 )
+		    return pos;
+	    }
 
-			for( labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++ ) {
-				
-				if( (*labelIT)._scriptPos == position )
-					return pos;
-			}
+	    // No labels here
+	    return -1;
+	}
 
-			// No labels here
-			return -1;
-		}
+	inline int scriptLabel( uint16_t position ) {
+	    static std::vector<labelPosition>::iterator		labelIT;
+	    int											pos = 0;
 
-		inline void scriptLabelAdd( std::string label, uint16_t position ) {
-			labelPosition	LP;
-			size_t				labelPos	= scriptLabel( position );
-			size_t				labelEndPos = label.find(":");
+	    for( labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++ ) {
 
-			if(labelEndPos == std::string::npos)
-				labelEndPos = label.length();
+		if( (*labelIT)._scriptPos == position )
+		    return pos;
+	    }
 
-			if( labelPos == (size_t)-1 ) {
-				LP._name		= label.substr( 0, labelEndPos);
-				LP._scriptPos	= position;
+	    // No labels here
+	    return -1;
+	}
 
-				_scriptLabels.push_back( LP );
-			}
-		}
+	inline void scriptLabelAdd( std::string label, uint16_t position ) {
+	    labelPosition	LP;
+	    size_t				labelPos	= scriptLabel( position );
+	    size_t				labelEndPos = label.find(":");
 
-		public:
-			// Constructor
-							 _scriptHandler( const char *fileName );
-							~_scriptHandler();
-		
-			uint16_t			 scriptOpcodeFind(  std::string opcodeStr, const _Opcode *opcodes );	// Search the opcode table for 'Opcode' std::string
-			
-			inline size_t labelCountGet() {
-				return _lineCount;
-	
-			}
+	    if(labelEndPos == std::string::npos)
+		labelEndPos = label.length();
 
-			// Virtual Functions
+	    if( labelPos == (size_t)-1 ) {
+		LP._name		= label.substr( 0, labelEndPos);
+		LP._scriptPos	= position;
 
-			virtual bool	 execute() = 0;
-			// Opcode Prepare
-			virtual void	 opcodesSetup();
-			virtual void	 opcodesBuildingsSetup();
-			virtual void	 opcodesUnitsSetup();
-			virtual void	 opcodesHousesSetup();
+		_scriptLabels.push_back( LP );
+	    }
+	}
 
-			// Opcodes
-			virtual void	 o_goto				(  )	= 0;					
-			virtual void	 o_setreturn		(   )	= 0;
-			virtual void	 o_pushOp			(   )	= 0;
-			virtual void	 o_push				(   )   = 0;
-			virtual void	 o_pushWord			(   )   = 0;
-			virtual void	 o_pushreg			(   )	= 0;
-			virtual void	 o_pushframeMinArg	(   )	= 0;
-			virtual void	 o_pushframePluArg	(   )	= 0;
-			virtual void	 o_popret			(   )	= 0;
-			virtual void	 o_popreg			(   )	= 0;
-			virtual void	 o_popframeMinArg	(   )	= 0;
-			virtual void	 o_popframePluArg	(   )	= 0;
-			virtual void	 o_spadd			(   )	= 0;
-			virtual void	 o_spsub			(   )	= 0;
-			virtual void	 o_execute			(   )	= 0;
-			virtual void	 o_ifnotgoto		(   )	= 0;
-			virtual void	 o_negate			(   )	= 0;
-			virtual void	 o_evaluate			(   )	= 0;
-			virtual void	 o_return			(   )	= 0;
+    public:
+	// Constructor
+	_scriptHandler( const char *fileName );
+	~_scriptHandler();
 
-			// Opcode Evaluation Modes
-			virtual void	 o_evaluate_IfEither( 	)				= 0;
-			virtual void	 o_evaluate_Equal(   )					= 0;
-			virtual void	 o_evaluate_NotEqual(   )				= 0;
-			virtual void	 o_evaluate_CompareGreaterEqual(   )	= 0;
-			virtual void	 o_evaluate_CompareGreater(   )			= 0;
-			virtual void	 o_evaluate_CompareLessEqual(   )		= 0;
-			virtual void	 o_evaluate_CompareLess(   )			= 0;
-			virtual void	 o_evaluate_Add(   )					= 0;
-			virtual void	 o_evaluate_Subtract(   )				= 0;
-			virtual void	 o_evaluate_Multiply(   )				= 0;
-			virtual void	 o_evaluate_Divide(   )					= 0;
-			virtual void	 o_evaluate_ShiftRight(   )				= 0;
-			virtual void	 o_evaluate_ShiftLeft(   )				= 0;
-			virtual void	 o_evaluate_And(   )					= 0;
-			virtual void	 o_evaluate_Or(   )						= 0;
-			virtual void	 o_evaluate_DivideRemainder(   )		= 0;
-			virtual void	 o_evaluate_XOR(   )					= 0;
+	uint16_t			 scriptOpcodeFind(  std::string opcodeStr, const _Opcode *opcodes );	// Search the opcode table for 'Opcode' std::string
 
-			// Opcode Execute Functions
-			// Buildings
-			virtual void	 o_execute_Building_Null(  )			= 0;
+	inline size_t labelCountGet() {
+	    return _lineCount;
 
-			// Units
-			virtual void	 o_execute_Unit_Null(  )				= 0;
-			virtual void	 o_execute_Unit_GetDetail(  )			= 0;
+	}
 
-			// Houses
-			virtual void	 o_execute_House_Null(  )				= 0;
-		};
+	// Virtual Functions
+
+	virtual bool	 execute() = 0;
+	// Opcode Prepare
+	virtual void	 opcodesSetup();
+	virtual void	 opcodesBuildingsSetup();
+	virtual void	 opcodesUnitsSetup();
+	virtual void	 opcodesHousesSetup();
+
+	// Opcodes
+	virtual void	 o_goto				(  )	= 0;					
+	virtual void	 o_setreturn		(   )	= 0;
+	virtual void	 o_pushOp			(   )	= 0;
+	virtual void	 o_push				(   )   = 0;
+	virtual void	 o_pushWord			(   )   = 0;
+	virtual void	 o_pushreg			(   )	= 0;
+	virtual void	 o_pushframeMinArg	(   )	= 0;
+	virtual void	 o_pushframePluArg	(   )	= 0;
+	virtual void	 o_popret			(   )	= 0;
+	virtual void	 o_popreg			(   )	= 0;
+	virtual void	 o_popframeMinArg	(   )	= 0;
+	virtual void	 o_popframePluArg	(   )	= 0;
+	virtual void	 o_spadd			(   )	= 0;
+	virtual void	 o_spsub			(   )	= 0;
+	virtual void	 o_execute			(   )	= 0;
+	virtual void	 o_ifnotgoto		(   )	= 0;
+	virtual void	 o_negate			(   )	= 0;
+	virtual void	 o_evaluate			(   )	= 0;
+	virtual void	 o_return			(   )	= 0;
+
+	// Opcode Evaluation Modes
+	virtual void	 o_evaluate_IfEither( 	)				= 0;
+	virtual void	 o_evaluate_Equal(   )					= 0;
+	virtual void	 o_evaluate_NotEqual(   )				= 0;
+	virtual void	 o_evaluate_CompareGreaterEqual(   )	= 0;
+	virtual void	 o_evaluate_CompareGreater(   )			= 0;
+	virtual void	 o_evaluate_CompareLessEqual(   )		= 0;
+	virtual void	 o_evaluate_CompareLess(   )			= 0;
+	virtual void	 o_evaluate_Add(   )					= 0;
+	virtual void	 o_evaluate_Subtract(   )				= 0;
+	virtual void	 o_evaluate_Multiply(   )				= 0;
+	virtual void	 o_evaluate_Divide(   )					= 0;
+	virtual void	 o_evaluate_ShiftRight(   )				= 0;
+	virtual void	 o_evaluate_ShiftLeft(   )				= 0;
+	virtual void	 o_evaluate_And(   )					= 0;
+	virtual void	 o_evaluate_Or(   )						= 0;
+	virtual void	 o_evaluate_DivideRemainder(   )		= 0;
+	virtual void	 o_evaluate_XOR(   )					= 0;
+
+	// Opcode Execute Functions
+	// Buildings
+	virtual void	 o_execute_Building_Null(  )			= 0;
+
+	// Units
+	virtual void	 o_execute_Unit_Null(  )				= 0;
+	virtual void	 o_execute_Unit_GetDetail(  )			= 0;
+
+	// Houses
+	virtual void	 o_execute_House_Null(  )				= 0;
+};
 
