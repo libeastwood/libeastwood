@@ -1,7 +1,7 @@
 /* DST  -  Dune 2 Script Tools
  *  
  * Copyright (C) 2009 segra		<segra@strobs.com>
- 
+
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -26,37 +26,37 @@
 #include "scriptHandlerCompiler.h"
 
 int main( int argc, char *argv[]) {
-	bool			result = false;
-	_scriptHandler *script = 0;
+    bool			result = false;
+    _scriptHandler *script = 0;
 
-	std::cout << "Dune II Script Tools v" << version << std::endl << std::endl;
+    std::cout << "Dune II Script Tools v" << version << std::endl << std::endl;
 
-	if(argc < 3) {
-		std::cout << "Usage:" << std::endl;
-		std::cout << "d: Decompile" << std::endl;
-		std::cout << "c: Compile" << std::endl;
-		std::cout << "dst d script.emc" << std::endl;
-		std::cout << "dst c script.txt" << std::endl;
-		return 0;
-	}
+    if(argc < 3) {
+	std::cout << "Usage:" << std::endl;
+	std::cout << "d: Decompile" << std::endl;
+	std::cout << "c: Compile" << std::endl;
+	std::cout << "dst d script.emc" << std::endl;
+	std::cout << "dst c script.txt" << std::endl;
+	return 0;
+    }
 
-	// Decompile Mode
-	if( tolower(*argv[1]) == 'd' )
-		script = new _scriptHandlerDecompiler( argv[2] );
+    // Decompile Mode
+    if( tolower(*argv[1]) == 'd' )
+	script = new _scriptHandlerDecompiler( argv[2] );
 
-	// Compile Mode
-	else if( tolower(*argv[1]) == 'c' )
-		script = new _scriptHandlerCompiler( argv[2] );
+    // Compile Mode
+    else if( tolower(*argv[1]) == 'c' )
+	script = new _scriptHandlerCompiler( argv[2] );
 
-	// Do It
-	result = script->execute();
-	std::cout << std::endl;
+    // Do It
+    result = script->execute();
+    std::cout << std::endl;
 
-	if( !result ) {
-			std::cout << "Failed" << std::endl;
-			std::cout << "Line Number:" << script->labelCountGet() << std::endl;
-	}	else
-			std::cout << "Done" << std::endl;
+    if( !result ) {
+	std::cout << "Failed" << std::endl;
+	std::cout << "Line Number:" << script->labelCountGet() << std::endl;
+    }	else
+	std::cout << "Done" << std::endl;
 
-	delete script;
+    delete script;
 }

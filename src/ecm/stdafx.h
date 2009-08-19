@@ -1,7 +1,7 @@
 /* DST  -  Dune 2 Script Tools
  *  
  * Copyright (C) 2009 segra		<segra@strobs.com>
- 
+
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -30,20 +30,20 @@
 // Endian functions
 // Read a uint16_t from the buffer
 inline uint16_t	readWord( const void *buffer ) {
-	const uint8_t *uint16_tByte = (const uint8_t *) buffer;
-	return (uint16_tByte[0] << 8) + uint16_tByte[1];
+    const uint8_t *uint16_tByte = (const uint8_t *) buffer;
+    return (uint16_tByte[0] << 8) + uint16_tByte[1];
 }
 
 // Endian swap a uint16_t
 inline uint16_t	swapWord(  uint16_t buffer ) {
-	const uint8_t *uint16_tByte = (const uint8_t *) &buffer;
-	return (uint16_tByte[0] << 8) + uint16_tByte[1];
+    const uint8_t *uint16_tByte = (const uint8_t *) &buffer;
+    return (uint16_tByte[0] << 8) + uint16_tByte[1];
 }
 
 enum _scriptTypes {
-	_scriptBUILD = 0,
-	_scriptUNIT,
-	_scriptHOUSE
+    _scriptBUILD = 0,
+    _scriptUNIT,
+    _scriptHOUSE
 };
 
 extern const char *version;
