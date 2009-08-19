@@ -16,9 +16,9 @@ SET( LIBEASTWOOD_SRCS
   WsaFile.cpp
   adl/emuopl.cpp
   adl/fmopl.c
-  emc/scriptHandler.cpp
-  emc/scriptHandlerCompiler.cpp
-  emc/scriptHandlerDecompiler.cpp
+  emc/EmcFileBase.cpp
+  emc/EmcFileCompile.cpp
+  emc/EmcFileDecompile.cpp
 )
 
 SET( LIBEASTWOOD_HEADERS
@@ -39,9 +39,9 @@ SET( LIBEASTWOOD_HEADERS
   adl/emuopl.h
   adl/fmopl.h
   adl/opl.h
-  emc/scriptHandler.h
-  emc/scriptHandlerCompiler.h
-  emc/scriptHandlerDecompiler.h  
+  emc/EmcFileBase.h
+  emc/EmcFileCompile.h
+  emc/EmcFileDecompile.h  
 )
 
 SET( EMC_INTERPRETER

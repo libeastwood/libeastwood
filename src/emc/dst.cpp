@@ -22,17 +22,17 @@
 
 #include <iostream>
 
-#include "scriptHandler.h"
-#include "scriptHandlerDecompiler.h"
-#include "scriptHandlerCompiler.h"
+#include "EmcFileBase.h"
+#include "EmcFileDecompile.h"
+#include "EmcFileCompile.h"
 
 static const char *version = "1.1";
 
 int main( int argc, char *argv[]) {
     bool result = false;
-    _scriptHandler *script = NULL;
-    _scriptHandlerDecompiler *decompiler = NULL;
-    _scriptHandlerCompiler *compiler = NULL;
+    EmcFileBase *script = NULL;
+    EmcFileDecompile *decompiler = NULL;
+    EmcFileCompile *compiler = NULL;
 
 
     std::cout << "Dune II Script Tools v" << version << std::endl << std::endl;
@@ -48,11 +48,11 @@ int main( int argc, char *argv[]) {
 
     // Decompile Mode
     if( tolower(*argv[1]) == 'd' )
-	script = decompiler = new _scriptHandlerDecompiler( argv[2] );
+	script = decompiler = new EmcFileDecompile( argv[2] );
 
     // Compile Mode
     else if( tolower(*argv[1]) == 'c' )
-	script = compiler = new _scriptHandlerCompiler( argv[2] );
+	script = compiler = new EmcFileCompile( argv[2] );
 
     // Do It
     result = script->execute();

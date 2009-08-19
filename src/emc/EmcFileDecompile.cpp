@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
  * 
- * $Id: scriptHandlerDecompiler.cpp 25 2009-04-28 09:58:25Z segra $
+ * $Id: EmcFileDecompile.cpp 25 2009-04-28 09:58:25Z segra $
  * 
  */
 
 #include <iostream>
 #include <iomanip>
 
-#include "scriptHandler.h"
-#include "scriptHandlerDecompiler.h"
+#include "EmcFileBase.h"
+#include "EmcFileDecompile.h"
 
 #include "ObjectNames.h"
 
@@ -52,7 +52,7 @@ static const char *nameUnitDetails[] = {
     "CheckIfHuman"              
 };
 
-_scriptHandlerDecompiler::_scriptHandlerDecompiler(const char *fileName) : _scriptHandler(fileName) {
+EmcFileDecompile::EmcFileDecompile(const char *fileName) : EmcFileBase(fileName) {
     std::string	sourceFilename = std::string(_fileName), targetFilename;
     size_t posPeriod = sourceFilename.find(".");
 
@@ -72,11 +72,11 @@ _scriptHandlerDecompiler::_scriptHandlerDecompiler(const char *fileName) : _scri
     _destinationFile.open(targetFilename.c_str(), std::ios::out);
 }
 
-_scriptHandlerDecompiler::~_scriptHandlerDecompiler() {
+EmcFileDecompile::~EmcFileDecompile() {
     _destinationFile.close();
 }
 
-bool _scriptHandlerDecompiler::scriptLoad() {
+bool EmcFileDecompile::scriptLoad() {
     std::ifstream fileScript;
     size_t scriptSize;
 
@@ -101,7 +101,7 @@ bool _scriptHandlerDecompiler::scriptLoad() {
     return true;
 }
 
-bool _scriptHandlerDecompiler::headerRead() {
+bool EmcFileDecompile::headerRead() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer + 0x12);
 
     // Number of script functions
@@ -152,7 +152,7 @@ bool _scriptHandlerDecompiler::headerRead() {
     return true;
 }
 
-bool _scriptHandlerDecompiler::scriptNextStart() {
+bool EmcFileDecompile::scriptNextStart() {
     bool found = false;
 
     // Loop through each pointer and write the section names out
@@ -172,7 +172,7 @@ bool _scriptHandlerDecompiler::scriptNextStart() {
     return found;
 }
 
-bool _scriptHandlerDecompiler::execute() {
+bool EmcFileDecompile::execute() {
 
     std::cout << "Preprocessing " << _fileName << std::endl;
 
@@ -194,7 +194,7 @@ bool _scriptHandlerDecompiler::execute() {
     return scriptDecompile();
 }
 
-bool _scriptHandlerDecompiler::scriptDecompile() {
+bool EmcFileDecompile::scriptDecompile() {
 
     _lineCount		= 0;
     _opcodeCurrent	= 0;
@@ -262,7 +262,7 @@ bool _scriptHandlerDecompiler::scriptDecompile() {
     return true;
 }
 
-void _scriptHandlerDecompiler::o_goto() {
+void EmcFileDecompile::o_goto() {
     size_t labelPos = scriptLabel(_scriptData);
 
     if(!_modePreProcess) {
@@ -278,14 +278,14 @@ void _scriptHandlerDecompiler::o_goto() {
     }
 }
 
-void _scriptHandlerDecompiler::o_setreturn() {
+void EmcFileDecompile::o_setreturn() {
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);
     else
 	dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_pushOp() {
+void EmcFileDecompile::o_pushOp() {
     uint16_t data = _scriptData;
     if(_scriptData == 0)
 	data = _scriptDataNext;
@@ -295,7 +295,7 @@ void _scriptHandlerDecompiler::o_pushOp() {
     dataPrint(data);
 }
 
-void _scriptHandlerDecompiler::o_push() {
+void EmcFileDecompile::o_push() {
     _stackCount--;
 
     if(_scriptDataNext) {
@@ -307,11 +307,11 @@ void _scriptHandlerDecompiler::o_push() {
     }
 }
 
-void _scriptHandlerDecompiler::o_pushWord() {
+void EmcFileDecompile::o_pushWord() {
     o_push();
 }
 
-void _scriptHandlerDecompiler::o_pushreg() {
+void EmcFileDecompile::o_pushreg() {
     _stackCount--;
 
     if(_scriptDataNext)
@@ -320,7 +320,7 @@ void _scriptHandlerDecompiler::o_pushreg() {
 	dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_pushframeMinArg() {
+void EmcFileDecompile::o_pushframeMinArg() {
     _stackCount--;
     _stackCount--;
     if(_scriptDataNext)
@@ -329,7 +329,7 @@ void _scriptHandlerDecompiler::o_pushframeMinArg() {
 	dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_pushframePluArg() {
+void EmcFileDecompile::o_pushframePluArg() {
     _stackCount--;
     _stackCount--;
     if(_scriptDataNext)
@@ -338,7 +338,7 @@ void _scriptHandlerDecompiler::o_pushframePluArg() {
 	dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_popret() {
+void EmcFileDecompile::o_popret() {
     if(_scriptData == 1) {
 	if(!_modePreProcess)
 	    _destinationFile << " (Return)";
@@ -350,7 +350,7 @@ void _scriptHandlerDecompiler::o_popret() {
     _stackCount++;
 }
 
-void _scriptHandlerDecompiler::o_popreg() {
+void EmcFileDecompile::o_popreg() {
     _stackCount++;
 
     if(_scriptDataNext)
@@ -359,7 +359,7 @@ void _scriptHandlerDecompiler::o_popreg() {
 	dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_popframeMinArg() {
+void EmcFileDecompile::o_popframeMinArg() {
     _stackCount++;
     _stackCount++;
     if(_scriptDataNext)
@@ -368,7 +368,7 @@ void _scriptHandlerDecompiler::o_popframeMinArg() {
 	dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_popframePluArg() {
+void EmcFileDecompile::o_popframePluArg() {
     _stackCount++;
     _stackCount++;
     if(_scriptDataNext)
@@ -377,17 +377,17 @@ void _scriptHandlerDecompiler::o_popframePluArg() {
 	dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_spadd() {
+void EmcFileDecompile::o_spadd() {
     dataPrint(_scriptData);
     _stackCount += (_scriptData & 0xF);
 }
 
-void _scriptHandlerDecompiler::o_spsub() {
+void EmcFileDecompile::o_spsub() {
     dataPrint(_scriptData);
     _stackCount -= (_scriptData & 0xF);
 }
 
-void _scriptHandlerDecompiler::o_execute() {
+void EmcFileDecompile::o_execute() {
 
     if(!_modePreProcess)
 	_destinationFile << std::left << _opcodesExecute[ _scriptData ].description << " ";
@@ -395,7 +395,7 @@ void _scriptHandlerDecompiler::o_execute() {
     (this->*_opcodesExecute[ _scriptData ].function)();
 }
 
-void _scriptHandlerDecompiler::o_ifnotgoto() {
+void EmcFileDecompile::o_ifnotgoto() {
     size_t labelPos;
 
     if(_scriptDataNext) {
@@ -427,23 +427,23 @@ void _scriptHandlerDecompiler::o_ifnotgoto() {
     }
 }
 
-void _scriptHandlerDecompiler::o_negate() {
+void EmcFileDecompile::o_negate() {
     dataPrint(_scriptData);
 }
 
-void _scriptHandlerDecompiler::o_evaluate() {
+void EmcFileDecompile::o_evaluate() {
     if(!_modePreProcess)
 	_destinationFile << _opcodesEvaluate[ _scriptData ].description;
 
     (this->*_opcodesEvaluate[ _scriptData ].function)();
 }
 
-void _scriptHandlerDecompiler::o_return() {
+void EmcFileDecompile::o_return() {
 
 }
 
 
-void _scriptHandlerDecompiler::o_execute_Unit_GetDetail() {
+void EmcFileDecompile::o_execute_Unit_GetDetail() {
     if(!_modePreProcess)
 	_destinationFile << "(" << nameUnitDetails[_scriptLastPush] << ")";
 }

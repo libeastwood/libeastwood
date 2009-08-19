@@ -16,24 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
  * 
- * $Id: scriptHandlerCompiler.cpp 26 2009-05-18 04:49:54Z segra $
- * 
  */
 
 #include <fstream>
 #include <iostream>
 
-#include "scriptHandler.h"
-#include "scriptHandlerCompiler.h"
+#include "EmcFileBase.h"
+#include "EmcFileCompile.h"
 
 #include "ObjectNames.h"
 
-_scriptHandlerCompiler::_scriptHandlerCompiler(const char *fileName) : _scriptHandler(fileName) {
+EmcFileCompile::EmcFileCompile(const char *fileName) : EmcFileBase(fileName) {
     _sourceFile = NULL;
     opcodesSetup();
 }
 
-_scriptHandlerCompiler::~_scriptHandlerCompiler() {
+EmcFileCompile::~EmcFileCompile() {
     if(_sourceFile) {
     	_sourceFile->close();
     	delete _sourceFile;
@@ -41,7 +39,7 @@ _scriptHandlerCompiler::~_scriptHandlerCompiler() {
 }
 
 
-bool _scriptHandlerCompiler::headerCreate() {
+bool EmcFileCompile::headerCreate() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer);
     const char header[] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
 
@@ -89,7 +87,7 @@ bool _scriptHandlerCompiler::headerCreate() {
     return true;
 }
 
-bool _scriptHandlerCompiler::scriptSave() {
+bool EmcFileCompile::scriptSave() {
     std::ofstream _targetFile;
     std::string file;
 
@@ -111,7 +109,7 @@ bool _scriptHandlerCompiler::scriptSave() {
     return true;
 }
 
-int _scriptHandlerCompiler::scriptSectionCheck() {
+int EmcFileCompile::scriptSectionCheck() {
     int count = 0;
     size_t posStart = _currentLine.find("[") + 1;
     size_t posEnd;
@@ -135,7 +133,7 @@ int _scriptHandlerCompiler::scriptSectionCheck() {
     return -1;
 }
 
-bool _scriptHandlerCompiler::execute() {
+bool EmcFileCompile::execute() {
 
     std::cout << "Preprocessing " << _fileName << std::endl;
 
@@ -164,7 +162,7 @@ bool _scriptHandlerCompiler::execute() {
 }
 
 // -1 Decompiles the script at _scriptStart
-bool _scriptHandlerCompiler::scriptCompile() {
+bool EmcFileCompile::scriptCompile() {
     char nextChar;
     int	objectID = 0;
 
@@ -301,7 +299,7 @@ bool _scriptHandlerCompiler::scriptCompile() {
     return true;
 }
 
-void _scriptHandlerCompiler::o_goto() {
+void EmcFileCompile::o_goto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int bb = 0;
 
@@ -313,24 +311,24 @@ void _scriptHandlerCompiler::o_goto() {
 
 }
 
-void _scriptHandlerCompiler::o_setreturn() {
+void EmcFileCompile::o_setreturn() {
     //*(_scriptPtr) |= 0x40;
 
 }
 
-void _scriptHandlerCompiler::o_pushOp() {
+void EmcFileCompile::o_pushOp() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void  _scriptHandlerCompiler::o_pushWord() {
+void  EmcFileCompile::o_pushWord() {
     *(_scriptPtr) |= 0x20;
     *(_scriptPtr+1) |= htobe16(atoi(_currentLine.c_str()));
     _scriptPtr++;
     _scriptPos++;
 }
 
-void _scriptHandlerCompiler::o_push() {
+void EmcFileCompile::o_push() {
     uint16_t value = atoi(_currentLine.c_str());
 
     // Just incase, we dont want to corrupt the opcode
@@ -342,22 +340,22 @@ void _scriptHandlerCompiler::o_push() {
     *(_scriptPtr) |= htobe16(value);
 }
 
-void _scriptHandlerCompiler::o_pushreg() {
+void EmcFileCompile::o_pushreg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_pushframeMinArg() {
+void EmcFileCompile::o_pushframeMinArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_pushframePluArg() {
+void EmcFileCompile::o_pushframePluArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_popret() {
+void EmcFileCompile::o_popret() {
     *(_scriptPtr) |= 0x40;
 
     if(_currentLine == "(Return)")
@@ -368,32 +366,32 @@ void _scriptHandlerCompiler::o_popret() {
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_popreg() {
+void EmcFileCompile::o_popreg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_popframeMinArg() {
+void EmcFileCompile::o_popframeMinArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_popframePluArg() {
+void EmcFileCompile::o_popframePluArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_spadd() {
+void EmcFileCompile::o_spadd() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_spsub() {
+void EmcFileCompile::o_spsub() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_execute() {
+void EmcFileCompile::o_execute() {
     uint16_t opcode = 0;
     *(_scriptPtr) |= 0x40;
 
@@ -404,7 +402,7 @@ void _scriptHandlerCompiler::o_execute() {
     (this->*_opcodesExecute[opcode].function)();
 }
 
-void _scriptHandlerCompiler::o_ifnotgoto() {
+void EmcFileCompile::o_ifnotgoto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int line = 0;
 
@@ -420,12 +418,12 @@ void _scriptHandlerCompiler::o_ifnotgoto() {
     _scriptPos++;
 }
 
-void _scriptHandlerCompiler::o_negate() {
+void EmcFileCompile::o_negate() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void _scriptHandlerCompiler::o_evaluate() {
+void EmcFileCompile::o_evaluate() {
     uint16_t opcode = 0;
     *(_scriptPtr) |= 0x40;
 
@@ -434,12 +432,12 @@ void _scriptHandlerCompiler::o_evaluate() {
     *(_scriptPtr) |= htobe16(opcode);
 }
 
-void _scriptHandlerCompiler::o_return() {
+void EmcFileCompile::o_return() {
 
 }
 
 #if 0
-void _scriptHandlerCompiler::o_execute_Unit_GetDetail() {
+void EmcFileCompile::o_execute_Unit_GetDetail() {
     /* What's this for??
     static std::string	detailName;
     *_sourceFile >> detailName;*/

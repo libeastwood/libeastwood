@@ -24,10 +24,10 @@
 #include <string>
 #include <vector>
 
-class _scriptHandler;
+class EmcFileBase;
 
 // Opcode Definitions
-typedef void (_scriptHandler::*opcodefuncPtr)();
+typedef void (EmcFileBase::*opcodefuncPtr)();
 
 struct _Opcode {
     const char *description;
@@ -46,10 +46,10 @@ enum _scriptTypes {
     _scriptHOUSE
 };
 
-class _scriptHandler {
+class EmcFileBase {
     public:
-	_scriptHandler(const char *fileName);
-	~_scriptHandler();
+	EmcFileBase(const char *fileName);
+	~EmcFileBase();
 
 	uint16_t	scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes);	// Search the opcode table for 'Opcode' string
 

@@ -16,21 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
  * 
- * $Id: scriptHandlerDecompiler.h 21 2009-04-11 01:11:32Z segra $
- * 
  */
 
-#include <fstream>
+#include <string>
+#include "../StdDef.h"
 
-class _scriptHandlerDecompiler : public _scriptHandler {
+
+class EmcFileCompile : public EmcFileBase {
     public:
-	_scriptHandlerDecompiler(const char *fileName);
-	~_scriptHandlerDecompiler();
+	EmcFileCompile( const char *fileName );
+	~EmcFileCompile();
 
-	bool	execute();		// Decompile a script
+	bool	execute();			// Compile a script
 
-    protected:
-	void	o_goto();					
+    private:
+	std::ifstream	*_sourceFile;		// Source-Code file	
+
+	std::string	_currentLine,
+			_opcodeCurrent,
+			_data;
+	uint16_t	_opcode;
+
+	bool		headerCreate();		// Insert the header
+	bool		scriptCompile( );	// Compile to the byte code
+	bool		scriptSave();		// Save the buffer to disk
+	int 		scriptSectionCheck();	// Check for section name in _currentLine
+
+	void	o_goto();
 	void	o_setreturn();
 	void	o_pushOp();
 	void	o_push();
@@ -49,30 +61,6 @@ class _scriptHandlerDecompiler : public _scriptHandler {
 	void	o_negate();
 	void	o_evaluate();
 	void	o_return();
-
-	void	o_execute_Unit_GetDetail();
-
-    private:
-	std::ofstream	_destinationFile;
-	uint16_t	_scriptLastPush;		// Last push operation value
-
-	// Runtime Data
-	uint8_t		_opcodeCurrent;			// Current Opcode
-	size_t		_stackCount;			// Stack Count
-	uint16_t	_scriptData,
-			_scriptDataNext;	 
-	uint16_t	*_scriptPtrEnd;			// address of beginning and end of script data
-
-	bool		headerRead();			// Read the header
-
-	bool		scriptDecompile();		// Decompile the script
-	bool		scriptNextStart();		// Are we at the start of a section?
-	bool		scriptLoad();			 
-
-	inline void	dataPrint(uint16_t data) {	// Print a uint16_t to screen in decimal
-	    if(!_modePreProcess)
-		_destinationFile << std::dec << std::uppercase  << data;
-	}
 
 };
 
