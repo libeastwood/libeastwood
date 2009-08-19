@@ -94,7 +94,7 @@ const char *nameUnitDetails[] = {
     "IndexGet",              
     "Field64Get",            
     "AttackObjectIndexTypeGet",                   
-    "Return",                  
+    "Return",
     "TypeIndex",             
     "IndexGetAsObject",      
     "Field6BGet",                 

@@ -24,10 +24,8 @@
 #include "scriptHandler.h"
 #include "scriptHandlerCompiler.h"
 
-_scriptHandlerCompiler::_scriptHandlerCompiler( const char *fileName ) : _scriptHandler(fileName) {
-
-    _sourceFile		= 0;
-
+_scriptHandlerCompiler::_scriptHandlerCompiler(const char *fileName) : _scriptHandler(fileName) {
+    _sourceFile = 0;
     opcodesSetup();
 }
 
@@ -37,23 +35,23 @@ _scriptHandlerCompiler::~_scriptHandlerCompiler() {
 
 
 bool _scriptHandlerCompiler::headerCreate() {
-    uint16_t		*buffer = (uint16_t*) (_scriptBuffer);
-    uint16_t		*bufferStart = buffer;
-    const char	 header[0x10] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
+    uint16_t *buffer = (uint16_t*) (_scriptBuffer);
+    uint16_t *bufferStart = buffer;
+    const char header[] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
 
     // Copy the header in
-    memcpy( (uint8_t*) buffer, header, 0x10 );
+    memcpy((uint8_t*) buffer, header, sizeof(header));
 
     buffer += 0x3;
 
     // Not sure what these values' means yet, so i copied them from each different script
-    if( _scriptType == _scriptBUILD )
+    if(_scriptType == _scriptBUILD)
 	*buffer = 0x2E04;
 
-    if( _scriptType == _scriptUNIT )
+    if(_scriptType == _scriptUNIT)
 	*buffer = 0x6A15;
 
-    if( _scriptType == _scriptHOUSE ) 
+    if(_scriptType == _scriptHOUSE) 
 	*buffer = 0x5A01;
 
     // 0x6 is WORDS, not uint8_ts like 0x10 above
@@ -71,9 +69,9 @@ bool _scriptHandlerCompiler::headerCreate() {
     }
 
     // Write DATA std::string
-    *buffer = 'AD';
+    *buffer = ('A'<<8) + 'D';
     buffer++;
-    *buffer = 'AT';
+    *buffer = ('A'<<8) + 'T';
     buffer++;
 
     // Not sure if this uint16_t is actually part of a DWORD, or 2 useless uint8_ts?
@@ -85,12 +83,12 @@ bool _scriptHandlerCompiler::headerCreate() {
     return true;
 }
 
-bool _scriptHandlerCompiler::scriptSave( ) {
+bool _scriptHandlerCompiler::scriptSave() {
     std::ofstream		 _targetFile;
     std::string file;
 
-    file.append( _fileName );
-    file.append( ".EMC" );
+    file.append(_fileName);
+    file.append(".EMC");
 
     _targetFile.open(file.c_str(), std::ios::binary | std::ios::out);
 
@@ -101,29 +99,29 @@ bool _scriptHandlerCompiler::scriptSave( ) {
     headerCreate();
 
     // Write the header, the pointers and the script
-    _targetFile.write( (char*)_scriptBuffer, _scriptSize + (_pointerCount*2) + 0x1C);
+    _targetFile.write((char*)_scriptBuffer, _scriptSize + (_pointerCount*2) + 0x1C);
     _targetFile.close();
 
     return true;
 }
 
-int _scriptHandlerCompiler::scriptSectionCheck( ) {
+int _scriptHandlerCompiler::scriptSectionCheck() {
     int		count = 0;
     size_t	posStart = _currentLine.find("[") + 1;
     size_t	posEnd;
 
     // Not a section header
-    if( posStart == std::string::npos )
+    if(posStart == std::string::npos)
 	return -2;
 
     posEnd = _currentLine.find("]", posStart);;
 
     // Read the section name
-    std::string name = _currentLine.substr( posStart, posEnd - posStart );
+    std::string name = _currentLine.substr(posStart, posEnd - posStart);
 
     // Check for the section name
-    for( const char **namePtr = _objectNames; *namePtr; *namePtr++, count++ ) {
-	if( name.compare( *namePtr ) == 0 )
+    for(const char **namePtr = _objectNames; *namePtr; *namePtr++, count++) {
+	if(name.compare(*namePtr) == 0)
 	    return count;
     }
 
@@ -140,11 +138,11 @@ bool _scriptHandlerCompiler::execute() {
 	return false;
 
     // Cleanup script buffer
-    if( _scriptBuffer )
+    if(_scriptBuffer)
 	delete _scriptBuffer;
 
     // Cleanup header pointers
-    if( _headerPointers )
+    if(_headerPointers)
 	delete _headerPointers;
 
     // Disable PreProcess mode
@@ -152,7 +150,7 @@ bool _scriptHandlerCompiler::execute() {
 
     std::cout << "Compiling....." << std::endl;
     // Properly compile the script
-    if(scriptCompile() == false )
+    if(scriptCompile() == false)
 	return false;
 
     // Save the _scriptBuffer to disk
@@ -160,15 +158,15 @@ bool _scriptHandlerCompiler::execute() {
 }
 
 // -1 Decompiles the script at _scriptStart
-bool _scriptHandlerCompiler::scriptCompile( ) {
-    char	nextChar;
-    int		objectID = 0;
+bool _scriptHandlerCompiler::scriptCompile() {
+    char nextChar;
+    int	objectID = 0;
 
     _lineCount = 0;
 
     // Reset the script position and the size
-    _scriptSize		= 0;
-    _scriptPos		= 0;
+    _scriptSize	= 0;
+    _scriptPos	= 0;
 
     // Cleanup previous file operation
     if(_sourceFile)
@@ -176,9 +174,9 @@ bool _scriptHandlerCompiler::scriptCompile( ) {
 
     // Open source file 
     _sourceFile = new std::ifstream();
-    _sourceFile->open( _fileName, std::ios::in );
+    _sourceFile->open(_fileName, std::ios::in);
 
-    if( _sourceFile->is_open() == false )
+    if(_sourceFile->is_open() == false)
 	return false;
 
     // Read file type line
@@ -187,42 +185,41 @@ bool _scriptHandlerCompiler::scriptCompile( ) {
 
     // House Script
     if(_currentLine == "[House]") {
-	_scriptType		 = _scriptHOUSE;
-	_pointerCount = 0x06;
-
-	_objectNames	 = nameHouses;
+	_scriptType	= _scriptHOUSE;
+	_pointerCount	= 0x06;
+	_objectNames	= nameHouses;
 	opcodesHousesSetup();
     }
 
     // Building Script
     if(_currentLine == "[Build]") {
-	_scriptType		 = _scriptBUILD;
-	_pointerCount = 0x13;
-	_objectNames	 = nameStructures;
+	_scriptType	= _scriptBUILD;
+	_pointerCount	= 0x13;
+	_objectNames	= nameStructures;
 	opcodesBuildingsSetup();
     }
 
     // Unit Script
     if(_currentLine == "[Unit]") {
-	_scriptType		 = _scriptUNIT;
-	_pointerCount = 0x1B;
-	_objectNames	 = nameUnits;
+	_scriptType	= _scriptUNIT;
+	_pointerCount	= 0x1B;
+	_objectNames	= nameUnits;
 	opcodesUnitsSetup();
     }
 
     // Prepare memory for scriptBuffer and headerPointers
     _headerPointers = new uint16_t[_pointerCount];
-    _scriptBuffer	= new uint8_t[0x100000];			// should be big enough :p
+    _scriptBuffer = new uint8_t[0x100000];			// should be big enough :p
 
     // Set the script pointer to the script starting position (in buffer)
-    _scriptPtr		= (uint16_t*) (_scriptBuffer + (_pointerCount*2) + 0x1C);
+    _scriptPtr = (uint16_t*) (_scriptBuffer + (_pointerCount*2) + 0x1C);
 
     // Clear memory
-    memset( (void*) _headerPointers, 0, _pointerCount * 2);
-    memset( (void*) _scriptBuffer, 0, 0x100000 );
+    memset((void*) _headerPointers, 0, _pointerCount * 2);
+    memset((void*) _scriptBuffer, 0, 0x100000);
 
     // Loop until end of source file
-    while( !_sourceFile->eof() ) {
+    while(!_sourceFile->eof()) {
 
 	// Read next line from sourcecode file
 	*_sourceFile >> _currentLine;
@@ -238,13 +235,13 @@ bool _scriptHandlerCompiler::scriptCompile( ) {
 		_headerPointers[objectID] = _scriptPos;		
 
 	    // Find the opcode
-	    _opcode = scriptOpcodeFind( _currentLine, _opcodes );
+	    _opcode = scriptOpcodeFind(_currentLine, _opcodes);
 
 	    // Check for label
-	    if( _modePreProcess &&  (_currentLine.find( ":" ) != std::string::npos) ) {
+	    if(_modePreProcess &&  (_currentLine.find(":") != std::string::npos)) {
 
 		// Add the label to the labels vector
-		scriptLabelAdd( _currentLine, _scriptPos );
+		scriptLabelAdd(_currentLine, _scriptPos);
 	    }
 
 	    // Did we reach end of file?
@@ -258,7 +255,7 @@ bool _scriptHandlerCompiler::scriptCompile( ) {
 	    }
 
 	    // Skip the spaces and check the next character
-	    while( (nextChar = _sourceFile->get()) == 0x20 ) {
+	    while((nextChar = _sourceFile->get()) == 0x20) {
 
 	    }
 
@@ -280,10 +277,10 @@ bool _scriptHandlerCompiler::scriptCompile( ) {
 	*_scriptPtr = _opcode;
 
 	// Execute opcode call
-	(this->*_opcodes[ _opcode ].function)( );
+	(this->*_opcodes[_opcode].function)();
 
 	// Debugging Use
-	//if( ((uint8_t*) _scriptPtr) - _scriptBuffer > 0x89B)
+	//if(((uint8_t*) _scriptPtr) - _scriptBuffer > 0x89B)
 	//	std::cout << "a";
 
 	// Next Line Number

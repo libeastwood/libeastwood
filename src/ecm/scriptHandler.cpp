@@ -26,38 +26,37 @@
 #include "scriptHandlerCompiler.h"
 
 
-// Constructor
-_scriptHandler::_scriptHandler( const char *fileName ) {
-    _fileName = fileName;
+_scriptHandler::_scriptHandler(const char *fileName) {
+    _fileName		= fileName;
 
-    _headerPointers	 = 0;
-    _pointerCount	 = 0;
+    _headerPointers	= 0;
+    _pointerCount	= 0;
 
-    _scriptBuffer	 = 0;
-    _scriptPtr		 = 0;
-    _scriptPos		 = 0;
+    _scriptBuffer	= 0;
+    _scriptPtr		= 0;
+    _scriptPos		= 0;
 
-    _modePreProcess = true;
+    _modePreProcess	= true;
 }
 
 // Destructor
 _scriptHandler::~_scriptHandler() {
 
-    if( _scriptBuffer )
+    if(_scriptBuffer)
 	delete _scriptBuffer;
 
-    if( _headerPointers )
+    if(_headerPointers)
 	delete _headerPointers;
 }
 
 // Search the opcode table for a string opcode name
-uint16_t _scriptHandler::scriptOpcodeFind( std::string opcodeStr, const _Opcode *opcodes ) {
+uint16_t _scriptHandler::scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes) {
     const _Opcode *opcode;
     uint16_t  count =0;
 
     // Search opcode list
-    for( opcode = opcodes; opcode->description; opcode++, count++ ) {
-	if( opcodeStr.compare(opcode->description) == 0)
+    for(opcode = opcodes; opcode->description; opcode++, count++) {
+	if(opcodeStr.compare(opcode->description) == 0)
 	    return count;
     }
 
@@ -68,47 +67,47 @@ uint16_t _scriptHandler::scriptOpcodeFind( std::string opcodeStr, const _Opcode 
 // Setup the opcode name/function table
 void _scriptHandler::opcodesSetup() {
     static const _Opcode scriptOpcodes[] = {
-	{"Goto",				&_scriptHandler::o_goto},				// 0
-	{"SetReturn",		&_scriptHandler::o_setreturn},			// 1
-	{"PushOp",			&_scriptHandler::o_pushOp},				// 2
-	{"PushWord",			&_scriptHandler::o_pushWord},			// 3
-	{"Push",				&_scriptHandler::o_push},				// 4
-	{"PushReg",			&_scriptHandler::o_pushreg},				// 5
-	{"PushFrameMinArg",	&_scriptHandler::o_pushframeMinArg},		// 6
-	{"PushFramePluArg",	&_scriptHandler::o_pushframePluArg},		// 7
-	{"Pop",				&_scriptHandler::o_popret},				// 8
-	{"PopReg",			&_scriptHandler::o_popreg},				// 9
-	{"PopFrameMinArg",	&_scriptHandler::o_popframeMinArg},		// A
-	{"PopFramePluArg",	&_scriptHandler::o_popframePluArg},		// B
-	{"AddSP",			&_scriptHandler::o_spadd},				// C
-	{"SubSP",			&_scriptHandler::o_spsub},				// D
-	{"Execute",			&_scriptHandler::o_execute},				// E
-	{"IfNotGoto",		&_scriptHandler::o_ifnotgoto},			// F
-	{"Negate",			&_scriptHandler::o_negate},				// 10
-	{"Evaluate",			&_scriptHandler::o_evaluate},			// 11
-	{"Return",			&_scriptHandler::o_return},				// 12
+	{"Goto",		&_scriptHandler::o_goto},
+	{"SetReturn",		&_scriptHandler::o_setreturn},
+	{"PushOp",		&_scriptHandler::o_pushOp},
+	{"PushWord",		&_scriptHandler::o_pushWord},
+	{"Push",		&_scriptHandler::o_push},
+	{"PushReg",		&_scriptHandler::o_pushreg},
+	{"PushFrameMinArg",	&_scriptHandler::o_pushframeMinArg},
+	{"PushFramePluArg",	&_scriptHandler::o_pushframePluArg},
+	{"Pop",			&_scriptHandler::o_popret},
+	{"PopReg",		&_scriptHandler::o_popreg},
+	{"PopFrameMinArg",	&_scriptHandler::o_popframeMinArg},
+	{"PopFramePluArg",	&_scriptHandler::o_popframePluArg},
+	{"AddSP",		&_scriptHandler::o_spadd},
+	{"SubSP",		&_scriptHandler::o_spsub},
+	{"Execute",		&_scriptHandler::o_execute},
+	{"IfNotGoto",		&_scriptHandler::o_ifnotgoto},
+	{"Negate",		&_scriptHandler::o_negate},
+	{"Evaluate",		&_scriptHandler::o_evaluate},
+	{"Return",		&_scriptHandler::o_return},
     };
 
     // The 'Evaluate' opcode functions
     static const _Opcode scriptOpcodesEvaluate[] = {
-	{"IfEither",					&_scriptHandler::o_evaluate_IfEither},				// 0
-	{"IfEither1",				&_scriptHandler::o_evaluate_IfEither},				// 1
-	{"Equal",					&_scriptHandler::o_evaluate_Equal},					// 2
-	{"NotEqual",					&_scriptHandler::o_evaluate_NotEqual},				// 3
-	{"CompareGreaterEqual",		&_scriptHandler::o_evaluate_CompareGreaterEqual},	// 4
-	{"CompareGreater",			&_scriptHandler::o_evaluate_CompareGreater},			// 5
-	{"CompareLessEqual",			&_scriptHandler::o_evaluate_CompareLessEqual},		// 6
-	{"CompareLess",				&_scriptHandler::o_evaluate_CompareLess},			// 7
-	{"Add",						&_scriptHandler::o_evaluate_Add},					// 8
-	{"Subtract",					&_scriptHandler::o_evaluate_Subtract},				// 9
-	{"Multiply",					&_scriptHandler::o_evaluate_Multiply},				// A
-	{"Divide",					&_scriptHandler::o_evaluate_Divide},					// B
-	{"ShiftRight",				&_scriptHandler::o_evaluate_ShiftRight},				// C
-	{"ShiftLeft",				&_scriptHandler::o_evaluate_ShiftLeft},				// D
-	{"And",						&_scriptHandler::o_evaluate_And},					// E
-	{"Or",						&_scriptHandler::o_evaluate_Or},						// F
-	{"DivideRemainder",			&_scriptHandler::o_evaluate_DivideRemainder},		// 10
-	{"XOR",						&_scriptHandler::o_evaluate_XOR},					// 11
+	{"IfEither",		&_scriptHandler::o_evaluate_IfEither},
+	{"IfEither1",		&_scriptHandler::o_evaluate_IfEither},
+	{"Equal",		&_scriptHandler::o_evaluate_Equal},
+	{"NotEqual",		&_scriptHandler::o_evaluate_NotEqual},
+	{"CompareGreaterEqual",	&_scriptHandler::o_evaluate_CompareGreaterEqual},
+	{"CompareGreater",	&_scriptHandler::o_evaluate_CompareGreater},
+	{"CompareLessEqual",	&_scriptHandler::o_evaluate_CompareLessEqual},
+	{"CompareLess",		&_scriptHandler::o_evaluate_CompareLess},
+	{"Add",			&_scriptHandler::o_evaluate_Add},
+	{"Subtract",		&_scriptHandler::o_evaluate_Subtract},
+	{"Multiply",		&_scriptHandler::o_evaluate_Multiply},
+	{"Divide",		&_scriptHandler::o_evaluate_Divide},
+	{"ShiftRight",		&_scriptHandler::o_evaluate_ShiftRight},
+	{"ShiftLeft",		&_scriptHandler::o_evaluate_ShiftLeft},
+	{"And",			&_scriptHandler::o_evaluate_And},
+	{"Or",			&_scriptHandler::o_evaluate_Or},
+	{"DivideRemainder",	&_scriptHandler::o_evaluate_DivideRemainder},
+	{"XOR",			&_scriptHandler::o_evaluate_XOR},
     };
 
     _opcodes		  = scriptOpcodes;
@@ -118,31 +117,31 @@ void _scriptHandler::opcodesSetup() {
 // The 'Building' Execute functions
 void _scriptHandler::opcodesBuildingsSetup() {
     static const _Opcode scriptOpcodesExecuteBuildings[] = {
-	{"Delay",					&_scriptHandler::o_execute_Building_Null},					// 0
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// 1
-	{"VerifyAttached",			&_scriptHandler::o_execute_Building_Null},					// 2	
-	{"Attach",					&_scriptHandler::o_execute_Building_Null},					// 3
-	{"SetFrame",					&_scriptHandler::o_execute_Building_Null},					// 4
-	{"Text",						&_scriptHandler::o_execute_Building_Null},					// 5
-	{"Disattach",				&_scriptHandler::o_execute_Building_Null},					// 6
-	{"Deploy",					&_scriptHandler::o_execute_Building_Null},					// 7
-	{"GetTarget",				&_scriptHandler::o_execute_Building_Null},					// 8
-	{"SetAngle",					&_scriptHandler::o_execute_Building_Null},					// 9
-	{"GetAngle",					&_scriptHandler::o_execute_Building_Null},					// A
-	{"ShootTarget",				&_scriptHandler::o_execute_Building_Null},					// B
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// C
-	{"GetFrame",					&_scriptHandler::o_execute_Building_Null},					// D
-	{"PlaySfx",					&_scriptHandler::o_execute_Building_Null},					// E
-	{"Reveal",					&_scriptHandler::o_execute_Building_Null},					// F
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// 10
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// 11
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// 12
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// 13
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// 14
-	{"RefineSpice",				&_scriptHandler::o_execute_Building_Null},					// 15
-	{"Explode",					&_scriptHandler::o_execute_Building_Null},					// 16
-	{"Destroy",					&_scriptHandler::o_execute_Building_Null},					// 17
-	{"Null",						&_scriptHandler::o_execute_Building_Null},					// 18
+	{"Delay",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
+	{"VerifyAttached",	&_scriptHandler::o_execute_Building_Null},	
+	{"Attach",		&_scriptHandler::o_execute_Building_Null},
+	{"SetFrame",		&_scriptHandler::o_execute_Building_Null},
+	{"Text",		&_scriptHandler::o_execute_Building_Null},
+	{"Disattach",		&_scriptHandler::o_execute_Building_Null},
+	{"Deploy",		&_scriptHandler::o_execute_Building_Null},
+	{"GetTarget",		&_scriptHandler::o_execute_Building_Null},
+	{"SetAngle",		&_scriptHandler::o_execute_Building_Null},
+	{"GetAngle",		&_scriptHandler::o_execute_Building_Null},
+	{"ShootTarget",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
+	{"GetFrame",		&_scriptHandler::o_execute_Building_Null},
+	{"PlaySfx",		&_scriptHandler::o_execute_Building_Null},
+	{"Reveal",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
+	{"RefineSpice",		&_scriptHandler::o_execute_Building_Null},
+	{"Explode",		&_scriptHandler::o_execute_Building_Null},
+	{"Destroy",		&_scriptHandler::o_execute_Building_Null},
+	{"Null",		&_scriptHandler::o_execute_Building_Null},
     };
 
     _opcodesExecute = scriptOpcodesExecuteBuildings;
@@ -152,70 +151,70 @@ void _scriptHandler::opcodesBuildingsSetup() {
 // The 'Units' Execute functions
 void _scriptHandler::opcodesUnitsSetup() {
     static const _Opcode scriptOpcodesExecuteUnits[] = {
-	{"GetDetail",				&_scriptHandler::o_execute_Unit_GetDetail},				// 0 	
-	{"sub_272E7",				&_scriptHandler::o_execute_Unit_Null},					// 1
-	{"Text",   					&_scriptHandler::o_execute_Unit_Null},					// 2
-	{"getObjectDistance?",		&_scriptHandler::o_execute_Unit_Null},					// 3
-	{"sub_279AB",				&_scriptHandler::o_execute_Unit_Null},					// 4
-	{"sub_27186",				&_scriptHandler::o_execute_Unit_Null},					// 5
-	{"sub_27127",				&_scriptHandler::o_execute_Unit_Null},					// 6
-	{"sub_27019",				&_scriptHandler::o_execute_Unit_Null},					// 7
-	{"Attack",					&_scriptHandler::o_execute_Unit_Null},					// 8
-	{"MCVDeploy",				&_scriptHandler::o_execute_Unit_Null},					// 9
-	{"SidebarCmd4",				&_scriptHandler::o_execute_Unit_Null},					// A
-	{"Flash",					&_scriptHandler::o_execute_Unit_Null},					// B
-	{"sub_27638",				&_scriptHandler::o_execute_Unit_Null},					// C
-	{"HouseCompare",				&_scriptHandler::o_execute_Unit_Null},					// D
-	{"sub_26A69",				&_scriptHandler::o_execute_Unit_Null},					// E
-	{"Destroy",					&_scriptHandler::o_execute_Unit_Null},					// F
-	{"Delay",					&_scriptHandler::o_execute_Unit_Null},					// 10
-	{"sub_1D2EE",				&_scriptHandler::o_execute_Unit_Null},					// 11
-	{"sub_26AB4",				&_scriptHandler::o_execute_Unit_Null},					// 12
-	{"sub_26745",				&_scriptHandler::o_execute_Unit_Null},					// 13
-	{"sub_25F69",				&_scriptHandler::o_execute_Unit_Null},					// 14
-	{"Null",						&_scriptHandler::o_execute_Unit_Null},					// 15
-	{"sub_2677F",				&_scriptHandler::o_execute_Unit_Null},					// 16
-	{"RandomNumber",				&_scriptHandler::o_execute_Unit_Null},					// 17
-	{"sub_1D3D4",				&_scriptHandler::o_execute_Unit_Null},					// 18
-	{"sub_27356",				&_scriptHandler::o_execute_Unit_Null},					// 19
-	{"sub_26689",				&_scriptHandler::o_execute_Unit_Null},					// 1A
-	{"sub_266B9",				&_scriptHandler::o_execute_Unit_Null},					// 1B
-	{"sub_25F3F",				&_scriptHandler::o_execute_Unit_Null},					// 1C
-	{"DamageGet",				&_scriptHandler::o_execute_Unit_Null},					// 1D
-	{"Dock?",					&_scriptHandler::o_execute_Unit_Null},					// 1E
-	{"EMCDataTest?",				&_scriptHandler::o_execute_Unit_Null},					// 1F
-	{"CheckHarvestReturn",		&_scriptHandler::o_execute_Unit_Null},					// 20
-	{"CreateSoldier",			&_scriptHandler::o_execute_Unit_Null},					// 21
-	{"DeliverToBuilding",		&_scriptHandler::o_execute_Unit_Null},					// 22
-	{"PlaceInUnit",				&_scriptHandler::o_execute_Unit_Null},					// 23
-	{"CarryAllHoldingClear",		&_scriptHandler::o_execute_Unit_Null},					// 24
-	{"BuildingFreeFind",			&_scriptHandler::o_execute_Unit_Null},					// 25
-	{"PlaySFX",					&_scriptHandler::o_execute_Unit_Null},					// 26
-	{"DestroyedMessage",			&_scriptHandler::o_execute_Unit_Null},					// 27
-	{"MapReveal",				&_scriptHandler::o_execute_Unit_Null},					// 28
-	{"MapGetTile",				&_scriptHandler::o_execute_Unit_Null},					// 29
-	{"Harvest",					&_scriptHandler::o_execute_Unit_Null},					// 2A
-	{"Null",						&_scriptHandler::o_execute_Unit_Null},					// 2B
-	{"GetHoldingType",			&_scriptHandler::o_execute_Unit_Null},					// 2C
-	{"GetType",					&_scriptHandler::o_execute_Unit_Null},					// 2D
-	{"IndexGet ",				&_scriptHandler::o_execute_Unit_Null},					// 2E
-	{"sub_27E8B",				&_scriptHandler::o_execute_Unit_Null},					// 2F
-	{"GetMapPieceForUnit",		&_scriptHandler::o_execute_Unit_Null},					// 30
-	{"sub_28001",				&_scriptHandler::o_execute_Unit_Null},					// 31
-	{"TypeCount",				&_scriptHandler::o_execute_Unit_Null},					// 32
-	{"sub_28090",				&_scriptHandler::o_execute_Unit_Null},					// 33
-	{"Null",						&_scriptHandler::o_execute_Unit_Null},					// 34
-	{"Null",						&_scriptHandler::o_execute_Unit_Null},					// 35
-	{"GetNearObjectTypeIndex",   &_scriptHandler::o_execute_Unit_Null},					// 36
-	{"sub_282BC",				&_scriptHandler::o_execute_Unit_Null},					// 37
-	{"GetField64",				&_scriptHandler::o_execute_Unit_Null},					// 38
-	{"Null",						&_scriptHandler::o_execute_Unit_Null},					// 39
-	{"GetAttackObjectIndexType",	&_scriptHandler::o_execute_Unit_Null},					// 3A
-	{"ObjectIsValid?",			&_scriptHandler::o_execute_Unit_Null},					// 3B
-	{"DelayAnd?",				&_scriptHandler::o_execute_Unit_Null},					// 3C
-	{"sub_27053",				&_scriptHandler::o_execute_Unit_Null},					// 3D
-	{"ObjectDistanceCalc",		&_scriptHandler::o_execute_Unit_Null},					// 3E
-	{"Null",						&_scriptHandler::o_execute_Unit_Null},					// 3F
+	{"GetDetail",			&_scriptHandler::o_execute_Unit_GetDetail}, 	
+	{"sub_272E7",			&_scriptHandler::o_execute_Unit_Null},
+	{"Text",   			&_scriptHandler::o_execute_Unit_Null},
+	{"getObjectDistance?",		&_scriptHandler::o_execute_Unit_Null},
+	{"sub_279AB",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_27186",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_27127",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_27019",			&_scriptHandler::o_execute_Unit_Null},
+	{"Attack",			&_scriptHandler::o_execute_Unit_Null},
+	{"MCVDeploy",			&_scriptHandler::o_execute_Unit_Null},
+	{"SidebarCmd4",			&_scriptHandler::o_execute_Unit_Null},
+	{"Flash",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_27638",			&_scriptHandler::o_execute_Unit_Null},
+	{"HouseCompare",		&_scriptHandler::o_execute_Unit_Null},
+	{"sub_26A69",			&_scriptHandler::o_execute_Unit_Null},
+	{"Destroy",			&_scriptHandler::o_execute_Unit_Null},
+	{"Delay",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_1D2EE",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_26AB4",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_26745",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_25F69",			&_scriptHandler::o_execute_Unit_Null},
+	{"Null",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_2677F",			&_scriptHandler::o_execute_Unit_Null},
+	{"RandomNumber",		&_scriptHandler::o_execute_Unit_Null},
+	{"sub_1D3D4",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_27356",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_26689",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_266B9",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_25F3F",			&_scriptHandler::o_execute_Unit_Null},
+	{"DamageGet",			&_scriptHandler::o_execute_Unit_Null},
+	{"Dock?",			&_scriptHandler::o_execute_Unit_Null},
+	{"EMCDataTest?",		&_scriptHandler::o_execute_Unit_Null},
+	{"CheckHarvestReturn",		&_scriptHandler::o_execute_Unit_Null},
+	{"CreateSoldier",		&_scriptHandler::o_execute_Unit_Null},
+	{"DeliverToBuilding",		&_scriptHandler::o_execute_Unit_Null},
+	{"PlaceInUnit",			&_scriptHandler::o_execute_Unit_Null},
+	{"CarryAllHoldingClear",	&_scriptHandler::o_execute_Unit_Null},
+	{"BuildingFreeFind",		&_scriptHandler::o_execute_Unit_Null},
+	{"PlaySFX",			&_scriptHandler::o_execute_Unit_Null},
+	{"DestroyedMessage",		&_scriptHandler::o_execute_Unit_Null},
+	{"MapReveal",			&_scriptHandler::o_execute_Unit_Null},
+	{"MapGetTile",			&_scriptHandler::o_execute_Unit_Null},
+	{"Harvest",			&_scriptHandler::o_execute_Unit_Null},
+	{"Null",			&_scriptHandler::o_execute_Unit_Null},
+	{"GetHoldingType",		&_scriptHandler::o_execute_Unit_Null},
+	{"GetType",			&_scriptHandler::o_execute_Unit_Null},
+	{"IndexGet ",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_27E8B",			&_scriptHandler::o_execute_Unit_Null},
+	{"GetMapPieceForUnit",		&_scriptHandler::o_execute_Unit_Null},
+	{"sub_28001",			&_scriptHandler::o_execute_Unit_Null},
+	{"TypeCount",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_28090",			&_scriptHandler::o_execute_Unit_Null},
+	{"Null",			&_scriptHandler::o_execute_Unit_Null},
+	{"Null",			&_scriptHandler::o_execute_Unit_Null},
+	{"GetNearObjectTypeIndex",	&_scriptHandler::o_execute_Unit_Null},
+	{"sub_282BC",			&_scriptHandler::o_execute_Unit_Null},
+	{"GetField64",			&_scriptHandler::o_execute_Unit_Null},
+	{"Null",			&_scriptHandler::o_execute_Unit_Null},
+	{"GetAttackObjectIndexType",	&_scriptHandler::o_execute_Unit_Null},
+	{"ObjectIsValid?",		&_scriptHandler::o_execute_Unit_Null},
+	{"DelayAnd?",			&_scriptHandler::o_execute_Unit_Null},
+	{"sub_27053",			&_scriptHandler::o_execute_Unit_Null},
+	{"ObjectDistanceCalc",		&_scriptHandler::o_execute_Unit_Null},
+	{"Null",			&_scriptHandler::o_execute_Unit_Null},
     };
 
     _opcodesExecute = scriptOpcodesExecuteUnits;
@@ -224,21 +223,21 @@ void _scriptHandler::opcodesUnitsSetup() {
 // The 'Houses' Execute functions
 void _scriptHandler::opcodesHousesSetup() {
     static const _Opcode scriptOpcodesExecuteHouses[] = {
-	{"Delay",					&_scriptHandler::o_execute_House_Null},		// 0 	
-	{"HouseText",				&_scriptHandler::o_execute_House_Null},		// 1
-	{"HouseLastUnitIndexGet",	&_scriptHandler::o_execute_House_Null},		// 2
-	{"sub_24E93",				&_scriptHandler::o_execute_House_Null},		// 3
-	{"sub_2503A",				&_scriptHandler::o_execute_House_Null},		// 4
-	{"sub_251BA",				&_scriptHandler::o_execute_House_Null},		// 5
-	{"sub_2533D",				&_scriptHandler::o_execute_House_Null},		// 6
-	{"sub_253FF",				&_scriptHandler::o_execute_House_Null},		// 7
-	{"sub_2563B",				&_scriptHandler::o_execute_House_Null},		// 8
-	{"sub_25697",				&_scriptHandler::o_execute_House_Null},		// 9
-	{"DelayAnd",					&_scriptHandler::o_execute_House_Null},		// A
-	{"sub_1CFC4",				&_scriptHandler::o_execute_House_Null},		// B
-	{"UnitCountGet",				&_scriptHandler::o_execute_House_Null},		// C
-	{"WindtrapCountGet",			&_scriptHandler::o_execute_House_Null},		// D
-	{"Null",						&_scriptHandler::o_execute_House_Null},		// E
+	{"Delay",			&_scriptHandler::o_execute_House_Null}, 	
+	{"HouseText",			&_scriptHandler::o_execute_House_Null},
+	{"HouseLastUnitIndexGet",	&_scriptHandler::o_execute_House_Null},
+	{"sub_24E93",			&_scriptHandler::o_execute_House_Null},
+	{"sub_2503A",			&_scriptHandler::o_execute_House_Null},
+	{"sub_251BA",			&_scriptHandler::o_execute_House_Null},
+	{"sub_2533D",			&_scriptHandler::o_execute_House_Null},
+	{"sub_253FF",			&_scriptHandler::o_execute_House_Null},
+	{"sub_2563B",			&_scriptHandler::o_execute_House_Null},
+	{"sub_25697",			&_scriptHandler::o_execute_House_Null},
+	{"DelayAnd",			&_scriptHandler::o_execute_House_Null},
+	{"sub_1CFC4",			&_scriptHandler::o_execute_House_Null},
+	{"UnitCountGet",		&_scriptHandler::o_execute_House_Null},
+	{"WindtrapCountGet",		&_scriptHandler::o_execute_House_Null},
+	{"Null",			&_scriptHandler::o_execute_House_Null},
     };
 
     _opcodesExecute = scriptOpcodesExecuteHouses;

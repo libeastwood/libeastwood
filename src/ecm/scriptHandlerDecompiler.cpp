@@ -25,15 +25,15 @@
 #include "scriptHandlerDecompiler.h"
 
 
-_scriptHandlerDecompiler::_scriptHandlerDecompiler( const char *fileName ) : _scriptHandler(fileName) {
+_scriptHandlerDecompiler::_scriptHandlerDecompiler(const char *fileName) : _scriptHandler(fileName) {
     std::string	sourceFilename = std::string(_fileName), targetFilename;
-    size_t		posPeriod = sourceFilename.find(".");
+    size_t posPeriod = sourceFilename.find(".");
 
     // Prepare output filename
     if(posPeriod == std::string::npos)
 	posPeriod = sourceFilename.length() - 1;
 
-    targetFilename = sourceFilename.substr( 0, posPeriod );
+    targetFilename = sourceFilename.substr(0, posPeriod);
     targetFilename.append(".txt");
 
     _scriptLastPush = 0;
@@ -42,7 +42,7 @@ _scriptHandlerDecompiler::_scriptHandlerDecompiler( const char *fileName ) : _sc
     opcodesSetup();
 
     // Open target file
-    _destinationFile.open( targetFilename.c_str(), std::ios::out );
+    _destinationFile.open(targetFilename.c_str(), std::ios::out);
 }
 
 _scriptHandlerDecompiler::~_scriptHandlerDecompiler() {
@@ -50,23 +50,23 @@ _scriptHandlerDecompiler::~_scriptHandlerDecompiler() {
 }
 
 bool _scriptHandlerDecompiler::scriptLoad() {
-    std::ifstream		 fileScript;
-    size_t			 scriptSize;
+    std::ifstream fileScript;
+    size_t scriptSize;
 
 
-    fileScript.open( _fileName, std::ios::in | std::ios::binary );
+    fileScript.open(_fileName, std::ios::in | std::ios::binary);
 
-    if( fileScript.is_open() == false )
+    if(fileScript.is_open() == false)
 	return false;
 
     // Read File Size
-    fileScript.seekg( 0, std::ios::end );
+    fileScript.seekg(0, std::ios::end);
     scriptSize = fileScript.tellg();
-    fileScript.seekg( std::ios::beg );
+    fileScript.seekg(std::ios::beg);
 
     // Load file into _scriptBuffer
     _scriptBuffer = new uint8_t[ scriptSize ];
-    if( fileScript.read( (char*) _scriptBuffer, scriptSize ) == false)
+    if(fileScript.read((char*) _scriptBuffer, scriptSize) == false)
 	return false;
 
     fileScript.close();
@@ -75,17 +75,17 @@ bool _scriptHandlerDecompiler::scriptLoad() {
 }
 
 bool _scriptHandlerDecompiler::headerRead() {
-    uint16_t		*buffer = (uint16_t*) (_scriptBuffer + 0x12);
-    size_t		 ptrCount;
+    uint16_t *buffer = (uint16_t*) (_scriptBuffer + 0x12);
+    size_t ptrCount;
 
     // Number of script functions
-    _pointerCount = readWord( buffer ) / 2;
+    _pointerCount = readWord(buffer) / 2;
     buffer++;
 
     _headerPointers = new uint16_t[_pointerCount];
 
     for(ptrCount = 0; ptrCount < _pointerCount; ptrCount++) {
-	_headerPointers[ptrCount] = readWord( buffer );
+	_headerPointers[ptrCount] = readWord(buffer);
 	buffer++;
     }
 
@@ -96,7 +96,7 @@ bool _scriptHandlerDecompiler::headerRead() {
     buffer++;
 
     // Size of the upcoming script data
-    _scriptSize = readWord( buffer );
+    _scriptSize = readWord(buffer);
     buffer++;
 
     // Start of script data
@@ -104,36 +104,36 @@ bool _scriptHandlerDecompiler::headerRead() {
 
     if(_pointerCount == 0x06) {
 	_destinationFile << "[House]" << std::endl;
-	_scriptType		 = _scriptHOUSE;
-	_objectNames	 = nameHouses;
+	_scriptType	= _scriptHOUSE;
+	_objectNames	= nameHouses;
 	opcodesHousesSetup();
     }
 
     if(_pointerCount == 0x13) {
 	_destinationFile << "[Build]" << std::endl;
-	_scriptType		 = _scriptBUILD;
-	_objectNames	 = nameStructures;
+	_scriptType	= _scriptBUILD;
+	_objectNames	= nameStructures;
 	opcodesBuildingsSetup();
     }
 
     if(_pointerCount == 0x1B) {
 	_destinationFile << "[Unit]" << std::endl;
-	_scriptType		 = _scriptUNIT;
-	_objectNames	 = nameUnits;
+	_scriptType	= _scriptUNIT;
+	_objectNames	= nameUnits;
 	opcodesUnitsSetup();
     }
 
     return true;
 }
 
-bool _scriptHandlerDecompiler::scriptNextStart( ) {
+bool _scriptHandlerDecompiler::scriptNextStart() {
     bool found = false;
 
     // Loop through each pointer and write the section names out
-    for( int count = 0; count < _pointerCount; count++ ) {
+    for(int count = 0; count < _pointerCount; count++) {
 
 	// In TEAM.EMC for example, two objects use the same script
-	if( _scriptPos == (uint16_t) _headerPointers[count]) {
+	if(_scriptPos == (uint16_t) _headerPointers[count]) {
 	    if(found==false)
 		_destinationFile << std::endl;
 
@@ -168,10 +168,10 @@ bool _scriptHandlerDecompiler::execute() {
     return scriptDecompile();
 }
 
-bool _scriptHandlerDecompiler::scriptDecompile( ) {
+bool _scriptHandlerDecompiler::scriptDecompile() {
 
     _lineCount		= 0;
-    _opcodeCurrent  = 0;
+    _opcodeCurrent	= 0;
     _scriptData		= _scriptDataNext = 0;
     _scriptPtr		= 0;
     _scriptPtrEnd	= 0;
@@ -179,21 +179,21 @@ bool _scriptHandlerDecompiler::scriptDecompile( ) {
     _stackCount		= 0xF;
 
     _scriptPos		= 0;
-    _scriptPtr		= (uint16_t*)  _scriptStart;
+    _scriptPtr		= (uint16_t*) _scriptStart;
     _scriptPtrEnd	= (uint16_t*) (_scriptStart + _scriptSize);
 
-    while( _scriptPtr <  _scriptPtrEnd ) {
+    while(_scriptPtr <  _scriptPtrEnd) {
 
-	if( !_modePreProcess ) {
+	if(!_modePreProcess) {
 	    scriptNextStart();
 
 	    // Check if label location, print label if so
-	    if( scriptLabel( _scriptPos ) > -1)
+	    if(scriptLabel(_scriptPos) != (size_t)-1)
 		_destinationFile << "l" << _scriptPos << ":" << std::endl;
 	}
 
 	_scriptDataNext = 0;
-	_scriptData		= readWord( _scriptPtr );
+	_scriptData = readWord(_scriptPtr);
 	_scriptPtr++;
 	_scriptPos++;
 
@@ -201,33 +201,33 @@ bool _scriptHandlerDecompiler::scriptDecompile( ) {
 	_opcodeCurrent = _scriptData >> 8;
 	_opcodeCurrent &= 0x1F;
 
-	if( _scriptData & 0x8000 ) {
+	if(_scriptData & 0x8000) {
 	    // Opcode uses 13 bits
 	    _opcodeCurrent = 0;
 	    _scriptData &= 0x7FFF;
 	} else
 	    // Opcode only requires 1 uint8_t
-	    if( _scriptData & 0x4000 ) {
+	    if(_scriptData & 0x4000) {
 		_scriptData &= 0xFF;
 	    } else 	
 		// Opcode uses the next WORD, grab it
-		if( _scriptData & 0x2000 ) {
-		    _scriptDataNext = readWord( _scriptPtr );
-		    _scriptPtr++;
-		    _scriptPos++;
+		if(_scriptData & 0x2000) {
+		   _scriptDataNext = readWord(_scriptPtr);
+		   _scriptPtr++;
+		   _scriptPos++;
 		}
 
 
 	    // Print opcode
-	    if( !_modePreProcess )
+	    if(!_modePreProcess)
 		_destinationFile << std::setw(20) << std::left << _opcodes[ _opcodeCurrent ].description;
 
 	    // Excute opcode
-	    (this->*_opcodes[ _opcodeCurrent ].function)( );
+	    (this->*_opcodes[ _opcodeCurrent ].function)();
 
 	    //_destinationFile  << setw(20) << " ";
 	    //_destinationFile  << hex << uppercase << "S: 0x" << _stackCount << std::endl;
-	    if( !_modePreProcess )
+	    if(!_modePreProcess)
 		_destinationFile << std::endl;
 
 	    _lineCount++;
