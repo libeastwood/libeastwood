@@ -60,13 +60,13 @@
 		buffer += 0x6;
 
 		// Write pointer counter
-		*buffer = swapWord(_pointerCount * 2);
+		*buffer = htobe16(_pointerCount * 2);
 
 		buffer++;
 
 		// Write ID script pointers
 		for(size_t ptrCount = 0; ptrCount < _pointerCount; ptrCount++) {
-			*buffer = swapWord(_headerPointers[ptrCount]);
+			*buffer = htobe16(_headerPointers[ptrCount]);
 			buffer++;
 		}
 
@@ -80,7 +80,7 @@
 		buffer++;
 
 		// Write total script size
-		*buffer = swapWord(_scriptSize);
+		*buffer = htobe16(_scriptSize);
 
 		return true;
 	}

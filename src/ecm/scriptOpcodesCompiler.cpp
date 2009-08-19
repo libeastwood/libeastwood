@@ -33,7 +33,7 @@ void	_scriptHandlerCompiler::o_goto(   ) {
 	*( (uint8_t*) bb) = 01;
 
     *(_scriptPtr) |= 0x80;
-    *(_scriptPtr) |= swapWord(labelPos);
+    *(_scriptPtr) |= htobe16(labelPos);
 
 }
 
@@ -44,12 +44,12 @@ void	_scriptHandlerCompiler::o_setreturn(   ) {
 
 void	_scriptHandlerCompiler::o_pushOp(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	 _scriptHandlerCompiler::o_pushWord(   ) {
     *(_scriptPtr) |= 0x20;
-    *(_scriptPtr+1) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr+1) |= htobe16(atoi(_currentLine.c_str()));
     _scriptPtr++;
     _scriptPos++;
 }
@@ -63,22 +63,22 @@ void	_scriptHandlerCompiler::o_push(   ) {
 
     *(_scriptPtr)  = 0x04;
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(value);
+    *(_scriptPtr) |= htobe16(value);
 }
 
 void	_scriptHandlerCompiler::o_pushreg(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_pushframeMinArg(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_pushframePluArg(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_popret(   ) {
@@ -90,32 +90,32 @@ void	_scriptHandlerCompiler::o_popret(   ) {
 	_currentLine = "0";
     }
 
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_popreg(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_popframeMinArg(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_popframePluArg(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_spadd(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_spsub(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_execute(   ) {
@@ -124,7 +124,7 @@ void	_scriptHandlerCompiler::o_execute(   ) {
 
     opcode = scriptOpcodeFind( _currentLine, _opcodesExecute );
 
-    *(_scriptPtr) |= swapWord(opcode);
+    *(_scriptPtr) |= htobe16(opcode);
 
     (this->*_opcodesExecute[ opcode ].function)( );
 }
@@ -139,7 +139,7 @@ void	_scriptHandlerCompiler::o_ifnotgoto(   ) {
 
     line |= 0x8000;
 
-    *(_scriptPtr+1) = swapWord(line);
+    *(_scriptPtr+1) = htobe16(line);
 
     _scriptPtr++;
     _scriptPos++;
@@ -147,7 +147,7 @@ void	_scriptHandlerCompiler::o_ifnotgoto(   ) {
 
 void	_scriptHandlerCompiler::o_negate(   ) {
     *(_scriptPtr) |= 0x40;
-    *(_scriptPtr) |= swapWord(atoi(_currentLine.c_str()));
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void	_scriptHandlerCompiler::o_evaluate(   ) {
@@ -156,7 +156,7 @@ void	_scriptHandlerCompiler::o_evaluate(   ) {
 
     opcode = scriptOpcodeFind( _currentLine, _opcodesEvaluate );
 
-    *(_scriptPtr) |= swapWord(opcode);
+    *(_scriptPtr) |= htobe16(opcode);
 }
 
 void	_scriptHandlerCompiler::o_return(   ) {
