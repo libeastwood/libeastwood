@@ -41,10 +41,10 @@ _scriptHandler::_scriptHandler(const char *fileName) {
 // Destructor
 _scriptHandler::~_scriptHandler() {
     if(_scriptBuffer)
-	delete _scriptBuffer;
+	delete [] _scriptBuffer;
 
     if(_headerPointers)
-	delete _headerPointers;
+	delete [] _headerPointers;
 }
 
 // Search the opcode table for a string opcode name

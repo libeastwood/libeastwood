@@ -142,11 +142,11 @@ bool _scriptHandlerCompiler::execute() {
 
     // Cleanup script buffer
     if(_scriptBuffer)
-	delete _scriptBuffer;
+	delete [] _scriptBuffer;
 
     // Cleanup header pointers
     if(_headerPointers)
-	delete _headerPointers;
+	delete [] _headerPointers;
 
     // Disable PreProcess mode
     _modePreProcess = false;
