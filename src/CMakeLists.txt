@@ -16,6 +16,9 @@ SET( LIBEASTWOOD_SRCS
   WsaFile.cpp
   adl/emuopl.cpp
   adl/fmopl.c
+  emc/scriptHandler.cpp
+  emc/scriptHandlerCompiler.cpp
+  emc/scriptHandlerDecompiler.cpp
 )
 
 SET( LIBEASTWOOD_HEADERS
@@ -36,30 +39,34 @@ SET( LIBEASTWOOD_HEADERS
   adl/emuopl.h
   adl/fmopl.h
   adl/opl.h
+  emc/scriptHandler.h
+  emc/scriptHandlerCompiler.h
+  emc/scriptHandlerDecompiler.h  
 )
 
-SET( ECM_INTERPRETER
-    ecm/dst.cpp
-    ecm/scriptHandlerCompiler.cpp
-    ecm/scriptHandler.cpp
-    ecm/scriptHandlerDecompiler.cpp
+SET( EMC_INTERPRETER
+    emc/dst.cpp
 )
 
 INSTALL( FILES ${LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood" )
 
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
 
-ADD_EXECUTABLE( dst ${ECM_INTERPRETER})
-
-TARGET_LINK_LIBRARIES(eastwood ${SDL_LIBRARY} )
-TARGET_LINK_LIBRARIES(eastwood ${SDLMIXER_LIBRARY} )
-TARGET_LINK_LIBRARIES(eastwood ${LIBSAMPLERATE_LIBRARIES} )
+TARGET_LINK_LIBRARIES( eastwood ${SDL_LIBRARY} )
+TARGET_LINK_LIBRARIES( eastwood ${SDLMIXER_LIBRARY} )
+TARGET_LINK_LIBRARIES( eastwood ${LIBSAMPLERATE_LIBRARIES} )
 
 
 SET_TARGET_PROPERTIES( eastwood PROPERTIES VERSION "${LIBEASTWOOD_VERSION_INFO}" )
 SET_TARGET_PROPERTIES( eastwood PROPERTIES SOVERSION "${LIBEASTWOOD_SOVERSION_INFO}" )
 
 INSTALL(TARGETS eastwood LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+
+IF(LIBEASTWOOD_BUILD_DST)
+ADD_EXECUTABLE( dst ${EMC_INTERPRETER} )
+TARGET_LINK_LIBRARIES( dst eastwood )
+ENDIF(LIBEASTWOOD_BUILD_DST)
+
 
 IF(LIBEASTWOOD_BUILD_PYTHON)
   GET_FILENAME_COMPONENT(PYTHON_LIB_INSTALL "${PYTHON_LIBRARY}" PATH)
