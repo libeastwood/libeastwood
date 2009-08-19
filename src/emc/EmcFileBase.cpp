@@ -106,8 +106,8 @@ void EmcFileBase::opcodesSetup() {
 	{"XOR",			&EmcFileBase::o_evaluate_XOR},
     };
 
-    _opcodes		  = scriptOpcodes;
-    _opcodesEvaluate  = scriptOpcodesEvaluate;
+    _opcodes = scriptOpcodes;
+    _opcodesEvaluate = scriptOpcodesEvaluate;
 }
 
 // The 'Building' Execute functions
