@@ -68,7 +68,7 @@ namespace script {
 
 	// Setup the opcode name/function table
 	void _scriptHandler::opcodesSetup() {
-		static const _Opcode scriptOpcodes[0x14] = {
+		static const _Opcode scriptOpcodes[] = {
 		    {"Goto",				&_scriptHandler::o_goto},				// 0
 		    {"SetReturn",		&_scriptHandler::o_setreturn},			// 1
 		    {"PushOp",			&_scriptHandler::o_pushOp},				// 2
@@ -91,7 +91,7 @@ namespace script {
 		};
 		
 		// The 'Evaluate' opcode functions
-		static const _Opcode scriptOpcodesEvaluate[0x12] = {
+		static const _Opcode scriptOpcodesEvaluate[] = {
 		    {"IfEither",					&_scriptHandler::o_evaluate_IfEither},				// 0
 			{"IfEither1",				&_scriptHandler::o_evaluate_IfEither},				// 1
 			{"Equal",					&_scriptHandler::o_evaluate_Equal},					// 2
@@ -118,7 +118,7 @@ namespace script {
 
 	// The 'Building' Execute functions
 	void _scriptHandler::opcodesBuildingsSetup() {
-		static const _Opcode scriptOpcodesExecuteBuildings[0x19] = {
+		static const _Opcode scriptOpcodesExecuteBuildings[] = {
 			{"Delay",					&_scriptHandler::o_execute_Building_Null},					// 0
 			{"Null",						&_scriptHandler::o_execute_Building_Null},					// 1
 			{"VerifyAttached",			&_scriptHandler::o_execute_Building_Null},					// 2	
@@ -152,7 +152,7 @@ namespace script {
 
 	// The 'Units' Execute functions
 	void _scriptHandler::opcodesUnitsSetup() {
-		static const _Opcode scriptOpcodesExecuteUnits[0x64] = {
+		static const _Opcode scriptOpcodesExecuteUnits[] = {
 			{"GetDetail",				&_scriptHandler::o_execute_Unit_GetDetail},				// 0 	
 			{"sub_272E7",				&_scriptHandler::o_execute_Unit_Null},					// 1
 			{"Text",   					&_scriptHandler::o_execute_Unit_Null},					// 2
@@ -224,7 +224,7 @@ namespace script {
 
 	// The 'Houses' Execute functions
 	void _scriptHandler::opcodesHousesSetup() {
-		static const _Opcode scriptOpcodesExecuteHouses[0xF] = {
+		static const _Opcode scriptOpcodesExecuteHouses[] = {
 			{"Delay",					&_scriptHandler::o_execute_House_Null},		// 0 	
 			{"HouseText",				&_scriptHandler::o_execute_House_Null},		// 1
 			{"HouseLastUnitIndexGet",	&_scriptHandler::o_execute_House_Null},		// 2
