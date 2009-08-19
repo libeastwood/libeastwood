@@ -1,4 +1,5 @@
-/* DST  -  Dune 2 Script Tools
+/* Based on:
+ * DST  -  Dune 2 Script Tools
  *  
  * Copyright (C) 2009 segra		<segra@strobs.com>
 
@@ -15,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * 
  */
 
 #include <fstream>

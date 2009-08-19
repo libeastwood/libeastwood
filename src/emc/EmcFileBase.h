@@ -1,4 +1,8 @@
-/* DST  -  Dune 2 Script Tools
+#ifndef	EASTWOOD_EMC_EMCFILEBASE_H
+#define	EASTWOOD_EMC_EMCFILEBASE_H
+
+/* Based on:
+ * DST  -  Dune 2 Script Tools
  *  
  * Copyright (C) 2009 segra		<segra@strobs.com>
 
@@ -15,9 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * 
- * $Id: scriptHandler.h 21 2009-04-11 01:11:32Z segra $
- * 
  */
 
 #include "../StdDef.h"
@@ -204,3 +205,4 @@ class EmcFileBase {
 	}
 };
 
+#endif // EASTWOOD_EMC_EMCFILEBASE_H
