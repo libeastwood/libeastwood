@@ -29,12 +29,15 @@
 #include "ObjectNames.h"
 
 _scriptHandlerCompiler::_scriptHandlerCompiler(const char *fileName) : _scriptHandler(fileName) {
-    _sourceFile = 0;
+    _sourceFile = NULL;
     opcodesSetup();
 }
 
 _scriptHandlerCompiler::~_scriptHandlerCompiler() {
-
+    if(_sourceFile) {
+    	_sourceFile->close();
+    	delete _sourceFile;
+    }
 }
 
 
