@@ -43,9 +43,6 @@ SET( ECM_INTERPRETER
     ecm/scriptHandlerCompiler.cpp
     ecm/scriptHandler.cpp
     ecm/scriptHandlerDecompiler.cpp
-    ecm/scriptOpcodesCompiler.cpp
-    ecm/scriptOpcodesDecompiler.cpp
-    ecm/stdafx.cpp
 )
 
 INSTALL( FILES ${LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood" )

@@ -20,10 +20,37 @@
  * 
  */
 
-#include "stdafx.h"
+#include <iostream>
+#include <iomanip>
+
 #include "scriptHandler.h"
 #include "scriptHandlerDecompiler.h"
 
+#include "ObjectNames.h"
+
+// Unit GetDetail Function DetailNames
+static const char *nameUnitDetails[] = {
+    "HitPointRepairCalc?",   
+    "BuildingTypeIndex",     
+    "WeaponRange",           
+    "IndexGet",              
+    "Field64Get",            
+    "AttackObjectIndexTypeGet",                   
+    "Return",
+    "TypeIndex",             
+    "IndexGetAsObject",      
+    "Field6BGet",                 
+    "loc_27562",          
+    "Field49AndField4BGet",                 
+    "WeaponCoolDown?",                 
+    "Field36And4h",               
+    "HouseIDGet",            
+    "loc_275C1",                 
+    "TurretGet?",     
+    "loc_2752F",                 
+    "DoesTurretRotate",          
+    "CheckIfHuman"              
+};
 
 _scriptHandlerDecompiler::_scriptHandlerDecompiler(const char *fileName) : _scriptHandler(fileName) {
     std::string	sourceFilename = std::string(_fileName), targetFilename;
@@ -37,7 +64,7 @@ _scriptHandlerDecompiler::_scriptHandlerDecompiler(const char *fileName) : _scri
     targetFilename.append(".txt");
 
     _scriptLastPush = 0;
-    _opcodesExecute = 0;
+    _opcodesExecute = NULL;
 
     opcodesSetup();
 
@@ -65,7 +92,7 @@ bool _scriptHandlerDecompiler::scriptLoad() {
     fileScript.seekg(std::ios::beg);
 
     // Load file into _scriptBuffer
-    _scriptBuffer = new uint8_t[ scriptSize ];
+    _scriptBuffer = new uint8_t[scriptSize];
     if(fileScript.read((char*) _scriptBuffer, scriptSize) == false)
 	return false;
 
@@ -76,7 +103,6 @@ bool _scriptHandlerDecompiler::scriptLoad() {
 
 bool _scriptHandlerDecompiler::headerRead() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer + 0x12);
-    size_t ptrCount;
 
     // Number of script functions
     _pointerCount = readWord(buffer) / 2;
@@ -84,7 +110,7 @@ bool _scriptHandlerDecompiler::headerRead() {
 
     _headerPointers = new uint16_t[_pointerCount];
 
-    for(ptrCount = 0; ptrCount < _pointerCount; ptrCount++) {
+    for(size_t ptrCount = 0; ptrCount < _pointerCount; ptrCount++) {
 	_headerPointers[ptrCount] = readWord(buffer);
 	buffer++;
     }
@@ -102,21 +128,21 @@ bool _scriptHandlerDecompiler::headerRead() {
     // Start of script data
     _scriptStart = (uint8_t*) buffer;
 
-    if(_pointerCount == 0x06) {
+    if(_pointerCount == sizeof(nameHouses)/sizeof(*nameHouses)) {
 	_destinationFile << "[House]" << std::endl;
 	_scriptType	= _scriptHOUSE;
 	_objectNames	= nameHouses;
 	opcodesHousesSetup();
     }
 
-    if(_pointerCount == 0x13) {
+    if(_pointerCount == sizeof(nameStructures)/sizeof(*nameStructures)) {
 	_destinationFile << "[Build]" << std::endl;
 	_scriptType	= _scriptBUILD;
 	_objectNames	= nameStructures;
 	opcodesBuildingsSetup();
     }
 
-    if(_pointerCount == 0x1B) {
+    if(_pointerCount == sizeof(nameUnits)/sizeof(*nameUnits)) {
 	_destinationFile << "[Unit]" << std::endl;
 	_scriptType	= _scriptUNIT;
 	_objectNames	= nameUnits;
@@ -173,8 +199,8 @@ bool _scriptHandlerDecompiler::scriptDecompile() {
     _lineCount		= 0;
     _opcodeCurrent	= 0;
     _scriptData		= _scriptDataNext = 0;
-    _scriptPtr		= 0;
-    _scriptPtrEnd	= 0;
+    _scriptPtr		= NULL;
+    _scriptPtrEnd	= NULL;
     _scriptPos		= 0;
     _stackCount		= 0xF;
 
@@ -212,18 +238,18 @@ bool _scriptHandlerDecompiler::scriptDecompile() {
 	    } else 	
 		// Opcode uses the next WORD, grab it
 		if(_scriptData & 0x2000) {
-		   _scriptDataNext = readWord(_scriptPtr);
-		   _scriptPtr++;
-		   _scriptPos++;
+		    _scriptDataNext = readWord(_scriptPtr);
+		    _scriptPtr++;
+		    _scriptPos++;
 		}
 
 
 	    // Print opcode
 	    if(!_modePreProcess)
-		_destinationFile << std::setw(20) << std::left << _opcodes[ _opcodeCurrent ].description;
+		_destinationFile << std::setw(20) << std::left << _opcodes[_opcodeCurrent].description;
 
 	    // Excute opcode
-	    (this->*_opcodes[ _opcodeCurrent ].function)();
+	    (this->*_opcodes[_opcodeCurrent].function)();
 
 	    //_destinationFile  << setw(20) << " ";
 	    //_destinationFile  << hex << uppercase << "S: 0x" << _stackCount << std::endl;
@@ -236,3 +262,188 @@ bool _scriptHandlerDecompiler::scriptDecompile() {
     return true;
 }
 
+void _scriptHandlerDecompiler::o_goto() {
+    size_t labelPos = scriptLabel(_scriptData);
+
+    if(!_modePreProcess) {
+
+	if(labelPos == (size_t)-1)
+	    dataPrint(_scriptData);
+	else
+	    _destinationFile << "l" << _scriptLabels[labelPos]._scriptPos;
+
+    } else {
+	if(labelPos == (size_t)-1)
+	    scriptLabelAdd("", _scriptData);
+    }
+}
+
+void _scriptHandlerDecompiler::o_setreturn() {
+    if(_scriptDataNext)
+	dataPrint(_scriptDataNext);
+    else
+	dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_pushOp() {
+    uint16_t data = _scriptData;
+    if(_scriptData == 0)
+	data = _scriptDataNext;
+
+    _stackCount--;
+
+    dataPrint(data);
+}
+
+void _scriptHandlerDecompiler::o_push() {
+    _stackCount--;
+
+    if(_scriptDataNext) {
+	_scriptLastPush = _scriptDataNext;
+	dataPrint(_scriptDataNext);
+    } else {
+	_scriptLastPush = _scriptData;
+	dataPrint(_scriptData);
+    }
+}
+
+void _scriptHandlerDecompiler::o_pushWord() {
+    o_push();
+}
+
+void _scriptHandlerDecompiler::o_pushreg() {
+    _stackCount--;
+
+    if(_scriptDataNext)
+	dataPrint(_scriptDataNext);
+    else
+	dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_pushframeMinArg() {
+    _stackCount--;
+    _stackCount--;
+    if(_scriptDataNext)
+	dataPrint(_scriptDataNext);
+    else
+	dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_pushframePluArg() {
+    _stackCount--;
+    _stackCount--;
+    if(_scriptDataNext)
+	dataPrint(_scriptDataNext);
+    else
+	dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_popret() {
+    if(_scriptData == 1) {
+	if(!_modePreProcess)
+	    _destinationFile << " (Return)";
+	return;
+
+    } else 
+	_stackCount++;
+
+    _stackCount++;
+}
+
+void _scriptHandlerDecompiler::o_popreg() {
+    _stackCount++;
+
+    if(_scriptDataNext)
+	dataPrint(_scriptDataNext);
+    else
+	dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_popframeMinArg() {
+    _stackCount++;
+    _stackCount++;
+    if(_scriptDataNext)
+	dataPrint(_scriptDataNext);
+    else
+	dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_popframePluArg() {
+    _stackCount++;
+    _stackCount++;
+    if(_scriptDataNext)
+	dataPrint(_scriptDataNext);
+    else
+	dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_spadd() {
+    dataPrint(_scriptData);
+    _stackCount += (_scriptData & 0xF);
+}
+
+void _scriptHandlerDecompiler::o_spsub() {
+    dataPrint(_scriptData);
+    _stackCount -= (_scriptData & 0xF);
+}
+
+void _scriptHandlerDecompiler::o_execute() {
+
+    if(!_modePreProcess)
+	_destinationFile << std::left << _opcodesExecute[ _scriptData ].description << " ";
+
+    (this->*_opcodesExecute[ _scriptData ].function)();
+}
+
+void _scriptHandlerDecompiler::o_ifnotgoto() {
+    size_t labelPos;
+
+    if(_scriptDataNext) {
+	labelPos = scriptLabel(_scriptDataNext & 0x7FFF);
+
+	if(_modePreProcess)  {
+	    if(labelPos == (size_t)-1)
+		scriptLabelAdd("", _scriptDataNext & 0x7FFF);
+
+	} else {
+	    if(labelPos == (size_t)-1)
+		dataPrint(_scriptDataNext & 0x7FFF);
+	    else
+		_destinationFile << "l" << _scriptLabels[labelPos]._scriptPos;
+	}
+
+    } else {
+	labelPos = scriptLabel(_scriptData);
+
+	if(_modePreProcess) {
+	    if(labelPos == (size_t)-1)
+		scriptLabelAdd("", _scriptData);
+	} else {
+	    if(labelPos == (size_t)-1)
+		dataPrint(_scriptData);
+	    else
+		_destinationFile << "l" << _scriptLabels[labelPos]._scriptPos;
+	}
+    }
+}
+
+void _scriptHandlerDecompiler::o_negate() {
+    dataPrint(_scriptData);
+}
+
+void _scriptHandlerDecompiler::o_evaluate() {
+    if(!_modePreProcess)
+	_destinationFile << _opcodesEvaluate[ _scriptData ].description;
+
+    (this->*_opcodesEvaluate[ _scriptData ].function)();
+}
+
+void _scriptHandlerDecompiler::o_return() {
+
+}
+
+
+void _scriptHandlerDecompiler::o_execute_Unit_GetDetail() {
+    if(!_modePreProcess)
+	_destinationFile << "(" << nameUnitDetails[_scriptLastPush] << ")";
+}

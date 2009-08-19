@@ -20,14 +20,17 @@
  * 
  */
 
-#include "stdafx.h"
+#include <iostream>
+
 #include "scriptHandler.h"
 #include "scriptHandlerDecompiler.h"
 #include "scriptHandlerCompiler.h"
 
+static const char *version = "1.1";
+
 int main( int argc, char *argv[]) {
-    bool			result = false;
-    _scriptHandler *script = 0;
+    bool result = false;
+    _scriptHandler *script = NULL;
 
     std::cout << "Dune II Script Tools v" << version << std::endl << std::endl;
 

@@ -20,20 +20,39 @@
  * 
  */
 
+#include "../StdDef.h"
+#include <string>
+#include <vector>
+
 class _scriptHandler;
 
 // Opcode Definitions
 typedef void (_scriptHandler::*opcodefuncPtr)();
 
 struct _Opcode {
-    const char		*description;
-    opcodefuncPtr	 function;
+    const char *description;
+    opcodefuncPtr function;
 };
 
 struct labelPosition {
-    uint16_t	_scriptPos;
-    std::string	_name;
+    uint16_t _scriptPos;
+    std::string _name;
 };
+
+
+enum _scriptTypes {
+    _scriptBUILD = 0,
+    _scriptUNIT,
+    _scriptHOUSE
+};
+
+// Endian functions
+// Read a uint16_t from the buffer
+static inline
+uint16_t readWord( const uint16_t *buffer ) {
+    const uint8_t *uint16_tByte = (const uint8_t *) buffer;
+    return (uint16_tByte[0] << 8) + uint16_tByte[1];
+}
 
 class _scriptHandler {
     public:
@@ -42,14 +61,15 @@ class _scriptHandler {
 
 	uint16_t	scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes);	// Search the opcode table for 'Opcode' string
 
-	inline size_t labelCountGet() {
+	inline
+	size_t		labelCountGet() {
 	    return _lineCount;
-
 	}
 
 	// Virtual Functions
-
 	virtual bool	 execute()		= 0;
+
+    protected:
 	// Opcode Prepare
 	virtual void	 opcodesSetup();
 	virtual void	 opcodesBuildingsSetup();
@@ -78,36 +98,35 @@ class _scriptHandler {
 	virtual void	 o_return()		= 0;
 
 	// Opcode Evaluation Modes
-	virtual void	 o_evaluate_IfEither()			= 0;
-	virtual void	 o_evaluate_Equal()			= 0;
-	virtual void	 o_evaluate_NotEqual()			= 0;
-	virtual void	 o_evaluate_CompareGreaterEqual()	= 0;
-	virtual void	 o_evaluate_CompareGreater()		= 0;
-	virtual void	 o_evaluate_CompareLessEqual()		= 0;
-	virtual void	 o_evaluate_CompareLess()		= 0;
-	virtual void	 o_evaluate_Add()			= 0;
-	virtual void	 o_evaluate_Subtract()			= 0;
-	virtual void	 o_evaluate_Multiply()			= 0;
-	virtual void	 o_evaluate_Divide()			= 0;
-	virtual void	 o_evaluate_ShiftRight()		= 0;
-	virtual void	 o_evaluate_ShiftLeft()			= 0;
-	virtual void	 o_evaluate_And()			= 0;
-	virtual void	 o_evaluate_Or()			= 0;
-	virtual void	 o_evaluate_DivideRemainder()		= 0;
-	virtual void	 o_evaluate_XOR()			= 0;
+	virtual void	 o_evaluate_IfEither(){}
+	virtual void	 o_evaluate_Equal(){}
+	virtual void	 o_evaluate_NotEqual(){}
+	virtual void	 o_evaluate_CompareGreaterEqual(){}
+	virtual void	 o_evaluate_CompareGreater(){}
+	virtual void	 o_evaluate_CompareLessEqual(){}
+	virtual void	 o_evaluate_CompareLess(){}
+	virtual void	 o_evaluate_Add(){}
+	virtual void	 o_evaluate_Subtract(){}
+	virtual void	 o_evaluate_Multiply(){}
+	virtual void	 o_evaluate_Divide(){}
+	virtual void	 o_evaluate_ShiftRight(){}
+	virtual void	 o_evaluate_ShiftLeft(){}
+	virtual void	 o_evaluate_And(){}
+	virtual void	 o_evaluate_Or(){}
+	virtual void	 o_evaluate_DivideRemainder(){}
+	virtual void	 o_evaluate_XOR(){}
 
 	// Opcode Execute Functions
 	// Buildings
-	virtual void	 o_execute_Building_Null()		= 0;
+	virtual void	 o_execute_Building_Null(){}
 
 	// Units
-	virtual void	 o_execute_Unit_Null()			= 0;
-	virtual void	 o_execute_Unit_GetDetail()		= 0;
+	virtual void	 o_execute_Unit_Null(){}
+	virtual void	 o_execute_Unit_GetDetail(){}
 
 	// Houses
-	virtual void	 o_execute_House_Null()			= 0;
+	virtual void	 o_execute_House_Null(){}
 
-    protected:
 	// Opcode Functions
 	const _Opcode	*_opcodes;		// Script Opcodes
 	const _Opcode	*_opcodesEvaluate;	// Evaluate Command Opcodes
@@ -134,7 +153,8 @@ class _scriptHandler {
 
 	std::vector<labelPosition> _scriptLabels;	// List of memory locations which can/are jumped to
 
-	inline size_t scriptLabelGet(std::string label) {
+	inline
+	size_t scriptLabelGet(std::string label) {
 	    size_t pos = scriptLabel(label);
 
 	    if(pos == (size_t)-1)
@@ -143,11 +163,13 @@ class _scriptHandler {
 	    return _scriptLabels[pos]._scriptPos;
 	}
 
-	inline size_t scriptLabel(std::string label) {
-	    static std::vector<labelPosition>::iterator labelIT;
+	inline
+	size_t scriptLabel(std::string label) {
 	    size_t pos = 0;
 
-	    for(labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++) {
+	    for(std::vector<labelPosition>::const_iterator labelIT = _scriptLabels.begin();
+		    labelIT != _scriptLabels.end();
+		    labelIT++, pos++) {
 
 		if(label.compare((*labelIT)._name) == 0)
 		    return pos;
@@ -157,12 +179,13 @@ class _scriptHandler {
 	    return -1;
 	}
 
-	inline size_t scriptLabel(uint16_t position) {
-	    static std::vector<labelPosition>::iterator labelIT;
+	inline
+	size_t scriptLabel(uint16_t position) {
 	    size_t pos = 0;
 
-	    for(labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++) {
-
+	    for(std::vector<labelPosition>::const_iterator labelIT = _scriptLabels.begin();
+		    labelIT != _scriptLabels.end();
+		    labelIT++, pos++) {
 		if((*labelIT)._scriptPos == position)
 		    return pos;
 	    }
@@ -171,7 +194,8 @@ class _scriptHandler {
 	    return -1;
 	}
 
-	inline void scriptLabelAdd(std::string label, uint16_t position) {
+	inline
+	void scriptLabelAdd(std::string label, uint16_t position) {
 	    labelPosition LP;
 	    size_t labelPos = scriptLabel(position),
 		   labelEndPos = label.find(":");

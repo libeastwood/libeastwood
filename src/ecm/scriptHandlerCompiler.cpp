@@ -20,9 +20,13 @@
  * 
  */
 
-#include "stdafx.h"
+#include <fstream>
+#include <iostream>
+
 #include "scriptHandler.h"
 #include "scriptHandlerCompiler.h"
+
+#include "ObjectNames.h"
 
 _scriptHandlerCompiler::_scriptHandlerCompiler(const char *fileName) : _scriptHandler(fileName) {
     _sourceFile = 0;
@@ -36,7 +40,6 @@ _scriptHandlerCompiler::~_scriptHandlerCompiler() {
 
 bool _scriptHandlerCompiler::headerCreate() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer);
-    uint16_t *bufferStart = buffer;
     const char header[] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
 
     // Copy the header in
@@ -84,7 +87,7 @@ bool _scriptHandlerCompiler::headerCreate() {
 }
 
 bool _scriptHandlerCompiler::scriptSave() {
-    std::ofstream		 _targetFile;
+    std::ofstream _targetFile;
     std::string file;
 
     file.append(_fileName);
@@ -106,9 +109,9 @@ bool _scriptHandlerCompiler::scriptSave() {
 }
 
 int _scriptHandlerCompiler::scriptSectionCheck() {
-    int		count = 0;
-    size_t	posStart = _currentLine.find("[") + 1;
-    size_t	posEnd;
+    int count = 0;
+    size_t posStart = _currentLine.find("[") + 1;
+    size_t posEnd;
 
     // Not a section header
     if(posStart == std::string::npos)
@@ -186,7 +189,7 @@ bool _scriptHandlerCompiler::scriptCompile() {
     // House Script
     if(_currentLine == "[House]") {
 	_scriptType	= _scriptHOUSE;
-	_pointerCount	= 0x06;
+	_pointerCount	= sizeof(nameHouses)/sizeof(*nameHouses);
 	_objectNames	= nameHouses;
 	opcodesHousesSetup();
     }
@@ -194,7 +197,7 @@ bool _scriptHandlerCompiler::scriptCompile() {
     // Building Script
     if(_currentLine == "[Build]") {
 	_scriptType	= _scriptBUILD;
-	_pointerCount	= 0x13;
+	_pointerCount	= sizeof(nameStructures)/sizeof(*nameStructures);
 	_objectNames	= nameStructures;
 	opcodesBuildingsSetup();
     }
@@ -202,7 +205,7 @@ bool _scriptHandlerCompiler::scriptCompile() {
     // Unit Script
     if(_currentLine == "[Unit]") {
 	_scriptType	= _scriptUNIT;
-	_pointerCount	= 0x1B;
+	_pointerCount	= sizeof(nameUnits)/sizeof(*nameUnits);
 	_objectNames	= nameUnits;
 	opcodesUnitsSetup();
     }
@@ -294,3 +297,149 @@ bool _scriptHandlerCompiler::scriptCompile() {
     _scriptSize = _scriptPos * 2;
     return true;
 }
+
+void _scriptHandlerCompiler::o_goto() {
+    size_t labelPos = scriptLabelGet(_currentLine);
+    int bb = 0;
+
+    if(!_modePreProcess && labelPos == (size_t)-1)
+	*((uint8_t*) bb) = 01;
+
+    *(_scriptPtr) |= 0x80;
+    *(_scriptPtr) |= htobe16(labelPos);
+
+}
+
+void _scriptHandlerCompiler::o_setreturn() {
+    //*(_scriptPtr) |= 0x40;
+
+}
+
+void _scriptHandlerCompiler::o_pushOp() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void  _scriptHandlerCompiler::o_pushWord() {
+    *(_scriptPtr) |= 0x20;
+    *(_scriptPtr+1) |= htobe16(atoi(_currentLine.c_str()));
+    _scriptPtr++;
+    _scriptPos++;
+}
+
+void _scriptHandlerCompiler::o_push() {
+    uint16_t value = atoi(_currentLine.c_str());
+
+    // Just incase, we dont want to corrupt the opcode
+    if(value > 0xFF)
+	return o_pushWord();
+
+    *(_scriptPtr)  = 0x04;
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(value);
+}
+
+void _scriptHandlerCompiler::o_pushreg() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_pushframeMinArg() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_pushframePluArg() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_popret() {
+    *(_scriptPtr) |= 0x40;
+
+    if(_currentLine == "(Return)")
+	_currentLine = "1";
+    else
+	_currentLine = "0";
+
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_popreg() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_popframeMinArg() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_popframePluArg() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_spadd() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_spsub() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_execute() {
+    uint16_t opcode = 0;
+    *(_scriptPtr) |= 0x40;
+
+    opcode = scriptOpcodeFind(_currentLine, _opcodesExecute);
+
+    *(_scriptPtr) |= htobe16(opcode);
+
+    (this->*_opcodesExecute[opcode].function)();
+}
+
+void _scriptHandlerCompiler::o_ifnotgoto() {
+    size_t labelPos = scriptLabelGet(_currentLine);
+    int line = 0;
+
+    *(_scriptPtr) |= 0x20;
+
+    line = labelPos;
+
+    line |= 0x8000;
+
+    *(_scriptPtr+1) = htobe16(line);
+
+    _scriptPtr++;
+    _scriptPos++;
+}
+
+void _scriptHandlerCompiler::o_negate() {
+    *(_scriptPtr) |= 0x40;
+    *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
+}
+
+void _scriptHandlerCompiler::o_evaluate() {
+    uint16_t opcode = 0;
+    *(_scriptPtr) |= 0x40;
+
+    opcode = scriptOpcodeFind(_currentLine, _opcodesEvaluate);
+
+    *(_scriptPtr) |= htobe16(opcode);
+}
+
+void _scriptHandlerCompiler::o_return() {
+
+}
+
+#if 0
+void _scriptHandlerCompiler::o_execute_Unit_GetDetail() {
+    /* What's this for??
+    static std::string	detailName;
+    *_sourceFile >> detailName;*/
+}
+#endif
+

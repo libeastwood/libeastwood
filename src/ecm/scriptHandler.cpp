@@ -20,7 +20,6 @@
  * 
  */
 
-#include "stdafx.h"
 #include "scriptHandler.h"
 #include "scriptHandlerDecompiler.h"
 #include "scriptHandlerCompiler.h"
@@ -32,8 +31,8 @@ _scriptHandler::_scriptHandler(const char *fileName) {
     _headerPointers	= 0;
     _pointerCount	= 0;
 
-    _scriptBuffer	= 0;
-    _scriptPtr		= 0;
+    _scriptBuffer	= NULL;
+    _scriptPtr		= NULL;
     _scriptPos		= 0;
 
     _modePreProcess	= true;
@@ -41,7 +40,6 @@ _scriptHandler::_scriptHandler(const char *fileName) {
 
 // Destructor
 _scriptHandler::~_scriptHandler() {
-
     if(_scriptBuffer)
 	delete _scriptBuffer;
 
@@ -52,7 +50,7 @@ _scriptHandler::~_scriptHandler() {
 // Search the opcode table for a string opcode name
 uint16_t _scriptHandler::scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes) {
     const _Opcode *opcode;
-    uint16_t  count =0;
+    uint16_t count = 0;
 
     // Search opcode list
     for(opcode = opcodes; opcode->description; opcode++, count++) {
