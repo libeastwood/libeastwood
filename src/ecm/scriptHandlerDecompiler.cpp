@@ -105,13 +105,13 @@ bool _scriptHandlerDecompiler::headerRead() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer + 0x12);
 
     // Number of script functions
-    _pointerCount = readWord(buffer) / 2;
+    _pointerCount = htobe16(*buffer) / 2;
     buffer++;
 
     _headerPointers = new uint16_t[_pointerCount];
 
     for(size_t ptrCount = 0; ptrCount < _pointerCount; ptrCount++) {
-	_headerPointers[ptrCount] = readWord(buffer);
+	_headerPointers[ptrCount] = htobe16(*buffer);
 	buffer++;
     }
 
@@ -122,7 +122,7 @@ bool _scriptHandlerDecompiler::headerRead() {
     buffer++;
 
     // Size of the upcoming script data
-    _scriptSize = readWord(buffer);
+    _scriptSize = htobe16(*buffer);
     buffer++;
 
     // Start of script data
@@ -219,7 +219,7 @@ bool _scriptHandlerDecompiler::scriptDecompile() {
 	}
 
 	_scriptDataNext = 0;
-	_scriptData = readWord(_scriptPtr);
+	_scriptData = htobe16(*_scriptPtr);
 	_scriptPtr++;
 	_scriptPos++;
 
@@ -238,7 +238,7 @@ bool _scriptHandlerDecompiler::scriptDecompile() {
 	    } else 	
 		// Opcode uses the next WORD, grab it
 		if(_scriptData & 0x2000) {
-		    _scriptDataNext = readWord(_scriptPtr);
+		    _scriptDataNext = htobe16(*_scriptPtr);
 		    _scriptPtr++;
 		    _scriptPos++;
 		}

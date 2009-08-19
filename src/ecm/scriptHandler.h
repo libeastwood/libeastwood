@@ -46,14 +46,6 @@ enum _scriptTypes {
     _scriptHOUSE
 };
 
-// Endian functions
-// Read a uint16_t from the buffer
-static inline
-uint16_t readWord( const uint16_t *buffer ) {
-    const uint8_t *uint16_tByte = (const uint8_t *) buffer;
-    return (uint16_tByte[0] << 8) + uint16_tByte[1];
-}
-
 class _scriptHandler {
     public:
 	_scriptHandler(const char *fileName);
