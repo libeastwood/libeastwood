@@ -23,14 +23,14 @@
 namespace script {
 	class _scriptHandlerDecompiler : public _scriptHandler {
 	private:
-		ofstream		 _destinationFile;
-		word			 _scriptLastPush;			// Last push operation value
+		std::ofstream		 _destinationFile;
+		uint16_t			 _scriptLastPush;			// Last push operation value
 
 		// Runtime Data
-		byte			 _opcodeCurrent;					// Current Opcode
+		uint8_t			 _opcodeCurrent;					// Current Opcode
 		size_t			 _stackCount;						// Stack Count
-		word			 _scriptData, _scriptDataNext;		// 
-		word			*_scriptPtrEnd;						// address of beginning and end of script data
+		uint16_t			 _scriptData, _scriptDataNext;		// 
+		uint16_t			*_scriptPtrEnd;						// address of beginning and end of script data
 
 		bool			 headerRead();						// Read the header
 		
@@ -38,9 +38,9 @@ namespace script {
 		bool			 scriptNextStart( );				// Are we at the start of a section?
 		bool			 scriptLoad();						// 
 
-		inline void		 dataPrint( word data ) {			// Print a word to screen in decimal
+		inline void		 dataPrint( uint16_t data ) {			// Print a uint16_t to screen in decimal
 			if( !_modePreProcess )
-				_destinationFile << dec << uppercase  << data;
+				_destinationFile << std::dec << std::uppercase  << data;
 		}
 
 		// Public Functions

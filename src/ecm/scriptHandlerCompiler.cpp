@@ -39,12 +39,12 @@ namespace script {
 
 
 	bool _scriptHandlerCompiler::headerCreate() {
-		word		*buffer = (word*) (_scriptBuffer);
-		word		*bufferStart = buffer;
+		uint16_t		*buffer = (uint16_t*) (_scriptBuffer);
+		uint16_t		*bufferStart = buffer;
 		const char	 header[0x10] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
 
 		// Copy the header in
-		memcpy( (byte*) buffer, header, 0x10 );
+		memcpy( (uint8_t*) buffer, header, 0x10 );
 
 		buffer += 0x3;
 
@@ -58,7 +58,7 @@ namespace script {
 		if( _scriptType == _scriptHOUSE ) 
 			*buffer = 0x5A01;
 
-		// 0x6 is WORDS, not bytes like 0x10 above
+		// 0x6 is WORDS, not uint8_ts like 0x10 above
 		buffer += 0x6;
 
 		// Write pointer counter
@@ -72,13 +72,13 @@ namespace script {
 			buffer++;
 		}
 
-		// Write DATA string
+		// Write DATA std::string
 		*buffer = 'AD';
 		buffer++;
 		*buffer = 'AT';
 		buffer++;
 
-		// Not sure if this word is actually part of a DWORD, or 2 useless bytes?
+		// Not sure if this uint16_t is actually part of a DWORD, or 2 useless uint8_ts?
 		buffer++;
 
 		// Write total script size
@@ -88,13 +88,13 @@ namespace script {
 	}
 
 	bool _scriptHandlerCompiler::scriptSave( ) {
-		ofstream		 _targetFile;
-		string file;
+		std::ofstream		 _targetFile;
+		std::string file;
 
 		file.append( _fileName );
 		file.append( ".EMC" );
 
-		_targetFile.open(file.c_str(), ios::binary | ios::out);
+		_targetFile.open(file.c_str(), std::ios::binary | std::ios::out);
 		
 		if(_targetFile.is_open() == false)
 			return false;
@@ -115,13 +115,13 @@ namespace script {
 		size_t	posEnd;
 
 		// Not a section header
-		if( posStart == string::npos )
+		if( posStart == std::string::npos )
 			return -2;
 
 		posEnd = _currentLine.find("]", posStart);;
 
 		// Read the section name
-		string name = _currentLine.substr( posStart, posEnd - posStart );
+		std::string name = _currentLine.substr( posStart, posEnd - posStart );
 
 		// Check for the section name
 		for( const char **namePtr = _objectNames; *namePtr; *namePtr++, count++ ) {
@@ -135,7 +135,7 @@ namespace script {
 
 	bool _scriptHandlerCompiler::execute() {
 
-		cout << "Preprocessing " << _fileName << endl;
+		std::cout << "Preprocessing " << _fileName << std::endl;
 
 		// Run the script compiler in pre process mode (find all jump locations)
 		if(scriptCompile() == false)
@@ -152,7 +152,7 @@ namespace script {
 		// Disable PreProcess mode
 		_modePreProcess = false;
 
-		cout << "Compiling....." << endl;
+		std::cout << "Compiling....." << std::endl;
 		// Properly compile the script
 		if(scriptCompile() == false )
 			return false;
@@ -177,8 +177,8 @@ namespace script {
 			delete _sourceFile;
 
 		// Open source file 
-		_sourceFile = new ifstream();
-		_sourceFile->open( _fileName, ios::in );
+		_sourceFile = new std::ifstream();
+		_sourceFile->open( _fileName, std::ios::in );
 
 		if( _sourceFile->is_open() == false )
 			return false;
@@ -213,11 +213,11 @@ namespace script {
 		}
 
 		// Prepare memory for scriptBuffer and headerPointers
-		_headerPointers = new word[_pointerCount];
-		_scriptBuffer	= new byte[0x100000];			// should be big enough :p
+		_headerPointers = new uint16_t[_pointerCount];
+		_scriptBuffer	= new uint8_t[0x100000];			// should be big enough :p
 
 		// Set the script pointer to the script starting position (in buffer)
-		_scriptPtr		= (word*) (_scriptBuffer + (_pointerCount*2) + 0x1C);
+		_scriptPtr		= (uint16_t*) (_scriptBuffer + (_pointerCount*2) + 0x1C);
 
 		// Clear memory
 		memset( (void*) _headerPointers, 0, _pointerCount * 2);
@@ -243,7 +243,7 @@ namespace script {
 				_opcode = scriptOpcodeFind( _currentLine, _opcodes );
 				
 				// Check for label
-				if( _modePreProcess &&  (_currentLine.find( ":" ) != string::npos) ) {
+				if( _modePreProcess &&  (_currentLine.find( ":" ) != std::string::npos) ) {
 
 					// Add the label to the labels vector
 					scriptLabelAdd( _currentLine, _scriptPos );
@@ -265,7 +265,7 @@ namespace script {
 				}
 
 				// Move the buffer back
-				_sourceFile->seekg(-1, ios::cur);
+				_sourceFile->seekg(-1, std::ios::cur);
 
 				// Is it end of line? or is it a parameter?
 				if(nextChar != '\n')
@@ -278,15 +278,15 @@ namespace script {
 			
 			_lineCount++;
 
-			// Write bytecode
+			// Write uint8_tcode
 			*_scriptPtr = _opcode;
 
 			// Execute opcode call
 			(this->*_opcodes[ _opcode ].function)( );
 
 			// Debugging Use
-			//if( ((byte*) _scriptPtr) - _scriptBuffer > 0x89B)
-			//	cout << "a";
+			//if( ((uint8_t*) _scriptPtr) - _scriptBuffer > 0x89B)
+			//	std::cout << "a";
 
 			// Next Line Number
 			_scriptPos++;
@@ -295,7 +295,7 @@ namespace script {
 			_scriptPtr++;
 		}
 
-		// Set the size of the script to the Line numbers * 2 (sizeof word)
+		// Set the size of the script to the Line numbers * 2 (sizeof uint16_t)
 		_scriptSize = _scriptPos * 2;
 		return true;
 	}

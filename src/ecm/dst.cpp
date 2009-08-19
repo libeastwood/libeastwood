@@ -31,14 +31,14 @@ int main( int argc, char *argv[]) {
 	bool			result = false;
 	_scriptHandler *script = 0;
 
-	cout << "Dune II Script Tools v" << version << endl << endl;
+	std::cout << "Dune II Script Tools v" << version << std::endl << std::endl;
 
 	if(argc < 3) {
-		cout << "Usage:" << endl;
-		cout << "d: Decompile" << endl;
-		cout << "c: Compile" << endl;
-		cout << "dst d script.emc" << endl;
-		cout << "dst c script.txt" << endl;
+		std::cout << "Usage:" << std::endl;
+		std::cout << "d: Decompile" << std::endl;
+		std::cout << "c: Compile" << std::endl;
+		std::cout << "dst d script.emc" << std::endl;
+		std::cout << "dst c script.txt" << std::endl;
 		return 0;
 	}
 
@@ -52,13 +52,13 @@ int main( int argc, char *argv[]) {
 
 	// Do It
 	result = script->execute();
-	cout << endl;
+	std::cout << std::endl;
 
 	if( !result ) {
-			cout << "Failed" << endl;
-			cout << "Line Number:" << script->labelCountGet() << endl;
+			std::cout << "Failed" << std::endl;
+			std::cout << "Line Number:" << script->labelCountGet() << std::endl;
 	}	else
-			cout << "Done" << endl;
+			std::cout << "Done" << std::endl;
 
 	delete script;
 }

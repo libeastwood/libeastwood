@@ -52,9 +52,9 @@ namespace script {
 	}
 
 	// Search the opcode table for a string opcode name
-	word _scriptHandler::scriptOpcodeFind( string opcodeStr, const _Opcode *opcodes ) {
+	uint16_t _scriptHandler::scriptOpcodeFind( std::string opcodeStr, const _Opcode *opcodes ) {
 		const _Opcode *opcode;
-		word  count =0;
+		uint16_t  count =0;
 
 		// Search opcode list
 		for( opcode = opcodes; opcode->description; opcode++, count++ ) {

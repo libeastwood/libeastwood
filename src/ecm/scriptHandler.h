@@ -23,8 +23,8 @@
 namespace script {
 
 	struct labelPosition {
-		word	_scriptPos;
-		string	_name;
+		uint16_t	_scriptPos;
+		std::string	_name;
 	};
 
 	class _scriptHandler {
@@ -44,7 +44,7 @@ namespace script {
 
 
 		const char		*_fileName;					// Open File
-		word			*_headerPointers;			// function pointers
+		uint16_t			*_headerPointers;			// function pointers
 
 		unsigned short int	 _pointerCount;			// Number of script "function" pointers
 		size_t				 _scriptSize;			// Size of script
@@ -55,15 +55,15 @@ namespace script {
 		const char	   **_objectFunctions;			// Pointer to current script executable functions
 
 		size_t			 _lineCount;				
-		const byte		*_scriptBuffer;				// script byte stream
-		word			*_scriptPtr;				// Pointer in _scriptBuffer to current opcode
-		word			 _scriptPos;				// Line number of current opcode
-		const byte		*_scriptStart;				// pointer in _scriptBuffer to start of actual script
+		const uint8_t		*_scriptBuffer;				// script uint8_t stream
+		uint16_t			*_scriptPtr;				// Pointer in _scriptBuffer to current opcode
+		uint16_t			 _scriptPos;				// Line number of current opcode
+		const uint8_t		*_scriptStart;				// pointer in _scriptBuffer to start of actual script
 		_scriptTypes	 _scriptType;				// Type of script (BUILD/TEAM/UNIT)
 
-		vector<labelPosition> _scriptLabels;		// List of memory locations which can/are jumped to
+		std::vector<labelPosition> _scriptLabels;		// List of memory locations which can/are jumped to
 
-		inline int scriptLabelGet( string label ) {
+		inline int scriptLabelGet( std::string label ) {
 			int pos = scriptLabel( label );
 		
 			if(pos == -1)
@@ -72,8 +72,8 @@ namespace script {
 			return _scriptLabels[pos]._scriptPos;
 		}
 
-		inline int scriptLabel( string label ) {
-			static  vector<labelPosition>::iterator		labelIT;
+		inline int scriptLabel( std::string label ) {
+			static  std::vector<labelPosition>::iterator		labelIT;
 			int											pos = 0;
 
 			for( labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++ ) {
@@ -86,8 +86,8 @@ namespace script {
 			return -1;
 		}
 
-		inline int scriptLabel( word position ) {
-			static vector<labelPosition>::iterator		labelIT;
+		inline int scriptLabel( uint16_t position ) {
+			static std::vector<labelPosition>::iterator		labelIT;
 			int											pos = 0;
 
 			for( labelIT = _scriptLabels.begin(); labelIT != _scriptLabels.end(); labelIT++, pos++ ) {
@@ -100,12 +100,12 @@ namespace script {
 			return -1;
 		}
 
-		inline void scriptLabelAdd( string label, word position ) {
+		inline void scriptLabelAdd( std::string label, uint16_t position ) {
 			labelPosition	LP;
 			int				labelPos	= scriptLabel( position );
 			int				labelEndPos = label.find(":");
 
-			if(labelEndPos == string::npos)
+			if(labelEndPos == std::string::npos)
 				labelEndPos = label.length();
 
 			if( labelPos == -1 ) {
@@ -121,7 +121,7 @@ namespace script {
 							 _scriptHandler( const char *fileName );
 							~_scriptHandler();
 		
-			word			 scriptOpcodeFind(  string opcodeStr, const _Opcode *opcodes );	// Search the opcode table for 'Opcode' string
+			uint16_t			 scriptOpcodeFind(  std::string opcodeStr, const _Opcode *opcodes );	// Search the opcode table for 'Opcode' std::string
 			
 			inline size_t labelCountGet() {
 				return _lineCount;

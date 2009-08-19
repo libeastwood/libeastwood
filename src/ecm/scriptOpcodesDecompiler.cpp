@@ -51,7 +51,7 @@ namespace script {
 	}
 
 	void	_scriptHandlerDecompiler::o_pushOp(   ) {
-		word data = _scriptData;
+		uint16_t data = _scriptData;
 		if(_scriptData == 0)
 			data = _scriptDataNext;
 
@@ -162,7 +162,7 @@ namespace script {
 	void	_scriptHandlerDecompiler::o_execute(   ) {
 
 		if( !_modePreProcess )
-			_destinationFile << left << _opcodesExecute[ _scriptData ].description << " ";
+			_destinationFile << std::left << _opcodesExecute[ _scriptData ].description << " ";
 		
 		(this->*_opcodesExecute[ _scriptData ].function)( );
 	}

@@ -31,7 +31,7 @@ namespace script {
 		int bb = 0;
 
 		if(!_modePreProcess && labelPos == -1)
-			*( (byte*) bb) = 01;
+			*( (uint8_t*) bb) = 01;
 
 		*(_scriptPtr) |= 0x80;
 		*(_scriptPtr) |= swapWord(labelPos);
@@ -120,7 +120,7 @@ namespace script {
 	}
 
 	void	_scriptHandlerCompiler::o_execute(   ) {
-		word opcode = 0;
+		uint16_t opcode = 0;
 		*(_scriptPtr) |= 0x40;
 
 		opcode = scriptOpcodeFind( _currentLine, _opcodesExecute );
@@ -152,7 +152,7 @@ namespace script {
 	}
 
 	void	_scriptHandlerCompiler::o_evaluate(   ) {
-		word opcode = 0;
+		uint16_t opcode = 0;
 		*(_scriptPtr) |= 0x40;
 
 		opcode = scriptOpcodeFind( _currentLine, _opcodesEvaluate );
@@ -230,7 +230,7 @@ namespace script {
 	}
 
 	void	_scriptHandlerCompiler::o_execute_Unit_GetDetail(  ) {
-		static string	detailName;
+		static std::string	detailName;
 		*_sourceFile >> detailName;
 	}
 

@@ -20,32 +20,24 @@
  * 
  */
 
-#pragma once
-
-#include <cstring>
-#include <cstdlib>
+#include <StdDef.h>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <vector>
 
-using namespace std;
-
-typedef	unsigned char	byte;
-typedef unsigned short	word;
-
 // Endian functions
-// Read a word from the buffer
-inline word	readWord( const void *buffer ) {
-	const byte *wordByte = (const byte *) buffer;
-	return (wordByte[0] << 8) + wordByte[1];
+// Read a uint16_t from the buffer
+inline uint16_t	readWord( const void *buffer ) {
+	const uint8_t *uint16_tByte = (const uint8_t *) buffer;
+	return (uint16_tByte[0] << 8) + uint16_tByte[1];
 }
 
-// Endian swap a word
-inline word	swapWord(  word buffer ) {
-	const byte *wordByte = (const byte *) &buffer;
-	return (wordByte[0] << 8) + wordByte[1];
+// Endian swap a uint16_t
+inline uint16_t	swapWord(  uint16_t buffer ) {
+	const uint8_t *uint16_tByte = (const uint8_t *) &buffer;
+	return (uint16_tByte[0] << 8) + uint16_tByte[1];
 }
 
 enum _scriptTypes {

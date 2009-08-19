@@ -20,14 +20,17 @@
  * 
  */
 
+#include <string>
+#include "StdDef.h"
+
 namespace script {
 
 	class _scriptHandlerCompiler : public _scriptHandler {
 	private:
-		ifstream		*_sourceFile;				// Source-Code file	
+		std::ifstream		*_sourceFile;				// Source-Code file	
 
-		string			 _currentLine, _opcodeCurrent, _data;
-		word			 _opcode;
+		std::string			 _currentLine, _opcodeCurrent, _data;
+		uint16_t			 _opcode;
 
 		bool			 headerCreate();			// Insert the header
 		bool		     scriptCompile( );			// Compile to the byte code

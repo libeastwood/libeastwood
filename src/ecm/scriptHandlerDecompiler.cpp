@@ -27,11 +27,11 @@
 namespace script {
 
 	_scriptHandlerDecompiler::_scriptHandlerDecompiler( const char *fileName ) : _scriptHandler(fileName) {
-		string	sourceFilename = string(_fileName), targetFilename;
+		std::string	sourceFilename = std::string(_fileName), targetFilename;
 		int		posPeriod = sourceFilename.find(".");
 
 		// Prepare output filename
-		if(posPeriod == string::npos)
+		if(posPeriod == std::string::npos)
 			posPeriod = sourceFilename.length() - 1;
 
 		targetFilename = sourceFilename.substr( 0, posPeriod );
@@ -43,7 +43,7 @@ namespace script {
 		opcodesSetup();
 
 		// Open target file
-		_destinationFile.open( targetFilename.c_str(), ios::out );
+		_destinationFile.open( targetFilename.c_str(), std::ios::out );
 	}
 
 	_scriptHandlerDecompiler::~_scriptHandlerDecompiler() {
@@ -51,22 +51,22 @@ namespace script {
 	}
 
 	bool _scriptHandlerDecompiler::scriptLoad() {
-		ifstream		 fileScript;
+		std::ifstream		 fileScript;
 		size_t			 scriptSize;
 
 
-		fileScript.open( _fileName, ios::in | ios::binary );
+		fileScript.open( _fileName, std::ios::in | std::ios::binary );
 
 		if( fileScript.is_open() == false )
 			return false;
 
 		// Read File Size
-		fileScript.seekg( 0, ios::end );
+		fileScript.seekg( 0, std::ios::end );
 		scriptSize = fileScript.tellg();
-		fileScript.seekg( ios::beg );
+		fileScript.seekg( std::ios::beg );
 
 		// Load file into _scriptBuffer
-		_scriptBuffer = new byte[ scriptSize ];
+		_scriptBuffer = new uint8_t[ scriptSize ];
 		if( fileScript.read( (char*) _scriptBuffer, scriptSize ) == false)
 			return false;
 		
@@ -76,14 +76,14 @@ namespace script {
 	}
 
 	bool _scriptHandlerDecompiler::headerRead() {
-		word		*buffer = (word*) (_scriptBuffer + 0x12);
+		uint16_t		*buffer = (uint16_t*) (_scriptBuffer + 0x12);
 		size_t		 ptrCount;
 
 		// Number of script functions
 		_pointerCount = readWord( buffer ) / 2;
 		buffer++;
 
-		_headerPointers = new word[_pointerCount];
+		_headerPointers = new uint16_t[_pointerCount];
 
 		for(ptrCount = 0; ptrCount < _pointerCount; ptrCount++) {
 			_headerPointers[ptrCount] = readWord( buffer );
@@ -93,7 +93,7 @@ namespace script {
 		// Skip 'DATA' tag
 		buffer += 2;	// 2 Words
 
-		// Not sure if this word is actually part of a DWORD, or 2 useless bytes?
+		// Not sure if this uint16_t is actually part of a DWORD, or 2 useless uint8_ts?
 		buffer++;
 
 		// Size of the upcoming script data
@@ -101,24 +101,24 @@ namespace script {
 		buffer++;
 
 		// Start of script data
-		_scriptStart = (byte*) buffer;
+		_scriptStart = (uint8_t*) buffer;
 
 		if(_pointerCount == 0x06) {
-			_destinationFile << "[House]" << endl;
+			_destinationFile << "[House]" << std::endl;
 			_scriptType		 = _scriptHOUSE;
 			_objectNames	 = nameHouses;
 			opcodesHousesSetup();
 		}
 
 		if(_pointerCount == 0x13) {
-			_destinationFile << "[Build]" << endl;
+			_destinationFile << "[Build]" << std::endl;
 			_scriptType		 = _scriptBUILD;
 			_objectNames	 = nameStructures;
 			opcodesBuildingsSetup();
 		}
 
 		if(_pointerCount == 0x1B) {
-			_destinationFile << "[Unit]" << endl;
+			_destinationFile << "[Unit]" << std::endl;
 			_scriptType		 = _scriptUNIT;
 			_objectNames	 = nameUnits;
 			opcodesUnitsSetup();
@@ -134,12 +134,12 @@ namespace script {
 		for( int count = 0; count < _pointerCount; count++ ) {
 
 			// In TEAM.EMC for example, two objects use the same script
-			if( _scriptPos == (word) _headerPointers[count]) {
+			if( _scriptPos == (uint16_t) _headerPointers[count]) {
 				if(found==false)
-					_destinationFile << endl;
+					_destinationFile << std::endl;
 
 				// Write the section name in square brackets
-				_destinationFile << "[" << _objectNames[count] << "]" << endl;
+				_destinationFile << "[" << _objectNames[count] << "]" << std::endl;
 				found = true;
 			}
 		}
@@ -149,7 +149,7 @@ namespace script {
 
 	bool _scriptHandlerDecompiler::execute() {
 		
-		cout << "Preprocessing " << _fileName << endl;
+		std::cout << "Preprocessing " << _fileName << std::endl;
 
 		// Load the script into a _scriptBuffer, then read the header information
 		scriptLoad();
@@ -163,9 +163,9 @@ namespace script {
 		// Decompile the script 
 		_modePreProcess = false;
 		
-		_destinationFile << "[General]" << endl;
+		_destinationFile << "[General]" << std::endl;
 
-		cout << "Decompiling....." << endl;
+		std::cout << "Decompiling....." << std::endl;
 		return scriptDecompile();
 	}
 
@@ -180,8 +180,8 @@ namespace script {
 		_stackCount		= 0xF;
 
 		_scriptPos		= 0;
-		_scriptPtr		= (word*)  _scriptStart;
-		_scriptPtrEnd	= (word*) (_scriptStart + _scriptSize);
+		_scriptPtr		= (uint16_t*)  _scriptStart;
+		_scriptPtrEnd	= (uint16_t*) (_scriptStart + _scriptSize);
 
 		while( _scriptPtr <  _scriptPtrEnd ) {
 
@@ -190,7 +190,7 @@ namespace script {
 
 				// Check if label location, print label if so
 				if( scriptLabel( _scriptPos ) > -1)
-					_destinationFile << "l" << _scriptPos << ":" << endl;
+					_destinationFile << "l" << _scriptPos << ":" << std::endl;
 			}
 
 			_scriptDataNext = 0;
@@ -207,7 +207,7 @@ namespace script {
 				_opcodeCurrent = 0;
 				_scriptData &= 0x7FFF;
 			} else
-				// Opcode only requires 1 byte
+				// Opcode only requires 1 uint8_t
 				if( _scriptData & 0x4000 ) {
 					_scriptData &= 0xFF;
 			} else 	
@@ -221,15 +221,15 @@ namespace script {
 
 			// Print opcode
 			if( !_modePreProcess )
-				_destinationFile << setw(20) << left << _opcodes[ _opcodeCurrent ].description;
+				_destinationFile << std::setw(20) << std::left << _opcodes[ _opcodeCurrent ].description;
 
 			// Excute opcode
 			(this->*_opcodes[ _opcodeCurrent ].function)( );
 
 			//_destinationFile  << setw(20) << " ";
-			//_destinationFile  << hex << uppercase << "S: 0x" << _stackCount << endl;
+			//_destinationFile  << hex << uppercase << "S: 0x" << _stackCount << std::endl;
 			if( !_modePreProcess )
-				_destinationFile << endl;
+				_destinationFile << std::endl;
 
 			_lineCount++;
 		}
