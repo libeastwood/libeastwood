@@ -38,9 +38,21 @@ SET( LIBEASTWOOD_HEADERS
   adl/opl.h
 )
 
+SET( ECM_INTERPRETER
+    ecm/dst.cpp
+    ecm/scriptHandlerCompiler.cpp
+    ecm/scriptHandler.cpp
+    ecm/scriptHandlerDecompiler.cpp
+    ecm/scriptOpcodesCompiler.cpp
+    ecm/scriptOpcodesDecompiler.cpp
+    ecm/stdafx.cpp
+)
+
 INSTALL( FILES ${LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood" )
 
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
+
+ADD_EXECUTABLE( dst ${ECM_INTERPRETER})
 
 TARGET_LINK_LIBRARIES(eastwood ${SDL_LIBRARY} )
 TARGET_LINK_LIBRARIES(eastwood ${SDLMIXER_LIBRARY} )

@@ -21,7 +21,7 @@
  */
 
 #include <string>
-#include "StdDef.h"
+#include "../StdDef.h"
 
 namespace script {
 
