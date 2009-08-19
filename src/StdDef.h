@@ -2,9 +2,9 @@
 #define	EASTWOOD_STDDEF_H
 
 #include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #ifdef _WIN32
 #include <tchar.h>
