@@ -24,8 +24,6 @@
 #include "scriptHandler.h"
 #include "scriptHandlerCompiler.h"
 
-namespace script {
-
 	_scriptHandlerCompiler::_scriptHandlerCompiler( const char *fileName ) : _scriptHandler(fileName) {
 		
 		_sourceFile		= 0;
@@ -299,4 +297,3 @@ namespace script {
 		_scriptSize = _scriptPos * 2;
 		return true;
 	}
-}

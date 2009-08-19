@@ -24,7 +24,6 @@
 #include "scriptHandler.h"
 #include "scriptHandlerDecompiler.h"
 
-namespace script {
 
 	void	_scriptHandlerDecompiler::o_goto(   ) {
 		int labelPos = scriptLabel( _scriptData );
@@ -297,4 +296,3 @@ namespace script {
 
 	}
 
-}

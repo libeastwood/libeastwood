@@ -20,7 +20,6 @@
  * 
  */
 
-namespace script {
 
 	struct labelPosition {
 		uint16_t	_scriptPos;
@@ -189,4 +188,3 @@ namespace script {
 			virtual void	 o_execute_House_Null(  )				= 0;
 		};
 
-}

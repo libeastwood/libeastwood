@@ -25,8 +25,6 @@
 #include "scriptHandlerDecompiler.h"
 #include "scriptHandlerCompiler.h"
 
-using namespace script;
-
 int main( int argc, char *argv[]) {
 	bool			result = false;
 	_scriptHandler *script = 0;

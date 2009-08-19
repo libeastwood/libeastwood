@@ -24,7 +24,6 @@
 #include "scriptHandler.h"
 #include "scriptHandlerCompiler.h"
 
-namespace script {
 
 	void	_scriptHandlerCompiler::o_goto(   ) {
 		int labelPos = scriptLabelGet( _currentLine );
@@ -234,4 +233,3 @@ namespace script {
 		*_sourceFile >> detailName;
 	}
 
-}

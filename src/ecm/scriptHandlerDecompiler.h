@@ -20,7 +20,6 @@
  * 
  */
 
-namespace script {
 	class _scriptHandlerDecompiler : public _scriptHandler {
 	private:
 		std::ofstream		 _destinationFile;
@@ -98,4 +97,3 @@ namespace script {
 		void			 o_execute_House_Null(  );
 	};
 
-}

@@ -23,7 +23,6 @@
 #include <string>
 #include "../StdDef.h"
 
-namespace script {
 
 	class _scriptHandlerCompiler : public _scriptHandler {
 	private:
@@ -98,4 +97,3 @@ namespace script {
 		void o_execute_Unit_GetDetail(  );
 	};
 
-}

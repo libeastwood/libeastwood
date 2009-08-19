@@ -24,7 +24,6 @@
 #include "scriptHandler.h"
 #include "scriptHandlerDecompiler.h"
 
-namespace script {
 
 	_scriptHandlerDecompiler::_scriptHandlerDecompiler( const char *fileName ) : _scriptHandler(fileName) {
 		std::string	sourceFilename = std::string(_fileName), targetFilename;
@@ -237,4 +236,3 @@ namespace script {
 		return true;
 	}
 
-}

@@ -25,7 +25,6 @@
 #include "scriptHandlerDecompiler.h"
 #include "scriptHandlerCompiler.h"
 
-namespace script {
 
 	// Constructor
 	_scriptHandler::_scriptHandler( const char *fileName ) {
@@ -245,4 +244,3 @@ namespace script {
 		_opcodesExecute = scriptOpcodesExecuteHouses;
 	}
 
-}
