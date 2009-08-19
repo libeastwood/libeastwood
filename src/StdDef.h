@@ -18,11 +18,11 @@
 #define htole16(x) (x)
 #define htole32(x) (x)
 #else
-static inline uint16_t htole16(uint16_t x) {
+static inline uint16_t htobe16(uint16_t x) {
 	return((x<<8)|(x>>8));
 }
 
-static inline uint32_t htole32(uint32_t x) {
+static inline uint32_t htobe32(uint32_t x) {
 	return((x<<24)|((x<<8)&0x00FF0000)|((x>>8)&0x0000FF00)|(x>>24));
 }
 #endif
