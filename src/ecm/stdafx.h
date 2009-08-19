@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include <cstring>
+#include <cstdlib>
 #include <string>
 #include <iostream>
 #include <fstream>
