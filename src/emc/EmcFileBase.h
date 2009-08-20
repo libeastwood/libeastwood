@@ -21,9 +21,9 @@
  *  
  */
 
-#include "../StdDef.h"
 #include <string>
 #include <vector>
+#include <inttypes.h>
 
 class EmcFileBase;
 
