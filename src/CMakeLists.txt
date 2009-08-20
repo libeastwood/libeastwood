@@ -17,8 +17,8 @@ SET( LIBEASTWOOD_SRCS
   adl/emuopl.cpp
   adl/fmopl.c
   emc/EmcFileBase.cpp
-  emc/EmcFileCompile.cpp
-  emc/EmcFileDecompile.cpp
+  emc/EmcFileAssemble.cpp
+  emc/EmcFileDisassemble.cpp
 )
 
 SET( LIBEASTWOOD_HEADERS
@@ -40,8 +40,8 @@ SET( LIBEASTWOOD_HEADERS
   adl/fmopl.h
   adl/opl.h
   emc/EmcFileBase.h
-  emc/EmcFileCompile.h
-  emc/EmcFileDecompile.h  
+  emc/EmcFileAssemble.h
+  emc/EmcFileDisassemble.h  
 )
 
 SET( EMC_INTERPRETER

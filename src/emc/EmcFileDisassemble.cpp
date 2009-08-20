@@ -22,7 +22,7 @@
 #include <iomanip>
 
 #include "EmcFileBase.h"
-#include "EmcFileDecompile.h"
+#include "EmcFileDisassemble.h"
 #include "EmcObjectNames.h"
 
 // Unit GetDetail Function DetailNames
@@ -49,7 +49,7 @@ static const char *nameUnitDetails[] = {
     "CheckIfHuman"              
 };
 
-EmcFileDecompile::EmcFileDecompile(const char *fileName) : EmcFileBase(fileName) {
+EmcFileDisassemble::EmcFileDisassemble(const char *fileName) : EmcFileBase(fileName) {
     std::string	sourceFilename = std::string(_fileName), targetFilename;
     size_t posPeriod = sourceFilename.find(".");
 
@@ -69,11 +69,11 @@ EmcFileDecompile::EmcFileDecompile(const char *fileName) : EmcFileBase(fileName)
     _destinationFile.open(targetFilename.c_str(), std::ios::out);
 }
 
-EmcFileDecompile::~EmcFileDecompile() {
+EmcFileDisassemble::~EmcFileDisassemble() {
     _destinationFile.close();
 }
 
-bool EmcFileDecompile::scriptLoad() {
+bool EmcFileDisassemble::scriptLoad() {
     std::ifstream fileScript;
     size_t scriptSize;
 
@@ -98,7 +98,7 @@ bool EmcFileDecompile::scriptLoad() {
     return true;
 }
 
-bool EmcFileDecompile::headerRead() {
+bool EmcFileDisassemble::headerRead() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer + 0x12);
 
     // Number of script functions
@@ -149,7 +149,7 @@ bool EmcFileDecompile::headerRead() {
     return true;
 }
 
-bool EmcFileDecompile::scriptNextStart() {
+bool EmcFileDisassemble::scriptNextStart() {
     bool found = false;
 
     // Loop through each pointer and write the section names out
@@ -169,7 +169,7 @@ bool EmcFileDecompile::scriptNextStart() {
     return found;
 }
 
-bool EmcFileDecompile::execute() {
+bool EmcFileDisassemble::execute() {
 
     std::cout << "Preprocessing " << _fileName << std::endl;
 
@@ -179,19 +179,19 @@ bool EmcFileDecompile::execute() {
 
     // Map out all labels
     _modePreProcess = true;
-    if(scriptDecompile() == false)
+    if(scriptDisassemble() == false)
 	return false;
 
-    // Decompile the script 
+    // Disassemble the script 
     _modePreProcess = false;
 
     _destinationFile << "[General]" << std::endl;
 
     std::cout << "Decompiling....." << std::endl;
-    return scriptDecompile();
+    return scriptDisassemble();
 }
 
-bool EmcFileDecompile::scriptDecompile() {
+bool EmcFileDisassemble::scriptDisassemble() {
 
     _lineCount		= 0;
     _opcodeCurrent	= 0;
@@ -259,7 +259,7 @@ bool EmcFileDecompile::scriptDecompile() {
     return true;
 }
 
-void EmcFileDecompile::o_Goto() {
+void EmcFileDisassemble::o_Goto() {
     size_t labelPos = scriptLabel(_scriptData);
 
     if(!_modePreProcess) {
@@ -275,14 +275,14 @@ void EmcFileDecompile::o_Goto() {
     }
 }
 
-void EmcFileDecompile::o_SetReturn() {
+void EmcFileDisassemble::o_SetReturn() {
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);
     else
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_PushOp() {
+void EmcFileDisassemble::o_PushOp() {
     uint16_t data = _scriptData;
     if(_scriptData == 0)
 	data = _scriptDataNext;
@@ -292,7 +292,7 @@ void EmcFileDecompile::o_PushOp() {
     dataPrint(data);
 }
 
-void EmcFileDecompile::o_Push() {
+void EmcFileDisassemble::o_Push() {
     _stackCount--;
 
     if(_scriptDataNext) {
@@ -304,11 +304,11 @@ void EmcFileDecompile::o_Push() {
     }
 }
 
-void EmcFileDecompile::o_PushWord() {
+void EmcFileDisassemble::o_PushWord() {
     o_Push();
 }
 
-void EmcFileDecompile::o_PushReg() {
+void EmcFileDisassemble::o_PushReg() {
     _stackCount--;
 
     if(_scriptDataNext)
@@ -317,7 +317,7 @@ void EmcFileDecompile::o_PushReg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_PushFrameMinArg() {
+void EmcFileDisassemble::o_PushFrameMinArg() {
     _stackCount--;
     _stackCount--;
     if(_scriptDataNext)
@@ -326,7 +326,7 @@ void EmcFileDecompile::o_PushFrameMinArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_PushFramePluArg() {
+void EmcFileDisassemble::o_PushFramePluArg() {
     _stackCount--;
     _stackCount--;
     if(_scriptDataNext)
@@ -335,7 +335,7 @@ void EmcFileDecompile::o_PushFramePluArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_Pop() {
+void EmcFileDisassemble::o_Pop() {
     if(_scriptData == 1) {
 	if(!_modePreProcess)
 	    _destinationFile << " (Return)";
@@ -347,7 +347,7 @@ void EmcFileDecompile::o_Pop() {
     _stackCount++;
 }
 
-void EmcFileDecompile::o_PopReg() {
+void EmcFileDisassemble::o_PopReg() {
     _stackCount++;
 
     if(_scriptDataNext)
@@ -356,7 +356,7 @@ void EmcFileDecompile::o_PopReg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_PopFrameMinArg() {
+void EmcFileDisassemble::o_PopFrameMinArg() {
     _stackCount++;
     _stackCount++;
     if(_scriptDataNext)
@@ -365,7 +365,7 @@ void EmcFileDecompile::o_PopFrameMinArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_PopFramePluArg() {
+void EmcFileDisassemble::o_PopFramePluArg() {
     _stackCount++;
     _stackCount++;
     if(_scriptDataNext)
@@ -374,17 +374,17 @@ void EmcFileDecompile::o_PopFramePluArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_AddSP() {
+void EmcFileDisassemble::o_AddSP() {
     dataPrint(_scriptData);
     _stackCount += (_scriptData & 0xF);
 }
 
-void EmcFileDecompile::o_SubSP() {
+void EmcFileDisassemble::o_SubSP() {
     dataPrint(_scriptData);
     _stackCount -= (_scriptData & 0xF);
 }
 
-void EmcFileDecompile::o_Execute() {
+void EmcFileDisassemble::o_Execute() {
 
     if(!_modePreProcess)
 	_destinationFile << std::left << _opcodesExecute[ _scriptData ].description << " ";
@@ -392,7 +392,7 @@ void EmcFileDecompile::o_Execute() {
     (this->*_opcodesExecute[ _scriptData ].function)();
 }
 
-void EmcFileDecompile::o_IfNotGoto() {
+void EmcFileDisassemble::o_IfNotGoto() {
     size_t labelPos;
 
     if(_scriptDataNext) {
@@ -424,23 +424,23 @@ void EmcFileDecompile::o_IfNotGoto() {
     }
 }
 
-void EmcFileDecompile::o_Negate() {
+void EmcFileDisassemble::o_Negate() {
     dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_Evaluate() {
+void EmcFileDisassemble::o_Evaluate() {
     if(!_modePreProcess)
 	_destinationFile << _opcodesEvaluate[ _scriptData ].description;
 
     (this->*_opcodesEvaluate[ _scriptData ].function)();
 }
 
-void EmcFileDecompile::o_Return() {
+void EmcFileDisassemble::o_Return() {
 
 }
 
 
-void EmcFileDecompile::o_execute_Unit_GetDetail() {
+void EmcFileDisassemble::o_execute_Unit_GetDetail() {
     if(!_modePreProcess)
 	_destinationFile << "(" << nameUnitDetails[_scriptLastPush] << ")";
 }

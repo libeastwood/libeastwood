@@ -23,12 +23,12 @@
 
 #include <fstream>
 
-class EmcFileDecompile : public EmcFileBase {
+class EmcFileDisassemble : public EmcFileBase {
     public:
-	EmcFileDecompile(const char *fileName);
-	~EmcFileDecompile();
+	EmcFileDisassemble(const char *fileName);
+	~EmcFileDisassemble();
 
-	bool	execute();		// Decompile a script
+	bool	execute();		// Disassemble a script
 
     protected:
 	void	o_Goto();					
@@ -66,7 +66,7 @@ class EmcFileDecompile : public EmcFileBase {
 
 	bool		headerRead();			// Read the header
 
-	bool		scriptDecompile();		// Decompile the script
+	bool		scriptDisassemble();		// Disassemble the script
 	bool		scriptNextStart();		// Are we at the start of a section?
 	bool		scriptLoad();			 
 

@@ -25,12 +25,12 @@
 #include "../StdDef.h"
 
 
-class EmcFileCompile : public EmcFileBase {
+class EmcFileAssemble : public EmcFileBase {
     public:
-	EmcFileCompile( const char *fileName );
-	~EmcFileCompile();
+	EmcFileAssemble( const char *fileName );
+	~EmcFileAssemble();
 
-	bool	execute();			// Compile a script
+	bool	execute();			// Assemble a script
 
     private:
 	std::ifstream	*_sourceFile;		// Source-Code file	
@@ -41,7 +41,7 @@ class EmcFileCompile : public EmcFileBase {
 	uint16_t	_opcode;
 
 	bool		headerCreate();		// Insert the header
-	bool		scriptCompile( );	// Compile to the byte code
+	bool		scriptAssemble( );	// Assemble to the byte code
 	bool		scriptSave();		// Save the buffer to disk
 	int 		scriptSectionCheck();	// Check for section name in _currentLine
 

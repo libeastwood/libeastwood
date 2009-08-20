@@ -22,15 +22,15 @@
 #include <iostream>
 
 #include "EmcFileBase.h"
-#include "EmcFileCompile.h"
+#include "EmcFileAssemble.h"
 #include "EmcObjectNames.h"
 
-EmcFileCompile::EmcFileCompile(const char *fileName) : EmcFileBase(fileName) {
+EmcFileAssemble::EmcFileAssemble(const char *fileName) : EmcFileBase(fileName) {
     _sourceFile = NULL;
     opcodesSetup();
 }
 
-EmcFileCompile::~EmcFileCompile() {
+EmcFileAssemble::~EmcFileAssemble() {
     if(_sourceFile) {
     	_sourceFile->close();
     	delete _sourceFile;
@@ -38,7 +38,7 @@ EmcFileCompile::~EmcFileCompile() {
 }
 
 
-bool EmcFileCompile::headerCreate() {
+bool EmcFileAssemble::headerCreate() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer);
     const char header[] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
 
@@ -86,7 +86,7 @@ bool EmcFileCompile::headerCreate() {
     return true;
 }
 
-bool EmcFileCompile::scriptSave() {
+bool EmcFileAssemble::scriptSave() {
     std::ofstream _targetFile;
     std::string file;
 
@@ -108,7 +108,7 @@ bool EmcFileCompile::scriptSave() {
     return true;
 }
 
-int EmcFileCompile::scriptSectionCheck() {
+int EmcFileAssemble::scriptSectionCheck() {
     int count = 0;
     size_t posStart = _currentLine.find("[") + 1;
     size_t posEnd;
@@ -132,12 +132,12 @@ int EmcFileCompile::scriptSectionCheck() {
     return -1;
 }
 
-bool EmcFileCompile::execute() {
+bool EmcFileAssemble::execute() {
 
     std::cout << "Preprocessing " << _fileName << std::endl;
 
-    // Run the script compiler in pre process mode (find all jump locations)
-    if(scriptCompile() == false)
+    // Run the script assembler in pre process mode (find all jump locations)
+    if(scriptAssemble() == false)
 	return false;
 
     // Cleanup script buffer
@@ -152,16 +152,16 @@ bool EmcFileCompile::execute() {
     _modePreProcess = false;
 
     std::cout << "Compiling....." << std::endl;
-    // Properly compile the script
-    if(scriptCompile() == false)
+    // Properly assemble the script
+    if(scriptAssemble() == false)
 	return false;
 
     // Save the _scriptBuffer to disk
     return scriptSave();
 }
 
-// -1 Decompiles the script at _scriptStart
-bool EmcFileCompile::scriptCompile() {
+// -1 Disassembles the script at _scriptStart
+bool EmcFileAssemble::scriptAssemble() {
     char nextChar;
     int	objectID = 0;
 
@@ -298,7 +298,7 @@ bool EmcFileCompile::scriptCompile() {
     return true;
 }
 
-void EmcFileCompile::o_Goto() {
+void EmcFileAssemble::o_Goto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int bb = 0;
 
@@ -310,24 +310,24 @@ void EmcFileCompile::o_Goto() {
 
 }
 
-void EmcFileCompile::o_SetReturn() {
+void EmcFileAssemble::o_SetReturn() {
     //*(_scriptPtr) |= 0x40;
 
 }
 
-void EmcFileCompile::o_PushOp() {
+void EmcFileAssemble::o_PushOp() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void  EmcFileCompile::o_PushWord() {
+void  EmcFileAssemble::o_PushWord() {
     *(_scriptPtr) |= 0x20;
     *(_scriptPtr+1) |= htobe16(atoi(_currentLine.c_str()));
     _scriptPtr++;
     _scriptPos++;
 }
 
-void EmcFileCompile::o_Push() {
+void EmcFileAssemble::o_Push() {
     uint16_t value = atoi(_currentLine.c_str());
 
     // Just incase, we dont want to corrupt the opcode
@@ -339,22 +339,22 @@ void EmcFileCompile::o_Push() {
     *(_scriptPtr) |= htobe16(value);
 }
 
-void EmcFileCompile::o_PushReg() {
+void EmcFileAssemble::o_PushReg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_PushFrameMinArg() {
+void EmcFileAssemble::o_PushFrameMinArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_PushFramePluArg() {
+void EmcFileAssemble::o_PushFramePluArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_Pop() {
+void EmcFileAssemble::o_Pop() {
     *(_scriptPtr) |= 0x40;
 
     if(_currentLine == "(Return)")
@@ -365,32 +365,32 @@ void EmcFileCompile::o_Pop() {
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_PopReg() {
+void EmcFileAssemble::o_PopReg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_PopFrameMinArg() {
+void EmcFileAssemble::o_PopFrameMinArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_PopFramePluArg() {
+void EmcFileAssemble::o_PopFramePluArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_AddSP() {
+void EmcFileAssemble::o_AddSP() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_SubSP() {
+void EmcFileAssemble::o_SubSP() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_Execute() {
+void EmcFileAssemble::o_Execute() {
     uint16_t opcode = 0;
     *(_scriptPtr) |= 0x40;
 
@@ -401,7 +401,7 @@ void EmcFileCompile::o_Execute() {
     (this->*_opcodesExecute[opcode].function)();
 }
 
-void EmcFileCompile::o_IfNotGoto() {
+void EmcFileAssemble::o_IfNotGoto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int line = 0;
 
@@ -417,12 +417,12 @@ void EmcFileCompile::o_IfNotGoto() {
     _scriptPos++;
 }
 
-void EmcFileCompile::o_Negate() {
+void EmcFileAssemble::o_Negate() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileCompile::o_Evaluate() {
+void EmcFileAssemble::o_Evaluate() {
     uint16_t opcode = 0;
     *(_scriptPtr) |= 0x40;
 
@@ -431,12 +431,12 @@ void EmcFileCompile::o_Evaluate() {
     *(_scriptPtr) |= htobe16(opcode);
 }
 
-void EmcFileCompile::o_Return() {
+void EmcFileAssemble::o_Return() {
 
 }
 
 #if 0
-void EmcFileCompile::o_execute_Unit_GetDetail() {
+void EmcFileAssemble::o_execute_Unit_GetDetail() {
     /* What's this for??
     static std::string	detailName;
     *_sourceFile >> detailName;*/

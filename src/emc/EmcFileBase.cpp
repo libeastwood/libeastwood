@@ -19,8 +19,8 @@
  */
 
 #include "EmcFileBase.h"
-#include "EmcFileDecompile.h"
-#include "EmcFileCompile.h"
+#include "EmcFileDisassemble.h"
+#include "EmcFileAssemble.h"
 
 
 EmcFileBase::EmcFileBase(const char *fileName) {
