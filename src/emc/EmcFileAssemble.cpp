@@ -27,7 +27,6 @@
 
 EmcFileAssemble::EmcFileAssemble(const char *fileName) : EmcFileBase(fileName) {
     _sourceFile = NULL;
-    opcodesSetup();
 }
 
 EmcFileAssemble::~EmcFileAssemble() {
@@ -185,29 +184,7 @@ bool EmcFileAssemble::scriptAssemble() {
     *_sourceFile >> _currentLine;
     _lineCount++;
 
-    // House Script
-    if(_currentLine == "[House]") {
-	_scriptType	= _scriptHOUSE;
-	_pointerCount	= sizeof(nameHouses)/sizeof(*nameHouses);
-	_objectNames	= nameHouses;
-	opcodesHousesSetup();
-    }
-
-    // Building Script
-    if(_currentLine == "[Build]") {
-	_scriptType	= _scriptBUILD;
-	_pointerCount	= sizeof(nameStructures)/sizeof(*nameStructures);
-	_objectNames	= nameStructures;
-	opcodesBuildingsSetup();
-    }
-
-    // Unit Script
-    if(_currentLine == "[Unit]") {
-	_scriptType	= _scriptUNIT;
-	_pointerCount	= sizeof(nameUnits)/sizeof(*nameUnits);
-	_objectNames	= nameUnits;
-	opcodesUnitsSetup();
-    }
+    opcodesSetup(_currentLine);
 
     // Prepare memory for scriptBuffer and headerPointers
     _headerPointers = new uint16_t[_pointerCount];

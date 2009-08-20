@@ -64,7 +64,7 @@ class EmcFileBase {
 
     protected:
 	// Opcode Prepare
-	virtual void	 opcodesSetup();
+	virtual void	 opcodesSetup(std::string currentLine = "");
 	virtual void	 opcodesBuildingsSetup();
 	virtual void	 opcodesUnitsSetup();
 	virtual void	 opcodesHousesSetup();

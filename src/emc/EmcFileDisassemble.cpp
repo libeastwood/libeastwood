@@ -30,30 +30,6 @@
 
 using namespace eastwood;
 
-// Unit GetDetail Function DetailNames
-static const char *nameUnitDetails[] = {
-    "HitPointRepairCalc?",   
-    "BuildingTypeIndex",     
-    "WeaponRange",           
-    "IndexGet",              
-    "Field64Get",            
-    "AttackObjectIndexTypeGet",                   
-    "Return",
-    "TypeIndex",             
-    "IndexGetAsObject",      
-    "Field6BGet",                 
-    "loc_27562",          
-    "Field49AndField4BGet",                 
-    "WeaponCoolDown?",                 
-    "Field36And4h",               
-    "HouseIDGet",            
-    "loc_275C1",                 
-    "TurretGet?",     
-    "loc_2752F",                 
-    "DoesTurretRotate",          
-    "CheckIfHuman"              
-};
-
 EmcFileDisassemble::EmcFileDisassemble(const char *fileName) : EmcFileBase(fileName) {
     std::string	sourceFilename = std::string(_fileName), targetFilename;
     size_t posPeriod = sourceFilename.find(".");
@@ -68,7 +44,6 @@ EmcFileDisassemble::EmcFileDisassemble(const char *fileName) : EmcFileBase(fileN
     _scriptLastPush = 0;
     _opcodesExecute = NULL;
 
-    opcodesSetup();
 
     // Open target file
     _destinationFile.open(targetFilename.c_str(), std::ios::out);
@@ -140,25 +115,18 @@ bool EmcFileDisassemble::headerRead() {
     // Start of script data
     _scriptStart = (uint8_t*) buffer;
 
-    if(_pointerCount == sizeof(nameHouses)/sizeof(*nameHouses)) {
-	_destinationFile << "[House]" << std::endl;
-	_scriptType	= _scriptHOUSE;
-	_objectNames	= nameHouses;
-	opcodesHousesSetup();
-    }
+    opcodesSetup();
 
-    if(_pointerCount == sizeof(nameStructures)/sizeof(*nameStructures)) {
-	_destinationFile << "[Build]" << std::endl;
-	_scriptType	= _scriptBUILD;
-	_objectNames	= nameStructures;
-	opcodesBuildingsSetup();
-    }
-
-    if(_pointerCount == sizeof(nameUnits)/sizeof(*nameUnits)) {
-	_destinationFile << "[Unit]" << std::endl;
-	_scriptType	= _scriptUNIT;
-	_objectNames	= nameUnits;
-	opcodesUnitsSetup();
+    switch(_scriptType) {
+	case _scriptHOUSE:
+    	    _destinationFile << "[House]" << std::endl;
+	    break;
+	case _scriptBUILD:
+    	    _destinationFile << "[Build]" << std::endl;
+	    break;
+	case _scriptUNIT:
+    	    _destinationFile << "[Unit]" << std::endl;
+	    break;
     }
 
     return true;
@@ -457,5 +425,30 @@ void EmcFileDisassemble::o_Return() {
 
 void EmcFileDisassemble::o_execute_Unit_GetDetail() {
     if(!_modePreProcess)
+    {
+	// Unit GetDetail Function DetailNames
+	static const char *nameUnitDetails[] = {
+	    "HitPointRepairCalc?",   
+	    "BuildingTypeIndex",     
+	    "WeaponRange",           
+	    "IndexGet",              
+	    "Field64Get",            
+	    "AttackObjectIndexTypeGet",                   
+	    "Return",
+	    "TypeIndex",             
+	    "IndexGetAsObject",      
+	    "Field6BGet",                 
+	    "loc_27562",          
+	    "Field49AndField4BGet",                 
+	    "WeaponCoolDown?",                 
+	    "Field36And4h",               
+	    "HouseIDGet",            
+	    "loc_275C1",                 
+	    "TurretGet?",     
+	    "loc_2752F",                 
+	    "DoesTurretRotate",          
+	    "CheckIfHuman"              
+	};
 	_destinationFile << "(" << nameUnitDetails[_scriptLastPush] << ")";
+    }
 }

@@ -22,6 +22,10 @@
 #include "EmcFileDisassemble.h"
 #include "EmcFileAssemble.h"
 
+#include "../Exception.h"
+
+using namespace eastwood;
+
 
 EmcFileBase::EmcFileBase(const char *fileName) {
     _fileName		= fileName;
@@ -61,7 +65,73 @@ uint16_t EmcFileBase::scriptOpcodeFind(std::string opcodeStr, const _Opcode *opc
 }
 
 // Setup the opcode name/function table
-void EmcFileBase::opcodesSetup() {
+void EmcFileBase::opcodesSetup(std::string currentLine) {
+    // Object Names
+    static const char *nameHouses[] = {
+	"Harkonnen",
+	"Atreides",
+	"Ordos",
+	"Fremen",
+	"Sardaukar",
+	"Mercenary"
+    };
+    static const size_t houseSize = sizeof(nameHouses)/sizeof(*nameHouses);
+
+    static const char *nameStructures[] = {
+	"Concrete",
+	"Concrete4",
+	"Palace",
+	"LightFactory",
+	"HeavyFactory",
+	"Hi-Tech",
+	"IX",
+	"WOR",
+	"ConstructionYard",
+	"Windtrap",
+	"Barracks",
+	"Starport",
+	"Refinery",
+	"Repair",
+	"Wall",
+	"Turret",
+	"R-Turret",
+	"SpiceSilo",
+	"Outpost"
+    };
+    static const size_t structureSize = sizeof(nameStructures)/sizeof(*nameStructures);
+
+    static const char *nameUnits[] = {
+	"Carryall",
+	"Ornithopter",
+	"Infantry",
+	"Troopers",
+	"Soldier",
+	"Trooper",
+	"Saboteur",
+	"Launcher",
+	"Deviator",
+	"Tank",
+	"SiegeTank",
+	"Devastator",
+	"SonicTank",
+	"Trike",
+	"RaiderTrike",	
+	"Quad",
+	"Harvester",
+	"MCV",
+	"DeathHand",
+	"Rocket",
+	"ARocket",
+	"GRocket",
+	"MiniRocket",
+	"Bullet",
+	"SonicBlast",
+	"Sandworm",
+	"Frigate"
+    };
+    static const size_t unitSize = sizeof(nameUnits)/sizeof(*nameUnits);
+
+
 #define OPCODE(x) { #x, &EmcFileBase::o_##x }
     static const _Opcode scriptOpcodes[] = {
 	OPCODE(Goto),
@@ -112,6 +182,34 @@ void EmcFileBase::opcodesSetup() {
     _opcodes = scriptOpcodes;
     _opcodesEvaluate = scriptOpcodesEvaluate;
 #undef OPCODE
+
+    if(currentLine == "[House]")
+	_pointerCount = houseSize;
+    else if(currentLine == "[Build]")
+	_pointerCount = structureSize;
+    else if(currentLine == "[Unit]")
+	_pointerCount = unitSize;
+
+    switch(_pointerCount) {
+	case houseSize:
+	    _scriptType = _scriptHOUSE;	    
+	    _objectNames = nameHouses;
+	    opcodesHousesSetup();
+	    break;
+	case structureSize:
+	    _scriptType = _scriptBUILD;
+	    _objectNames = nameStructures;
+	    opcodesBuildingsSetup();
+	    break;
+	case unitSize:
+	    _scriptType = _scriptUNIT;
+	    _objectNames = nameUnits;
+	    opcodesUnitsSetup();
+	    break;
+	default:
+	    throw Exception(LOG_ERROR, "EmcFile", "Unable to determine script type!");
+	    break;
+    }
 }
 
 // The 'Building' Execute functions
