@@ -41,10 +41,10 @@ struct labelPosition {
 };
 
 
-enum _scriptTypes {
-    _scriptBUILD = 0,
-    _scriptUNIT,
-    _scriptHOUSE
+enum script_t {
+    script_BUILD = 0,
+    script_UNIT,
+    script_HOUSE
 };
 
 class EmcFileBase {
@@ -143,7 +143,7 @@ class EmcFileBase {
 	uint16_t	*_scriptPtr;		// Pointer in _scriptBuffer to current opcode
 	uint16_t	_scriptPos;		// Line number of current opcode
 	const uint8_t	*_scriptStart;		// pointer in _scriptBuffer to start of actual script
-	_scriptTypes	_scriptType;		// Type of script (BUILD/TEAM/UNIT)
+	script_t	_scriptType;		// Type of script (BUILD/TEAM/UNIT)
 
 	std::vector<labelPosition> _scriptLabels;	// List of memory locations which can/are jumped to
 

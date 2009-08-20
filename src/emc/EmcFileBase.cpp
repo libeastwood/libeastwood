@@ -192,17 +192,17 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 
     switch(_pointerCount) {
 	case houseSize:
-	    _scriptType = _scriptHOUSE;	    
+	    _scriptType = script_HOUSE;
 	    _objectNames = nameHouses;
 	    opcodesHousesSetup();
 	    break;
 	case structureSize:
-	    _scriptType = _scriptBUILD;
+	    _scriptType = script_BUILD;
 	    _objectNames = nameStructures;
 	    opcodesBuildingsSetup();
 	    break;
 	case unitSize:
-	    _scriptType = _scriptUNIT;
+	    _scriptType = script_UNIT;
 	    _objectNames = nameUnits;
 	    opcodesUnitsSetup();
 	    break;

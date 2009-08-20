@@ -118,13 +118,13 @@ bool EmcFileDisassemble::headerRead() {
     opcodesSetup();
 
     switch(_scriptType) {
-	case _scriptHOUSE:
+	case script_HOUSE:
     	    _destinationFile << "[House]" << std::endl;
 	    break;
-	case _scriptBUILD:
+	case script_BUILD:
     	    _destinationFile << "[Build]" << std::endl;
 	    break;
-	case _scriptUNIT:
+	case script_UNIT:
     	    _destinationFile << "[Unit]" << std::endl;
 	    break;
     }
