@@ -259,7 +259,7 @@ bool EmcFileDecompile::scriptDecompile() {
     return true;
 }
 
-void EmcFileDecompile::o_goto() {
+void EmcFileDecompile::o_Goto() {
     size_t labelPos = scriptLabel(_scriptData);
 
     if(!_modePreProcess) {
@@ -275,14 +275,14 @@ void EmcFileDecompile::o_goto() {
     }
 }
 
-void EmcFileDecompile::o_setreturn() {
+void EmcFileDecompile::o_SetReturn() {
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);
     else
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_pushOp() {
+void EmcFileDecompile::o_PushOp() {
     uint16_t data = _scriptData;
     if(_scriptData == 0)
 	data = _scriptDataNext;
@@ -292,7 +292,7 @@ void EmcFileDecompile::o_pushOp() {
     dataPrint(data);
 }
 
-void EmcFileDecompile::o_push() {
+void EmcFileDecompile::o_Push() {
     _stackCount--;
 
     if(_scriptDataNext) {
@@ -304,11 +304,11 @@ void EmcFileDecompile::o_push() {
     }
 }
 
-void EmcFileDecompile::o_pushWord() {
-    o_push();
+void EmcFileDecompile::o_PushWord() {
+    o_Push();
 }
 
-void EmcFileDecompile::o_pushreg() {
+void EmcFileDecompile::o_PushReg() {
     _stackCount--;
 
     if(_scriptDataNext)
@@ -317,7 +317,7 @@ void EmcFileDecompile::o_pushreg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_pushframeMinArg() {
+void EmcFileDecompile::o_PushFrameMinArg() {
     _stackCount--;
     _stackCount--;
     if(_scriptDataNext)
@@ -326,7 +326,7 @@ void EmcFileDecompile::o_pushframeMinArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_pushframePluArg() {
+void EmcFileDecompile::o_PushFramePluArg() {
     _stackCount--;
     _stackCount--;
     if(_scriptDataNext)
@@ -335,7 +335,7 @@ void EmcFileDecompile::o_pushframePluArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_popret() {
+void EmcFileDecompile::o_Pop() {
     if(_scriptData == 1) {
 	if(!_modePreProcess)
 	    _destinationFile << " (Return)";
@@ -347,7 +347,7 @@ void EmcFileDecompile::o_popret() {
     _stackCount++;
 }
 
-void EmcFileDecompile::o_popreg() {
+void EmcFileDecompile::o_PopReg() {
     _stackCount++;
 
     if(_scriptDataNext)
@@ -356,7 +356,7 @@ void EmcFileDecompile::o_popreg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_popframeMinArg() {
+void EmcFileDecompile::o_PopFrameMinArg() {
     _stackCount++;
     _stackCount++;
     if(_scriptDataNext)
@@ -365,7 +365,7 @@ void EmcFileDecompile::o_popframeMinArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_popframePluArg() {
+void EmcFileDecompile::o_PopFramePluArg() {
     _stackCount++;
     _stackCount++;
     if(_scriptDataNext)
@@ -374,17 +374,17 @@ void EmcFileDecompile::o_popframePluArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_spadd() {
+void EmcFileDecompile::o_AddSP() {
     dataPrint(_scriptData);
     _stackCount += (_scriptData & 0xF);
 }
 
-void EmcFileDecompile::o_spsub() {
+void EmcFileDecompile::o_SubSP() {
     dataPrint(_scriptData);
     _stackCount -= (_scriptData & 0xF);
 }
 
-void EmcFileDecompile::o_execute() {
+void EmcFileDecompile::o_Execute() {
 
     if(!_modePreProcess)
 	_destinationFile << std::left << _opcodesExecute[ _scriptData ].description << " ";
@@ -392,7 +392,7 @@ void EmcFileDecompile::o_execute() {
     (this->*_opcodesExecute[ _scriptData ].function)();
 }
 
-void EmcFileDecompile::o_ifnotgoto() {
+void EmcFileDecompile::o_IfNotGoto() {
     size_t labelPos;
 
     if(_scriptDataNext) {
@@ -424,18 +424,18 @@ void EmcFileDecompile::o_ifnotgoto() {
     }
 }
 
-void EmcFileDecompile::o_negate() {
+void EmcFileDecompile::o_Negate() {
     dataPrint(_scriptData);
 }
 
-void EmcFileDecompile::o_evaluate() {
+void EmcFileDecompile::o_Evaluate() {
     if(!_modePreProcess)
 	_destinationFile << _opcodesEvaluate[ _scriptData ].description;
 
     (this->*_opcodesEvaluate[ _scriptData ].function)();
 }
 
-void EmcFileDecompile::o_return() {
+void EmcFileDecompile::o_Return() {
 
 }
 

@@ -70,28 +70,29 @@ class EmcFileBase {
 	virtual void	 opcodesHousesSetup();
 
 	// Opcodes
-	virtual void	 o_goto()		= 0;					
-	virtual void	 o_setreturn()		= 0;
-	virtual void	 o_pushOp()		= 0;
-	virtual void	 o_push	() 		= 0;
-	virtual void	 o_pushWord()		= 0;
-	virtual void	 o_pushreg()		= 0;
-	virtual void	 o_pushframeMinArg()	= 0;
-	virtual void	 o_pushframePluArg()	= 0;
-	virtual void	 o_popret()		= 0;
-	virtual void	 o_popreg()		= 0;
-	virtual void	 o_popframeMinArg()	= 0;
-	virtual void	 o_popframePluArg()	= 0;
-	virtual void	 o_spadd()		= 0;
-	virtual void	 o_spsub()		= 0;
-	virtual void	 o_execute()		= 0;
-	virtual void	 o_ifnotgoto()		= 0;
-	virtual void	 o_negate()		= 0;
-	virtual void	 o_evaluate()		= 0;
-	virtual void	 o_return()		= 0;
+	virtual void	 o_Goto()		= 0;					
+	virtual void	 o_SetReturn()		= 0;
+	virtual void	 o_PushOp()		= 0;
+	virtual void	 o_Push() 		= 0;
+	virtual void	 o_PushWord()		= 0;
+	virtual void	 o_PushReg()		= 0;
+	virtual void	 o_PushFrameMinArg()	= 0;
+	virtual void	 o_PushFramePluArg()	= 0;
+	virtual void	 o_Pop()		= 0;
+	virtual void	 o_PopReg()		= 0;
+	virtual void	 o_PopFrameMinArg()	= 0;
+	virtual void	 o_PopFramePluArg()	= 0;
+	virtual void	 o_AddSP()		= 0;
+	virtual void	 o_SubSP()		= 0;
+	virtual void	 o_Execute()		= 0;
+	virtual void	 o_IfNotGoto()		= 0;
+	virtual void	 o_Negate()		= 0;
+	virtual void	 o_Evaluate()		= 0;
+	virtual void	 o_Return()		= 0;
 
 	// Opcode Evaluation Modes
 	virtual void	 o_evaluate_IfEither(){}
+	virtual void	 o_evaluate_IfEither1(){ o_evaluate_IfEither(); }
 	virtual void	 o_evaluate_Equal(){}
 	virtual void	 o_evaluate_NotEqual(){}
 	virtual void	 o_evaluate_CompareGreaterEqual(){}

@@ -45,25 +45,25 @@ class EmcFileCompile : public EmcFileBase {
 	bool		scriptSave();		// Save the buffer to disk
 	int 		scriptSectionCheck();	// Check for section name in _currentLine
 
-	void	o_goto();
-	void	o_setreturn();
-	void	o_pushOp();
-	void	o_push();
-	void	o_pushWord();
-	void	o_pushreg();
-	void	o_pushframeMinArg();
-	void	o_pushframePluArg();
-	void	o_popret();
-	void	o_popreg();
-	void	o_popframeMinArg();
-	void	o_popframePluArg();
-	void	o_spadd();
-	void	o_spsub();
-	void	o_execute();
-	void	o_ifnotgoto();
-	void	o_negate();
-	void	o_evaluate();
-	void	o_return();
+	void	o_Goto();
+	void	o_SetReturn();
+	void	o_PushOp();
+	void	o_Push();
+	void	o_PushWord();
+	void	o_PushReg();
+	void	o_PushFrameMinArg();
+	void	o_PushFramePluArg();
+	void	o_Pop();
+	void	o_PopReg();
+	void	o_PopFrameMinArg();
+	void	o_PopFramePluArg();
+	void	o_AddSP();
+	void	o_SubSP();
+	void	o_Execute();
+	void	o_IfNotGoto();
+	void	o_Negate();
+	void	o_Evaluate();
+	void	o_Return();
 
 };
 
