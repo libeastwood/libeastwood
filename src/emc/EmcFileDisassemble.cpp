@@ -23,7 +23,7 @@
 
 #include "EmcFileBase.h"
 #include "EmcFileDisassemble.h"
-#include "EmcObjectNames.h"
+#include "EmcFileInternal.h"
 
 // Unit GetDetail Function DetailNames
 static const char *nameUnitDetails[] = {

@@ -23,7 +23,7 @@
 
 #include "EmcFileBase.h"
 #include "EmcFileAssemble.h"
-#include "EmcObjectNames.h"
+#include "EmcFileInternal.h"
 
 EmcFileAssemble::EmcFileAssemble(const char *fileName) : EmcFileBase(fileName) {
     _sourceFile = NULL;

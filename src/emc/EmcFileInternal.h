@@ -1,5 +1,5 @@
-#ifndef	EASTWOOD_EMC_OBJECTNAMES_H
-#define	EASTWOOD_EMC_OBJECTNAMES_H
+#ifndef	EASTWOOD_EMC_EMCINTERNAL_H
+#define	EASTWOOD_EMC_EMCINTERNAL_H
 
 // Object Names
 static const char *nameHouses[] = {
@@ -63,4 +63,4 @@ static const char *nameUnits[] = {
     "Frigate"
 };
 
-#endif /* EASTWOOD_EMC_OBJECTNAMES_H */
+#endif // EASTWOOD_EMC_EMCINTERNAL_H
