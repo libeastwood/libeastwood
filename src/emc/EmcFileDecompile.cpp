@@ -23,7 +23,6 @@
 
 #include "EmcFileBase.h"
 #include "EmcFileDecompile.h"
-
 #include "EmcObjectNames.h"
 
 // Unit GetDetail Function DetailNames
