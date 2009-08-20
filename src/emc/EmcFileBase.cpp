@@ -237,7 +237,7 @@ void EmcFileBase::opcodesBuildingsSetup() {
 	OPCODE(Null),
 	OPCODE(Null),
 	OPCODE(Null),
-	OPCODE(RefinceSpice),
+	OPCODE(RefineSpice),
 	OPCODE(Explode),
 	OPCODE(Destroy),
 	OPCODE(Null),
