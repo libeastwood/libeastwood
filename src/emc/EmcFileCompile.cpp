@@ -23,8 +23,7 @@
 
 #include "EmcFileBase.h"
 #include "EmcFileCompile.h"
-
-#include "ObjectNames.h"
+#include "EmcObjectNames.h"
 
 EmcFileCompile::EmcFileCompile(const char *fileName) : EmcFileBase(fileName) {
     _sourceFile = NULL;

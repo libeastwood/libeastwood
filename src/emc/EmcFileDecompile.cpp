@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * 
- * $Id: EmcFileDecompile.cpp 25 2009-04-28 09:58:25Z segra $
- * 
  */
 
 #include <iostream>
@@ -26,7 +23,7 @@
 #include "EmcFileBase.h"
 #include "EmcFileDecompile.h"
 
-#include "ObjectNames.h"
+#include "EmcObjectNames.h"
 
 // Unit GetDetail Function DetailNames
 static const char *nameUnitDetails[] = {
