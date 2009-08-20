@@ -1,4 +1,5 @@
-/* DST  -  Dune 2 Script Tools
+/* Based on:
+ * DST  -  Dune 2 Script Tools
  *  
  * Copyright (C) 2009 segra		<segra@strobs.com>
 
