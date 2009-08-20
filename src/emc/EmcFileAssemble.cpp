@@ -40,10 +40,9 @@ EmcFileAssemble::~EmcFileAssemble() {
 
 bool EmcFileAssemble::headerCreate() {
     uint16_t *buffer = (uint16_t*) (_scriptBuffer);
-    const char header[] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
 
     // Copy the header in
-    memcpy((uint8_t*) buffer, header, sizeof(header));
+    memcpy((uint8_t*) buffer, emcHeader, sizeof(emcHeader));
 
     buffer += 0x3;
 

@@ -20,10 +20,15 @@
 
 #include <iostream>
 #include <iomanip>
+#include <string.h>
 
 #include "EmcFileBase.h"
 #include "EmcFileDisassemble.h"
 #include "EmcFileInternal.h"
+
+#include "../Exception.h"
+
+using namespace eastwood;
 
 // Unit GetDetail Function DetailNames
 static const char *nameUnitDetails[] = {
@@ -86,8 +91,18 @@ bool EmcFileDisassemble::scriptLoad() {
     // Read File Size
     fileScript.seekg(0, std::ios::end);
     scriptSize = fileScript.tellg();
-    fileScript.seekg(std::ios::beg);
+    fileScript.seekg(0, std::ios::beg);
+    if(scriptSize < sizeof(emcHeader))
+	throw(FileException(LOG_ERROR, "EmcFile", _fileName, "File is too small!"));
 
+    // Verify header
+    char fileHeader[sizeof(emcHeader)];
+    fileScript.get(fileHeader, sizeof(fileHeader));
+    if(memcmp(emcHeader, fileHeader, 4) || memcmp(emcHeader+8, fileHeader+8, sizeof(emcHeader)-9))
+	throw(FileException(LOG_ERROR, "EmcFile", _fileName, "Invalid header!"));
+
+    fileScript.seekg(3, std::ios::cur);
+    scriptSize -= fileScript.tellg();
     // Load file into _scriptBuffer
     _scriptBuffer = new uint8_t[scriptSize];
     if(fileScript.read((char*) _scriptBuffer, scriptSize) == false)
@@ -99,7 +114,7 @@ bool EmcFileDisassemble::scriptLoad() {
 }
 
 bool EmcFileDisassemble::headerRead() {
-    uint16_t *buffer = (uint16_t*) (_scriptBuffer + 0x12);
+    uint16_t *buffer = (uint16_t*) _scriptBuffer;
 
     // Number of script functions
     _pointerCount = htobe16(*buffer) / 2;
