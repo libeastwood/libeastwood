@@ -21,36 +21,36 @@
 #include <iostream>
 
 #include "EmcFileBase.h"
-#include "EmcFileDecompile.h"
-#include "EmcFileCompile.h"
+#include "EmcFileDisassemble.h"
+#include "EmcFileAssemble.h"
 
 static const char *version = "1.1";
 
 int main( int argc, char *argv[]) {
     bool result = false;
     EmcFileBase *script = NULL;
-    EmcFileDecompile *decompiler = NULL;
-    EmcFileCompile *compiler = NULL;
+    EmcFileDisassemble *decompiler = NULL;
+    EmcFileAssemble *compiler = NULL;
 
 
     std::cout << "Dune II Script Tools v" << version << std::endl << std::endl;
 
     if(argc < 3) {
 	std::cout << "Usage:" << std::endl;
-	std::cout << "d: Decompile" << std::endl;
-	std::cout << "c: Compile" << std::endl;
+	std::cout << "d: Disassemble" << std::endl;
+	std::cout << "c: Assemble" << std::endl;
 	std::cout << "dst d script.emc" << std::endl;
 	std::cout << "dst c script.txt" << std::endl;
 	return 0;
     }
 
-    // Decompile Mode
+    // Disassemble Mode
     if( tolower(*argv[1]) == 'd' )
-	script = decompiler = new EmcFileDecompile( argv[2] );
+	script = decompiler = new EmcFileDisassemble( argv[2] );
 
-    // Compile Mode
+    // Assemble Mode
     else if( tolower(*argv[1]) == 'c' )
-	script = compiler = new EmcFileCompile( argv[2] );
+	script = compiler = new EmcFileAssemble( argv[2] );
 
     // Do It
     result = script->execute();
