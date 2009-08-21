@@ -48,9 +48,10 @@
  *
  */
 
-#include <inttypes.h>
-#include <stdarg.h>
-#include <assert.h>
+#include <cassert>
+#include <string>
+
+#include "StdDef.h"
 
 #include "Log.h"
 #include "AdlFile.h"
@@ -63,21 +64,13 @@
 
 #define CALLBACKS_PER_SECOND 72
 
-typedef uint8_t	uint8;
-typedef int8_t	int8;
-typedef uint16_t	uint16;
-typedef int16_t	int16;
-typedef uint32_t	uint32;
-typedef int32_t	int32;
-typedef uint8_t	byte;
-
-static inline uint16 READ_LE_UINT16(const void *ptr) {
-  const byte *b = (const byte *)ptr;
+static inline uint16_t READ_LE_UINT16(const void *ptr) {
+  const uint8_t *b = (const uint8_t *)ptr;
   return (b[1] << 8) + b[0];
 }
 
-static inline uint16 READ_BE_UINT16(const void *ptr) {
-  const byte *b = (const byte *)ptr;
+static inline uint16_t READ_BE_UINT16(const void *ptr) {
+  const uint8_t *b = (const uint8_t *)ptr;
   return (b[0] << 8) + b[1];
 }
 
@@ -90,9 +83,9 @@ public:
   void callback();
 
   // AudioStream API
-  // 	int readBuffer(int16 *buffer, const int numSamples) {
-  // 		int32 samplesLeft = numSamples;
-  // 		memset(buffer, 0, sizeof(int16) * numSamples);
+  // 	int readBuffer(int16_t *buffer, const int numSamples) {
+  // 		int32_t samplesLeft = numSamples;
+  // 		memset(buffer, 0, sizeof(int16_t) * numSamples);
   // 		while (samplesLeft) {
   // 			if (!_samplesTillCallback) {
   // 				callback();
@@ -104,7 +97,7 @@ public:
   // 				}
   // 			}
 
-  // 			int32 render = MIN(samplesLeft, _samplesTillCallback);
+  // 			int32_t render = MIN(samplesLeft, _samplesTillCallback);
   // 			samplesLeft -= render;
   // 			_samplesTillCallback -= render;
   // 			YM3812UpdateOne(_adlib, buffer, render);
@@ -170,54 +163,54 @@ public:
   // unk41 - Sound-effect. Used for primaryEffect2()
 
   struct Channel {
-    uint8 opExtraLevel2;
-    uint8 *dataptr;
-    uint8 duration;
-    uint8 repeatCounter;
-    int8 baseOctave;
-    uint8 priority;
-    uint8 dataptrStackPos;
-    uint8 *dataptrStack[4];
-    int8 baseNote;
-    uint8 unk29;
-    uint8 unk31;
-    uint16 unk30;
-    uint16 unk37;
-    uint8 unk33;
-    uint8 unk34;
-    uint8 unk35;
-    uint8 unk36;
-    uint8 unk32;
-    uint8 unk41;
-    uint8 unk38;
-    uint8 opExtraLevel1;
-    uint8 spacing2;
-    uint8 baseFreq;
-    uint8 tempo;
-    uint8 position;
-    uint8 regAx;
-    uint8 regBx;
+    uint8_t opExtraLevel2;
+    uint8_t *dataptr;
+    uint8_t duration;
+    uint8_t repeatCounter;
+    int8_t baseOctave;
+    uint8_t priority;
+    uint8_t dataptrStackPos;
+    uint8_t *dataptrStack[4];
+    int8_t baseNote;
+    uint8_t unk29;
+    uint8_t unk31;
+    uint16_t unk30;
+    uint16_t unk37;
+    uint8_t unk33;
+    uint8_t unk34;
+    uint8_t unk35;
+    uint8_t unk36;
+    uint8_t unk32;
+    uint8_t unk41;
+    uint8_t unk38;
+    uint8_t opExtraLevel1;
+    uint8_t spacing2;
+    uint8_t baseFreq;
+    uint8_t tempo;
+    uint8_t position;
+    uint8_t regAx;
+    uint8_t regBx;
     typedef void (AdlibDriver::*Callback)(Channel&);
     Callback primaryEffect;
     Callback secondaryEffect;
-    uint8 fractionalSpacing;
-    uint8 opLevel1;
-    uint8 opLevel2;
-    uint8 opExtraLevel3;
-    uint8 twoChan;
-    uint8 unk39;	
-    uint8 unk40;
-    uint8 spacing1;
-    uint8 durationRandomness;
-    uint8 unk19;
-    uint8 unk18;
-    int8 unk20;
-    int8 unk21;
-    uint8 unk22;
-    uint16 offset;
-    uint8 tempoReset;
-    uint8 rawNote;
-    int8 unk16;
+    uint8_t fractionalSpacing;
+    uint8_t opLevel1;
+    uint8_t opLevel2;
+    uint8_t opExtraLevel3;
+    uint8_t twoChan;
+    uint8_t unk39;	
+    uint8_t unk40;
+    uint8_t spacing1;
+    uint8_t durationRandomness;
+    uint8_t unk19;
+    uint8_t unk18;
+    int8_t unk20;
+    int8_t unk21;
+    uint8_t unk22;
+    uint16_t offset;
+    uint8_t tempoReset;
+    uint8_t rawNote;
+    int8_t unk16;
   };
 
   void primaryEffect1(Channel &channel);
@@ -225,24 +218,24 @@ public:
   void secondaryEffect1(Channel &channel);
 
   void resetAdlibState();
-  void writeOPL(byte reg, byte val);
+  void writeOPL(uint8_t reg, uint8_t val);
   void initChannel(Channel &channel);
   void noteOff(Channel &channel);
-  void unkOutput2(uint8 num);
+  void unkOutput2(uint8_t num);
 
-  uint16 getRandomNr();
-  void setupDuration(uint8 duration, Channel &channel);
+  uint16_t getRandomNr();
+  void setupDuration(uint8_t duration, Channel &channel);
 
-  void setupNote(uint8 rawNote, Channel &channel, bool flag = false);
-  void setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &channel);
+  void setupNote(uint8_t rawNote, Channel &channel, bool flag = false);
+  void setupInstrument(uint8_t regOffset, uint8_t *dataptr, Channel &channel);
   void noteOn(Channel &channel);
 
   void adjustVolume(Channel &channel);
 
-  uint8 calculateOpLevel1(Channel &channel);
-  uint8 calculateOpLevel2(Channel &channel);
+  uint8_t calculateOpLevel1(Channel &channel);
+  uint8_t calculateOpLevel2(Channel &channel);
 
-  uint16 checkValue(int16 val) {
+  uint16_t checkValue(int16_t val) {
     if (val < 0)
       val = 0;
     else if (val > 0x3F)
@@ -255,11 +248,11 @@ public:
   // * One for programs, starting at offset 0.
   // * One for instruments, starting at offset 500.
 
-  uint8 *getProgram(int progId) {
+  uint8_t *getProgram(int progId) {
     return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
   }
 
-  uint8 *getInstrument(int instrumentId) {
+  uint8_t *getInstrument(int instrumentId) {
     return _soundData + READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
   }
 
@@ -267,7 +260,7 @@ public:
   void executePrograms();
 
   struct ParserOpcode {
-    typedef int (AdlibDriver::*POpcode)(uint8 *&dataptr, Channel &channel, uint8 value);
+    typedef int (AdlibDriver::*POpcode)(uint8_t *&dataptr, Channel &channel, uint8_t value);
     POpcode function;
     const char *name;
   };
@@ -276,62 +269,62 @@ public:
   const ParserOpcode *_parserOpcodeTable;
   int _parserOpcodeTableSize;
 
-  int update_setRepeat(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_checkRepeat(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setNoteSpacing(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_jump(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_jumpToSubroutine(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_returnFromSubroutine(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setBaseOctave(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_stopChannel(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_playRest(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_writeAdlib(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupNoteAndDuration(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setBaseNote(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupSecondaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_stopOtherChannel(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_waitForEndOfProgram(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupInstrument(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupPrimaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_removePrimaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setBaseFreq(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupPrimaryEffect2(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setPriority(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback23(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback24(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setExtraLevel1(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupDuration(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_playNote(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setFractionalNoteSpacing(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setTempo(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_removeSecondaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setChannelTempo(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setExtraLevel3(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setExtraLevel2(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_changeExtraLevel2(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setAMDepth(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setVibratoDepth(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_changeExtraLevel1(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback38(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback39(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_removePrimaryEffect2(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback41(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_resetToGlobalTempo(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_nop1(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setDurationRandomness(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_changeChannelTempo(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback46(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_nop2(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setupRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_playRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_removeRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback51(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback52(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback53(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setSoundTrigger(uint8 *&dataptr, Channel &channel, uint8 value);
-  int update_setTempoReset(uint8 *&dataptr, Channel &channel, uint8 value);
-  int updateCallback56(uint8 *&dataptr, Channel &channel, uint8 value);
+  int update_setRepeat(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_checkRepeat(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupProgram(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setNoteSpacing(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_jump(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_jumpToSubroutine(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_returnFromSubroutine(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setBaseOctave(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_stopChannel(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_playRest(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_writeAdlib(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupNoteAndDuration(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setBaseNote(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupSecondaryEffect1(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_stopOtherChannel(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_waitForEndOfProgram(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupInstrument(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupPrimaryEffect1(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_removePrimaryEffect1(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setBaseFreq(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupPrimaryEffect2(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setPriority(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback23(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback24(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setExtraLevel1(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupDuration(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_playNote(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setFractionalNoteSpacing(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setTempo(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_removeSecondaryEffect1(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setChannelTempo(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setExtraLevel3(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setExtraLevel2(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_changeExtraLevel2(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setAMDepth(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setVibratoDepth(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_changeExtraLevel1(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback38(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback39(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_removePrimaryEffect2(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback41(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_resetToGlobalTempo(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_nop1(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setDurationRandomness(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_changeChannelTempo(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback46(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_nop2(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setupRhythmSection(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_playRhythmSection(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_removeRhythmSection(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback51(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback52(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback53(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setSoundTrigger(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int update_setTempoReset(uint8_t *&dataptr, Channel &channel, uint8_t value);
+  int updateCallback56(uint8_t *&dataptr, Channel &channel, uint8_t value);
 
   // These variables have not yet been named, but some of them are partly
   // known nevertheless:
@@ -362,63 +355,63 @@ public:
   // _unkTable2_2[]  - One of the tables in _unkTable2[]
   // _unkTable2_3[]  - One of the tables in _unkTable2[]
 
-  int32 _samplesPerCallback;
-  int32 _samplesPerCallbackRemainder;
-  int32 _samplesTillCallback;
-  int32 _samplesTillCallbackRemainder;
+  int32_t _samplesPerCallback;
+  int32_t _samplesPerCallbackRemainder;
+  int32_t _samplesTillCallback;
+  int32_t _samplesTillCallbackRemainder;
 
   int _lastProcessed;
-  int8 _flagTrigger;
+  int8_t _flagTrigger;
   int _curChannel;
-  uint8 _soundTrigger;
+  uint8_t _soundTrigger;
   int _soundsPlaying;
 
-  uint16 _rnd;
+  uint16_t _rnd;
 
-  uint8 _unkValue1;
-  uint8 _unkValue2;
-  uint8 _unkValue3;
-  uint8 _unkValue4;
-  uint8 _unkValue5;
-  uint8 _unkValue6;
-  uint8 _unkValue7;
-  uint8 _unkValue8;
-  uint8 _unkValue9;
-  uint8 _unkValue10;
-  uint8 _unkValue11;
-  uint8 _unkValue12;
-  uint8 _unkValue13;
-  uint8 _unkValue14;
-  uint8 _unkValue15;
-  uint8 _unkValue16;
-  uint8 _unkValue17;
-  uint8 _unkValue18;
-  uint8 _unkValue19;
-  uint8 _unkValue20;
+  uint8_t _unkValue1;
+  uint8_t _unkValue2;
+  uint8_t _unkValue3;
+  uint8_t _unkValue4;
+  uint8_t _unkValue5;
+  uint8_t _unkValue6;
+  uint8_t _unkValue7;
+  uint8_t _unkValue8;
+  uint8_t _unkValue9;
+  uint8_t _unkValue10;
+  uint8_t _unkValue11;
+  uint8_t _unkValue12;
+  uint8_t _unkValue13;
+  uint8_t _unkValue14;
+  uint8_t _unkValue15;
+  uint8_t _unkValue16;
+  uint8_t _unkValue17;
+  uint8_t _unkValue18;
+  uint8_t _unkValue19;
+  uint8_t _unkValue20;
 
   int _flags;
 
-  uint8 *_soundData;
+  uint8_t *_soundData;
 
-  uint8 _soundIdTable[0x10];
+  uint8_t _soundIdTable[0x10];
   Channel _channels[10];
 
-  uint8 _vibratoAndAMDepthBits;
-  uint8 _rhythmSectionBits;
+  uint8_t _vibratoAndAMDepthBits;
+  uint8_t _rhythmSectionBits;
 
-  uint8 _curRegOffset;
-  uint8 _tempo;
+  uint8_t _curRegOffset;
+  uint8_t _tempo;
 
-  const uint8 *_tablePtr1;
-  const uint8 *_tablePtr2;
+  const uint8_t *_tablePtr1;
+  const uint8_t *_tablePtr2;
 
-  static const uint8 _regOffset[];
-  static const uint16 _unkTable[];
-  static const uint8 *_unkTable2[];
-  static const uint8 _unkTable2_1[];
-  static const uint8 _unkTable2_2[];
-  static const uint8 _unkTable2_3[];
-  static const uint8 _unkTables[][32];
+  static const uint8_t _regOffset[];
+  static const uint16_t _unkTable[];
+  static const uint8_t *_unkTable2[];
+  static const uint8_t _unkTable2_1[];
+  static const uint8_t _unkTable2_2[];
+  static const uint8_t _unkTable2_3[];
+  static const uint8_t _unkTables[][32];
 
   Copl *opl;
 };
@@ -512,7 +505,7 @@ int AdlibDriver::snd_setSoundData(va_list &list) {
     delete [] _soundData;
     _soundData = 0;
   }
-  _soundData = va_arg(list, uint8*);
+  _soundData = va_arg(list, uint8_t*);
   return 0;
 }
 
@@ -526,8 +519,8 @@ int AdlibDriver::snd_startSong(va_list &list) {
   _flags |= 8;
   _flagTrigger = 1;
 
-  uint8 *ptr = getProgram(songId);
-  uint8 chan = *ptr;
+  uint8_t *ptr = getProgram(songId);
+  uint8_t chan = *ptr;
 
   if ((songId << 1) != 0) {
     if (chan == 9) {
@@ -577,7 +570,7 @@ int AdlibDriver::snd_unkOpcode3(va_list &list) {
 int AdlibDriver::snd_readByte(va_list &list) {
   int a = va_arg(list, int);
   int b = va_arg(list, int);
-  uint8 *ptr = getProgram(a) + b;
+  uint8_t *ptr = getProgram(a) + b;
   return *ptr;
 }
 
@@ -585,9 +578,9 @@ int AdlibDriver::snd_writeByte(va_list &list) {
   int a = va_arg(list, int);
   int b = va_arg(list, int);
   int c = va_arg(list, int);
-  uint8 *ptr = getProgram(a) + b;
-  uint8 oldValue = *ptr;
-  *ptr = (uint8)c;
+  uint8_t *ptr = getProgram(a) + b;
+  uint8_t oldValue = *ptr;
+  *ptr = (uint8_t)c;
   return oldValue;
 }
 
@@ -636,7 +629,7 @@ void AdlibDriver::callback() {
   setupPrograms();
   executePrograms();
 
-  uint8 temp = _unkValue3;
+  uint8_t temp = _unkValue3;
   _unkValue3 += _tempo;
   if (_unkValue3 < temp) {
     if (!(--_unkValue2)) {
@@ -649,9 +642,9 @@ void AdlibDriver::callback() {
 
 void AdlibDriver::setupPrograms() {
   while (_lastProcessed != _soundsPlaying) {
-    uint8 *ptr = getProgram(_soundIdTable[_lastProcessed]);
-    uint8 chan = *ptr++;
-    uint8 priority = *ptr++;
+    uint8_t *ptr = getProgram(_soundIdTable[_lastProcessed]);
+    uint8_t chan = *ptr++;
+    uint8_t priority = *ptr++;
 
     // Only start this sound if its priority is higher than the one
     // already playing.
@@ -726,7 +719,7 @@ void AdlibDriver::executePrograms() {
       channel.tempo = _tempo;
     }
 
-    uint8 backup = channel.position;
+    uint8_t backup = channel.position;
     channel.position += channel.tempo;
     if (channel.position < backup) {
       if (--channel.duration) {
@@ -743,10 +736,10 @@ void AdlibDriver::executePrograms() {
 	// This fixes a subtle music bug where the
 	// wrong music would play when getting the
 	// quill in Kyra 1.
-	uint8 *dataptr = channel.dataptr;
+	uint8_t *dataptr = channel.dataptr;
 	while (dataptr) {
-	  uint8 opcode = *dataptr++;
-	  uint8 param = *dataptr++;
+	  uint8_t opcode = *dataptr++;
+	  uint8_t param = *dataptr++;
 
 	  if (opcode & 0x80) {
 	    opcode &= 0x7F;
@@ -810,7 +803,7 @@ void AdlibDriver::resetAdlibState() {
 // Old calling style: output0x388(0xABCD)
 // New calling style: writeOPL(0xAB, 0xCD)
 
-void AdlibDriver::writeOPL(byte reg, byte val) {
+void AdlibDriver::writeOPL(uint8_t reg, uint8_t val) {
   opl->write(reg, val);
 }
 
@@ -846,7 +839,7 @@ void AdlibDriver::noteOff(Channel &channel) {
   writeOPL(0xB0 + _curChannel, channel.regBx);
 }
 
-void AdlibDriver::unkOutput2(uint8 chan) {
+void AdlibDriver::unkOutput2(uint8_t chan) {
   LOG_INFO("AdlibDriver", "unkOutput2(%d)", chan);
 
   // The control channel has no corresponding Adlib channel
@@ -860,7 +853,7 @@ void AdlibDriver::unkOutput2(uint8 chan) {
   if (_rhythmSectionBits && chan >= 6)
     return;
 
-  uint8 offset = _regOffset[chan];
+  uint8_t offset = _regOffset[chan];
 
   // The channel is cleared: First the attack/delay rate, then the
   // sustain level/release rate, and finally the note is turned off.
@@ -897,15 +890,15 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 // generate an even distribution of almost all numbers from 0 through 65535,
 // though in my tests some numbers were never generated.
 
-uint16 AdlibDriver::getRandomNr() {
+uint16_t AdlibDriver::getRandomNr() {
   _rnd += 0x9248;
-  uint16 lowBits = _rnd & 7;
+  uint16_t lowBits = _rnd & 7;
   _rnd >>= 3;
   _rnd |= (lowBits << 13);
   return _rnd;
 }
 
-void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
+void AdlibDriver::setupDuration(uint8_t duration, Channel &channel) {
   LOG_INFO("AdlibDriver", "setupDuration(%d, %lu)", duration, (long)(&channel - _channels));
   if (channel.durationRandomness) {
     channel.duration = duration + (getRandomNr() & channel.durationRandomness);
@@ -920,13 +913,13 @@ void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 // This function may or may not play the note. It's usually followed by a call
 // to noteOn(), which will always play the current note.
 
-void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
+void AdlibDriver::setupNote(uint8_t rawNote, Channel &channel, bool flag) {
   LOG_INFO("AdlibDriver", "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
 
   channel.rawNote = rawNote;
 
-  int8 note = (rawNote & 0x0F) + channel.baseNote;
-  int8 octave = ((rawNote + channel.baseOctave) >> 4) & 0x0F;
+  int8_t note = (rawNote & 0x0F) + channel.baseNote;
+  int8_t octave = ((rawNote + channel.baseOctave) >> 4) & 0x0F;
 
   // There are only twelve notes. If we go outside that, we have to
   // adjust the note and octave.
@@ -949,13 +942,13 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
   // octave bits, and that could possibly have been used in some sound.
   // But as it is now, I can't see any way it would happen.
 
-  uint16 freq = _unkTable[note] + channel.baseFreq;
+  uint16_t freq = _unkTable[note] + channel.baseFreq;
 
   // When called from callback 41, the behaviour is slightly different:
   // We adjust the frequency, even when channel.unk16 is 0.
 
   if (channel.unk16 || flag) {
-    const uint8 *table;
+    const uint8_t *table;
 
     if (channel.unk16 >= 0) {
       table = _unkTables[(channel.rawNote & 0x0F) + 2];
@@ -974,14 +967,14 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
   writeOPL(0xB0 + _curChannel, channel.regBx);
 }
 
-void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &channel) {
+void AdlibDriver::setupInstrument(uint8_t regOffset, uint8_t *dataptr, Channel &channel) {
   LOG_INFO("AdlibDriver", "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
   // Amplitude Modulation / Vibrato / Envelope Generator Type /
   // Keyboard Scaling Rate / Modulator Frequency Multiple
   writeOPL(0x20 + regOffset, *dataptr++);
   writeOPL(0x23 + regOffset, *dataptr++);
 
-  uint8 temp = *dataptr++;
+  uint8_t temp = *dataptr++;
 
   // Feedback / Algorithm
 
@@ -1029,8 +1022,8 @@ void AdlibDriver::noteOn(Channel &channel) {
   channel.regBx |= 0x20;
   writeOPL(0xB0 + _curChannel, channel.regBx);
 
-  int8 shift = 9 - channel.unk33;
-  uint16 temp = channel.regAx | (channel.regBx << 8);
+  int8_t shift = 9 - channel.unk33;
+  uint16_t temp = channel.regAx | (channel.regBx << 8);
   channel.unk37 = ((temp & 0x3FF) >> shift) & 0xFF;
   channel.unk38 = channel.unk36;
 }
@@ -1062,19 +1055,19 @@ void AdlibDriver::adjustVolume(Channel &channel) {
 
 void AdlibDriver::primaryEffect1(Channel &channel) {
   LOG_INFO("AdlibDriver", "Calling primaryEffect1 (channel: %d)", _curChannel);
-  uint8 temp = channel.unk31;
+  uint8_t temp = channel.unk31;
   channel.unk31 += channel.unk29;
   if (channel.unk31 >= temp)
     return;
 
   // Initialise unk1 to the current frequency
-  uint16 unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
+  uint16_t unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
 
   // This is presumably to shift the "note on" bit so far to the left
   // that it won't be affected by any of the calculations below.
-  uint16 unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
+  uint16_t unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
 
-  int16 unk3 = (int16)channel.unk30;
+  int16_t unk3 = (int16_t)channel.unk30;
 
   if (unk3 >= 0) {
     unk1 += unk3;
@@ -1107,7 +1100,7 @@ void AdlibDriver::primaryEffect1(Channel &channel) {
   channel.regAx = unk1 & 0xFF;
 
   // Shift down the "note on" bit again.
-  uint8 value = unk1 >> 8;
+  uint8_t value = unk1 >> 8;
   value |= (unk2 >> 8) & 0xFF;
   value |= unk2 & 0xFF;
 
@@ -1150,10 +1143,10 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
     return;
   }
 
-  uint8 temp = channel.unk41;
+  uint8_t temp = channel.unk41;
   channel.unk41 += channel.unk32;
   if (channel.unk41 < temp) {
-    uint16 unk1 = channel.unk37;
+    uint16_t unk1 = channel.unk37;
     if (!(--channel.unk34)) {
       unk1 ^= 0xFFFF;
       ++unk1;
@@ -1161,7 +1154,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
       channel.unk34 = channel.unk35;
     }
 
-    uint16 unk2 = (channel.regAx | (channel.regBx << 8)) & 0x3FF;
+    uint16_t unk2 = (channel.regAx | (channel.regBx << 8)) & 0x3FF;
     unk2 += unk1;
 		
     channel.regAx = unk2 & 0xFF;
@@ -1200,7 +1193,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
 
 void AdlibDriver::secondaryEffect1(Channel &channel) {
   LOG_INFO("AdlibDriver", "Calling secondaryEffect1 (channel: %d)", _curChannel);
-  uint8 temp = channel.unk18;
+  uint8_t temp = channel.unk18;
   channel.unk18 += channel.unk19;
   if (channel.unk18 < temp) {
     if (--channel.unk21 < 0) {
@@ -1210,8 +1203,8 @@ void AdlibDriver::secondaryEffect1(Channel &channel) {
   }
 }
 
-uint8 AdlibDriver::calculateOpLevel1(Channel &channel) {
-  int8 value = channel.opLevel1 & 0x3F;
+uint8_t AdlibDriver::calculateOpLevel1(Channel &channel) {
+  int8_t value = channel.opLevel1 & 0x3F;
 
   if (channel.twoChan) {
     value += channel.opExtraLevel1;
@@ -1224,8 +1217,8 @@ uint8 AdlibDriver::calculateOpLevel1(Channel &channel) {
   return checkValue(value) | (channel.opLevel1 & 0xC0);
 }
 
-uint8 AdlibDriver::calculateOpLevel2(Channel &channel) {
-  int8 value = channel.opLevel2 & 0x3F;
+uint8_t AdlibDriver::calculateOpLevel2(Channel &channel) {
+  int8_t value = channel.opLevel2 & 0x3F;
 
   value += channel.opExtraLevel1;
   value += channel.opExtraLevel2;
@@ -1238,27 +1231,27 @@ uint8 AdlibDriver::calculateOpLevel2(Channel &channel) {
 
 // parser opcodes
 
-int AdlibDriver::update_setRepeat(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setRepeat(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.repeatCounter = value;
   return 0;
 }
 
-int AdlibDriver::update_checkRepeat(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_checkRepeat(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   ++dataptr;
   if (--channel.repeatCounter) {
-    int16 add = READ_LE_UINT16(dataptr - 2);
+    int16_t add = READ_LE_UINT16(dataptr - 2);
     dataptr += add;
   }
   return 0;
 }
 
-int AdlibDriver::update_setupProgram(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_setupProgram(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   if (value == 0xFF)
     return 0;
 
-  uint8 *ptr = getProgram(value);
-  uint8 chan = *ptr++;
-  uint8 priority = *ptr++;
+  uint8_t *ptr = getProgram(value);
+  uint8_t chan = *ptr++;
+  uint8_t priority = *ptr++;
 
   Channel &channel2 = _channels[chan];
 
@@ -1277,37 +1270,37 @@ int AdlibDriver::update_setupProgram(__attribute__((unused)) uint8 *&dataptr, __
   return 0;
 }
 
-int AdlibDriver::update_setNoteSpacing(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setNoteSpacing(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.spacing1 = value;
   return 0;
 }
 
-int AdlibDriver::update_jump(uint8 *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_jump(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
-  int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
+  int16_t add = READ_LE_UINT16(dataptr); dataptr += 2;
   dataptr += add;
   return 0;
 }
 
-int AdlibDriver::update_jumpToSubroutine(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_jumpToSubroutine(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
-  int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
+  int16_t add = READ_LE_UINT16(dataptr); dataptr += 2;
   channel.dataptrStack[channel.dataptrStackPos++] = dataptr;
   dataptr += add;
   return 0;
 }
 
-int AdlibDriver::update_returnFromSubroutine(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_returnFromSubroutine(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   dataptr = channel.dataptrStack[--channel.dataptrStackPos];
   return 0;
 }
 
-int AdlibDriver::update_setBaseOctave(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setBaseOctave(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.baseOctave = value;
   return 0;
 }
 
-int AdlibDriver::update_stopChannel(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_stopChannel(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   channel.priority = 0;
   if (_curChannel != 9) {
     noteOff(channel);
@@ -1316,30 +1309,30 @@ int AdlibDriver::update_stopChannel(uint8 *&dataptr, Channel &channel, __attribu
   return 2;
 }
 
-int AdlibDriver::update_playRest(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_playRest(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   setupDuration(value, channel);
   noteOff(channel);
   return (value != 0);
 }
 
-int AdlibDriver::update_writeAdlib(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_writeAdlib(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   writeOPL(value, *dataptr++);
   return 0;
 }
 
-int AdlibDriver::update_setupNoteAndDuration(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupNoteAndDuration(uint8_t *&dataptr, Channel &channel, uint8_t value) {
   setupNote(value, channel);
   value = *dataptr++;
   setupDuration(value, channel);
   return (value != 0);
 }
 
-int AdlibDriver::update_setBaseNote(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setBaseNote(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.baseNote = value;
   return 0;
 }
 
-int AdlibDriver::update_setupSecondaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupSecondaryEffect1(uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.unk18 = value;
   channel.unk19 = value;
   channel.unk20 = channel.unk21 = *dataptr++;
@@ -1349,7 +1342,7 @@ int AdlibDriver::update_setupSecondaryEffect1(uint8 *&dataptr, Channel &channel,
   return 0;
 }
 
-int AdlibDriver::update_stopOtherChannel(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_stopOtherChannel(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   Channel &channel2 = _channels[value];
   channel2.duration = 0;
   channel2.priority = 0;
@@ -1357,9 +1350,9 @@ int AdlibDriver::update_stopOtherChannel(__attribute__((unused)) uint8 *&dataptr
   return 0;
 }
 
-int AdlibDriver::update_waitForEndOfProgram(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
-  uint8 *ptr = getProgram(value);
-  uint8 chan = *ptr;
+int AdlibDriver::update_waitForEndOfProgram(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
+  uint8_t *ptr = getProgram(value);
+  uint8_t chan = *ptr;
 
   if (!_channels[chan].dataptr) {
     return 0;
@@ -1369,12 +1362,12 @@ int AdlibDriver::update_waitForEndOfProgram(uint8 *&dataptr, __attribute__((unus
   return 2;
 }
 
-int AdlibDriver::update_setupInstrument(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupInstrument(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   setupInstrument(_curRegOffset, getInstrument(value), channel);
   return 0;
 }
 
-int AdlibDriver::update_setupPrimaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupPrimaryEffect1(uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.unk29 = value;
   channel.unk30 = READ_BE_UINT16(dataptr);
   dataptr += 2;
@@ -1383,22 +1376,22 @@ int AdlibDriver::update_setupPrimaryEffect1(uint8 *&dataptr, Channel &channel, u
   return 0;
 }
 
-int AdlibDriver::update_removePrimaryEffect1(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_removePrimaryEffect1(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
   channel.primaryEffect = 0;
   channel.unk30 = 0;
   return 0;
 }
 
-int AdlibDriver::update_setBaseFreq(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setBaseFreq(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.baseFreq = value;
   return 0;
 }
 
-int AdlibDriver::update_setupPrimaryEffect2(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupPrimaryEffect2(uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.unk32 = value;
   channel.unk33 = *dataptr++;
-  uint8 temp = *dataptr++;
+  uint8_t temp = *dataptr++;
   channel.unk34 = temp + 1;
   channel.unk35 = temp << 1;
   channel.unk36 = *dataptr++;
@@ -1406,12 +1399,12 @@ int AdlibDriver::update_setupPrimaryEffect2(uint8 *&dataptr, Channel &channel, u
   return 0;
 }
 
-int AdlibDriver::update_setPriority(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_setPriority(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   channel.priority = value;
   return 0;
 }
 
-int AdlibDriver::updateCallback23(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::updateCallback23(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   value >>= 1;
   _unkValue1 = _unkValue2 = value;
   _unkValue3 = 0xFF;
@@ -1419,7 +1412,7 @@ int AdlibDriver::updateCallback23(__attribute__((unused)) uint8 *&dataptr, __att
   return 0;
 }
 
-int AdlibDriver::updateCallback24(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::updateCallback24(uint8_t *&dataptr, Channel &channel, uint8_t value) {
   if (_unkValue5) {
     if (_unkValue4 & value) {
       _unkValue5 = 0;
@@ -1436,50 +1429,50 @@ int AdlibDriver::updateCallback24(uint8 *&dataptr, Channel &channel, uint8 value
   return 2;
 }
 
-int AdlibDriver::update_setExtraLevel1(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setExtraLevel1(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.opExtraLevel1 = value;
   adjustVolume(channel);
   return 0;
 }
 
-int AdlibDriver::update_setupDuration(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupDuration(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   setupDuration(value, channel);
   return (value != 0);
 }
 
-int AdlibDriver::update_playNote(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_playNote(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   setupDuration(value, channel);
   noteOn(channel);
   return (value != 0);
 }
 
-int AdlibDriver::update_setFractionalNoteSpacing(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setFractionalNoteSpacing(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.fractionalSpacing = value & 7;
   return 0;
 }
 
-int AdlibDriver::update_setTempo(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_setTempo(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   _tempo = value;
   return 0;
 }
 
-int AdlibDriver::update_removeSecondaryEffect1(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_removeSecondaryEffect1(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
   channel.secondaryEffect = 0;
   return 0;
 }
 
-int AdlibDriver::update_setChannelTempo(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setChannelTempo(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.tempo = value;
   return 0;
 }
 
-int AdlibDriver::update_setExtraLevel3(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setExtraLevel3(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.opExtraLevel3 = value;
   return 0;
 }
 
-int AdlibDriver::update_setExtraLevel2(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_setExtraLevel2(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   int channelBackUp = _curChannel;
 
   _curChannel = value;
@@ -1491,7 +1484,7 @@ int AdlibDriver::update_setExtraLevel2(uint8 *&dataptr, __attribute__((unused)) 
   return 0;
 }
 
-int AdlibDriver::update_changeExtraLevel2(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_changeExtraLevel2(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   int channelBackUp = _curChannel;
 
   _curChannel = value;
@@ -1506,7 +1499,7 @@ int AdlibDriver::update_changeExtraLevel2(uint8 *&dataptr, __attribute__((unused
 // Apart from initialising to zero, these two functions are the only ones that
 // modify _vibratoAndAMDepthBits.
 
-int AdlibDriver::update_setAMDepth(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_setAMDepth(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   if (value & 1)
     _vibratoAndAMDepthBits |= 0x80;
   else
@@ -1516,7 +1509,7 @@ int AdlibDriver::update_setAMDepth(__attribute__((unused)) uint8 *&dataptr, __at
   return 0;
 }
 
-int AdlibDriver::update_setVibratoDepth(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_setVibratoDepth(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   if (value & 1)
     _vibratoAndAMDepthBits |= 0x40;
   else
@@ -1526,13 +1519,13 @@ int AdlibDriver::update_setVibratoDepth(__attribute__((unused)) uint8 *&dataptr,
   return 0;
 }
 
-int AdlibDriver::update_changeExtraLevel1(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_changeExtraLevel1(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.opExtraLevel1 += value;
   adjustVolume(channel);
   return 0;
 }
 
-int AdlibDriver::updateCallback38(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::updateCallback38(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   int channelBackUp = _curChannel;
 
   _curChannel = value;
@@ -1542,7 +1535,7 @@ int AdlibDriver::updateCallback38(__attribute__((unused)) uint8 *&dataptr, __att
   channel2.opExtraLevel2 = 0;
 
   if (value != 9) {
-    uint8 outValue = _regOffset[value];
+    uint8_t outValue = _regOffset[value];
 
     // Feedback strength / Connection type
     writeOPL(0xC0 + _curChannel, 0x00);
@@ -1561,12 +1554,12 @@ int AdlibDriver::updateCallback38(__attribute__((unused)) uint8 *&dataptr, __att
   return 0;
 }
 
-int AdlibDriver::updateCallback39(uint8 *&dataptr, Channel &channel, uint8 value) {
-  uint16 unk = *dataptr++;
+int AdlibDriver::updateCallback39(uint8_t *&dataptr, Channel &channel, uint8_t value) {
+  uint16_t unk = *dataptr++;
   unk |= value << 8;
   unk &= getRandomNr();
 
-  uint16 unk2 = ((channel.regBx & 0x1F) << 8) | channel.regAx;
+  uint16_t unk2 = ((channel.regBx & 0x1F) << 8) | channel.regAx;
   unk2 += unk;
   unk2 |= ((channel.regBx & 0x20) << 8);
 
@@ -1579,36 +1572,36 @@ int AdlibDriver::updateCallback39(uint8 *&dataptr, Channel &channel, uint8 value
   return 0;
 }
 
-int AdlibDriver::update_removePrimaryEffect2(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_removePrimaryEffect2(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
   channel.primaryEffect = 0;
   return 0;
 }
 
-int AdlibDriver::updateCallback41(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::updateCallback41(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.unk16 = value;
   setupNote(channel.rawNote, channel, true);
   return 0;
 }
 
-int AdlibDriver::update_resetToGlobalTempo(uint8 *&dataptr, Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_resetToGlobalTempo(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
   channel.tempo = _tempo;
   return 0;
 }
 
-int AdlibDriver::update_nop1(uint8 *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_nop1(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
   return 0;
 }
 
-int AdlibDriver::update_setDurationRandomness(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setDurationRandomness(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.durationRandomness = value;
   return 0;
 }
 
-int AdlibDriver::update_changeChannelTempo(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
-  int tempo = channel.tempo + (int8)value;
+int AdlibDriver::update_changeChannelTempo(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
+  int tempo = channel.tempo + (int8_t)value;
 
   if (tempo <= 0)
     tempo = 1;
@@ -1619,8 +1612,8 @@ int AdlibDriver::update_changeChannelTempo(__attribute__((unused)) uint8 *&datap
   return 0;
 }
 
-int AdlibDriver::updateCallback46(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
-  uint8 entry = *dataptr++;
+int AdlibDriver::updateCallback46(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
+  uint8_t entry = *dataptr++;
   _tablePtr1 = _unkTable2[entry++];
   _tablePtr2 = _unkTable2[entry];
   if (value == 2) {
@@ -1633,12 +1626,12 @@ int AdlibDriver::updateCallback46(uint8 *&dataptr, __attribute__((unused)) Chann
 // TODO: This is really the same as update_nop1(), so they should be combined
 //       into one single update_nop().
 
-int AdlibDriver::update_nop2(uint8 *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_nop2(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
   return 0;
 }
 
-int AdlibDriver::update_setupRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupRhythmSection(uint8_t *&dataptr, Channel &channel, uint8_t value) {
   int channelBackUp = _curChannel;
   int regOffsetBackUp = _curRegOffset;
 
@@ -1683,7 +1676,7 @@ int AdlibDriver::update_setupRhythmSection(uint8 *&dataptr, Channel &channel, ui
   return 0;
 }
 
-int AdlibDriver::update_playRhythmSection(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_playRhythmSection(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   // Any instrument that we want to play, and which was already playing,
   // is temporarily keyed off. Instruments that were off already, or
   // which we don't want to play, retain their old on/off status. This is
@@ -1703,7 +1696,7 @@ int AdlibDriver::update_playRhythmSection(__attribute__((unused)) uint8 *&datapt
   return 0;
 }
 
-int AdlibDriver::update_removeRhythmSection(uint8 *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8 value) {
+int AdlibDriver::update_removeRhythmSection(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, __attribute__((unused)) uint8_t value) {
   --dataptr;
   _rhythmSectionBits = 0;
 
@@ -1714,8 +1707,8 @@ int AdlibDriver::update_removeRhythmSection(uint8 *&dataptr, __attribute__((unus
   return 0;
 }
 
-int AdlibDriver::updateCallback51(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
-  uint8 value2 = *dataptr++;
+int AdlibDriver::updateCallback51(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
+  uint8_t value2 = *dataptr++;
 
   if (value & 1) {
     _unkValue12 = value2;
@@ -1755,8 +1748,8 @@ int AdlibDriver::updateCallback51(uint8 *&dataptr, __attribute__((unused)) Chann
   return 0;
 }
 
-int AdlibDriver::updateCallback52(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
-  uint8 value2 = *dataptr++;
+int AdlibDriver::updateCallback52(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
+  uint8_t value2 = *dataptr++;
 
   if (value & 1) {
     _unkValue11 = checkValue(value2 + _unkValue7 + _unkValue11 + _unkValue12);
@@ -1796,8 +1789,8 @@ int AdlibDriver::updateCallback52(uint8 *&dataptr, __attribute__((unused)) Chann
   return 0;
 }
 
-int AdlibDriver::updateCallback53(uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
-  uint8 value2 = *dataptr++;
+int AdlibDriver::updateCallback53(uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
+  uint8_t value2 = *dataptr++;
 
   if (value & 1) {
     _unkValue11 = value2;
@@ -1837,17 +1830,17 @@ int AdlibDriver::updateCallback53(uint8 *&dataptr, __attribute__((unused)) Chann
   return 0;
 }
 
-int AdlibDriver::update_setSoundTrigger(__attribute__((unused)) uint8 *&dataptr, __attribute__((unused)) Channel &channel, uint8 value) {
+int AdlibDriver::update_setSoundTrigger(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
   _soundTrigger = value;
   return 0;
 }
 
-int AdlibDriver::update_setTempoReset(__attribute__((unused)) uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setTempoReset(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.tempoReset = value;
   return 0;
 }
 
-int AdlibDriver::updateCallback56(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::updateCallback56(uint8_t *&dataptr, Channel &channel, uint8_t value) {
   channel.unk39 = value;
   channel.unk40 = *dataptr++;
   return 0;
@@ -2007,7 +2000,7 @@ void AdlibDriver::setupParserOpcodeTable() {
 // This table holds the register offset for operator 1 for each of the nine
 // channels. To get the register offset for operator 2, simply add 3.
 
-const uint8 AdlibDriver::_regOffset[] = {
+const uint8_t AdlibDriver::_regOffset[] = {
   0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11,
   0x12
 };
@@ -2016,7 +2009,7 @@ const uint8 AdlibDriver::_regOffset[] = {
 // F-Numbers (10 bits) for the notes of the 12-tone scale. However, it does not
 // match the table in the Adlib documentation I've seen.
 
-const uint16 AdlibDriver::_unkTable[] = {
+const uint16_t AdlibDriver::_unkTable[] = {
   0x0134, 0x0147, 0x015A, 0x016F, 0x0184, 0x019C, 0x01B4, 0x01CE, 0x01E9,
   0x0207, 0x0225, 0x0246
 };
@@ -2024,7 +2017,7 @@ const uint16 AdlibDriver::_unkTable[] = {
 // These tables are currently only used by updateCallback46(), which only ever
 // uses the first element of one of the sub-tables.
 
-const uint8 *AdlibDriver::_unkTable2[] = {
+const uint8_t *AdlibDriver::_unkTable2[] = {
   AdlibDriver::_unkTable2_1,
   AdlibDriver::_unkTable2_2,
   AdlibDriver::_unkTable2_1,
@@ -2033,7 +2026,7 @@ const uint8 *AdlibDriver::_unkTable2[] = {
   AdlibDriver::_unkTable2_2
 };
 
-const uint8 AdlibDriver::_unkTable2_1[] = {
+const uint8_t AdlibDriver::_unkTable2_1[] = {
   0x50, 0x50, 0x4F, 0x4F, 0x4E, 0x4E, 0x4D, 0x4D,
   0x4C, 0x4C, 0x4B, 0x4B, 0x4A, 0x4A, 0x49, 0x49,
   0x48, 0x48, 0x47, 0x47, 0x46, 0x46, 0x45, 0x45,
@@ -2054,7 +2047,7 @@ const uint8 AdlibDriver::_unkTable2_1[] = {
 };
 
 // no don't ask me WHY this table exsits!
-const uint8 AdlibDriver::_unkTable2_2[] = {
+const uint8_t AdlibDriver::_unkTable2_2[] = {
   0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
   0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
   0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
@@ -2073,7 +2066,7 @@ const uint8 AdlibDriver::_unkTable2_2[] = {
   0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F
 };
 
-const uint8 AdlibDriver::_unkTable2_3[] = {
+const uint8_t AdlibDriver::_unkTable2_3[] = {
   0x40, 0x40, 0x40, 0x3F, 0x3F, 0x3F, 0x3E, 0x3E,
   0x3E, 0x3D, 0x3D, 0x3D, 0x3C, 0x3C, 0x3C, 0x3B,
   0x3B, 0x3B, 0x3A, 0x3A, 0x3A, 0x39, 0x39, 0x39,
@@ -2100,7 +2093,7 @@ const uint8 AdlibDriver::_unkTable2_3[] = {
 // This could be some sort of pitch bend, but I have yet to see it used for
 // anything so it's hard to say.
 
-const uint8 AdlibDriver::_unkTables[][32] = {
+const uint8_t AdlibDriver::_unkTables[][32] = {
   // 0
   { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x08,
     0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
@@ -2232,7 +2225,7 @@ bool CadlPlayer::init() {
 }
 
 void CadlPlayer::process() {
-  uint8 trigger = _driver->callback(11);
+  uint8_t trigger = _driver->callback(11);
 
   if (trigger < _numSoundTriggers) {
     int soundId = _soundTriggers[trigger];
@@ -2277,7 +2270,7 @@ void CadlPlayer::callback(void *userdata, uint8_t *audiobuf, int len)
 // 	loadSoundFile(file);
 // }
 
-void CadlPlayer::playTrack(uint8 track) {
+void CadlPlayer::playTrack(uint8_t track) {
   play(track);
 }
 
@@ -2292,8 +2285,8 @@ void CadlPlayer::playSoundEffect(uint8_t track) {
 }
 
 void CadlPlayer::play(uint8_t track) {
-  uint8 soundId = _trackEntries[track];
-  if ((int8)soundId == -1 || !_soundDataPtr)
+  uint8_t soundId = _trackEntries[track];
+  if ((int8_t)soundId == -1 || !_soundDataPtr)
     return;
   soundId &= 0xFF;
   _driver->callback(16, 0);
@@ -2350,16 +2343,16 @@ bool CadlPlayer::load(uint8_t *bufFiledata, int bufsize)
   _driver->callback(8, int(-1));
   _soundDataPtr = 0;
 
-  uint8 *p = bufFiledata;
-  memcpy(_trackEntries, p, 120*sizeof(uint8));
+  uint8_t *p = bufFiledata;
+  memcpy(_trackEntries, p, 120*sizeof(uint8_t));
   p += 120;
 
   int soundDataSize = bufsize - 120;
 
-  _soundDataPtr = new uint8[soundDataSize];
+  _soundDataPtr = new uint8_t[soundDataSize];
   assert(_soundDataPtr);
 
-  memcpy(_soundDataPtr, p, soundDataSize*sizeof(uint8));
+  memcpy(_soundDataPtr, p, soundDataSize*sizeof(uint8_t));
 
   bufFiledata = p = 0;
   bufsize = 0;

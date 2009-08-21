@@ -8,10 +8,6 @@
 #ifndef EASTWOOD_ADLIBFILE_H
 #define EASTWOOD_ADLIBFILE_H 
 
-#include <string>
-#include <inttypes.h>
-
-
 #include <SDL.h>
 #include <SDL_mixer.h>
 
