@@ -26,7 +26,7 @@
 #include "EmcFileDisassemble.h"
 #include "EmcFileInternal.h"
 
-#include "../Exception.h"
+#include "Exception.h"
 
 using namespace eastwood;
 

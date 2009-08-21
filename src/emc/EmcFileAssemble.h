@@ -22,7 +22,6 @@
  */
 
 #include <string>
-#include "../StdDef.h"
 
 
 class EmcFileAssemble : public EmcFileBase {

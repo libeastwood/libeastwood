@@ -21,6 +21,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "StdDef.h"
+
 #include "EmcFileBase.h"
 #include "EmcFileAssemble.h"
 #include "EmcFileInternal.h"

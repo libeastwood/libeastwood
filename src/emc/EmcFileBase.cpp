@@ -22,7 +22,7 @@
 #include "EmcFileDisassemble.h"
 #include "EmcFileAssemble.h"
 
-#include "../Exception.h"
+#include "Exception.h"
 
 using namespace eastwood;
 
