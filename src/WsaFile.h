@@ -18,29 +18,29 @@ public:
 
 	SDL_Surface *getSurface(uint32_t FrameNumber);
 
-	inline uint32_t getNumFrames() { return (uint32_t) NumFrames; };
-	inline uint32_t getFramesPer1024ms() { return FramesPer1024ms; };
-	inline float getFPS() { return fps; }
+	inline uint32_t getNumFrames() { return (uint32_t) _numFrames; };
+	inline uint32_t getFramesPer1024ms() { return _framesPer1024ms; };
+	inline float getFPS() { return _fps; }
 
 private:
 	void decodeFrames();
-	std::string m_text;
+	std::string _text;
 
-	unsigned char *decodedFrames;
+	unsigned char *_decodedFrames;
 
-	unsigned char *Filedata;
-	unsigned char *m_textColor;
+	unsigned char *_fileData;
+	unsigned char *_textColor;
 
-	SDL_Palette *m_palette;
+	SDL_Palette *_palette;
 
-	uint32_t *Index;
-	int WsaFilesize;
+	uint32_t *_index;
+	int _wsaFileSize;
 
-	uint16_t NumFrames;
-	uint16_t SizeX;
-	uint16_t SizeY;
-	uint32_t FramesPer1024ms;
-	float fps;
+	uint16_t _numFrames;
+	uint16_t _sizeX;
+	uint16_t _sizeY;
+	uint32_t _framesPer1024ms;
+	float _fps;
 };
 
 #endif // EASTWOOD_WSAFILE_H
