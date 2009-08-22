@@ -63,7 +63,7 @@ struct VocFileHeader {
  * rates, but the VOC marks them incorrectly as 11111 or 22222 kHz. This code
  * works around that and "unrounds" the sampling rates.
  */
-static uint32_t getSampleRateFromVOCRate(uint8_t vocSR) {
+uint32_t getSampleRateFromVOCRate(uint8_t vocSR) {
     if (vocSR == 0xa5 || vocSR == 0xa6) {
 	return 11025;
     } else if (vocSR == 0xd2 || vocSR == 0xd3) {
