@@ -439,14 +439,14 @@ void EmcFileDisassemble::o_execute_Unit_GetDetail() {
 	    "IndexGetAsObject",      
 	    "Field6BGet",                 
 	    "loc_27562",          
-	    "Field49AndField4BGet",                 
-	    "WeaponCoolDown?",                 
-	    "Field36And4h",               
+	    "IsMoving",
+	    "WeaponCoolDownTimer",
+	    "OptsFitW",
 	    "HouseIDGet",            
 	    "loc_275C1",                 
 	    "TurretGet?",     
 	    "loc_2752F",                 
-	    "DoesTurretRotate",          
+	    "CanTurretRotates",          
 	    "CheckIfHuman"              
 	};
 	_destinationFile << "(" << nameUnitDetails[_scriptLastPush] << ")";
