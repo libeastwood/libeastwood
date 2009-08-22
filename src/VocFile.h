@@ -1,7 +1,14 @@
 #ifndef EASTWOOD_VOCFILE_H
 #define EASTWOOD_VOCFILE_H
 
-class Mix_Chunk;
+enum AudioFormat { 
+    FMT_U8,
+    FMT_S8,
+    FMT_U16LE,
+    FMT_S16LE,
+    FMT_U16BE,
+    FMT_S16BE
+};
 
 /**
  * Take a sample rate parameter as it occurs in a VOC sound header, and
@@ -23,7 +30,7 @@ extern int getSampleRateFromVOCRate(int vocSR);
 	\param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
 	\return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
  */
-extern Mix_Chunk* loadVOCFromStream(std::istream &stream, int quality = 0);
+extern uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequency, int channels, AudioFormat format, int quality = 0);
 
 #endif // EASTWOOD_VOCFILE_H
 

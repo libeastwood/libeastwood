@@ -20,7 +20,6 @@
 #include <cmath>
 #include <cassert>
 #include <samplerate.h>
-#include <SDL_mixer.h>
 #include <fstream>
 
 #include "StdDef.h"
@@ -31,7 +30,7 @@
 
 using namespace eastwood;
 
-enum {
+enum VocCode {
     VOC_CODE_TERM = 0,
     VOC_CODE_DATA,
     VOC_CODE_CONT,
@@ -41,9 +40,10 @@ enum {
     VOC_CODE_LOOPBEGIN,
     VOC_CODE_LOOPEND,
     VOC_CODE_EXTENDED,
-    VOC_CODE_DATA_16,
-    NUM_SAMPLES_OF_SILENCE = 250
+    VOC_CODE_DATA_16
 };
+
+#define NUM_SAMPLES_OF_SILENCE 250
 
 struct VocFileHeader {
     uint8_t desc[20];
@@ -135,7 +135,7 @@ static uint8_t *loadVOCFromStream(std::istream &stream, uint32_t &size, uint32_t
 	    len |= stream.get() << 8;
 	    len |= stream.get() << 16;
 
-	    switch (code) {
+	    switch ((VocCode)code) {
 	    case VOC_CODE_DATA:
 	    case VOC_CODE_DATA_16: {
 		uint16_t packing;
@@ -248,7 +248,7 @@ static inline T float2integer(float x) {
 }
 
 template <typename T>
-static T *setSoundBuffer(uint32_t &len, uint16_t format,
+static T *setSoundBuffer(size_t &len, AudioFormat format,
 	int channels, uint32_t samples, float *dataFloat,
 	int silenceLength) {
     T* data;
@@ -258,9 +258,9 @@ static T *setSoundBuffer(uint32_t &len, uint16_t format,
 
     for(uint32_t i=0; i < samples*channels; i+=channels) {
 	data[i] = float2integer<T>(dataFloat[(i/channels)+silenceLength]);
-	if(format == AUDIO_U16LSB || format == AUDIO_S16LSB)
+	if(format == FMT_U16LE || format == FMT_S16LE)
 	    data[i] = htole16(data[i]);
-	else if(format == AUDIO_U16MSB || format == AUDIO_S16MSB)
+	else if(format == FMT_U16BE || format == FMT_S16BE)
 	    data[i] = htobe16(data[i]);
 	if(sizeof(T) == sizeof(uint8_t))
 	    memset((void*)&data[i+1], data[i], channels);
@@ -271,7 +271,7 @@ static T *setSoundBuffer(uint32_t &len, uint16_t format,
     return data;
 }
 
-Mix_Chunk* loadVOCFromStream(std::istream &stream, int quality) {
+uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequency, int channels, AudioFormat targetFormat, int quality) {
     // Read voc file
     uint32_t frequency,
 	     samples,
@@ -299,15 +299,6 @@ Mix_Chunk* loadVOCFromStream(std::istream &stream, int quality) {
     // To prevent strange invalid read in src_linear
     samples--;
 
-    // Get audio device specifications
-    int targetFrequency, channels;
-    uint16_t targetFormat;
-    if(Mix_QuerySpec(&targetFrequency, &targetFormat, &channels) == 0) {
-	free(data);
-	delete [] dataFloat;
-	return NULL;
-    }
-
     // Convert to audio device frequency
     float conversionRatio = ((float) targetFrequency) / ((float) frequency);
     uint32_t targetSamplesFloat = (uint32_t) ((float) samples * conversionRatio) + 1;
@@ -325,7 +316,6 @@ Mix_Chunk* loadVOCFromStream(std::istream &stream, int quality) {
     if(src_simple(&src_data, quality, channels) != 0) {
 	delete [] dataFloat;
 	delete [] targetDataFloat;
-	return NULL;
     }
 
     uint32_t targetSamples = src_data.output_frames_gen;
@@ -347,38 +337,34 @@ Mix_Chunk* loadVOCFromStream(std::istream &stream, int quality) {
     int silenceLength = (int) ((NUM_SAMPLES_OF_SILENCE * conversionRatio)*(3.0/4.0));
     targetSamples -= 2*silenceLength;
 
-    Mix_Chunk* myChunk = new Mix_Chunk;
-
-    myChunk->volume = 128;
-    myChunk->allocated = 1;	
 
     switch(targetFormat) {
-    case AUDIO_U8:
-	myChunk->abuf = (uint8_t*) setSoundBuffer<uint8_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+    case FMT_U8:
+	data = (uint8_t*) setSoundBuffer<uint8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
-    case AUDIO_S8:
-	myChunk->abuf = (uint8_t*) setSoundBuffer<int8_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+    case FMT_S8:
+	data = (uint8_t*) setSoundBuffer<int8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
-    case AUDIO_U16LSB:
-	myChunk->abuf = (uint8_t*) setSoundBuffer<uint16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+    case FMT_U16LE:
+	data = (uint8_t*) setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
-    case AUDIO_S16LSB:
-	myChunk->abuf = (uint8_t*) setSoundBuffer<int16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+    case FMT_S16LE:
+	data = (uint8_t*) setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
-    case AUDIO_U16MSB:
-	myChunk->abuf = (uint8_t*) setSoundBuffer<uint16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+    case FMT_U16BE:
+	data = (uint8_t*) setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
-    case AUDIO_S16MSB:
-	myChunk->abuf = (uint8_t*) setSoundBuffer<int16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+    case FMT_S16BE:
+	data = (uint8_t*) setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
     }
 
     delete [] targetDataFloat;
 
-    return myChunk;
+    return data;
 }
