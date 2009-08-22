@@ -248,7 +248,7 @@ static inline T float2integer(float x) {
 }
 
 template <typename T>
-static T *setSoundBuffer(size_t &len, AudioFormat format,
+static uint8_t *setSoundBuffer(size_t &len, AudioFormat format,
 	int channels, uint32_t samples, float *dataFloat,
 	int silenceLength) {
     T* data;
@@ -268,7 +268,7 @@ static T *setSoundBuffer(size_t &len, AudioFormat format,
 	    wmemset((wchar_t*)&data[i+1], (wchar_t)data[i], channels);
     }
 
-    return data;
+    return (uint8_t*)data;
 }
 
 uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequency, int channels, AudioFormat targetFormat, int quality) {
@@ -312,10 +312,11 @@ uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequenc
     src_data.output_frames = targetSamplesFloat;
 
     if(quality < SRC_SINC_BEST_QUALITY || quality > SRC_LINEAR)
-	quality = SRC_SINC_BEST_QUALITY;
+	quality = SRC_LINEAR;
     if(src_simple(&src_data, quality, channels) != 0) {
 	delete [] dataFloat;
 	delete [] targetDataFloat;
+	return NULL;
     }
 
     uint32_t targetSamples = src_data.output_frames_gen;
@@ -340,27 +341,27 @@ uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequenc
 
     switch(targetFormat) {
     case FMT_U8:
-	data = (uint8_t*) setSoundBuffer<uint8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	data = setSoundBuffer<uint8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S8:
-	data = (uint8_t*) setSoundBuffer<int8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	data = setSoundBuffer<int8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16LE:
-	data = (uint8_t*) setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	data = setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16LE:
-	data = (uint8_t*) setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	data = setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16BE:
-	data = (uint8_t*) setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	data = setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16BE:
-	data = (uint8_t*) setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	data = setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
 	break;
     }
 

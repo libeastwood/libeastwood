@@ -30,7 +30,7 @@ extern int getSampleRateFromVOCRate(int vocSR);
 	\param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
 	\return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
  */
-extern uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequency, int channels, AudioFormat format, int quality = 0);
+extern uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequency, int channels, AudioFormat format, int quality = 4);
 
 #endif // EASTWOOD_VOCFILE_H
 
