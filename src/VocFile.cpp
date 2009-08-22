@@ -178,19 +178,19 @@ static uint8_t *loadVOCFromStream(std::istream &stream, uint32_t &size, uint32_t
 		}
 	    } break;
 	    case VOC_CODE_SILENCE: {
-		uint16_t SilenceLength;
-		stream.read((char*)SilenceLength, sizeof(SilenceLength));
-		SilenceLength = htole16(SilenceLength);
+		uint16_t silenceLength;
+		stream.read((char*)silenceLength, sizeof(silenceLength));
+		silenceLength = htole16(silenceLength);
 		uint8_t time_constant = stream.get();
-		uint32_t SilenceRate = getSampleRateFromVOCRate(time_constant);
-
+		uint32_t silenceRate = getSampleRateFromVOCRate(time_constant);
 
 		uint32_t length = 0;
 		if(rate != 0) {
-		    length = (uint32_t) ((((double) SilenceRate)/((double) rate)) * SilenceLength) + 1;
+		    length = (uint32_t) ((((double) silenceRate)/((double) rate)) * silenceLength) + 1;
 		} else {
-		    LOG_ERROR("VocFile", "The silence in this voc-file is right at the beginning. Therefore it is not possible to adjust the silence sample rate to the sample rate of the other sound data in this file!");
-		    length = SilenceLength; 
+		    LOG_ERROR("VocFile", "The silence in this voc-file is right at the beginning.\n"
+			   "Therefore it is not possible to adjust the silence sample rate to the sample rate of the other sound data in this file!");
+		    length = silenceLength; 
 		}
 
 		if (size) {
@@ -229,307 +229,154 @@ static uint8_t *loadVOCFromStream(std::istream &stream, uint32_t &size, uint32_t
 	return ret_sound;
 }
 
-static inline uint8_t Float2uint8_t(float x) {
-    int val = lround(x*127.0 + 128.0);
-    if(val < 0) {
-	val = 0;
-    } else if (val > 255) {
-	val = 255;
-    }
+#define __HALF_MAX_SIGNED(type) ((type)1 << (sizeof(type)*8-2))
+#define __MAX_SIGNED(type) (__HALF_MAX_SIGNED(type) - 1 + __HALF_MAX_SIGNED(type))
+#define __MIN_SIGNED(type) (-1 - __MAX_SIGNED(type))
 
-    return (uint8_t) val;
+#define __MIN(type) ((type)-1 < 1?__MIN_SIGNED(type):(type)0)
+#define __MAX(type) ((type)~__MIN(type))
+
+template <typename T>
+static inline T float2integer(float x) {
+    int val = lround(x * (float)__MAX_SIGNED(T) + (float)((T)(__MAX_SIGNED(T)+1)-__MIN(T)));
+    if(val < __MIN(T))
+	val = __MIN(T);
+    else if(val > __MAX(T))
+	val = __MAX(T);
+
+    return (T)val;
 }
 
-static inline Sint8 Float2Sint8(float x) {
-    int val = lround(x*127.0);
-    if(val < -128) {
-	val = -128;
-    } else if (val > 127) {
-	val = 127;
+template <typename T>
+static T *setSoundBuffer(uint32_t &len, uint16_t format,
+	int channels, uint32_t samples, float *dataFloat,
+	int silenceLength) {
+    T* data;
+    int sampleSize = sizeof(T) * channels;
+    len = samples * sampleSize;
+    data = new T[len];
+
+    for(uint32_t i=0; i < samples*channels; i+=channels) {
+	data[i] = float2integer<T>(dataFloat[(i/channels)+silenceLength]);
+	if(format == AUDIO_U16LSB || format == AUDIO_S16LSB)
+	    data[i] = htole16(data[i]);
+	else if(format == AUDIO_U16MSB || format == AUDIO_S16MSB)
+	    data[i] = htobe16(data[i]);
+	if(sizeof(T) == sizeof(uint8_t))
+	    memset((void*)&data[i+1], data[i], channels);
+	else
+	    wmemset((wchar_t*)&data[i+1], (wchar_t)data[i], channels);
     }
 
-    return (Sint8) val;
-}
-
-static inline uint16_t Float2uint16_t(float x) {
-    int val = lround(x*32767.0 + 32768.0);
-    if(val < 0) {
-	val = 0;
-    } else if (val > 65535) {
-	val = 65535;
-    }
-
-    return (uint16_t) val;
-}
-
-static inline Sint16 Float2Sint16(float x) {
-    int val = lround(x*32767.0);
-    if(val < -32768) {
-	val = -32768;
-    } else if (val > 32767) {
-	val = 32767;
-    }
-
-    return (Sint16) val;
+    return data;
 }
 
 Mix_Chunk* loadVOCFromStream(std::istream &stream) {
     // Read voc file
-    uint32_t RawData_Frequency,
-	     RawData_Samples,
+    uint32_t frequency,
+	     samples,
 	     begin_loop,
 	     end_loop;
     uint16_t loops;
-    uint8_t* RawDatauint8_t = loadVOCFromStream(stream, RawData_Samples, RawData_Frequency, loops, begin_loop, end_loop);
+    uint8_t *data = loadVOCFromStream(stream, samples, frequency, loops, begin_loop, end_loop);
 
     // Convert to floats
-    float* RawDataFloat;
-    if((RawDataFloat = (float*) malloc((RawData_Samples+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float))) == NULL) {
-	free(RawDatauint8_t);
-	return NULL;
-    }
+    float *dataFloat = new float[(samples+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float)];
 
-    for(uint32_t i=0; i < NUM_SAMPLES_OF_SILENCE; i++) {
-	RawDataFloat[i] = 0.0;
-    }
+    for(uint32_t i=0; i < NUM_SAMPLES_OF_SILENCE; i++)
+	dataFloat[i] = 0.0;
 
-    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < RawData_Samples+NUM_SAMPLES_OF_SILENCE; i++) {
-	RawDataFloat[i] = (((float) RawDatauint8_t[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
-    }
+    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < samples+NUM_SAMPLES_OF_SILENCE; i++)
+	dataFloat[i] = (((float) data[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
-    for(uint32_t i=RawData_Samples+NUM_SAMPLES_OF_SILENCE; i < RawData_Samples + 2*NUM_SAMPLES_OF_SILENCE; i++) {
-	RawDataFloat[i] = 0.0;
-    }
+    for(uint32_t i=samples+NUM_SAMPLES_OF_SILENCE; i < samples+2*NUM_SAMPLES_OF_SILENCE; i++)
+	dataFloat[i] = 0.0;
 
-    free(RawDatauint8_t);
+    free(data);
 
-    RawData_Samples += 2*NUM_SAMPLES_OF_SILENCE;
+    samples += 2*NUM_SAMPLES_OF_SILENCE;
 
     // To prevent strange invalid read in src_linear
-    RawData_Samples--;
+    samples--;
 
     // Get audio device specifications
-    int TargetFrequency, channels;
-    uint16_t TargetFormat;
-    if(Mix_QuerySpec(&TargetFrequency, &TargetFormat, &channels) == 0) {
-	free(RawDatauint8_t);
-	free(RawDataFloat);
+    int targetFrequency, channels;
+    uint16_t targetFormat;
+    if(Mix_QuerySpec(&targetFrequency, &targetFormat, &channels) == 0) {
+	free(data);
+	delete [] dataFloat;
 	return NULL;
     }
 
     // Convert to audio device frequency
-    float ConversionRatio = ((float) TargetFrequency) / ((float) RawData_Frequency);
-    uint32_t TargetDataFloat_Samples = (uint32_t) ((float) RawData_Samples * ConversionRatio) + 1;
-    float* TargetDataFloat;
-    if((TargetDataFloat = (float*) malloc(TargetDataFloat_Samples*sizeof(float))) == NULL) {
-	free(RawDataFloat);
-	return NULL;
-    }
+    float conversionRatio = ((float) targetFrequency) / ((float) frequency);
+    uint32_t targetSamplesFloat = (uint32_t) ((float) samples * conversionRatio) + 1;
+    float* targetDataFloat = new float[targetSamplesFloat*sizeof(float)];
 
     SRC_DATA src_data;
-    src_data.data_in = RawDataFloat;
-    src_data.input_frames = RawData_Samples;
-    src_data.src_ratio = ConversionRatio;
-    src_data.data_out = TargetDataFloat;
-    src_data.output_frames = TargetDataFloat_Samples;
+    src_data.data_in = dataFloat;
+    src_data.input_frames = samples;
+    src_data.src_ratio = conversionRatio;
+    src_data.data_out = targetDataFloat;
+    src_data.output_frames = targetSamplesFloat;
 
     if(src_simple(&src_data, SRC_LINEAR, 1) != 0) {
-	free(RawDataFloat);
-	free(TargetDataFloat);
+	delete [] dataFloat;
+	delete [] targetDataFloat;
 	return NULL;
     }
 
-    uint32_t TargetData_Samples = src_data.output_frames_gen;
-    free(RawDataFloat);
+    uint32_t targetSamples = src_data.output_frames_gen;
+    delete [] dataFloat;
 
 
     // Equalize if neccessary
     float distance = 0.0;
-    for(uint32_t i=0; i < TargetData_Samples; i++) {
-	if(fabs(TargetDataFloat[i]) > distance) {
-	    distance = fabs(TargetDataFloat[i]);
-	}
-    }
+    for(uint32_t i=0; i < targetSamples; i++)
+	if(fabs(targetDataFloat[i]) > distance)
+	    distance = fabs(targetDataFloat[i]);
 
-    if(distance > 1.0) {
-	//Equalize
-	for(uint32_t i=0; i < TargetData_Samples; i++) {
-	    TargetDataFloat[i] = TargetDataFloat[i] / distance;
-	}
-    }
-
+    //Equalize
+    if(distance > 1.0)
+	for(uint32_t i=0; i < targetSamples; i++)
+	    targetDataFloat[i] = targetDataFloat[i] / distance;
 
     // Convert floats back to integers but leave out 3/4 of silence
-    int ThreeQuaterSilenceLength = (int) ((NUM_SAMPLES_OF_SILENCE * ConversionRatio)*(3.0/4.0));
-    TargetData_Samples -= 2*ThreeQuaterSilenceLength;
+    int silenceLength = (int) ((NUM_SAMPLES_OF_SILENCE * conversionRatio)*(3.0/4.0));
+    targetSamples -= 2*silenceLength;
 
-    Mix_Chunk* myChunk;
-    if((myChunk = (Mix_Chunk*) calloc(sizeof(Mix_Chunk),1)) == NULL) {
-	free(TargetDataFloat);
-	return NULL;
-    }
+    Mix_Chunk* myChunk = new Mix_Chunk;
 
     myChunk->volume = 128;
     myChunk->allocated = 1;	
 
-    switch(TargetFormat) {
-	case AUDIO_U8:
-	    {
-		uint8_t* TargetData;
-		int SizeOfTargetSample = sizeof(uint8_t) * channels;
-		if((TargetData = (uint8_t*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-		    free(TargetDataFloat);
-		    free(myChunk);
-		    return NULL;
-		}
+    switch(targetFormat) {
+    case AUDIO_U8:
+	myChunk->abuf = (uint8_t*) setSoundBuffer<uint8_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	break;
 
-		for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-		    TargetData[i] = Float2uint8_t(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]);
-		    for(int j = 1; j < channels; j++) {
-			TargetData[i+j] = TargetData[i];
-		    }
+    case AUDIO_S8:
+	myChunk->abuf = (uint8_t*) setSoundBuffer<int8_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	break;
 
-		}
+    case AUDIO_U16LSB:
+	myChunk->abuf = (uint8_t*) setSoundBuffer<uint16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	break;
 
-		free(TargetDataFloat);
+    case AUDIO_S16LSB:
+	myChunk->abuf = (uint8_t*) setSoundBuffer<int16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	break;
 
-		myChunk->abuf = (uint8_t*) TargetData;
-		myChunk->alen = TargetData_Samples * SizeOfTargetSample;
+    case AUDIO_U16MSB:
+	myChunk->abuf = (uint8_t*) setSoundBuffer<uint16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	break;
 
-	    } break;
-
-	case AUDIO_S8:
-	    {
-		Sint8* TargetData;
-		int SizeOfTargetSample = sizeof(Sint8) * channels;
-		if((TargetData = (Sint8*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-		    free(TargetDataFloat);
-		    free(myChunk);
-		    return NULL;
-		}
-
-		for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-		    TargetData[i] = Float2Sint8(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]);
-		    for(int j = 1; j < channels; j++) {
-			TargetData[i+j] = TargetData[i];
-		    }
-
-		}
-
-		free(TargetDataFloat);
-
-		myChunk->abuf = (uint8_t*) TargetData;
-		myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-
-	    } break;
-
-	case AUDIO_U16LSB:
-	    {
-		uint16_t* TargetData;
-		int SizeOfTargetSample = sizeof(uint16_t) * channels;
-		if((TargetData = (uint16_t*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-		    free(TargetDataFloat);
-		    free(myChunk);
-		    return NULL;
-		}
-
-		for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-		    TargetData[i] = htole16(Float2uint16_t(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
-		    for(int j = 1; j < channels; j++) {
-			TargetData[i+j] = TargetData[i];
-		    }
-
-		}
-
-		free(TargetDataFloat);
-
-		myChunk->abuf = (uint8_t*) TargetData;
-		myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-
-	    } break;
-
-	case AUDIO_S16LSB:
-	    {
-		Sint16* TargetData;
-		int SizeOfTargetSample = sizeof(Sint16) * channels;
-		if((TargetData = (Sint16*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-		    free(TargetDataFloat);
-		    free(myChunk);
-		    return NULL;
-		}
-
-		for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-		    TargetData[i] = htole16(Float2Sint16(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
-		    for(int j = 1; j < channels; j++) {
-			TargetData[i+j] = TargetData[i];
-		    }
-
-		}
-
-		free(TargetDataFloat);
-
-		myChunk->abuf = (uint8_t*) TargetData;
-		myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-
-	    } break;
-
-	case AUDIO_U16MSB:
-	    {
-		uint16_t* TargetData;
-		int SizeOfTargetSample = sizeof(uint16_t) * channels;
-		if((TargetData = (uint16_t*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-		    free(TargetDataFloat);
-		    free(myChunk);
-		    return NULL;
-		}
-
-		for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-		    TargetData[i] = htobe16(Float2uint16_t(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
-		    for(int j = 1; j < channels; j++) {
-			TargetData[i+j] = TargetData[i];
-		    }
-
-		}
-
-		free(TargetDataFloat);
-
-		myChunk->abuf = (uint8_t*) TargetData;
-		myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-
-	    } break;
-
-	case AUDIO_S16MSB:
-	    {
-		Sint16* TargetData;
-		int SizeOfTargetSample = sizeof(Sint16) * channels;
-		if((TargetData = (Sint16*) malloc(TargetData_Samples * SizeOfTargetSample)) == NULL) {
-		    free(TargetDataFloat);
-		    free(myChunk);
-		    return NULL;
-		}
-
-		for(uint32_t i=0; i < TargetData_Samples*channels; i+=channels) {
-		    TargetData[i] = htobe16(Float2Sint16(TargetDataFloat[(i/channels)+ThreeQuaterSilenceLength]));
-		    for(int j = 1; j < channels; j++) {
-			TargetData[i+j] = TargetData[i];
-		    }
-
-		}
-
-		free(TargetDataFloat);
-
-		myChunk->abuf = (uint8_t*) TargetData;
-		myChunk->alen = TargetData_Samples * SizeOfTargetSample;
-
-	    } break;
-
-	default:
-	    {
-		free(TargetDataFloat);
-		free(myChunk);
-		return NULL;
-	    } break;
+    case AUDIO_S16MSB:
+	myChunk->abuf = (uint8_t*) setSoundBuffer<int16_t>(myChunk->alen, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	break;
     }
+
+    delete [] targetDataFloat;
 
     return myChunk;
 }
