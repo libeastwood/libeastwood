@@ -50,7 +50,7 @@ struct VocFileHeader {
     uint16_t datablock_offset;
     uint16_t version;
     uint16_t id;
-} PACKED_STRUCT;
+} __attribute__((packed));
 
 
 /**
@@ -63,7 +63,7 @@ struct VocFileHeader {
  * rates, but the VOC marks them incorrectly as 11111 or 22222 kHz. This code
  * works around that and "unrounds" the sampling rates.
  */
-uint32_t getSampleRateFromVOCRate(uint8_t vocSR) {
+static uint32_t getSampleRateFromVOCRate(uint8_t vocSR) {
     if (vocSR == 0xa5 || vocSR == 0xa6) {
 	return 11025;
     } else if (vocSR == 0xd2 || vocSR == 0xd3) {
@@ -229,7 +229,7 @@ static uint8_t *loadVOCFromStream(std::istream &stream, uint32_t &size, uint32_t
 	return ret_sound;
 }
 
-inline uint8_t Float2uint8_t(float x) {
+static inline uint8_t Float2uint8_t(float x) {
     int val = lround(x*127.0 + 128.0);
     if(val < 0) {
 	val = 0;
@@ -240,7 +240,7 @@ inline uint8_t Float2uint8_t(float x) {
     return (uint8_t) val;
 }
 
-inline Sint8 Float2Sint8(float x) {
+static inline Sint8 Float2Sint8(float x) {
     int val = lround(x*127.0);
     if(val < -128) {
 	val = -128;
@@ -251,7 +251,7 @@ inline Sint8 Float2Sint8(float x) {
     return (Sint8) val;
 }
 
-inline uint16_t Float2uint16_t(float x) {
+static inline uint16_t Float2uint16_t(float x) {
     int val = lround(x*32767.0 + 32768.0);
     if(val < 0) {
 	val = 0;
@@ -262,7 +262,7 @@ inline uint16_t Float2uint16_t(float x) {
     return (uint16_t) val;
 }
 
-inline Sint16 Float2Sint16(float x) {
+static inline Sint16 Float2Sint16(float x) {
     int val = lround(x*32767.0);
     if(val < -32768) {
 	val = -32768;
