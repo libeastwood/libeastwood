@@ -322,7 +322,7 @@ Mix_Chunk* loadVOCFromStream(std::istream &stream, int quality) {
 
     if(quality < SRC_SINC_BEST_QUALITY || quality > SRC_LINEAR)
 	quality = SRC_SINC_BEST_QUALITY;
-    if(src_simple(&src_data, quality, 1) != 0) {
+    if(src_simple(&src_data, quality, channels) != 0) {
 	delete [] dataFloat;
 	delete [] targetDataFloat;
 	return NULL;
