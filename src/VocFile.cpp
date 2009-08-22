@@ -53,6 +53,18 @@ struct VocFileHeader {
 } __attribute__((packed));
 
 
+VocFile::VocFile(std::istream &stream, int _frequency, int channels, AudioFormat format, int quality) :
+    _stream(stream), _frequency(_frequency), _channels(channels), _format(format), _quality(quality),
+    _vocFrequency(0), _vocSize(0), _vocBeginLoop(0), _vocEndLoop(0), _vocLoops(0), _vocBuffer(NULL),
+    _buffer(NULL)
+{
+}
+
+VocFile::~VocFile()
+{
+    free(_vocBuffer);
+}
+
 /**
  * Take a sample rate parameter as it occurs in a VOC sound header, and
  * return the corresponding sample frequency.
@@ -63,7 +75,7 @@ struct VocFileHeader {
  * rates, but the VOC marks them incorrectly as 11111 or 22222 kHz. This code
  * works around that and "unrounds" the sampling rates.
  */
-uint32_t getSampleRateFromVOCRate(uint8_t vocSR) {
+int VocFile::getSampleRateFromVOCRate(int vocSR) {
     if (vocSR == 0xa5 || vocSR == 0xa6) {
 	return 11025;
     } else if (vocSR == 0xd2 || vocSR == 0xd3) {
@@ -90,17 +102,17 @@ uint32_t getSampleRateFromVOCRate(uint8_t vocSR) {
 	\param	rate	The sampling rate of the voc-file
 	\return	A pointer to a memory block that contains the data. (Free it with free() when no longer needed)
 */
-static uint8_t *loadVOCFromStream(std::istream &stream, uint32_t &size, uint32_t &rate, uint16_t &loops, uint32_t &begin_loop, uint32_t &end_loop) {
+void VocFile::parseVocFormat() {
 	VocFileHeader fileHeader;    
 	
-	stream.read((char*)&fileHeader, 8);
+	_stream.read((char*)&fileHeader, 8);
 
 	if (!memcmp(&fileHeader, "VTLK", 4)) {
-	    stream.read((char*)&fileHeader, sizeof(VocFileHeader));
-	    if(!stream.good()) goto invalid;
+	    _stream.read((char*)&fileHeader, sizeof(VocFileHeader));
+	    if(!_stream.good()) goto invalid;
 	} else if (!memcmp(&fileHeader, "Creative", 8)) {
-	    stream.read((char*)&fileHeader + 8, sizeof(VocFileHeader) - 8);
-	    if(!stream.good()) goto invalid;
+	    _stream.read((char*)&fileHeader + 8, sizeof(VocFileHeader) - 8);
+	    if(!_stream.good()) goto invalid;
 	} else {
 	invalid:
 	    throw(Exception(LOG_ERROR, "VocFile", "Invalid header"));
@@ -119,98 +131,94 @@ static uint8_t *loadVOCFromStream(std::istream &stream, uint32_t &size, uint32_t
 	assert(code == ~version + 0x1234);
 
 	uint32_t len;
-	uint8_t *ret_sound = NULL;
-	size = 0;
-	rate = 0;
-	begin_loop = 0;
-	end_loop = 0;
 	
-	while (!stream.eof()) {
-	    code = stream.get();
+	while (!_stream.eof()) {
+	    code = _stream.get();
 	    if(code == VOC_CODE_TERM) {
-		return ret_sound;
+		//TODO: throw exception?
+		return;
 	    }
 
-	    len = stream.get();
-	    len |= stream.get() << 8;
-	    len |= stream.get() << 16;
+	    len = _stream.get();
+	    len |= _stream.get() << 8;
+	    len |= _stream.get() << 16;
 
 	    switch ((VocCode)code) {
 	    case VOC_CODE_DATA:
 	    case VOC_CODE_DATA_16: {
 		uint16_t packing;
 		if(code == VOC_CODE_DATA) {
-		    uint8_t time_constant = stream.get();
-		    packing = stream.get();
+		    uint8_t time_constant = _stream.get();
+		    packing = _stream.get();
 		    len -= 2;
 		    uint32_t tmp_rate = getSampleRateFromVOCRate(time_constant);
-		    if((rate != 0) && (rate != tmp_rate))
-			LOG_ERROR("VocFile", "This voc-file contains data blocks with different sampling rates: old rate: %d, new rate: %d",rate,tmp_rate);
-		    rate = tmp_rate;
+		    if((_vocFrequency != 0) && (_vocFrequency != _vocFrequency))
+			LOG_ERROR("VocFile", "This voc-file contains data blocks with different sampling rates: old rate: %d, new rate: %d", _vocFrequency,tmp_rate);
+		    _vocFrequency = tmp_rate;
 
 		} else {
-		    stream.read((char*)rate, sizeof(rate));
-		    rate = htole32(rate);
-		    int bits = stream.get();
-		    int channels = stream.get();
+		    _stream.read((char*)_vocFrequency, sizeof(_vocFrequency));
+		    _vocFrequency = htole32(_vocFrequency);
+		    int bits = _stream.get();
+		    int channels = _stream.get();
 		    if (bits != 8 || channels != 1) {
 			//warning("Unsupported VOC file format (%d bits per sample, %d channels)", bits, channels);
 			break;
 		    }
-		    stream.read((char*)packing, sizeof(packing));
+		    _stream.read((char*)packing, sizeof(packing));
 		    packing = htole16(packing);
-		    stream.seekg(sizeof(uint32_t), std::ios::cur);
+		    _stream.seekg(sizeof(uint32_t), std::ios::cur);
 		    len -= 12;
 		}
 		//debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
 		if (packing == 0) {
-		    if (size) {
-			ret_sound = (uint8_t*)realloc(ret_sound, size + len);
+		    if (_vocSize) {
+			_vocBuffer = (uint8_t*)realloc(_vocBuffer, _vocSize + len);
 		    } else {
-			ret_sound = (uint8_t*)malloc(len);
+			_vocBuffer = (uint8_t*)malloc(len);
 		    }
-		    stream.read((char*)ret_sound + size, len);
-		    size += len;
-		    begin_loop = size;
-		    end_loop = size;
+		    _stream.read((char*)_vocBuffer + _vocSize, len);
+		    _vocSize += len;
+		    _vocBeginLoop = _vocSize;
+		    _vocEndLoop = _vocSize;
 		} else {
 		    /*warning("VOC file packing %d unsupported", packing)*/;
 		}
 	    } break;
 	    case VOC_CODE_SILENCE: {
 		uint16_t silenceLength;
-		stream.read((char*)silenceLength, sizeof(silenceLength));
+		_stream.read((char*)silenceLength, sizeof(silenceLength));
 		silenceLength = htole16(silenceLength);
-		uint8_t time_constant = stream.get();
+		uint8_t time_constant = _stream.get();
 		uint32_t silenceRate = getSampleRateFromVOCRate(time_constant);
 
 		uint32_t length = 0;
-		if(rate != 0) {
-		    length = (uint32_t) ((((double) silenceRate)/((double) rate)) * silenceLength) + 1;
+		if(_vocFrequency != 0) {
+		    length = (uint32_t) ((((double) silenceRate)/((double) _vocFrequency)) * silenceLength) + 1;
 		} else {
 		    LOG_ERROR("VocFile", "The silence in this voc-file is right at the beginning.\n"
 			   "Therefore it is not possible to adjust the silence sample rate to the sample rate of the other sound data in this file!");
 		    length = silenceLength; 
 		}
 
-		if (size) {
-		    ret_sound = (uint8_t *)realloc(ret_sound, size + length);
+		if (_vocSize) {
+		    _vocBuffer = (uint8_t *)realloc(_vocBuffer, _vocSize + length);
 		} else {
-		    ret_sound = (uint8_t *)malloc(length);
+		    _vocBuffer = (uint8_t *)malloc(length);
 		}
 
-		memset(ret_sound + size,0x80,length);
+		memset(_vocBuffer + _vocSize, 0x80, length);
 
-		size += length;
+		_vocSize += length;
 	    } break;
 
 	    case VOC_CODE_CONT:
 	    case VOC_CODE_MARKER:
 	    case VOC_CODE_TEXT:
 	    case VOC_CODE_LOOPBEGIN:
-		assert(len == sizeof(loops));
-		stream.read((char*)loops, len);
-		loops = htole16(loops);
+		assert(len == sizeof(_vocLoops));
+		_stream.read((char*)_vocLoops, len);
+		_vocLoops = htole16(_vocLoops);
 		break;
 
 	    case VOC_CODE_LOOPEND:
@@ -219,14 +227,12 @@ static uint8_t *loadVOCFromStream(std::istream &stream, uint32_t &size, uint32_t
 
 	    case VOC_CODE_EXTENDED:
 		assert(len == 4);
-		stream.seekg(len, std::ios::cur);
+		_stream.seekg(_length, std::ios::cur);
 
 	    default:
 		LOG_ERROR("VocFile", "Unhandled code in VOC file : %d", code);
-		return ret_sound;
 	    }
 	}
-	return ret_sound;
 }
 
 #define __HALF_MAX_SIGNED(type) ((type)1 << (sizeof(type)*8-2))
@@ -248,13 +254,13 @@ static inline T float2integer(float x) {
 }
 
 template <typename T>
-static uint8_t *setSoundBuffer(size_t &len, AudioFormat format,
+static uint8_t *setSoundBuffer(size_t &length, AudioFormat format,
 	int channels, uint32_t samples, float *dataFloat,
 	int silenceLength) {
     T* data;
     int sampleSize = sizeof(T) * channels;
-    len = samples * sampleSize;
-    data = new T[len];
+    length = samples * sampleSize;
+    data = new T[length];
 
     for(uint32_t i=0; i < samples*channels; i+=channels) {
 	data[i] = float2integer<T>(dataFloat[(i/channels)+silenceLength]);
@@ -271,49 +277,41 @@ static uint8_t *setSoundBuffer(size_t &len, AudioFormat format,
     return (uint8_t*)data;
 }
 
-uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequency, int channels, AudioFormat targetFormat, int quality) {
-    // Read voc file
-    uint32_t frequency,
-	     samples,
-	     begin_loop,
-	     end_loop;
-    uint16_t loops;
-    uint8_t *data = loadVOCFromStream(stream, samples, frequency, loops, begin_loop, end_loop);
+uint8_t *VocFile::loadVOCFromStream() {
+    parseVocFormat();
 
     // Convert to floats
-    float *dataFloat = new float[(samples+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float)];
+    float *dataFloat = new float[(_vocSize+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float)];
 
     for(uint32_t i=0; i < NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = 0.0;
 
-    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < samples+NUM_SAMPLES_OF_SILENCE; i++)
-	dataFloat[i] = (((float) data[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
+    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < _vocSize+NUM_SAMPLES_OF_SILENCE; i++)
+	dataFloat[i] = (((float) _vocBuffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
-    for(uint32_t i=samples+NUM_SAMPLES_OF_SILENCE; i < samples+2*NUM_SAMPLES_OF_SILENCE; i++)
+    for(uint32_t i=_vocSize+NUM_SAMPLES_OF_SILENCE; i < _vocSize+2*NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = 0.0;
 
-    free(data);
-
-    samples += 2*NUM_SAMPLES_OF_SILENCE;
+    _vocSize += 2*NUM_SAMPLES_OF_SILENCE;
 
     // To prevent strange invalid read in src_linear
-    samples--;
+    _vocSize--;
 
     // Convert to audio device frequency
-    float conversionRatio = ((float) targetFrequency) / ((float) frequency);
-    uint32_t targetSamplesFloat = (uint32_t) ((float) samples * conversionRatio) + 1;
-    float* targetDataFloat = new float[targetSamplesFloat*sizeof(float)];
+    float conversionRatio = ((float) _frequency) / ((float) _vocFrequency);
+    uint32_t targetSamplesFloat = (uint32_t) ((float) _vocSize * conversionRatio) + 1;
+    float *targetDataFloat = new float[targetSamplesFloat*sizeof(float)];
 
     SRC_DATA src_data;
     src_data.data_in = dataFloat;
-    src_data.input_frames = samples;
+    src_data.input_frames = _vocSize;
     src_data.src_ratio = conversionRatio;
     src_data.data_out = targetDataFloat;
     src_data.output_frames = targetSamplesFloat;
 
-    if(quality < SRC_SINC_BEST_QUALITY || quality > SRC_LINEAR)
-	quality = SRC_LINEAR;
-    if(src_simple(&src_data, quality, channels) != 0) {
+    if(_quality < SRC_SINC_BEST_QUALITY || _quality > SRC_LINEAR)
+	_quality = SRC_LINEAR;
+    if(src_simple(&src_data, _quality, _channels) != 0) {
 	delete [] dataFloat;
 	delete [] targetDataFloat;
 	return NULL;
@@ -339,33 +337,33 @@ uint8_t *loadVOCFromStream(std::istream &stream, size_t &len, int targetFrequenc
     targetSamples -= 2*silenceLength;
 
 
-    switch(targetFormat) {
+    switch(_format) {
     case FMT_U8:
-	data = setSoundBuffer<uint8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	_buffer = setSoundBuffer<uint8_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S8:
-	data = setSoundBuffer<int8_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	_buffer = setSoundBuffer<int8_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16LE:
-	data = setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	_buffer = setSoundBuffer<uint16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16LE:
-	data = setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	_buffer = setSoundBuffer<int16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16BE:
-	data = setSoundBuffer<uint16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	_buffer = setSoundBuffer<uint16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16BE:
-	data = setSoundBuffer<int16_t>(len, targetFormat, channels, targetSamples, targetDataFloat, silenceLength);
+	_buffer = setSoundBuffer<int16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
     }
 
     delete [] targetDataFloat;
 
-    return data;
+    return _buffer;
 }
