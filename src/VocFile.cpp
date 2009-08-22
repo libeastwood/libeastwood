@@ -271,7 +271,7 @@ static T *setSoundBuffer(uint32_t &len, uint16_t format,
     return data;
 }
 
-Mix_Chunk* loadVOCFromStream(std::istream &stream) {
+Mix_Chunk* loadVOCFromStream(std::istream &stream, int quality) {
     // Read voc file
     uint32_t frequency,
 	     samples,
@@ -320,7 +320,9 @@ Mix_Chunk* loadVOCFromStream(std::istream &stream) {
     src_data.data_out = targetDataFloat;
     src_data.output_frames = targetSamplesFloat;
 
-    if(src_simple(&src_data, SRC_LINEAR, 1) != 0) {
+    if(quality < SRC_SINC_BEST_QUALITY || quality > SRC_LINEAR)
+	quality = SRC_SINC_BEST_QUALITY;
+    if(src_simple(&src_data, quality, 1) != 0) {
 	delete [] dataFloat;
 	delete [] targetDataFloat;
 	return NULL;
