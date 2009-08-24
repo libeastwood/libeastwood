@@ -22,8 +22,8 @@ enum Interpolator
 };
 
 struct SoundBuffer {
-    uint8_t *buffer;
     uint32_t length;
+    uint8_t *buffer;
 };
 
 class VocFile 

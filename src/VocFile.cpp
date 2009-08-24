@@ -257,12 +257,10 @@ template <typename T>
 static SoundBuffer getSoundBuffer(AudioFormat format,
 	int channels, uint32_t samples, float *dataFloat,
 	int silenceLength) {
-    SoundBuffer soundBuffer;
     T* data;
-    uint32_t length;
-    uint32_t sampleSize = sizeof(T) * channels;
-    length = samples * sampleSize;
-    data = new T[length];
+    uint32_t length,
+	     sampleSize = sizeof(T) * channels;
+    SoundBuffer soundBuffer = { (length = samples * sampleSize), (uint8_t*)(data = new T[length])  };
 
     for(uint32_t i=0; i < samples*channels; i+=channels) {
 	data[i] = float2integer<T>(dataFloat[(i/channels)+silenceLength]);
@@ -275,7 +273,6 @@ static SoundBuffer getSoundBuffer(AudioFormat format,
 	else
 	    wmemset((wchar_t*)&data[i+1], (wchar_t)data[i], channels);
     }
-    soundBuffer.buffer = (uint8_t*)data, soundBuffer.length = length;
 
     return soundBuffer;
 }
