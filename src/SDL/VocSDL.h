@@ -9,7 +9,6 @@ class VocSDL : VocFile
     public:
 	VocSDL(std::istream &stream, int targetFrequency, int channels, AudioFormat format);
 	VocSDL(std::istream &stream);	
-	~VocSDL();
 
 	Mix_Chunk *getMixChunk(Interpolator interpolator = I_LINEAR);
 

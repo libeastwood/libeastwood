@@ -23,10 +23,6 @@ VocSDL::VocSDL(std::istream &stream) : VocFile(stream, 0, 0, FMT_U8)
 
 }
 
-VocSDL::~VocSDL()
-{
-}
-
 Mix_Chunk *VocSDL::getMixChunk(Interpolator interpolator) {
     SoundBuffer soundBuffer = getVOCFromStream(interpolator);
     Mix_Chunk *mixChunk = new Mix_Chunk;

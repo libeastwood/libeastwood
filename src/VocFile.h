@@ -30,7 +30,7 @@ class VocFile
 {
     public:
 	VocFile(std::istream &stream, int targetFrequency, int channels, AudioFormat format);
-	~VocFile();
+	virtual ~VocFile();
 
 	/**
 	 * Take a sample rate parameter as it occurs in a VOC sound header, and
