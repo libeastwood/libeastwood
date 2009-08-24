@@ -43,6 +43,12 @@ class VocFile
 	uint8_t *loadVOCFromStream();
 	inline size_t getLength() { return _length; }
 
+    protected:
+	AudioFormat _format;
+	int _frequency;
+	int _channels;
+	int _quality;
+
     private:
 	uint32_t _vocFrequency,
 		 _vocSize,
@@ -53,10 +59,6 @@ class VocFile
 	uint8_t *_vocBuffer,
 		*_buffer;
 	size_t _length;
-	AudioFormat _format;
-	int _frequency;
-	int _channels;
-	int _quality;
 	std::istream &_stream;
     
 
