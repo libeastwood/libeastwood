@@ -16,6 +16,7 @@ namespace eastwood {
     class Exception {
         public:
             Exception(logLevel level, std::string location, std::string message);
+            virtual ~Exception(){}
             inline logLevel getLogLevel() { return m_level; }
             inline std::string getLocation() { return m_location; }
             inline std::string getMessage() { return m_message; }
