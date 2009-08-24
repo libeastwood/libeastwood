@@ -227,7 +227,7 @@ void VocFile::parseVocFormat() {
 
 	    case VOC_CODE_EXTENDED:
 		assert(len == 4);
-		_stream.seekg(_length, std::ios::cur);
+		_stream.seekg(len, std::ios::cur);
 
 	    default:
 		LOG_ERROR("VocFile", "Unhandled code in VOC file : %d", code);
