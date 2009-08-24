@@ -257,6 +257,7 @@ template <typename T>
 static SoundBuffer getSoundBuffer(AudioFormat format,
 	int channels, uint32_t samples, float *dataFloat,
 	int silenceLength) {
+    SoundBuffer soundBuffer;
     T* data;
     uint32_t length;
     uint32_t sampleSize = sizeof(T) * channels;
@@ -274,8 +275,9 @@ static SoundBuffer getSoundBuffer(AudioFormat format,
 	else
 	    wmemset((wchar_t*)&data[i+1], (wchar_t)data[i], channels);
     }
+    soundBuffer.buffer = (uint8_t*)data, soundBuffer.length = length;
 
-    return SoundBuffer{(uint8_t*)data, length};
+    return soundBuffer;
 }
 
 SoundBuffer VocFile::getVOCFromStream(Interpolator interpolator) {
