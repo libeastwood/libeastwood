@@ -312,7 +312,6 @@ SoundBuffer VocFile::getVOCFromStream(Interpolator interpolator) {
     targetSamplesFloat = (uint32_t) ((float) vocSize * conversionRatio) + 1;
     targetDataFloat = new float[targetSamplesFloat*sizeof(float)];
 
-    src_data;
     src_data.data_in = dataFloat;
     src_data.input_frames = vocSize;
     src_data.src_ratio = conversionRatio;
