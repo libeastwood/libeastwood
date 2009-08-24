@@ -283,7 +283,7 @@ static SoundBuffer getSoundBuffer(AudioFormat format,
 SoundBuffer VocFile::getVOCFromStream(Interpolator interpolator) {
     uint32_t targetSamples,
 	     targetSamplesFloat,	     
-	     vocSize = _vocSize;
+	     vocSize;
     float conversionRatio,
 	  distance,
 	  *dataFloat,
@@ -292,22 +292,15 @@ SoundBuffer VocFile::getVOCFromStream(Interpolator interpolator) {
     SoundBuffer soundBuffer;
     SRC_DATA src_data;
 
+    vocSize = (_vocSize+2*NUM_SAMPLES_OF_SILENCE)-1;
     // Convert to floats
-    dataFloat = new float[(vocSize+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float)];
+    dataFloat = new float[vocSize*sizeof(float)];
 
-    for(uint32_t i=0; i < NUM_SAMPLES_OF_SILENCE; i++)
-	dataFloat[i] = 0.0;
-
-    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < vocSize+NUM_SAMPLES_OF_SILENCE; i++)
+    bzero(dataFloat, NUM_SAMPLES_OF_SILENCE*sizeof(float));
+    bzero(&dataFloat[vocSize-NUM_SAMPLES_OF_SILENCE], (NUM_SAMPLES_OF_SILENCE*sizeof(float)));
+    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < vocSize-NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = (((float) _vocBuffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
-    for(uint32_t i=vocSize+NUM_SAMPLES_OF_SILENCE; i < vocSize+2*NUM_SAMPLES_OF_SILENCE; i++)
-	dataFloat[i] = 0.0;
-
-    vocSize += 2*NUM_SAMPLES_OF_SILENCE;
-
-    // To prevent strange invalid read in src_linear
-    vocSize--;
 
     // Convert to audio device frequency
     conversionRatio = ((float) _frequency) / ((float) _vocFrequency);
