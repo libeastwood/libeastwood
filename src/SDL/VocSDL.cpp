@@ -2,12 +2,12 @@
 #include "StdDef.h"
 #include "SDL/VocSDL.h"
 
-VocSDL::VocSDL(std::istream &stream, int frequency, int channels, AudioFormat format, int quality) :
-    VocFile(stream, frequency, channels, format, quality), _mixChunk(new Mix_Chunk)
+VocSDL::VocSDL(std::istream &stream, int frequency, int channels, AudioFormat format) :
+    VocFile(stream, frequency, channels, format)
 {
 }
 
-VocSDL::VocSDL(std::istream &stream, int quality) : VocFile(stream, 0, 0, FMT_U8, quality), _mixChunk(new Mix_Chunk)
+VocSDL::VocSDL(std::istream &stream) : VocFile(stream, 0, 0, FMT_U8)
 {
     uint16_t format;
     Mix_QuerySpec(&_frequency, &format, &_channels);
@@ -25,14 +25,15 @@ VocSDL::VocSDL(std::istream &stream, int quality) : VocFile(stream, 0, 0, FMT_U8
 
 VocSDL::~VocSDL()
 {
-    delete _mixChunk;
 }
 
-Mix_Chunk *VocSDL::get() {
-    _mixChunk->abuf = loadVOCFromStream();
-    _mixChunk->alen = getLength();
-    _mixChunk->volume = 128;
-    _mixChunk->allocated = 1;	
+Mix_Chunk *VocSDL::getMixChunk(Interpolator interpolator) {
+    SoundBuffer soundBuffer = getVOCFromStream(interpolator);
+    Mix_Chunk *mixChunk = new Mix_Chunk;
+    mixChunk->abuf = soundBuffer.buffer;
+    mixChunk->alen = soundBuffer.length;
+    mixChunk->volume = 128;
+    mixChunk->allocated = 1;	
 
-    return _mixChunk;
+    return mixChunk;
 }

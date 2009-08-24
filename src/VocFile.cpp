@@ -53,11 +53,11 @@ struct VocFileHeader {
 } __attribute__((packed));
 
 
-VocFile::VocFile(std::istream &stream, int _frequency, int channels, AudioFormat format, int quality) :
-    _stream(stream), _frequency(_frequency), _channels(channels), _format(format), _quality(quality),
-    _vocFrequency(0), _vocSize(0), _vocBeginLoop(0), _vocEndLoop(0), _vocLoops(0), _vocBuffer(NULL),
-    _buffer(NULL)
+VocFile::VocFile(std::istream &stream, int _frequency, int channels, AudioFormat format) :
+    _frequency(_frequency), _channels(channels), _format(format), _stream(stream), 
+    _vocFrequency(0), _vocSize(0), _vocBeginLoop(0), _vocEndLoop(0), _vocLoops(0), _vocBuffer(NULL)
 {
+    parseVocFormat();
 }
 
 VocFile::~VocFile()
@@ -254,11 +254,12 @@ static inline T float2integer(float x) {
 }
 
 template <typename T>
-static uint8_t *setSoundBuffer(size_t &length, AudioFormat format,
+static SoundBuffer getSoundBuffer(AudioFormat format,
 	int channels, uint32_t samples, float *dataFloat,
 	int silenceLength) {
     T* data;
-    int sampleSize = sizeof(T) * channels;
+    uint32_t length;
+    uint32_t sampleSize = sizeof(T) * channels;
     length = samples * sampleSize;
     data = new T[length];
 
@@ -274,55 +275,58 @@ static uint8_t *setSoundBuffer(size_t &length, AudioFormat format,
 	    wmemset((wchar_t*)&data[i+1], (wchar_t)data[i], channels);
     }
 
-    return (uint8_t*)data;
+    return SoundBuffer{(uint8_t*)data, length};
 }
 
-uint8_t *VocFile::loadVOCFromStream() {
-    parseVocFormat();
+SoundBuffer VocFile::getVOCFromStream(Interpolator interpolator) {
+    uint32_t targetSamples,
+	     targetSamplesFloat,	     
+	     vocSize = _vocSize;
+    float conversionRatio,
+	  distance,
+	  *dataFloat,
+	  *targetDataFloat;
+    int32_t silenceLength;
+    SoundBuffer soundBuffer;
+    SRC_DATA src_data;
 
     // Convert to floats
-    float *dataFloat = new float[(_vocSize+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float)];
+    dataFloat = new float[(vocSize+2*NUM_SAMPLES_OF_SILENCE)*sizeof(float)];
 
     for(uint32_t i=0; i < NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = 0.0;
 
-    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < _vocSize+NUM_SAMPLES_OF_SILENCE; i++)
+    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < vocSize+NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = (((float) _vocBuffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
-    for(uint32_t i=_vocSize+NUM_SAMPLES_OF_SILENCE; i < _vocSize+2*NUM_SAMPLES_OF_SILENCE; i++)
+    for(uint32_t i=vocSize+NUM_SAMPLES_OF_SILENCE; i < vocSize+2*NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = 0.0;
 
-    _vocSize += 2*NUM_SAMPLES_OF_SILENCE;
+    vocSize += 2*NUM_SAMPLES_OF_SILENCE;
 
     // To prevent strange invalid read in src_linear
-    _vocSize--;
+    vocSize--;
 
     // Convert to audio device frequency
-    float conversionRatio = ((float) _frequency) / ((float) _vocFrequency);
-    uint32_t targetSamplesFloat = (uint32_t) ((float) _vocSize * conversionRatio) + 1;
-    float *targetDataFloat = new float[targetSamplesFloat*sizeof(float)];
+    conversionRatio = ((float) _frequency) / ((float) _vocFrequency);
+    targetSamplesFloat = (uint32_t) ((float) vocSize * conversionRatio) + 1;
+    targetDataFloat = new float[targetSamplesFloat*sizeof(float)];
 
-    SRC_DATA src_data;
+    src_data;
     src_data.data_in = dataFloat;
-    src_data.input_frames = _vocSize;
+    src_data.input_frames = vocSize;
     src_data.src_ratio = conversionRatio;
     src_data.data_out = targetDataFloat;
     src_data.output_frames = targetSamplesFloat;
 
-    if(_quality < SRC_SINC_BEST_QUALITY || _quality > SRC_LINEAR)
-	_quality = SRC_LINEAR;
-    if(src_simple(&src_data, _quality, _channels) != 0) {
-	delete [] dataFloat;
-	delete [] targetDataFloat;
-	return NULL;
-    }
+    if(src_simple(&src_data, interpolator, _channels) != 0)
+	goto end;
 
-    uint32_t targetSamples = src_data.output_frames_gen;
-    delete [] dataFloat;
+    targetSamples = src_data.output_frames_gen;
 
 
     // Equalize if neccessary
-    float distance = 0.0;
+    distance = 0.0;
     for(uint32_t i=0; i < targetSamples; i++)
 	if(fabs(targetDataFloat[i]) > distance)
 	    distance = fabs(targetDataFloat[i]);
@@ -333,37 +337,39 @@ uint8_t *VocFile::loadVOCFromStream() {
 	    targetDataFloat[i] = targetDataFloat[i] / distance;
 
     // Convert floats back to integers but leave out 3/4 of silence
-    int silenceLength = (int) ((NUM_SAMPLES_OF_SILENCE * conversionRatio)*(3.0/4.0));
+    silenceLength = (int32_t) ((NUM_SAMPLES_OF_SILENCE * conversionRatio)*(3.0/4.0));
     targetSamples -= 2*silenceLength;
 
 
     switch(_format) {
     case FMT_U8:
-	_buffer = setSoundBuffer<uint8_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
+	soundBuffer = getSoundBuffer<uint8_t>(_format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S8:
-	_buffer = setSoundBuffer<int8_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
+	soundBuffer = getSoundBuffer<int8_t>(_format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16LE:
-	_buffer = setSoundBuffer<uint16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
+	soundBuffer = getSoundBuffer<uint16_t>(_format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16LE:
-	_buffer = setSoundBuffer<int16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
+	soundBuffer = getSoundBuffer<int16_t>(_format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16BE:
-	_buffer = setSoundBuffer<uint16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
+	soundBuffer = getSoundBuffer<uint16_t>(_format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16BE:
-	_buffer = setSoundBuffer<int16_t>(_length, _format, _channels, targetSamples, targetDataFloat, silenceLength);
+	soundBuffer = getSoundBuffer<int16_t>(_format, _channels, targetSamples, targetDataFloat, silenceLength);
 	break;
     }
 
+    end:
+    delete [] dataFloat;
     delete [] targetDataFloat;
 
-    return _buffer;
+    return soundBuffer;
 }

@@ -12,10 +12,24 @@ enum AudioFormat {
     FMT_S16BE
 };
 
+enum Interpolator
+{
+    I_SINC_BEST_QUALITY		= 0,
+    I_SINC_MEDIUM_QUALITY	= 1,
+    I_SINC_FASTEST		= 2,
+    I_ZERO_ORDER_HOLD		= 3,
+    I_LINEAR			= 4
+};
+
+struct SoundBuffer {
+    uint8_t *buffer;
+    uint32_t length;
+};
+
 class VocFile 
 {
     public:
-	VocFile(std::istream &stream, int targetFrequency, int channels, AudioFormat format, int quality = 4);
+	VocFile(std::istream &stream, int targetFrequency, int channels, AudioFormat format);
 	~VocFile();
 
 	/**
@@ -38,28 +52,25 @@ class VocFile
 	  \param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
 	  \return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
 	  */
-	void parseVocFormat();
-
-	uint8_t *loadVOCFromStream();
-	inline size_t getLength() { return _length; }
+	SoundBuffer getVOCFromStream(Interpolator interpolator = I_LINEAR);
 
     protected:
-	AudioFormat _format;
 	int _frequency;
 	int _channels;
-	int _quality;
+	AudioFormat _format;
 
     private:
+	void parseVocFormat();
+
+	std::istream &_stream;
+
 	uint32_t _vocFrequency,
 		 _vocSize,
 		 _vocBeginLoop,
 		 _vocEndLoop;
 	uint16_t _vocLoops;
 
-	uint8_t *_vocBuffer,
-		*_buffer;
-	size_t _length;
-	std::istream &_stream;
+	uint8_t *_vocBuffer;
     
 
 };

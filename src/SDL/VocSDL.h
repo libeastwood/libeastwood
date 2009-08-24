@@ -7,14 +7,11 @@
 class VocSDL : VocFile
 {
     public:
-	VocSDL(std::istream &stream, int targetFrequency, int channels, AudioFormat format, int quality = 4);
-	VocSDL(std::istream &stream, int quality = 4);	
+	VocSDL(std::istream &stream, int targetFrequency, int channels, AudioFormat format);
+	VocSDL(std::istream &stream);	
 	~VocSDL();
 
-	Mix_Chunk *get();
-
-    private:
-	Mix_Chunk *_mixChunk;
+	Mix_Chunk *getMixChunk(Interpolator interpolator = I_LINEAR);
 
 };
 
