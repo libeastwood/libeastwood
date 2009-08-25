@@ -17,13 +17,13 @@ class PakFile
         PakFile(std::istream &stream);
         ~PakFile();
 
-        unsigned char *getFile(std::string fileName, size_t *size);
+        uint8_t *getFile(std::string fileName, size_t *size);
 
-        inline std::string getFileName(unsigned int index) {
+        inline std::string getFileName(uint32_t index) {
             return _fileEntry[index].fileName;
         };
 
-        inline unsigned int getNumFiles() {
+        inline uint32_t getNumFiles() {
             return _fileEntry.size();
         };
 

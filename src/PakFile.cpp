@@ -46,10 +46,10 @@ void PakFile::readIndex()
     }
 }
 
-unsigned char *PakFile::getFile(std::string fileName, size_t *size)
+uint8_t *PakFile::getFile(std::string fileName, size_t *size)
 {
     PakFileEntry fileEntry = { 0, 0, "" };
-    unsigned char *content;
+    uint8_t *content;
     for(std::vector<PakFileEntry>::iterator it = _fileEntry.begin(); it <= _fileEntry.end(); it++ )
     {
         if(it == _fileEntry.end())
@@ -64,7 +64,7 @@ unsigned char *PakFile::getFile(std::string fileName, size_t *size)
     if(*size == 0)
         throw(NullSizeException(LOG_ERROR, "PakFile", fileName));
 
-    if( (content = (unsigned char*) malloc(*size)) == NULL)
+    if( (content = (uint8_t*) malloc(*size)) == NULL)
         throw(std::bad_alloc());
 
     _stream.seekg(fileEntry.startOffset, std::ios::beg);
