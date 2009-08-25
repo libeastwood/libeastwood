@@ -13,8 +13,6 @@ PakFile::PakFile(std::istream &stream) : _stream(stream), _fileEntry(std::vector
 
 PakFile::~PakFile()
 {
-//    m_stream.close();
-//    delete m_stream;
 }
 
 void PakFile::readIndex()
