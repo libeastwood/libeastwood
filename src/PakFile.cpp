@@ -6,19 +6,15 @@
 
 using namespace eastwood;
 
-PakFile::PakFile(std::string pakFileName)
+PakFile::PakFile(std::istream &stream) : _stream(stream), _fileEntry(std::vector<PakFileEntry>())
 {
-    m_fileName = pakFileName;
-    m_pakFile = new std::ifstream(m_fileName.c_str());
-    m_pakFile->exceptions ( std::ifstream::eofbit | std::ifstream::failbit | std::ifstream::badbit );
-
     readIndex();
 }
 
 PakFile::~PakFile()
 {
-    m_pakFile->close();
-    delete m_pakFile;
+//    m_stream.close();
+//    delete m_stream;
 }
 
 void PakFile::readIndex()
@@ -27,24 +23,24 @@ void PakFile::readIndex()
 
     while(1) {
         PakFileEntry fileEntry = { 0, 0, ""};
-        m_pakFile->read((char*)&fileEntry.startOffset, sizeof(int));
+        _stream.read((char*)&fileEntry.startOffset, sizeof(int));
 
         // pak-files are always little endian encoded
         fileEntry.startOffset = htole32(fileEntry.startOffset);
 
-        m_pakFile->getline(name, 256, 0);
+        _stream.getline(name, 256, 0);
         fileEntry.fileName = name;
 
         LOG_INFO("PakFile", "Found file %s", name);
 
-        if(m_fileEntry.size() > 0)
-            m_fileEntry.back().endOffset = fileEntry.startOffset - 1;
+        if(_fileEntry.size() > 0)
+            _fileEntry.back().endOffset = fileEntry.startOffset - 1;
 
-        m_fileEntry.push_back(fileEntry);
-        if(m_pakFile->peek() == 0x0)
+        _fileEntry.push_back(fileEntry);
+        if(_stream.peek() == 0x0)
         {
-            m_pakFile->seekg(0, std::ios::end);
-            m_fileEntry.back().endOffset = (size_t)m_pakFile->tellg() - 1;
+            _stream.seekg(0, std::ios::end);
+            _fileEntry.back().endOffset = (size_t)_stream.tellg() - 1;
             break;
         }
     }
@@ -52,11 +48,11 @@ void PakFile::readIndex()
 
 unsigned char *PakFile::getFile(std::string fileName, size_t *size)
 {
-    PakFileEntry fileEntry;
+    PakFileEntry fileEntry = { 0, 0, "" };
     unsigned char *content;
-    for(std::vector<PakFileEntry>::iterator it = m_fileEntry.begin(); it <= m_fileEntry.end(); it++ )
+    for(std::vector<PakFileEntry>::iterator it = _fileEntry.begin(); it <= _fileEntry.end(); it++ )
     {
-        if(it == m_fileEntry.end())
+        if(it == _fileEntry.end())
             throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
 
         if((fileEntry = *it).fileName.compare(fileName) == 0)
@@ -71,9 +67,9 @@ unsigned char *PakFile::getFile(std::string fileName, size_t *size)
     if( (content = (unsigned char*) malloc(*size)) == NULL)
         throw(std::bad_alloc());
 
-    m_pakFile->seekg(fileEntry.startOffset, std::ios::beg);
+    _stream.seekg(fileEntry.startOffset, std::ios::beg);
 
-    m_pakFile->read((char*)content, *size);
+    _stream.read((char*)content, *size);
 
 
     return content;	

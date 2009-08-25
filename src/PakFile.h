@@ -14,27 +14,24 @@ struct PakFileEntry {
 class PakFile
 {
     public:
-        PakFile(std::string pakFileName);
+        PakFile(std::istream &stream);
         ~PakFile();
 
         unsigned char *getFile(std::string fileName, size_t *size);
 
         inline std::string getFileName(unsigned int index) {
-            return m_fileEntry[index].fileName;
+            return _fileEntry[index].fileName;
         };
 
         inline unsigned int getNumFiles() {
-            return m_fileEntry.size();
+            return _fileEntry.size();
         };
 
     private:
         void readIndex();
 
-        std::ifstream *m_pakFile;
-
-        std::string m_fileName;
-
-        std::vector<PakFileEntry> m_fileEntry;
+        std::istream &_stream;
+        std::vector<PakFileEntry> _fileEntry;
 };
 
 #endif // EASTWOOD_PAKFILE_H
