@@ -1,6 +1,4 @@
 #include "StdDef.h"
-#include <iomanip>
-#include <iostream>
 
 #include "Exception.h"
 #include "Log.h"
@@ -67,7 +65,13 @@ std::istream *PakFile::getFileStream(std::string fileName)
 
     _stream.seekg(fileEntry.startOffset, std::ios::beg);
 
-    _stream >> std::setw(size) >> content;
+    //FIXME:
+#if 0
+    _stream >> std::noskipws >> std::setw(size) >> content;
+#else
+    for(uint32_t i = 0; i < size; i++)
+        content += _stream.get();
+#endif
 
     return new std::istringstream(content);
 }
