@@ -31,7 +31,7 @@ static inline uint32_t TILE_GETINDEX(const uint32_t x) {
 
 
 static inline TileType TILE_GETTYPE(const uint32_t x) {
-    return (TileType)(((uint16_t*)&x)[1]<<16);
+    return (TileType)(x & (TILE_NORMAL-1)<<16);
 }
 
 SDL_Surface *ShpFile::getSurface(uint32_t IndexOfFile)
