@@ -6,8 +6,8 @@
 #include <vector>
 
 struct PakFileEntry {
-    size_t startOffset;
-    size_t endOffset;
+    uint32_t startOffset;
+    uint32_t endOffset;
     std::string fileName;
 };
 
@@ -17,7 +17,8 @@ class PakFile
         PakFile(std::istream &stream);
         ~PakFile();
 
-        uint8_t *getFile(std::string fileName, size_t *size);
+        std::istream *getFileStream(std::string fileName);
+
 
         inline std::string getFileName(uint32_t index) {
             return _fileEntry[index].fileName;
