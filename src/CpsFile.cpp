@@ -5,25 +5,34 @@
 #include "StdDef.h"
 
 #include "CpsFile.h"
+#include "Exception.h"
 #include "Log.h"
 
 #define	SIZE_X	320
 #define SIZE_Y	200
 
-CpsFile::CpsFile(const uint8_t *bufFileData, int bufSize, SDL_Palette *palette) : Decode()
+using namespace eastwood;
+
+CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(), _stream(stream)
 {
-	m_filedata = bufFileData;
-	if(*(uint8_t *)(bufFileData + 9) == 3){
+    _stream.seekg(2, std::ios::beg);
+    if(htole16(_stream.get() | _stream.get() << 8) != 0x0004 ||
+	    htole16(_stream.get() | _stream.get() << 8) != 0xFA00)
+	throw(Exception(LOG_ERROR, "CpsFile", "Invalid header"));
+
+    _stream.seekg(2, std::ios::cur);
+    uint16_t paletteSize = htole16(_stream.get() | _stream.get() << 8);
+
+	if(paletteSize == 768){
 		LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 		m_palette = new SDL_Palette;
-		m_palette->ncolors = bufSize / 3;
+		m_palette->ncolors = paletteSize / 3;
 		m_palette->colors = new SDL_Color[m_palette->ncolors];
 
-		bufFileData += 10;
 		for (int i = 0; i < m_palette->ncolors; i++){
-			m_palette->colors[i].r = *bufFileData++ <<2;
-			m_palette->colors[i].g = *bufFileData++ <<2;
-			m_palette->colors[i].b = *bufFileData++ <<2;
+			m_palette->colors[i].r = _stream.get() <<2;
+			m_palette->colors[i].g = _stream.get() <<2;
+			m_palette->colors[i].b = _stream.get() <<2;
 			m_palette->colors[i].unused = 0;
 		}
 	}else{
@@ -37,27 +46,28 @@ CpsFile::~CpsFile()
 
 SDL_Surface *CpsFile::getSurface()
 {
-	uint8_t *ImageOut;
+	uint8_t *buffer, *ImageOut;
 	SDL_Surface *pic = NULL;
+	uint32_t pos,
+		 size;
+       
+	pos = (uint32_t)_stream.tellg();
+    	_stream.seekg(0, std::ios::end);	
+    	size = (uint32_t)_stream.tellg() - pos;
+    	_stream.seekg(pos, std::ios::beg);
+    	buffer = new uint8_t[size];
+    	_stream.read((char*)buffer, size);
+	_stream.seekg(pos, std::ios::beg);
 
-	// check for valid file
-	if( htole16(*(uint16_t *)(m_filedata + 2)) != 0x0004) {
-		return NULL;
-	}
-	
-	if( htole16(*(uint16_t *)(m_filedata + 4)) != 0xFA00) {
-		return NULL;
-	}
-	
-	uint16_t PaletteSize = htole16(*((uint16_t *)(m_filedata + 8)));
-	
+
 	if( (ImageOut = (uint8_t*) calloc(1,SIZE_X*SIZE_Y)) == NULL) {
 		return NULL;
 	}
 	
-	if(decode80(m_filedata + 10 + PaletteSize,ImageOut,0) == -2) {
+	if(decode80(buffer,ImageOut,0) == -2) {
 		LOG_ERROR("CpsFile", "Cannot decode Cps-File");
 	}
+	delete [] buffer;
 	
 	// create new picture surface
 	if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SIZE_X,SIZE_Y,8,0,0,0,0))== NULL) {
