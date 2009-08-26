@@ -1,19 +1,30 @@
 #ifndef EASTWOOD_PALETTE_H
 #define EASTWOOD_PALETTE_H
 
-#include <SDL.h>
+#include <istream>
+
+struct Color {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+};
+
+typedef Color Palette[256];
+
+class SDL_Palette;
 
 class PalFile
 {
     public:
-        PalFile(unsigned char *buf, int bufSize);
-        virtual ~PalFile();
+	PalFile(std::istream &stream);
+	virtual ~PalFile();
 
-        SDL_Palette *getPalette() { return m_palette; }
+	SDL_Palette *getPalette();
 
     private:
-        SDL_Palette *m_palette;
-    
+	Palette _palette;
+	SDL_Palette *_SDLPalette;
+
 };
 
 #endif // EASTWOOD_PALETTE_H
