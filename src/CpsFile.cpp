@@ -7,13 +7,14 @@
 #include "CpsFile.h"
 #include "Exception.h"
 #include "Log.h"
+#include "PalFile.h"
 
 #define	SIZE_X	320
 #define SIZE_Y	200
 
 using namespace eastwood;
 
-CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(), _stream(stream), _palette(palette)
+CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(320, 200, palette), _stream(stream)
 {
     _stream.ignore(2);
     if(htole16(_stream.get() | _stream.get() << 8) != 0x0004 ||
@@ -23,18 +24,10 @@ CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(), _stream
     _stream.ignore(2);
     uint16_t paletteSize = htole16(_stream.get() | _stream.get() << 8);
 
-    if(paletteSize == 768){
+    if(paletteSize == sizeof(Palette)){
 	LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
-	_palette = new SDL_Palette;
-	_palette->ncolors = paletteSize / 3;
-	_palette->colors = new SDL_Color[_palette->ncolors];
-
-	for (int i = 0; i < _palette->ncolors; i++){
-	    _palette->colors[i].r = _stream.get() <<2;
-	    _palette->colors[i].g = _stream.get() <<2;
-	    _palette->colors[i].b = _stream.get() <<2;
-	    _palette->colors[i].unused = 0;
-	}
+	PalFile pal(_stream);
+	_palette = pal.getPalette();
     }
 }
 
