@@ -15,8 +15,8 @@ public:
 	SDL_Surface *getSurface();
 
 private:
-	SDL_Palette *m_palette;
 	std::istream &_stream;
+	SDL_Palette *_palette;
 };
 
 #endif // EASTWOOD_CPSFILE_H

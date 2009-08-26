@@ -13,7 +13,7 @@
 
 using namespace eastwood;
 
-CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(), _stream(stream)
+CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(), _stream(stream), _palette(palette)
 {
     _stream.seekg(2, std::ios::beg);
     if(htole16(_stream.get() | _stream.get() << 8) != 0x0004 ||
@@ -25,18 +25,16 @@ CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(), _stream
 
     if(paletteSize == 768){
 	LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
-	m_palette = new SDL_Palette;
-	m_palette->ncolors = paletteSize / 3;
-	m_palette->colors = new SDL_Color[m_palette->ncolors];
+	_palette = new SDL_Palette;
+	_palette->ncolors = paletteSize / 3;
+	_palette->colors = new SDL_Color[_palette->ncolors];
 
-	for (int i = 0; i < m_palette->ncolors; i++){
-	    m_palette->colors[i].r = _stream.get() <<2;
-	    m_palette->colors[i].g = _stream.get() <<2;
-	    m_palette->colors[i].b = _stream.get() <<2;
-	    m_palette->colors[i].unused = 0;
+	for (int i = 0; i < _palette->ncolors; i++){
+	    _palette->colors[i].r = _stream.get() <<2;
+	    _palette->colors[i].g = _stream.get() <<2;
+	    _palette->colors[i].b = _stream.get() <<2;
+	    _palette->colors[i].unused = 0;
 	}
-    }else{
-	m_palette = palette;
     }
 }
 
@@ -59,32 +57,27 @@ SDL_Surface *CpsFile::getSurface()
     _stream.read((char*)buffer, size);
     _stream.seekg(pos, std::ios::beg);
 
+    ImageOut = new uint8_t[SIZE_X*SIZE_Y];
 
-    if( (ImageOut = (uint8_t*) calloc(1,SIZE_X*SIZE_Y)) == NULL) {
-	return NULL;
-    }
+    if(decode80(buffer,ImageOut,0) == -2)
+	throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
 
-    if(decode80(buffer,ImageOut,0) == -2) {
-	LOG_ERROR("CpsFile", "Cannot decode Cps-File");
-    }
     delete [] buffer;
 
     // create new picture surface
-    if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SIZE_X,SIZE_Y,8,0,0,0,0))== NULL) {
-	return NULL;
-    }
+    if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SIZE_X,SIZE_Y,8,0,0,0,0))== NULL)
+	throw(Exception(LOG_ERROR, "CpsFile", "Unable to create SDL_Surface"));
 
-    SDL_SetColors(pic, m_palette->colors, 0, m_palette->ncolors);
+    SDL_SetColors(pic, _palette->colors, 0, _palette->ncolors);
 
     SDL_LockSurface(pic);	
 
     //Now we can copy line by line
-    for(int y = 0; y < SIZE_Y;y++) {
-	memcpy(	((uint8_t*) (pic->pixels)) + y * pic->pitch , ImageOut + y * SIZE_X, SIZE_X);
-    }
+    for(int y = 0; y < SIZE_Y;y++)
+	memcpy(((uint8_t*)(pic->pixels)) + y * pic->pitch , ImageOut + y * SIZE_X, SIZE_X);
 
     SDL_UnlockSurface(pic);
 
-    free(ImageOut);
+    delete [] ImageOut;
     return pic;
 }
