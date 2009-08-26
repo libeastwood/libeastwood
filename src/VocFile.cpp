@@ -116,6 +116,7 @@ void VocFile::parseVocFormat() {
 	} else {
 	invalid:
 	    throw(Exception(LOG_ERROR, "VocFile", "Invalid header"));
+	    return;
 	}
 
 	if (memcmp(fileHeader.desc, "Creative Voice File", 19) != 0)
