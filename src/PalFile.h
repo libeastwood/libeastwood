@@ -7,7 +7,7 @@ class PalFile
 {
     public:
         PalFile(unsigned char *buf, int bufSize);
-        ~PalFile();
+        virtual ~PalFile();
 
         SDL_Palette *getPalette() { return m_palette; }
 
