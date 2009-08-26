@@ -3,13 +3,12 @@
 
 #include "Decode.h"
 
-#define	TILE_NORMAL		0x00010000
-#define	TILE_FLIPH		0x00100000
-#define	TILE_FLIPV		0x01000000
-#define TILE_ROTATE		0x10000000
-
-#define TILE_GETINDEX(x)	(x & 0x0000FFFF)
-#define TILE_GETTYPE(x)		(x & 0xFFFF0000)
+enum TileType {
+    TILE_NORMAL = (1<<16),
+    TILE_FLIPH = (1<<20),
+    TILE_FLIPV = (1<<24),
+    TILE_ROTATE = (1<<28)
+};
 
 struct ShpFileEntry
 {

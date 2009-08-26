@@ -25,6 +25,15 @@ ShpFile::~ShpFile()
 	}
 }
 
+static inline uint32_t TILE_GETINDEX(const uint32_t x) {
+    return (x & (TILE_NORMAL-1));
+}
+
+
+static inline TileType TILE_GETTYPE(const uint32_t x) {
+    return (TileType)(((uint16_t*)&x)[1]<<16);
+}
+
 SDL_Surface *ShpFile::getSurface(uint32_t IndexOfFile)
 {
 	SDL_Surface *pic = NULL;
