@@ -38,7 +38,7 @@ void PakFile::readIndex()
         if(_stream.peek() == 0x0)
         {
             _stream.seekg(0, std::ios::end);
-            _fileEntry.back().endOffset = (uint32_t)_stream.tellg() - 1;
+            _fileEntry.back().endOffset = static_cast<std::streamoff>(_stream.tellg()) - 1;
             break;
         }
     }

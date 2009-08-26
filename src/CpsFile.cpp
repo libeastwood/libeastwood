@@ -15,12 +15,12 @@ using namespace eastwood;
 
 CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(), _stream(stream), _palette(palette)
 {
-    _stream.seekg(2, std::ios::beg);
+    _stream.ignore(2);
     if(htole16(_stream.get() | _stream.get() << 8) != 0x0004 ||
 	    htole16(_stream.get() | _stream.get() << 8) != 0xFA00)
 	throw(Exception(LOG_ERROR, "CpsFile", "Invalid header"));
 
-    _stream.seekg(2, std::ios::cur);
+    _stream.ignore(2);
     uint16_t paletteSize = htole16(_stream.get() | _stream.get() << 8);
 
     if(paletteSize == 768){
@@ -46,16 +46,16 @@ SDL_Surface *CpsFile::getSurface()
 {
     uint8_t *buffer, *ImageOut;
     SDL_Surface *pic = NULL;
-    uint32_t pos,
-	     size;
+    uint32_t size;
+    std::streampos pos;
 
-    pos = (uint32_t)_stream.tellg();
+    pos = _stream.tellg();
     _stream.seekg(0, std::ios::end);	
-    size = (uint32_t)_stream.tellg() - pos;
-    _stream.seekg(pos, std::ios::beg);
+    size = static_cast<std::streamoff>(_stream.tellg()) - static_cast<std::streamoff>(pos);
+    _stream.seekg(pos);
     buffer = new uint8_t[size];
     _stream.read((char*)buffer, size);
-    _stream.seekg(pos, std::ios::beg);
+    _stream.seekg(pos);
 
     ImageOut = new uint8_t[SIZE_X*SIZE_Y];
 
