@@ -56,7 +56,7 @@ std::istream *PakFile::getFileStream(std::string fileName)
         if(it == _fileEntry.end())
             throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
 
-        if((fileEntry = *it).fileName.compare(fileName) == 0)
+        if((fileEntry = *it).fileName == fileName)
             break;
     }
 
