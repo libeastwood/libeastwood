@@ -67,7 +67,8 @@ std::istream *PakFile::getFileStream(std::string fileName)
     buffer = new uint8_t[size];
     _stream.seekg(fileEntry.startOffset, std::ios::beg);
     _stream.read((char*)buffer, size);
-    content = std::string((const char*)buffer, size);
+    //FIXME: should be done better...
+    content = std::string(std::string((const char*)buffer, size));
     delete [] buffer;
 
     return new std::istringstream(content);
