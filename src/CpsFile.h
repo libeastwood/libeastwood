@@ -16,7 +16,6 @@ public:
 
 private:
 	std::istream &_stream;
-	SDL_Palette *_palette;
 };
 
 #endif // EASTWOOD_CPSFILE_H

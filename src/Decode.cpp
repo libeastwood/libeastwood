@@ -1,3 +1,5 @@
+#include <SDL/SDL_video.h>
+
 #include "StdDef.h"
 
 #include "Decode.h"
@@ -5,9 +7,13 @@
 
 using namespace eastwood;
 
-Decode::Decode()
+Decode::Decode() : _width(0), _height(0), _palette(NULL)
 {
 
+}
+
+Decode::Decode(uint16_t width, uint16_t height, SDL_Palette *palette) : _width(width), _height(height), _palette(palette)
+{
 }
 
 Decode::~Decode()
@@ -255,3 +261,28 @@ int Decode::decode40(const unsigned char *image_in, unsigned char *image_out)
 	}
 	return (writep - image_out);
 }
+
+SDL_Surface *Decode::createSurface(const uint8_t *buffer, uint32_t flags)
+{
+    return createSurface(buffer, _width, _height, flags);
+}
+
+SDL_Surface *Decode::createSurface(const uint8_t *buffer, uint16_t width, uint16_t height, uint32_t flags)
+{
+    SDL_Surface *surface;
+    if((surface = SDL_CreateRGBSurface(flags, width, height, 8, 0, 0, 0, 0))== NULL)
+	throw(Exception(LOG_ERROR, "Decode", "Unable to create SDL_Surface"));
+
+    SDL_SetColors(surface, _palette->colors, 0, _palette->ncolors);
+
+    SDL_LockSurface(surface);
+
+    //Now we can copy line by line
+    for(int y = 0; y < height; y++)
+	memcpy(((uint8_t*)(surface->pixels)) + y * surface->pitch , buffer + y * width, width);
+
+    SDL_UnlockSurface(surface);
+
+    return surface;
+}
+

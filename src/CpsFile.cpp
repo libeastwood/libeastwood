@@ -9,9 +9,6 @@
 #include "Log.h"
 #include "PalFile.h"
 
-#define	SIZE_X	320
-#define SIZE_Y	200
-
 using namespace eastwood;
 
 CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(320, 200, palette), _stream(stream)
@@ -50,13 +47,14 @@ SDL_Surface *CpsFile::getSurface()
     _stream.read((char*)buffer, size);
     _stream.seekg(pos);
 
-    ImageOut = new uint8_t[SIZE_X*SIZE_Y];
+    ImageOut = new uint8_t[_width*_height];
 
     if(decode80(buffer,ImageOut,0) == -2)
 	throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
 
     delete [] buffer;
 
+    pic = createSurface(ImageOut, SDL_SWSURFACE);/*
     // create new picture surface
     if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SIZE_X,SIZE_Y,8,0,0,0,0))== NULL)
 	throw(Exception(LOG_ERROR, "CpsFile", "Unable to create SDL_Surface"));
@@ -69,7 +67,7 @@ SDL_Surface *CpsFile::getSurface()
     for(int y = 0; y < SIZE_Y;y++)
 	memcpy(((uint8_t*)(pic->pixels)) + y * pic->pitch , ImageOut + y * SIZE_X, SIZE_X);
 
-    SDL_UnlockSurface(pic);
+    SDL_UnlockSurface(pic);*/
 
     delete [] ImageOut;
     return pic;
