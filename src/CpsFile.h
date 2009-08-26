@@ -10,7 +10,7 @@ class CpsFile : public Decode
 {
 public:
 	CpsFile(std::istream &stream, SDL_Palette *palette = NULL);
-	~CpsFile();
+	virtual ~CpsFile();
 
 	SDL_Surface *getSurface();
 
