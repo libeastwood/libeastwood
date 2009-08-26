@@ -46,6 +46,7 @@ void PakFile::readIndex()
 
 std::istream *PakFile::getFileStream(std::string fileName)
 {
+    uint8_t *buffer;
     uint32_t size;
     std::string content;
     PakFileEntry fileEntry = { 0, 0, "" };
@@ -63,15 +64,11 @@ std::istream *PakFile::getFileStream(std::string fileName)
     if(size == 0)
         throw(NullSizeException(LOG_ERROR, "PakFile", fileName));
 
+    buffer = new uint8_t[size];
     _stream.seekg(fileEntry.startOffset, std::ios::beg);
-
-    //FIXME:
-#if 0
-    _stream >> std::noskipws >> std::setw(size) >> content;
-#else
-    for(uint32_t i = 0; i < size; i++)
-        content += _stream.get();
-#endif
+    _stream.read((char*)buffer, size);
+    content = std::string((const char*)buffer, size);
+    delete [] buffer;
 
     return new std::istringstream(content);
 }
