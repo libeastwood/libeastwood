@@ -23,7 +23,6 @@ SDL_Palette *PalFile::getPalette()
 {
     SDL_Palette *palette = new SDL_Palette;
 
-    palette = new SDL_Palette;
     palette->ncolors = sizeof(_palette)/sizeof(_palette[0]);
 
     palette->colors = new SDL_Color[palette->ncolors];
