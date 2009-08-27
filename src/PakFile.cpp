@@ -34,7 +34,7 @@ void PakFile::readIndex()
         _fileEntry.push_back(fileEntry);
         if(_stream.peek() == 0x0)
         {
-            _fileEntry.back().endOffset = getStreamSize(_stream);
+            _fileEntry.back().endOffset = getStreamSize(_stream) - 1;
             break;
         }
     }
