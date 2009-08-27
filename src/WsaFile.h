@@ -12,7 +12,7 @@ public:
 	WsaFile(std::istream &stream, SDL_Palette *palette,
                 SDL_Surface *lastframe = NULL, float setFps = 0 );
 
-	~WsaFile();
+	virtual ~WsaFile();
 
 	SDL_Surface *getSurface(uint32_t FrameNumber);
 

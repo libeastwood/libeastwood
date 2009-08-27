@@ -10,7 +10,7 @@ class Decode
 {
 public:
 	Decode(std::istream &stream, uint16_t width, uint16_t height, SDL_Palette *palette);
-	~Decode();
+	virtual ~Decode();
 
 protected:
 	int decode80(const unsigned char *image_in, unsigned char *image_out,unsigned checksum);
