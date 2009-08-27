@@ -46,9 +46,7 @@ void PakFile::readIndex()
 
 std::istream *PakFile::getFileStream(std::string fileName)
 {
-    uint8_t *buffer;
-    uint32_t size;
-    std::string content;
+    std::vector<uint8_t> buffer;
     PakFileEntry fileEntry = { 0, 0, "" };
     for(std::vector<PakFileEntry>::iterator it = _fileEntry.begin(); it <= _fileEntry.end(); it++ )
     {
@@ -59,18 +57,14 @@ std::istream *PakFile::getFileStream(std::string fileName)
             break;
     }
 
-    size = fileEntry.endOffset - fileEntry.startOffset + 1;
+    buffer.resize(fileEntry.endOffset - fileEntry.startOffset + 1);
 
-    if(size == 0)
+    if(buffer.size() == 0)
         throw(NullSizeException(LOG_ERROR, "PakFile", fileName));
 
-    buffer = new uint8_t[size];
     _stream.seekg(fileEntry.startOffset, std::ios::beg);
-    _stream.read((char*)buffer, size);
-    //FIXME: should be done better...
-    content = std::string(std::string((const char*)buffer, size));
-    delete [] buffer;
+    _stream.read((char*)&buffer.front(), buffer.size());
 
-    return new std::istringstream(content);
+    return new std::istringstream(std::string((const char*)&buffer.front(), buffer.size()));
 }
 // vim:ts=8:sw=4:et
