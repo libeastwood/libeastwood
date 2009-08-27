@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
+#include <istream>
 
 #ifdef _WIN32
 #include <tchar.h>
@@ -31,5 +32,28 @@ static inline uint32_t htobe32(uint32_t x) {
 }
 #endif
 #endif
+
+template <typename T>
+static inline T readStream(std::istream &stream) {
+    T value;
+    stream.read((char*)&value, sizeof(value));
+    return value;
+}
+
+static inline uint16_t readU16BE(std::istream &stream) {
+    return htobe16(readStream<uint16_t>(stream));
+}
+
+static inline uint16_t readU16LE(std::istream &stream) {
+    return htole16(readStream<uint16_t>(stream));
+}
+
+static inline uint32_t readU32BE(std::istream &stream) {
+    return htobe32(readStream<uint32_t>(stream));
+}
+
+static inline uint32_t readU32LE(std::istream &stream) {
+    return htole32(readStream<uint32_t>(stream));
+}
 
 #endif // EASTWOOD_STDDEF_H
