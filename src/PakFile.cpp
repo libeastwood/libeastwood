@@ -20,11 +20,8 @@ void PakFile::readIndex()
     char name[256];
 
     while(1) {
-        PakFileEntry fileEntry = { 0, 0, "" };
-        _stream.read((char*)&fileEntry.startOffset, sizeof(fileEntry.startOffset));
-
         // pak-files are always little endian encoded
-        fileEntry.startOffset = htole32(fileEntry.startOffset);
+        PakFileEntry fileEntry = { readU32LE(_stream), 0, "" };
 
         _stream.getline(name, 256, 0);
         fileEntry.fileName = name;
@@ -37,8 +34,7 @@ void PakFile::readIndex()
         _fileEntry.push_back(fileEntry);
         if(_stream.peek() == 0x0)
         {
-            _stream.seekg(0, std::ios::end);
-            _fileEntry.back().endOffset = static_cast<std::streamoff>(_stream.tellg()) - 1;
+            _fileEntry.back().endOffset = getStreamSize(_stream);
             break;
         }
     }
