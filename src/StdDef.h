@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <tchar.h>
@@ -19,11 +20,14 @@
 #define htole32(x) (x)
 #else
 static inline uint16_t htobe16(uint16_t x) {
-    return((x<<8)|(x>>8));
+    std::swap(((uint8_t*)&x)[0], ((uint8_t*)&x)[1]);
+    return x;
 }
 
 static inline uint32_t htobe32(uint32_t x) {
-    return((x<<24)|((x<<8)&0x00FF0000)|((x>>8)&0x0000FF00)|(x>>24));
+    std::swap(((uint8_t*)&x)[0], ((uint8_t*)&x)[3]);
+    std::swap(((uint8_t*)&x)[1], ((uint8_t*)&x)[2]);
+    return x;
 }
 #endif
 #endif
