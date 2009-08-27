@@ -56,4 +56,12 @@ static inline uint32_t readU32LE(std::istream &stream) {
     return htole32(readStream<uint32_t>(stream));
 }
 
+static inline size_t getStreamSize(std::istream &stream) {
+    	size_t size;
+	std::streampos pos = stream.tellg();
+    	stream.seekg(0, std::ios::end);
+    	size = static_cast<std::streamoff>(stream.tellg());
+    	stream.seekg(pos);
+	return size;
+}
 #endif // EASTWOOD_STDDEF_H
