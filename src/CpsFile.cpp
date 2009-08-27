@@ -11,7 +11,7 @@
 
 using namespace eastwood;
 
-CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(320, 200, palette), _stream(stream)
+CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(stream, 320, 200, palette)
 {
     _stream.ignore(2);
     if(htole16(_stream.get() | _stream.get() << 8) != 0x0004 ||

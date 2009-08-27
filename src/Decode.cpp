@@ -7,12 +7,8 @@
 
 using namespace eastwood;
 
-Decode::Decode() : _width(0), _height(0), _palette(NULL)
-{
-
-}
-
-Decode::Decode(uint16_t width, uint16_t height, SDL_Palette *palette) : _width(width), _height(height), _palette(palette)
+Decode::Decode(std::istream &stream, uint16_t width, uint16_t height, SDL_Palette *palette) :
+    _stream(stream), _width(width), _height(height), _palette(palette)
 {
 }
 

@@ -67,7 +67,6 @@ class ShpFile : public Decode
 	std::vector<uint8_t> getImage(const uint16_t fileIndex, uint8_t &sizeX, uint8_t &sizeY);
 	void readIndex();
 
-	std::istream &_stream;
 	std::vector<ShpFileEntry> _index;
 	uint16_t _numFiles;	
 };

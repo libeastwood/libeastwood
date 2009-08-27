@@ -13,9 +13,6 @@ public:
 	virtual ~CpsFile();
 
 	SDL_Surface *getSurface();
-
-private:
-	std::istream &_stream;
 };
 
 #endif // EASTWOOD_CPSFILE_H
