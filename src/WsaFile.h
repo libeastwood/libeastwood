@@ -1,18 +1,16 @@
 #ifndef EASTWOOD_WSAFILE_H
 #define EASTWOOD_WSAFILE_H
+#include <istream>
+#include <vector>
 
 #include "Decode.h"
 
-#include <string>
 
-class SDL_Palette;
-class SDL_Surface;
 class WsaFile : public Decode
 {
 public:
-	WsaFile(unsigned char *bufFileData, int bufSize, SDL_Palette *palette,
+	WsaFile(std::istream &stream, SDL_Palette *palette,
                 SDL_Surface *lastframe = NULL, float setFps = 0 );
-	WsaFile();
 
 	~WsaFile();
 
@@ -24,21 +22,13 @@ public:
 
 private:
 	void decodeFrames();
-	std::string _text;
+	std::vector<uint32_t> _frameOffsTable;
+	std::vector<uint8_t> _decodedFrames;
 
-	unsigned char *_decodedFrames;
+	uint16_t _numFrames,
+		 _flags,
+		 _deltaBufferSize;
 
-	unsigned char *_fileData;
-	unsigned char *_textColor;
-
-	SDL_Palette *_palette;
-
-	uint32_t *_index;
-	int _wsaFileSize;
-
-	uint16_t _numFrames;
-	uint16_t _sizeX;
-	uint16_t _sizeY;
 	uint32_t _framesPer1024ms;
 	float _fps;
 };
