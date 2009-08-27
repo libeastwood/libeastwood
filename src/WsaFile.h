@@ -14,9 +14,9 @@ public:
 
 	virtual ~WsaFile();
 
-	SDL_Surface *getSurface(uint32_t FrameNumber);
+	SDL_Surface *getSurface(uint32_t frameNumber);
 
-	inline uint32_t getNumFrames() { return (uint32_t) _numFrames; };
+	inline uint32_t getNumFrames() { return _numFrames; };
 	inline uint32_t getFramesPer1024ms() { return _framesPer1024ms; };
 	inline float getFPS() { return _fps; }
 
@@ -25,11 +25,9 @@ private:
 	std::vector<uint32_t> _frameOffsTable;
 	std::vector<uint8_t> _decodedFrames;
 
-	uint16_t _numFrames,
-		 _flags,
-		 _deltaBufferSize;
-
-	uint32_t _framesPer1024ms;
+	uint16_t _numFrames;
+	uint32_t _deltaBufferSize,
+		 _framesPer1024ms;
 	float _fps;
 };
 

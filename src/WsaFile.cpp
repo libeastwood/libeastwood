@@ -24,7 +24,7 @@ enum WSAFlags {
 WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
 	SDL_Surface *lastframe, float setFps ) :
     Decode(stream, 0, 0, palette), _frameOffsTable(std::vector<uint32_t>()),
-    _decodedFrames(std::vector<uint8_t>()), _numFrames(0), _flags(0),
+    _decodedFrames(std::vector<uint8_t>()), _numFrames(0),
     _deltaBufferSize(0), _framesPer1024ms(0), _fps(0)
 
 
@@ -38,8 +38,7 @@ WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
     _height = readU16LE(_stream);
     LOG_INFO("WsaFile", "size %d x %d", _width, _height);
 
-    _deltaBufferSize = readU16LE(_stream);
-    _flags = readU16LE(_stream);
+    _deltaBufferSize = readU32LE(_stream);
 
     _frameOffsTable.resize(_numFrames+2);
     uint32_t frameDataOffs = readU32LE(_stream);
@@ -49,7 +48,6 @@ WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
     if (frameDataOffs == 0) {
 	firstFrame = false;
 	frameDataOffs = readU32LE(_stream);
-	_flags |= WF_NO_FIRST_FRAME;
     }
 
     for (uint32_t i = 1; i < _frameOffsTable.size(); ++i) {
@@ -58,17 +56,14 @@ WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
 	    _frameOffsTable[i] -= frameDataOffs;
     }
 
-    if (!_frameOffsTable[_numFrames + 1])
-	_flags |= WF_NO_LAST_FRAME;
 
-
-    _framesPer1024ms = _deltaBufferSize | _flags<<16;
+    _framesPer1024ms = _deltaBufferSize / 1024.0f;
 
     // surely /1000.0f not 100?!
     if(setFps)
 	_fps = setFps;
     else
-	_fps = (_framesPer1024ms / 1024.0f) / 100.0f;
+	_fps = _framesPer1024ms / 100.0f;
 
     LOG_INFO("WsaFile", "_framesPer1024ms = %d", _framesPer1024ms);
     LOG_INFO("WsaFile", "FPS = %.3f", _fps);
