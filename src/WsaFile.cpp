@@ -91,24 +91,9 @@ SDL_Surface *WsaFile::getSurface(uint32_t frameNumber)
 	return NULL;
     }
 
-    SDL_Surface *pic;
     uint8_t *frame = &_decodedFrames.front() + (frameNumber * _width * _height);
 
-    // create new picture surface
-    if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,_width,_height,8,0,0,0,0))== NULL) 
-	return NULL;
-
-    SDL_SetColors(pic, _palette->colors, 0, _palette->ncolors);
-    SDL_LockSurface(pic);
-
-    //Now we can copy line by line
-    for(uint16_t y = 0; y < _height;y++) 
-	memcpy(((uint8_t*) (pic->pixels)) + y * pic->pitch , frame + y * _width, _width);
-
-    SDL_UnlockSurface(pic);
-
-    return pic;	
-
+    return createSurface(frame, SDL_HWSURFACE);
 }
 
 void WsaFile::decodeFrames()
