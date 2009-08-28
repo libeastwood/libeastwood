@@ -14,14 +14,13 @@ using namespace eastwood;
 CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) : Decode(stream, 320, 200, palette)
 {
     _stream.ignore(2);
-    if(htole16(_stream.get() | _stream.get() << 8) != 0x0004 ||
-	    htole16(_stream.get() | _stream.get() << 8) != 0xFA00)
+    if(readU16LE(_stream) != 0x0004 ||
+	    readU16LE(_stream) != 0xFA00)
 	throw(Exception(LOG_ERROR, "CpsFile", "Invalid header"));
 
     _stream.ignore(2);
-    uint16_t paletteSize = htole16(_stream.get() | _stream.get() << 8);
 
-    if(paletteSize == sizeof(Palette)){
+    if(readU16LE(_stream)== sizeof(Palette)){
 	LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 	PalFile pal(_stream);
 	_palette = pal.getPalette();
@@ -54,20 +53,7 @@ SDL_Surface *CpsFile::getSurface()
 
     delete [] buffer;
 
-    pic = createSurface(ImageOut, SDL_SWSURFACE);/*
-    // create new picture surface
-    if((pic = SDL_CreateRGBSurface(SDL_SWSURFACE,SIZE_X,SIZE_Y,8,0,0,0,0))== NULL)
-	throw(Exception(LOG_ERROR, "CpsFile", "Unable to create SDL_Surface"));
-
-    SDL_SetColors(pic, _palette->colors, 0, _palette->ncolors);
-
-    SDL_LockSurface(pic);	
-
-    //Now we can copy line by line
-    for(int y = 0; y < SIZE_Y;y++)
-	memcpy(((uint8_t*)(pic->pixels)) + y * pic->pitch , ImageOut + y * SIZE_X, SIZE_X);
-
-    SDL_UnlockSurface(pic);*/
+    pic = createSurface(ImageOut, SDL_SWSURFACE);
 
     delete [] ImageOut;
     return pic;
