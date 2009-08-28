@@ -55,14 +55,7 @@ WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
 
     _framesPer1024ms = _deltaBufferSize / 1024.0f;
 
-    // surely /1000.0f not 100?!
-    if(setFps)
-	_fps = setFps;
-    else
-	_fps = _framesPer1024ms / 100.0f;
-
     LOG_INFO("WsaFile", "_framesPer1024ms = %d", _framesPer1024ms);
-    LOG_INFO("WsaFile", "FPS = %.3f", _fps);
 
     _decodedFrames.resize(_width*_height*_numFrames);
 
