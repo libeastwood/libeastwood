@@ -40,22 +40,18 @@ WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
 
     _deltaBufferSize = readU32LE(_stream);
 
-    _frameOffsTable.resize(_numFrames+2);
     uint32_t frameDataOffs = readU32LE(_stream);
-
-    bool firstFrame = true;
-
     if (frameDataOffs == 0) {
-	firstFrame = false;
 	frameDataOffs = readU32LE(_stream);
+	_numFrames--;
     }
 
+    _frameOffsTable.resize(_numFrames+2);
     for (uint32_t i = 1; i < _frameOffsTable.size(); ++i) {
 	_frameOffsTable[i] = readU32LE(_stream);
 	if (_frameOffsTable[i])
 	    _frameOffsTable[i] -= frameDataOffs;
     }
-
 
     _framesPer1024ms = _deltaBufferSize / 1024.0f;
 
