@@ -22,10 +22,10 @@ enum WSAFlags {
 };
 
 WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
-	SDL_Surface *lastframe, float setFps ) :
+	SDL_Surface *lastframe) :
     Decode(stream, 0, 0, palette), _frameOffsTable(std::vector<uint32_t>()),
     _decodedFrames(std::vector<uint8_t>()), _numFrames(0),
-    _deltaBufferSize(0), _framesPer1024ms(0), _fps(0)
+    _deltaBufferSize(0), _framesPer1024ms(0)
 
 
 {
