@@ -13,7 +13,6 @@ public:
 	virtual ~Decode();
 
 protected:
-	int decode80(const unsigned char *image_in, unsigned char *image_out,unsigned checksum);
 	int decode80(uint8_t *image_out, uint32_t checksum);
 	int decode40(const unsigned char *image_in, unsigned char *image_out);
 
