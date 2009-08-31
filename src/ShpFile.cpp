@@ -83,11 +83,73 @@ void ShpFile::readIndex()
 	// Add the endOffset for the last file
 	_index[_numFiles-1].endOffset = readU16LE(_stream) - 1 + 2;
     }
+#if 0
+    for(int i = 0; i < _index.size(); i++) {
+	_stream.seekg(_index[i].startOffset, std::ios::beg);
+	printf("%d: %d\n", i, readU16LE(_stream));
+    }
+    exit(1);
+#endif
+
+}
+
+static void shp_correct_lf(std::istream &stream, uint8_t *out, int size)
+{
+    int count;
+    while (size > 0) {
+	stream.getline((char*)out, size, 0);
+	count = stream.gcount();
+	out += count;
+	size -= count;
+	count = stream.get();
+	size--;
+	if (count == 0)
+	    return;
+
+	if(--count) {
+    	    memset(out, 0, count);
+    	    out += count;
+	}
+    }
+}
+
+static void shp_correct_lf(const uint8_t *in, uint8_t *out, int size)
+{
+    const uint8_t *end = in + size;
+    while (in < end) {
+	uint8_t val = *in;
+	in++;
+
+	if (val != 0) {
+	    *out = val;
+	    out++;
+	} else {
+	    uint8_t count;
+	    count = *in;
+	    in++;
+	    if (count == 0) {
+		return;
+	    }
+	    memset(out, 0, count);
+
+	    out += count;
+	}
+    }
+}
+
+
+static void apply_pal_offsets(const uint8_t *offsets, uint8_t *data, uint16_t length)
+{
+    for (uint16_t i = 0; i < length; i ++)
+    {
+	if(data[i] == 0)
+	    continue;
+	data[i] = offsets[data[i]];
+    }
 }
 
 std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8_t &sizeY)
 {
-    SDL_Surface *pic = NULL;
     uint8_t type;
     uint16_t size;
     std::vector<uint8_t>
@@ -109,35 +171,40 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8
 
     LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",fileIndex,sizeX,sizeY);
 
-    buf.resize(_index[fileIndex].endOffset - static_cast<std::streamoff>(_stream.tellg())+1);
-    _stream.read((char*)&buf.front(), buf.size());
-
     switch(type) {
 	case 0:
 	    decodeDestination.resize(size);
-	    if(decode80(&buf.front(), &decodeDestination.front(), size) == -1)
+	    
+	    if(decode80(&decodeDestination.front(), size) == -1)
 		LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 
-	    shp_correct_lf(&decodeDestination.front(),&imageOut.front(), size);
+	    ::shp_correct_lf(&decodeDestination.front(),&imageOut.front(), size);
 	    break;
 
 	case 1:
 	    decodeDestination.resize(size);
+	    buf.resize(imageOut.size());
 
-	    if(decode80(&buf.front()+16, &decodeDestination.front(), size) == -1)
+	    _stream.read((char*)&buf.front(), buf.size());
+	    _stream.seekg(-(_stream.gcount()-16), std::ios::cur);
+
+	    if(decode80(&decodeDestination.front(), size) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
-
-	    shp_correct_lf(&decodeDestination.front(), &imageOut.front(), size);
+	    
+	    ::shp_correct_lf(&decodeDestination.front(), &imageOut.front(), size);
 
 	    apply_pal_offsets(&buf.front(),&imageOut.front(), imageOut.size());
 	    break;
 
 	case 2:
-	    shp_correct_lf(&buf.front(), &imageOut.front(),size);
+	    ::shp_correct_lf(_stream, &imageOut.front(),size);
 	    break;
 
 	case 3:
-	    shp_correct_lf(&buf.front() + 16, &imageOut.front(),size);
+	    buf.resize(imageOut.size());
+	    _stream.read((char*)&buf.front(), buf.size());
+	    _stream.seekg(-(_stream.gcount()-16), std::ios::cur);
+	    ::shp_correct_lf(_stream, &imageOut.front(),size);
 
 	    apply_pal_offsets(&buf.front(), &imageOut.front(), imageOut.size());
 	    break;

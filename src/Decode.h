@@ -14,9 +14,10 @@ public:
 
 protected:
 	int decode80(const unsigned char *image_in, unsigned char *image_out,unsigned checksum);
+	int decode80(uint8_t *image_out, uint32_t checksum);
+
 	void my_memcpy(unsigned char *dst, unsigned char *src, unsigned cnt);
-	void shp_correct_lf(const unsigned char *in, unsigned char *out, int size);
-	void apply_pal_offsets(const unsigned char *offsets, unsigned char *data, unsigned int length);
+
 	int decode40(const unsigned char *image_in, unsigned char *image_out);
 	SDL_Surface *createSurface(const uint8_t *buffer, uint32_t flags);
 	SDL_Surface *createSurface(const uint8_t *buffer, uint16_t width, uint16_t height, uint32_t flags);

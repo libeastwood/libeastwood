@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <SDL.h>
 
 #include "StdDef.h"
@@ -33,28 +34,10 @@ CpsFile::~CpsFile()
 
 SDL_Surface *CpsFile::getSurface()
 {
-    uint8_t *buffer, *ImageOut;
-    SDL_Surface *pic = NULL;
-    uint32_t size;
-    std::streampos pos;
+    std::vector<uint8_t> ImageOut(_width*_height);
 
-    pos = _stream.tellg();
-    _stream.seekg(0, std::ios::end);	
-    size = static_cast<std::streamoff>(_stream.tellg()) - static_cast<std::streamoff>(pos);
-    _stream.seekg(pos);
-    buffer = new uint8_t[size];
-    _stream.read((char*)buffer, size);
-    _stream.seekg(pos);
-
-    ImageOut = new uint8_t[_width*_height];
-
-    if(decode80(buffer,ImageOut,0) == -2)
+    if(decode80(&ImageOut.front(),0) == -2)
 	throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
 
-    delete [] buffer;
-
-    pic = createSurface(ImageOut, SDL_SWSURFACE);
-
-    delete [] ImageOut;
-    return pic;
+    return createSurface(&ImageOut.front(), SDL_SWSURFACE);
 }

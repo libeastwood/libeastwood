@@ -84,13 +84,8 @@ void WsaFile::decodeFrames()
 {
     std::vector<uint8_t> dec80(_width*_height*2);
 
-    for(uint16_t i=0;i<_numFrames;i++) 
-    {
-	std::vector<uint8_t> buf(_frameOffsTable[i+1] - _frameOffsTable[i]);
-	_stream.read((char*)&buf.front(), buf.size());
-
-	decode80(&buf.front(), &dec80.front(), 0);
-
+    for(uint16_t i = 0; i<_numFrames;i++) {
+	decode80(&dec80.front(), 0);
 	decode40(&dec80.front(), &_decodedFrames.front() + i * _width * _height);
 
 	if (i < _numFrames - 1)

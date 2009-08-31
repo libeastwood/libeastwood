@@ -17,6 +17,99 @@ Decode::~Decode()
 
 }
 
+int Decode::decode80(uint8_t *image_out, uint32_t checksum)
+{
+    //
+    // should decode all the format80 stuff ;-) 
+    //
+
+    uint8_t *writep = image_out;
+
+    uint16_t a = 0,
+	     b = 0,
+	     c = 0,
+	     d = 0,
+	     e = 0,
+	     megacounta = 0,
+	     megacountb = 0,
+     	     megacountc = 0,
+     	     megacountd = 0,
+     	     megacounte = 0;
+    /*
+       1 10cccccc
+       2 0cccpppp p
+       3 11cccccc p p
+       4 11111110 c c v
+       5 11111111 c c p p
+       */
+
+    while (1) {
+	uint8_t byte = _stream.get();
+	if ((byte & 0xc0) == 0x80) {
+	    //
+	    // 10cccccc (1) 
+	    //
+	    uint16_t count = byte & 0x3f;
+	    //printf("Cmd 1, count: %d\n", count);
+	    megacounta += count;
+	    if (!count)
+		break;
+	    _stream.read((char*)writep, count);
+	    writep += count;
+	    a++;
+	} else if ((byte & 0x80) == 0x00) {
+	    //
+	    // 0cccpppp p (2) 
+	    //
+	    uint16_t count = ((byte & 0x70) >> 4) + 3;
+	    uint16_t relpos =	(byte  & 0xf) << 8 | _stream.get();
+	    //printf("Cmd 2, count: %d, relpos: %d\n", count, relpos);
+	    megacountb += count;
+	    my_memcpy(writep, writep - relpos, count);
+	    writep += count;
+	    b++;
+	} else if (byte == 0xff) {
+	    // 
+	    // 11111111 c c p p (5)
+	    //
+	    uint16_t count = readU16LE(_stream);
+	    uint16_t pos = readU16LE(_stream);
+	    //printf("Cmd 5, count: %d, pos: %d\n", count, pos);
+	    megacounte += count;
+	    my_memcpy(writep, image_out + pos, count);
+	    writep += count;
+	    e++;
+	} else if (byte == 0xfe) {
+	    //
+	    // 11111110 c c v(4) 
+	    //
+	    uint16_t count = readU16LE(_stream);
+	    uint8_t color = _stream.get();
+	    //printf("Cmd 4, count: %d, color: %d\n", count, color);
+	    memset(writep, color, count);
+	    writep += count;
+	    megacountd += count;
+	    d++;
+	} else if ((byte & 0xc0) == 0xc0) {
+	    //
+	    // 11cccccc p p (3)
+	    //
+	    uint16_t count = (byte & 0x3f) + 3;
+	    uint16_t pos = readU16LE(_stream);
+	    //printf("Cmd 3, count: %d, pos: %d\n", count, pos);
+	    megacountc += count;
+	    my_memcpy(writep, image_out + pos, count);
+	    writep += count;
+	    c++;
+	} else
+	    throw(Exception(LOG_ERROR, "Decode", "Stream contains unknown format80 command"));
+    };
+    if ((uint16_t)(megacounta + megacountb + megacountc + megacountd + megacounte)
+	    != checksum)
+	return -1;
+    return 0;
+}
+
 int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,unsigned int checksum)
 {
     //
@@ -134,45 +227,11 @@ void Decode::my_memcpy(unsigned char *dst, unsigned char *src, unsigned cnt)
 	memcpy(dst, src, cnt);
 	return;
     }
-    while (cnt--) {
-	*dst = *src;
-	dst++;
-	src++;
-    };
+    for(uint16_t i = 0; i < cnt; i++)
+	dst[i] = src[i];
 }
 
-void Decode::shp_correct_lf(const unsigned char *in, unsigned char *out, int size)
-{
-    const unsigned char *end = in + size;
-    while (in < end) {
-	unsigned char val = *in;
-	in++;
-
-	if (val != 0) {
-	    *out = val;
-	    out++;
-	} else {
-	    unsigned char count;
-	    count = *in;
-	    in++;
-	    if (count == 0) {
-		return;
-	    }
-	    memset(out, 0, count);
-
-	    out += count;
-	}
-    }
-}
-
-
-void Decode::apply_pal_offsets(const unsigned char *offsets, unsigned char *data,unsigned int length)
-{
-    for (uint16_t i = 0; i < length; i ++)
-	data[i] = offsets[data[i]];
-}
-
-int Decode::decode40(const unsigned char *image_in, unsigned char *image_out)
+int Decode::decode40(const uint8_t *image_in, uint8_t *image_out)
 {
     /*
        0 fill 00000000 c v
@@ -183,8 +242,8 @@ int Decode::decode40(const unsigned char *image_in, unsigned char *image_out)
        5 skip 1ccccccc	
        */
 
-    const unsigned char* readp = image_in;
-    unsigned char* writep = image_out;
+    const uint8_t* readp = image_in;
+    uint8_t* writep = image_out;
     uint16_t code;
     uint16_t count;
     while (1)
