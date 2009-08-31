@@ -6,13 +6,45 @@
 
 using namespace eastwood;
 
-PakFile::PakFile(std::istream &stream) : _stream(stream), _fileEntry(std::vector<PakFileEntry>())
+PakFile::PakFile(std::istream &stream) : std::istream(NULL), _stream(stream),_fileEntry(std::vector<PakFileEntry>()) 
 {
     readIndex();
 }
 
 PakFile::~PakFile()
 {
+    close();
+}
+
+void PakFile::close() {
+    if(is_open()) {
+	delete rdbuf();
+	std::ios::init(NULL);
+    }
+}
+
+void PakFile::open(std::string fileName) {
+    close();
+
+    PakFileEntry fileEntry = { 0, 0, "" };
+    for(std::vector<PakFileEntry>::iterator it = _fileEntry.begin(); it <= _fileEntry.end(); it++ )
+    {
+        if(it == _fileEntry.end())
+            throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
+
+        if((fileEntry = *it).fileName == fileName)
+            break;
+    }
+    _stream.seekg(fileEntry.startOffset, std::ios::beg);
+    std::string buffer(fileEntry.endOffset - fileEntry.startOffset + 1, 0);
+
+    if(buffer.size() == 0)
+        throw(NullSizeException(LOG_ERROR, "PakFile", fileName));
+
+    _stream.seekg(fileEntry.startOffset, std::ios::beg);
+    _stream.read((char*)buffer.data(), buffer.size());
+
+    std::ios::init(new std::stringbuf(buffer));
 }
 
 void PakFile::readIndex()
@@ -23,8 +55,8 @@ void PakFile::readIndex()
         // pak-files are always little endian encoded
         PakFileEntry fileEntry = { readU32LE(_stream), 0, "" };
 
-        _stream.getline(name, 256, 0);
-        fileEntry.fileName = name;
+	_stream.getline(name, 256, 0);
+        fileEntry.fileName += name;
 
         LOG_INFO("PakFile", "Found file %s", name);
 
@@ -40,27 +72,4 @@ void PakFile::readIndex()
     }
 }
 
-std::istream *PakFile::getFileStream(std::string fileName)
-{
-    std::vector<uint8_t> buffer;
-    PakFileEntry fileEntry = { 0, 0, "" };
-    for(std::vector<PakFileEntry>::iterator it = _fileEntry.begin(); it <= _fileEntry.end(); it++ )
-    {
-        if(it == _fileEntry.end())
-            throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
-
-        if((fileEntry = *it).fileName == fileName)
-            break;
-    }
-
-    buffer.resize(fileEntry.endOffset - fileEntry.startOffset + 1);
-
-    if(buffer.size() == 0)
-        throw(NullSizeException(LOG_ERROR, "PakFile", fileName));
-
-    _stream.seekg(fileEntry.startOffset, std::ios::beg);
-    _stream.read((char*)&buffer.front(), buffer.size());
-
-    return new std::istringstream(std::string((const char*)&buffer.front(), buffer.size()));
-}
 // vim:ts=8:sw=4:et

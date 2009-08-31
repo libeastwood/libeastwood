@@ -11,7 +11,7 @@ struct PakFileEntry {
     std::string fileName;
 };
 
-class PakFile
+class PakFile : public std::istream
 {
     public:
         PakFile(std::istream &stream);
@@ -19,12 +19,16 @@ class PakFile
 
         std::istream *getFileStream(std::string fileName);
 
+	void close();
+	void open(std::string fileName);
 
+	inline bool is_open() {
+            return rdbuf() != NULL;
+        }
         inline std::string getFileName(uint32_t index) {
             return _fileEntry[index].fileName;
         };
-
-        inline uint32_t getNumFiles() {
+        inline uint32_t size() {
             return _fileEntry.size();
         };
 
