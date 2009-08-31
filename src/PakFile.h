@@ -1,8 +1,7 @@
 #ifndef	EASTWOOD_PAKFILE_H
 #define	EASTWOOD_PAKFILE_H
 
-#include <iostream>
-#include <fstream>
+#include <istream>
 #include <vector>
 
 struct PakFileEntry {
