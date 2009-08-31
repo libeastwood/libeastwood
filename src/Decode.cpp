@@ -17,6 +17,19 @@ Decode::~Decode()
 
 }
 
+static inline void my_memcpy(uint8_t *dst, uint8_t *src, uint16_t cnt)
+{
+    /* Copies memory areas that may overlap byte by byte from small memory
+     * addresses to big memory addresses. Thus, already copied bytes can be
+     * copied again. */
+    if (dst + cnt < src || src + cnt < dst) {
+	memcpy(dst, src, cnt);
+	return;
+    }
+    for(uint16_t i = 0; i < cnt; i++)
+	dst[i] = src[i];
+}
+
 int Decode::decode80(uint8_t *image_out, uint32_t checksum)
 {
     //
@@ -216,19 +229,6 @@ int Decode::decode80(const unsigned char *image_in, unsigned char *image_out,uns
 	    != checksum)
 	return -1;
     return 0;
-}
-
-void Decode::my_memcpy(unsigned char *dst, unsigned char *src, unsigned cnt)
-{
-    /* Copies memory areas that may overlap byte by byte from small memory
-     * addresses to big memory addresses. Thus, already copied bytes can be
-     * copied again. */
-    if (dst + cnt < src || src + cnt < dst) {
-	memcpy(dst, src, cnt);
-	return;
-    }
-    for(uint16_t i = 0; i < cnt; i++)
-	dst[i] = src[i];
 }
 
 int Decode::decode40(const uint8_t *image_in, uint8_t *image_out)
