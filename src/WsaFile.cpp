@@ -11,16 +11,6 @@
 
 using namespace eastwood;
 
-
-enum WSAFlags {
-    WF_OFFSCREEN_DECODE = 0x10,
-    WF_NO_LAST_FRAME = 0x20,
-    WF_NO_FIRST_FRAME = 0x40,
-    WF_FLIPPED = 0x80,
-    WF_HAS_PALETTE = 0x100,
-    WF_XOR = 0x200
-};
-
 WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
 	SDL_Surface *lastframe) :
     Decode(stream, 0, 0, palette), _frameOffsTable(std::vector<uint32_t>()),
