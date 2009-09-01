@@ -51,8 +51,19 @@ SDL_Surface *CpsFile::getSurface()
 {
     std::vector<uint8_t> ImageOut(_imageSize);
 
-    if(decode80(&ImageOut.front(),0) == -2)
-	throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
+    switch(_format) {
+	case UNCOMPRESSED:
+	    for(uint16_t i = 0; i < _imageSize; i += _stream.gcount())
+		((uint16_t*)&ImageOut.front())[i/sizeof(uint16_t)] = readU16LE(_stream);
+	    break;
+	case FORMAT_LBM:
+	    //TODO: implement?
+	    break;
+	case FORMAT_80:
+    	if(decode80(&ImageOut.front(),0) == -2)
+    	    throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
+	break;
+    }
 
     return createSurface(&ImageOut.front(), SDL_SWSURFACE);
 }
