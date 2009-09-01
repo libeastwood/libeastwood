@@ -177,7 +177,7 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8
 	    decodeDestination.resize(size);
 	    buf.resize(16);
 
-	    _stream.read((char*)&buf.front(), buf.size());
+	    readLE(_stream, &buf.front(), buf.size());
 
 	    if(decode80(&decodeDestination.front(), size) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
@@ -193,7 +193,7 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8
 
 	case 3:
 	    buf.resize(16);
-	    _stream.read((char*)&buf.front(), buf.size());
+	    readLE(_stream, &buf.front(), buf.size());
 	    ::shp_correct_lf(_stream, &imageOut.front(), size);
 
 	    apply_pal_offsets(&buf.front(), &imageOut.front(), imageOut.size());
@@ -249,6 +249,7 @@ SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY
     uint16_t index = getIndex(tiles[0]);
     std::vector<uint8_t> imageOut;
 
+    printf("%dx%d\n", tilesX, tilesY);
     _stream.seekg(_index[index].startOffset+2, std::ios::beg);
     sizeY = _stream.get();
     sizeX = _stream.get();

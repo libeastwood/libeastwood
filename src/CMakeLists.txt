@@ -12,6 +12,7 @@ SET( LIBEASTWOOD_SRCS
   PalFile.cpp
   ShpFile.cpp
   StringFile.cpp
+  Surface.cpp
   VocFile.cpp
   WsaFile.cpp
   adl/emuopl.cpp

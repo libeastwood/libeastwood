@@ -53,8 +53,7 @@ SDL_Surface *CpsFile::getSurface()
 
     switch(_format) {
 	case UNCOMPRESSED:
-	    for(uint16_t i = 0; i < _imageSize; i += _stream.gcount())
-		((uint16_t*)&ImageOut.front())[i/sizeof(uint16_t)] = readU16LE(_stream);
+	    readLE(_stream, &ImageOut.front(), _imageSize);
 	    break;
 	case FORMAT_LBM:
 	    //TODO: implement?

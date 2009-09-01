@@ -56,6 +56,40 @@ static inline uint32_t readU32LE(std::istream &stream) {
     return htole32(readStream<uint32_t>(stream));
 }
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+static inline void readBE(std::istream &stream, uint8_t *s, size_t n) {
+    size_t i;
+    for(i = 0; i <= n-sizeof(uint32_t); i += stream.gcount())
+	((uint32_t*)s)[i/sizeof(uint32_t)] = readU32BE(stream);
+    if(i <= n-sizeof(uint16_t))
+	((uint16_t*)s)[i/sizeof(uint16_t)] = readU16BE(stream),
+	    i+=stream.gcount();
+    if(i<n)
+	s[i] = stream.get();
+}
+
+static inline void readLE(std::istream &stream, uint8_t *s, size_t n) {
+    stream.read((char*)s, n);
+}
+
+#else
+static inline void readLE(std::istream &stream, uint8_t *s, size_t n) {
+    size_t i;
+    for(i = 0; i <= n-sizeof(uint32_t); i += stream.gcount())
+	((uint32_t*)s)[i/sizeof(uint32_t)] = readU32LE(stream);
+    if(i <= n-sizeof(uint16_t))
+	((uint16_t*)s)[i/sizeof(uint16_t)] = readU16LE(stream),
+	    i+=stream.gcount();
+    if(i<n)
+	s[i] = stream.get();
+}
+
+static inline void readBE(std::istream &stream, uint8_t *s, size_t n) {
+    stream.read((char*)s, n);
+}
+
+#endif
+
 static inline size_t getStreamSize(std::istream &stream) {
     	size_t size;
 	std::streampos pos = stream.tellg();
