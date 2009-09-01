@@ -83,14 +83,6 @@ void ShpFile::readIndex()
 	// Add the endOffset for the last file
 	_index[_numFiles-1].endOffset = readU16LE(_stream) - 1 + 2;
     }
-#if 0
-    for(int i = 0; i < _index.size(); i++) {
-	_stream.seekg(_index[i].startOffset, std::ios::beg);
-	printf("%d: %d\n", i, readU16LE(_stream));
-    }
-    exit(1);
-#endif
-
 }
 
 static void shp_correct_lf(std::istream &stream, uint8_t *out, int size)
@@ -141,17 +133,16 @@ static void shp_correct_lf(const uint8_t *in, uint8_t *out, int size)
 static void apply_pal_offsets(const uint8_t *offsets, uint8_t *data, uint16_t length)
 {
     for (uint16_t i = 0; i < length; i ++)
-    {
-	if(data[i] == 0)
-	    continue;
 	data[i] = offsets[data[i]];
-    }
 }
 
 std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8_t &sizeY)
 {
-    uint8_t type;
-    uint16_t size;
+    uint8_t type,
+	    slices;
+    uint16_t size,
+	     fileSize,
+	     imageSize;
     std::vector<uint8_t>
 	buf,
 	decodeDestination,
@@ -160,11 +151,12 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8
     _stream.seekg(_index[fileIndex].startOffset, std::ios::beg);
     type = _stream.get();
 
-    _stream.ignore(1);
+    slices = _stream.get();
     sizeY = _stream.get();
     sizeX = _stream.get();
 
-    _stream.ignore(4);
+    fileSize = readU16LE(_stream);
+    imageSize = readU16LE(_stream);
     /* size and also checksum */
     size = readU16LE(_stream);
     imageOut.resize(sizeX*sizeY);
@@ -183,10 +175,9 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8
 
 	case 1:
 	    decodeDestination.resize(size);
-	    buf.resize(imageOut.size());
+	    buf.resize(16);
 
 	    _stream.read((char*)&buf.front(), buf.size());
-	    _stream.seekg(-(_stream.gcount()-16), std::ios::cur);
 
 	    if(decode80(&decodeDestination.front(), size) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
@@ -201,10 +192,9 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8
 	    break;
 
 	case 3:
-	    buf.resize(imageOut.size());
+	    buf.resize(16);
 	    _stream.read((char*)&buf.front(), buf.size());
-	    _stream.seekg(-(_stream.gcount()-16), std::ios::cur);
-	    ::shp_correct_lf(_stream, &imageOut.front(),size);
+	    ::shp_correct_lf(_stream, &imageOut.front(), size);
 
 	    apply_pal_offsets(&buf.front(), &imageOut.front(), imageOut.size());
 	    break;
