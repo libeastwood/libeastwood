@@ -17,7 +17,7 @@ Decode::~Decode()
 
 }
 
-static inline void my_memcpy(uint8_t *dst, uint8_t *src, uint16_t cnt)
+static inline void my_memcpy(uint8_t *dst, const uint8_t *src, uint16_t cnt)
 {
     /* Copies memory areas that may overlap command by command from small memory
      * addresses to big memory addresses. Thus, already copied commands can be
