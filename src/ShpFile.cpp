@@ -136,72 +136,70 @@ static void apply_pal_offsets(const uint8_t *offsets, uint8_t *data, uint16_t le
 	data[i] = offsets[data[i]];
 }
 
-std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8_t &sizeY)
+std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8_t &height)
 {
-    uint8_t type,
-	    slices;
-    uint16_t size,
+    uint8_t slices;
+    uint16_t flags,
 	     fileSize,
 	     imageSize;
     std::vector<uint8_t>
-	buf,
+	palOffsets,
 	decodeDestination,
 	imageOut;
 
     _stream.seekg(_index[fileIndex].startOffset, std::ios::beg);
-    type = _stream.get();
+    flags = readU16LE(_stream);
 
     slices = _stream.get();
-    sizeY = _stream.get();
-    sizeX = _stream.get();
+    width = readU16LE(_stream);
+    height = _stream.get();
 
     fileSize = readU16LE(_stream);
-    imageSize = readU16LE(_stream);
     /* size and also checksum */
-    size = readU16LE(_stream);
-    imageOut.resize(sizeX*sizeY);
+    imageSize = readU16LE(_stream);
+    imageOut.resize(width*height);
 
-    LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",fileIndex,sizeX,sizeY);
+    LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
 
-    switch(type) {
+    switch(flags) {
 	case 0:
-	    decodeDestination.resize(size);
+	    decodeDestination.resize(imageSize);
 	    
-	    if(decode80(&decodeDestination.front(), size) == -1)
+	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 
-	    ::decode2(&decodeDestination.front(),&imageOut.front(), size);
+	    ::decode2(&decodeDestination.front(),&imageOut.front(), imageSize);
 	    break;
 
 	case 1:
-	    decodeDestination.resize(size);
-	    buf.resize(16);
+	    decodeDestination.resize(imageSize);
+	    palOffsets.resize(16);
 
-	    readLE(_stream, &buf.front(), buf.size());
+	    readLE(_stream, &palOffsets.front(), palOffsets.size());
 
-	    if(decode80(&decodeDestination.front(), size) == -1)
+	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
 	    
-	    ::decode2(&decodeDestination.front(), &imageOut.front(), size);
+	    ::decode2(&decodeDestination.front(), &imageOut.front(), imageSize);
 
-	    apply_pal_offsets(&buf.front(),&imageOut.front(), imageOut.size());
+	    apply_pal_offsets(&palOffsets.front(),&imageOut.front(), imageOut.size());
 	    break;
 
 	case 2:
-	    ::decode2(_stream, &imageOut.front(),size);
+	    ::decode2(_stream, &imageOut.front(),imageSize);
 	    break;
 
 	case 3:
-	    buf.resize(16);
-	    readLE(_stream, &buf.front(), buf.size());
-	    ::decode2(_stream, &imageOut.front(), size);
+	    palOffsets.resize(16);
+	    readLE(_stream, &palOffsets.front(), palOffsets.size());
+	    ::decode2(_stream, &imageOut.front(), imageSize);
 
-	    apply_pal_offsets(&buf.front(), &imageOut.front(), imageOut.size());
+	    apply_pal_offsets(&palOffsets.front(), &imageOut.front(), imageOut.size());
 	    break;
 
 	default:
 	    char error[256];
-	    sprintf(error, "Type %d in SHP-Files not supported!", type);
+	    sprintf(error, "Type %d in SHP-Files not supported!", flags);
 	    throw(Exception(LOG_ERROR, "ShpFile", error));
     }
 
@@ -211,10 +209,10 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &sizeX, uint8
 SDL_Surface *ShpFile::getSurface(uint16_t fileIndex)
 {
     SDL_Surface *pic = NULL;
-    uint8_t sizeX,
-	    sizeY;
-    std::vector<uint8_t> imageOut = getImage(fileIndex, sizeX, sizeY);
-    pic = createSurface(&imageOut.front(), sizeX, sizeY, SDL_SWSURFACE);
+    uint8_t width,
+	    height;
+    std::vector<uint8_t> imageOut = getImage(fileIndex, width, height);
+    pic = createSurface(&imageOut.front(), width, height, SDL_SWSURFACE);
 
     SDL_SetColorKey(pic, SDL_SRCCOLORKEY, 0);
     
@@ -244,24 +242,24 @@ SDL_Surface *ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
 
 SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles) {
     SDL_Surface *pic = NULL;
-    uint8_t sizeX,
-	    sizeY;
+    uint8_t width,
+	    height;
     uint16_t index = getIndex(tiles[0]);
     std::vector<uint8_t> imageOut;
 
     _stream.seekg(_index[index].startOffset+2, std::ios::beg);
-    sizeY = _stream.get();
-    sizeX = _stream.get();
+    height = _stream.get();
+    width = _stream.get();
 
     for(uint32_t i = 1; i < tilesX*tilesY; i++) {
 	_stream.seekg(_index[getIndex(tiles[i])].startOffset+2, std::ios::beg);
-	if(_stream.get() != sizeY || _stream.get() != sizeX) {
+	if(_stream.get() != height || _stream.get() != width) {
 	    throw(Exception(LOG_ERROR, "ShpFile", "getSurfaceArray(): Not all pictures have the same size!"));
 	}
     }
 
     // create new picture surface
-    if((pic = SDL_CreateRGBSurface(SDL_HWSURFACE,sizeX*tilesX,sizeY*tilesY,8,0,0,0,0)) == NULL) {
+    if((pic = SDL_CreateRGBSurface(SDL_HWSURFACE,width*tilesX,height*tilesY,8,0,0,0,0)) == NULL) {
 	throw(Exception(LOG_ERROR, "ShpFile","getSurfaceArray(): Cannot create Surface."));
     }
 
@@ -277,25 +275,25 @@ SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY
 	    //Now we can copy line by line
 	    switch(getType(tiles[i])) {
 		case TILE_NORMAL:
-		    for(int y = 0; y < sizeY; y++)
-			memcpy(	((char*) (pic->pixels)) + i*sizeX + (y+j*sizeY) * pic->pitch , &imageOut.front() + y * sizeX, sizeX);
+		    for(int y = 0; y < height; y++)
+			memcpy(	((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch , &imageOut.front() + y * width, width);
 		    break;
 
 		case TILE_FLIPH:
-		    for(int y = 0; y < sizeY; y++)
-			memcpy(	((char*) (pic->pixels)) + i*sizeX + (y+j*sizeY) * pic->pitch , &imageOut.front() + (sizeY-1-y) * sizeX, sizeX);
+		    for(int y = 0; y < height; y++)
+			memcpy(	((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch , &imageOut.front() + (height-1-y) * width, width);
 		    break;
 
 		case TILE_FLIPV:
-		    for(int y = 0; y < sizeY; y++)
-			for(int x = 0; x < sizeX; x++)
-			    *(((char*) (pic->pixels)) + i*sizeX + (y+j*sizeY) * pic->pitch + x) = *(&imageOut.front() + y * sizeX + (sizeX-1-x));
+		    for(int y = 0; y < height; y++)
+			for(int x = 0; x < width; x++)
+			    *(((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch + x) = *(&imageOut.front() + y * width + (width-1-x));
 		    break;
 
 		case TILE_ROTATE:
-		    for(int y = 0; y < sizeY; y++)
-			for(int x = 0; x < sizeX; x++)
-			    *(((char*) (pic->pixels)) + i*sizeX + (y+j*sizeY) * pic->pitch + x) = *(&imageOut.front() + (sizeY-1-y) * sizeX + (sizeX-1-x));
+		    for(int y = 0; y < height; y++)
+			for(int x = 0; x < width; x++)
+			    *(((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch + x) = *(&imageOut.front() + (height-1-y) * width + (width-1-x));
 		    break;
 
 		default:
