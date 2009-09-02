@@ -247,9 +247,9 @@ SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY
     uint16_t index = getIndex(tiles[0]);
     std::vector<uint8_t> imageOut;
 
-    _stream.seekg(_index[index].startOffset+2, std::ios::beg);
-    height = _stream.get();
-    width = _stream.get();
+    _stream.seekg(_index[index].startOffset+3, std::ios::beg);
+    width = readU16LE(_stream);
+    height = _stream.get();    
 
     for(uint32_t i = 1; i < tilesX*tilesY; i++) {
 	_stream.seekg(_index[getIndex(tiles[i])].startOffset+2, std::ios::beg);
