@@ -19,8 +19,8 @@ Decode::~Decode()
 
 static inline void my_memcpy(uint8_t *dst, uint8_t *src, uint16_t cnt)
 {
-    /* Copies memory areas that may overlap byte by byte from small memory
-     * addresses to big memory addresses. Thus, already copied bytes can be
+    /* Copies memory areas that may overlap command by command from small memory
+     * addresses to big memory addresses. Thus, already copied commands can be
      * copied again. */
     if (dst + cnt < src || src + cnt < dst) {
 	memcpy(dst, src, cnt);
@@ -32,93 +32,65 @@ static inline void my_memcpy(uint8_t *dst, uint8_t *src, uint16_t cnt)
 
 int Decode::decode80(uint8_t *image_out, uint32_t checksum)
 {
-    //
-    // should decode all the format80 stuff ;-) 
-    //
-
     uint8_t *writep = image_out;
 
-    uint16_t a = 0,
-	     b = 0,
-	     c = 0,
-	     d = 0,
-	     e = 0,
-	     megacounta = 0,
-	     megacountb = 0,
-     	     megacountc = 0,
-     	     megacountd = 0,
-     	     megacounte = 0;
+    uint16_t count,
+	     pos;
     /*
-       1 10cccccc
-       2 0cccpppp p
+       1 0cccpppp p
+       2 10cccccc
        3 11cccccc p p
        4 11111110 c c v
        5 11111111 c c p p
        */
 
-    while (1) {
-	uint8_t byte = _stream.get();
-	if ((byte & 0xc0) == 0x80) {
-	    //
-	    // 10cccccc (1) 
-	    //
-	    uint16_t count = byte & 0x3f;
-	    //printf("Cmd 1, count: %d\n", count);
-	    megacounta += count;
-	    if (!count)
-		break;
-	    _stream.read((char*)writep, count);
+    while (true) {
+	uint8_t command = _stream.get();
+	if ((command & 0x80) == 0x00) {
+	    // 0cccpppp p (1) 
+	    count = ((command & 0x70) >> 4) + 3;
+	    pos = (command  & 0xf) << 8 | _stream.get();
+	    //printf("Cmd 1(0x%x), count: %d, pos: %d\n", command, count, pos);
+	    my_memcpy(writep, writep - pos, count);
 	    writep += count;
-	    a++;
-	} else if ((byte & 0x80) == 0x00) {
-	    //
-	    // 0cccpppp p (2) 
-	    //
-	    uint16_t count = ((byte & 0x70) >> 4) + 3;
-	    uint16_t relpos =	(byte  & 0xf) << 8 | _stream.get();
-	    //printf("Cmd 2, count: %d, relpos: %d\n", count, relpos);
-	    megacountb += count;
-	    my_memcpy(writep, writep - relpos, count);
-	    writep += count;
-	    b++;
-	} else if (byte == 0xff) {
-	    // 
-	    // 11111111 c c p p (5)
-	    //
-	    uint16_t count = readU16LE(_stream);
-	    uint16_t pos = readU16LE(_stream);
-	    //printf("Cmd 5, count: %d, pos: %d\n", count, pos);
-	    megacounte += count;
-	    my_memcpy(writep, image_out + pos, count);
-	    writep += count;
-	    e++;
-	} else if (byte == 0xfe) {
-	    //
-	    // 11111110 c c v(4) 
-	    //
-	    uint16_t count = readU16LE(_stream);
-	    uint8_t color = _stream.get();
-	    //printf("Cmd 4, count: %d, color: %d\n", count, color);
-	    memset(writep, color, count);
-	    writep += count;
-	    megacountd += count;
-	    d++;
-	} else if ((byte & 0xc0) == 0xc0) {
-	    //
-	    // 11cccccc p p (3)
-	    //
-	    uint16_t count = (byte & 0x3f) + 3;
-	    uint16_t pos = readU16LE(_stream);
-	    //printf("Cmd 3, count: %d, pos: %d\n", count, pos);
-	    megacountc += count;
-	    my_memcpy(writep, image_out + pos, count);
-	    writep += count;
-	    c++;
-	} else
-	    throw(Exception(LOG_ERROR, "Decode", "Stream contains unknown format80 command"));
-    };
-    if ((uint16_t)(megacounta + megacountb + megacountc + megacountd + megacounte)
-	    != checksum)
+	} else {
+	    // 10cccccc (2) 
+	    count = command & 0x3f;
+	    if((command & 0x40) == 0) {
+		//printf("Cmd 2(0x%x), count: %d\n", command, count);
+		// Finished decoding
+		if (!count)
+		    break;
+		_stream.read((char*)writep, count);
+		writep += count;
+	    } else {
+		if(count < 0x3e) {
+		    // 11cccccc p p (3)
+		    count += 3;
+		    pos = readU16LE(_stream);
+		    //printf("Cmd 3(0x%x), count: %d, pos: %d\n", command, count, pos);
+		    my_memcpy(writep, image_out + pos, count);
+		    writep += count;
+		    pos += count;
+		} else if (count == 0x3e) {
+		    // 11111110 c c v(4) 
+		    count = readU16LE(_stream);
+		    uint8_t color = _stream.get();
+		    //printf("Cmd 4(0x%x), count: %d, color: %d\n", command, count, color);
+		    memset(writep, color, count);
+		    writep += count;
+		} else {
+		    // 11111111 c c p p (5)
+		    count = readU16LE(_stream);
+		    pos = readU16LE(_stream);
+		    //printf("Cmd 5(0x%x), count: %d, pos: %d\n", command, count, pos);
+		    my_memcpy(writep, image_out + pos, count);
+		    writep += count;
+		}
+	    }
+	}
+    }
+    if ((writep - image_out) != checksum)
 	return -1;
     return 0;
 }
