@@ -22,6 +22,8 @@
 #ifndef EASTWOOD_ADL_OPL_H
 #define EASTWOOD_ADL_OPL_H
 
+namespace eastwood {
+
 class Copl
 {
  public:
@@ -66,4 +68,5 @@ class Copl
   ChipType	currType;		// this OPL chip's type
 };
 
+}
 #endif // EASTWOOD_ADL_OPL_H

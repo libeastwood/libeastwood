@@ -18,14 +18,15 @@
  *  
  */
 
-#include "EmcFileBase.h"
-#include "EmcFileDisassemble.h"
-#include "EmcFileAssemble.h"
+#include "StdDef.h"
+
+#include "emc/EmcFileBase.h"
+#include "emc/EmcFileDisassemble.h"
+#include "emc/EmcFileAssemble.h"
 
 #include "Exception.h"
 
-using namespace eastwood;
-
+namespace eastwood {
 
 EmcFileBase::EmcFileBase(const char *fileName) {
     _fileName		= fileName;
@@ -348,3 +349,4 @@ void EmcFileBase::opcodesHousesSetup() {
 #undef OPCODE
 }
 
+}

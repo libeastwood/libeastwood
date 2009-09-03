@@ -23,6 +23,7 @@
 
 #include <string>
 
+namespace eastwood {
 
 class EmcFileAssemble : public EmcFileBase {
     public:
@@ -66,4 +67,5 @@ class EmcFileAssemble : public EmcFileBase {
 
 };
 
+}
 #endif // EASTWOOD_EMC_EMCFILECOMPILE_H

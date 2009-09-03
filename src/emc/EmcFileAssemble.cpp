@@ -23,9 +23,11 @@
 
 #include "StdDef.h"
 
-#include "EmcFileBase.h"
-#include "EmcFileAssemble.h"
-#include "EmcFileInternal.h"
+#include "emc/EmcFileBase.h"
+#include "emc/EmcFileAssemble.h"
+#include "emc/EmcFileInternal.h"
+
+namespace eastwood {
 
 EmcFileAssemble::EmcFileAssemble(const char *fileName) : EmcFileBase(fileName) {
     _sourceFile = NULL;
@@ -424,3 +426,4 @@ void EmcFileAssemble::o_execute_Unit_GetDetail() {
 }
 #endif
 
+}

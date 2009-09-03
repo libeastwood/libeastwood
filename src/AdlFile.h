@@ -11,6 +11,8 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
+namespace eastwood {
+
 class AdlibDriver;
 class Copl;
 class CadlPlayer
@@ -80,4 +82,5 @@ class AdlFile : public CadlPlayer
   AdlFile();
 };
 
+}
 #endif // EASTWOOD_ADLIBFILE_H

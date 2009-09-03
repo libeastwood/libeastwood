@@ -23,7 +23,8 @@
 
 #include <string>
 #include <vector>
-#include <inttypes.h>
+
+namespace eastwood {
 
 class EmcFileBase;
 
@@ -206,4 +207,5 @@ class EmcFileBase {
 	}
 };
 
+}
 #endif // EASTWOOD_EMC_EMCFILEBASE_H

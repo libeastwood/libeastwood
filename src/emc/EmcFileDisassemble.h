@@ -23,6 +23,8 @@
 
 #include <fstream>
 
+namespace eastwood {
+
 class EmcFileDisassemble : public EmcFileBase {
     public:
 	EmcFileDisassemble(const char *fileName);
@@ -77,4 +79,5 @@ class EmcFileDisassemble : public EmcFileBase {
 
 };
 
+}
 #endif // EASTWOOD_EMC_EMCFILEDECOMPILE_H

@@ -22,6 +22,8 @@
 #include "emuopl.h"
 #include "fmopl.h"
 
+namespace eastwood {
+
 CEmuopl::CEmuopl(int rate, bool bit16, bool usestereo)
   : use16bit(bit16), stereo(usestereo), mixbufSamples(0)
 {
@@ -145,4 +147,6 @@ void CEmuopl::init()
 void CEmuopl::settype(ChipType type)
 {
   currType = type;
+}
+
 }

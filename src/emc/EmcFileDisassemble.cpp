@@ -22,13 +22,15 @@
 #include <iomanip>
 #include <string.h>
 
-#include "EmcFileBase.h"
-#include "EmcFileDisassemble.h"
-#include "EmcFileInternal.h"
+#include "StdDef.h"
+
+#include "emc/EmcFileBase.h"
+#include "emc/EmcFileDisassemble.h"
+#include "emc/EmcFileInternal.h"
 
 #include "Exception.h"
 
-using namespace eastwood;
+namespace eastwood {
 
 EmcFileDisassemble::EmcFileDisassemble(const char *fileName) : EmcFileBase(fileName) {
     std::string	sourceFilename = std::string(_fileName), targetFilename;
@@ -451,4 +453,6 @@ void EmcFileDisassemble::o_execute_Unit_GetDetail() {
 	};
 	_destinationFile << "(" << nameUnitDetails[_scriptLastPush] << ")";
     }
+}
+
 }

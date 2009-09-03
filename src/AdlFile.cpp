@@ -57,6 +57,8 @@
 #include "AdlFile.h"
 #include "adl/emuopl.h"
 
+namespace eastwood {
+
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 // Basic Adlib Programming:
@@ -2411,3 +2413,4 @@ AdlFile::AdlFile() : CadlPlayer()
 {
 }
 
+}

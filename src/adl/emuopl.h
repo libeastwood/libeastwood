@@ -22,10 +22,13 @@
 #ifndef EASTWOOD_ADL_EMUOPL_H
 #define EASTWOOD_ADL_EMUOPL_H
 
+
 #include "opl.h"
 extern "C" {
 #include "fmopl.h"
 }
+
+namespace eastwood {
 
 class CEmuopl: public Copl
 {
@@ -46,4 +49,5 @@ class CEmuopl: public Copl
   int		mixbufSamples;
 };
 
+}
 #endif // EASTWOOD_ADL_EMUOPL_H

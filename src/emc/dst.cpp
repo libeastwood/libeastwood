@@ -19,10 +19,13 @@
  */
 
 #include <iostream>
+#include "StdDef.h"
 
-#include "EmcFileBase.h"
-#include "EmcFileDisassemble.h"
-#include "EmcFileAssemble.h"
+#include "emc/EmcFileBase.h"
+#include "emc/EmcFileDisassemble.h"
+#include "emc/EmcFileAssemble.h"
+
+using namespace eastwood;
 
 static const char *version = "1.1";
 
