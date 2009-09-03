@@ -70,15 +70,12 @@ bool EmcFileDisassemble::headerRead() {
     uint16_t *buffer = (uint16_t*) _scriptBuffer;
 
     // Number of script functions
-    _pointerCount = htobe16(*buffer) / 2;
-    buffer++;
+    _pointerCount = htobe16(*buffer++) / 2;
 
     _headerPointers = new uint16_t[_pointerCount];
 
-    for(size_t ptrCount = 0; ptrCount < _pointerCount; ptrCount++) {
-	_headerPointers[ptrCount] = htobe16(*buffer);
-	buffer++;
-    }
+    for(size_t ptrCount = 0; ptrCount < _pointerCount; ptrCount++)
+	_headerPointers[ptrCount] = htobe16(*buffer++);
 
     // Skip 'DATA' tag
     buffer += 2;	// 2 Words
@@ -87,8 +84,7 @@ bool EmcFileDisassemble::headerRead() {
     buffer++;
 
     // Size of the upcoming script data
-    _scriptSize = htobe16(*buffer);
-    buffer++;
+    _scriptSize = htobe16(*buffer++);
 
     // Start of script data
     _scriptStart = (uint8_t*) buffer;
