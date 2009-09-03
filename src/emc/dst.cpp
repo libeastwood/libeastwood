@@ -32,8 +32,6 @@ static const char *version = "1.1";
 int main( int argc, char *argv[]) {
     bool result = false;
     EmcFileBase *script = NULL;
-    EmcFileDisassemble *decompiler = NULL;
-    EmcFileAssemble *compiler = NULL;
 
 
     std::cout << "Dune II Script Tools v" << version << std::endl << std::endl;
@@ -51,11 +49,11 @@ int main( int argc, char *argv[]) {
     std::ofstream output(argv[3], std::ios::binary | std::ios::out);
     // Disassemble Mode
     if( tolower(*argv[1]) == 'd' )
-	script = decompiler = new EmcFileDisassemble(input, output);
+	script = new EmcFileDisassemble(input, output);
 
     // Assemble Mode
     else if( tolower(*argv[1]) == 'c' )
-	script = compiler = new EmcFileAssemble(input, output);
+	script = new EmcFileAssemble(input, output);
 
     // Do It
     result = script->execute();
@@ -70,8 +68,5 @@ int main( int argc, char *argv[]) {
     input.close();
     output.close();
 
-    if(decompiler)
-	delete decompiler;
-    else if(compiler)
-	delete compiler;
+    delete script;
 }

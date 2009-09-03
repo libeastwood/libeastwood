@@ -28,7 +28,7 @@ namespace eastwood {
 class EmcFileAssemble : public EmcFileBase {
     public:
 	EmcFileAssemble(std::istream &input, std::ostream &output);
-	~EmcFileAssemble();
+	virtual ~EmcFileAssemble();
 
 	bool	execute();			// Assemble a script
 

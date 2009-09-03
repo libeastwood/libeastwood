@@ -28,7 +28,7 @@ namespace eastwood {
 class EmcFileDisassemble : public EmcFileBase {
     public:
 	EmcFileDisassemble(std::istream &input, std::ostream &output);
-	~EmcFileDisassemble();
+	virtual ~EmcFileDisassemble();
 
 	bool	execute();		// Disassemble a script
 

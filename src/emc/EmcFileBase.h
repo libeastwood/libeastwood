@@ -51,7 +51,7 @@ enum script_t {
 class EmcFileBase {
     public:
 	EmcFileBase(std::istream &input, std::ostream &output);
-	~EmcFileBase();
+	virtual ~EmcFileBase();
 
 	uint16_t	scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes);	// Search the opcode table for 'Opcode' string
 
