@@ -33,7 +33,8 @@
 namespace eastwood {
 
 EmcFileDisassemble::EmcFileDisassemble(std::istream &input, std::ostream &output) :
-    EmcFileBase(input, output), _scriptLastPush(0)
+    EmcFileBase(input, output), _scriptLastPush(0), _opcodeCurrent(0), _stackCount(0),
+    _scriptData(0), _scriptDataNext(0), _scriptPtrEnd(NULL)
 {
 }
 
@@ -59,7 +60,7 @@ bool EmcFileDisassemble::scriptLoad() {
     scriptSize -= _inputStream.tellg();
     // Load file into _scriptBuffer
     _scriptBuffer = new uint8_t[scriptSize];
-    if(_inputStream.read((char*) _scriptBuffer, scriptSize) == false)
+    if(!_inputStream.read((char*) _scriptBuffer, scriptSize))
 	return false;
 
     return true;
@@ -104,6 +105,8 @@ bool EmcFileDisassemble::headerRead() {
 	case script_UNIT:
     	    _outputStream << "[Unit]" << std::endl;
 	    break;
+	default:
+	    return false;
     }
 
     return true;
@@ -117,7 +120,7 @@ bool EmcFileDisassemble::scriptNextStart() {
 
 	// In TEAM.EMC for example, two objects use the same script
 	if(_scriptPos == (uint16_t) _headerPointers[count]) {
-	    if(found==false)
+	    if(!found)
 		_outputStream << std::endl;
 
 	    // Write the section name in square brackets
@@ -137,7 +140,7 @@ bool EmcFileDisassemble::execute() {
 
     // Map out all labels
     _modePreProcess = true;
-    if(scriptDisassemble() == false)
+    if(!scriptDisassemble())
 	return false;
 
     // Disassemble the script 
@@ -149,17 +152,9 @@ bool EmcFileDisassemble::execute() {
 }
 
 bool EmcFileDisassemble::scriptDisassemble() {
-
-    _lineCount		= 0;
-    _opcodeCurrent	= 0;
-    _scriptData		= _scriptDataNext = 0;
-    _scriptPtr		= NULL;
-    _scriptPtrEnd	= NULL;
-    _scriptPos		= 0;
-    _stackCount		= 0xF;
-
-    _scriptPos		= 0;
-    _scriptPtr		= (uint16_t*) _scriptStart;
+    _stackCount		= 0xF,
+    _scriptPos		= 0,
+    _scriptPtr		= (uint16_t*) _scriptStart,
     _scriptPtrEnd	= (uint16_t*) (_scriptStart + _scriptSize);
 
     while(_scriptPtr <  _scriptPtrEnd) {
@@ -172,30 +167,29 @@ bool EmcFileDisassemble::scriptDisassemble() {
 		_outputStream << "l" << _scriptPos << ":" << std::endl;
 	}
 
-	_scriptDataNext = 0;
-	_scriptData = htobe16(*_scriptPtr);
-	_scriptPtr++;
+	_scriptDataNext = 0,
+	_scriptData = htobe16(*_scriptPtr),
+	_scriptPtr++,
 	_scriptPos++;
 
 	// Keep the opcode
 	_opcodeCurrent = _scriptData >> 8;
 	_opcodeCurrent &= 0x1F;
 
-	if(_scriptData & 0x8000) {
+	if(_scriptData & 0x8000)
 	    // Opcode uses 13 bits
-	    _opcodeCurrent = 0;
+	    _opcodeCurrent = 0,
 	    _scriptData &= 0x7FFF;
-	} else
+	else
 	    // Opcode only requires 1 uint8_t
-	    if(_scriptData & 0x4000) {
+	    if(_scriptData & 0x4000)
 		_scriptData &= 0xFF;
-	    } else 	
+	    else 	
 		// Opcode uses the next WORD, grab it
-		if(_scriptData & 0x2000) {
-		    _scriptDataNext = htobe16(*_scriptPtr);
-		    _scriptPtr++;
+		if(_scriptData & 0x2000)
+		    _scriptDataNext = htobe16(*_scriptPtr),
+		    _scriptPtr++,
 		    _scriptPos++;
-		}
 
 
 	    // Print opcode
@@ -275,7 +269,7 @@ void EmcFileDisassemble::o_PushReg() {
 }
 
 void EmcFileDisassemble::o_PushFrameMinArg() {
-    _stackCount--;
+    _stackCount--,
     _stackCount--;
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);
@@ -284,7 +278,7 @@ void EmcFileDisassemble::o_PushFrameMinArg() {
 }
 
 void EmcFileDisassemble::o_PushFramePluArg() {
-    _stackCount--;
+    _stackCount--,
     _stackCount--;
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);
@@ -314,7 +308,7 @@ void EmcFileDisassemble::o_PopReg() {
 }
 
 void EmcFileDisassemble::o_PopFrameMinArg() {
-    _stackCount++;
+    _stackCount++,
     _stackCount++;
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);
@@ -323,7 +317,7 @@ void EmcFileDisassemble::o_PopFrameMinArg() {
 }
 
 void EmcFileDisassemble::o_PopFramePluArg() {
-    _stackCount++;
+    _stackCount++,
     _stackCount++;
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);

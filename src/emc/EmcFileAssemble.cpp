@@ -30,7 +30,9 @@
 namespace eastwood {
 
 EmcFileAssemble::EmcFileAssemble(std::istream &input, std::ostream &output) :
-    EmcFileBase(input, output), _currentLine(std::string(BUFSIZ, 0)) {
+    EmcFileBase(input, output), _currentLine(""), _opcodeCurrent(""), _data(""),
+    _opcode(0)
+{
 }
 
 EmcFileAssemble::~EmcFileAssemble() {
@@ -56,6 +58,8 @@ bool EmcFileAssemble::headerCreate() {
 	case script_HOUSE:
     	    *buffer = 0x5A01;
 	    break;
+	default:
+	    return false;
     }
 
     // 0x6 is WORDS, not uint8_ts like 0x10 above
@@ -127,7 +131,7 @@ bool EmcFileAssemble::execute() {
     memset((void*) _scriptBuffer, 0, 0x100000);
 
     // Run the script assembler in pre process mode (find all jump locations)
-    if(scriptAssemble() == false)
+    if(!scriptAssemble())
 	return false;
 
     // Cleanup header pointers
@@ -138,7 +142,7 @@ bool EmcFileAssemble::execute() {
     _modePreProcess = false;
 
     // Properly assemble the script
-    if(scriptAssemble() == false)
+    if(!scriptAssemble())
 	return false;
 
     // Save the _scriptBuffer to disk
@@ -203,7 +207,7 @@ bool EmcFileAssemble::scriptAssemble() {
 	    }
 
 	    // Did we reach end of file?
-	    if(_inputStream.eof() == true)
+	    if(_inputStream.eof())
 		break;
 
 	    // Check if the opcode is valid

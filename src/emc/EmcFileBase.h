@@ -43,6 +43,7 @@ struct labelPosition {
 
 
 enum script_t {
+    script_INVALID = -1,
     script_BUILD = 0,
     script_UNIT,
     script_HOUSE
@@ -122,14 +123,14 @@ class EmcFileBase {
 	// Houses
 	virtual void	 o_execute_House_Null(){}
 
+	std::istream 	&_inputStream;
+	std::ostream	&_outputStream;
+
 	// Opcode Functions
 	const _Opcode	*_opcodes;		// Script Opcodes
 	const _Opcode	*_opcodesEvaluate;	// Evaluate Command Opcodes
 	const _Opcode	*_opcodesExecute;	// Execute Functions
 
-
-	std::istream 	&_inputStream;		// Open File
-	std::ostream	&_outputStream;
 	uint16_t	*_headerPointers;	// function pointers
 
 	uint16_t	_pointerCount;		// Number of script "function" pointers
@@ -192,7 +193,7 @@ class EmcFileBase {
 
 	inline
 	void scriptLabelAdd(std::string label, uint16_t position) {
-	    labelPosition LP;
+	    labelPosition LP = { 0, "" };
 	    size_t labelPos = scriptLabel(position),
 		   labelEndPos = label.find(":");
 
@@ -200,7 +201,7 @@ class EmcFileBase {
 		labelEndPos = label.length();
 
 	    if(labelPos == (size_t)-1) {
-		LP._name = label.substr(0, labelEndPos);
+		LP._name += label.substr(0, labelEndPos);
 		LP._scriptPos = position;
 
 		_scriptLabels.push_back(LP);
