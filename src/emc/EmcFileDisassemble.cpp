@@ -32,60 +32,35 @@
 
 namespace eastwood {
 
-EmcFileDisassemble::EmcFileDisassemble(const char *fileName) : EmcFileBase(fileName) {
-    std::string	sourceFilename = std::string(_fileName), targetFilename;
-    size_t posPeriod = sourceFilename.find(".");
-
-    // Prepare output filename
-    if(posPeriod == std::string::npos)
-	posPeriod = sourceFilename.length() - 1;
-
-    targetFilename = sourceFilename.substr(0, posPeriod);
-    targetFilename.append(".txt");
-
-    _scriptLastPush = 0;
-    _opcodesExecute = NULL;
-
-
-    // Open target file
-    _destinationFile.open(targetFilename.c_str(), std::ios::out);
+EmcFileDisassemble::EmcFileDisassemble(std::istream &input, std::ostream &output) :
+    EmcFileBase(input, output), _scriptLastPush(0)
+{
 }
 
 EmcFileDisassemble::~EmcFileDisassemble() {
-    _destinationFile.close();
 }
 
 bool EmcFileDisassemble::scriptLoad() {
-    std::ifstream fileScript;
     size_t scriptSize;
 
 
-    fileScript.open(_fileName, std::ios::in | std::ios::binary);
-
-    if(fileScript.is_open() == false)
-	return false;
-
     // Read File Size
-    fileScript.seekg(0, std::ios::end);
-    scriptSize = fileScript.tellg();
-    fileScript.seekg(0, std::ios::beg);
+    scriptSize = getStreamSize(_inputStream);
     if(scriptSize < sizeof(emcHeader))
-	throw(FileException(LOG_ERROR, "EmcFile", _fileName, "File is too small!"));
+	throw(FileException(LOG_ERROR, "EmcFile", "_inputStream", "File is too small!"));
 
     // Verify header
     char fileHeader[sizeof(emcHeader)];
-    fileScript.get(fileHeader, sizeof(fileHeader));
+    _inputStream.get(fileHeader, sizeof(fileHeader));
     if(memcmp(emcHeader, fileHeader, 4) || memcmp(emcHeader+8, fileHeader+8, sizeof(emcHeader)-9))
-	throw(FileException(LOG_ERROR, "EmcFile", _fileName, "Invalid header!"));
+	throw(FileException(LOG_ERROR, "EmcFile", "_inputStream", "Invalid header!"));
 
-    fileScript.seekg(3, std::ios::cur);
-    scriptSize -= fileScript.tellg();
+    _inputStream.seekg(3, std::ios::cur);
+    scriptSize -= _inputStream.tellg();
     // Load file into _scriptBuffer
     _scriptBuffer = new uint8_t[scriptSize];
-    if(fileScript.read((char*) _scriptBuffer, scriptSize) == false)
+    if(_inputStream.read((char*) _scriptBuffer, scriptSize) == false)
 	return false;
-
-    fileScript.close();
 
     return true;
 }
@@ -121,13 +96,13 @@ bool EmcFileDisassemble::headerRead() {
 
     switch(_scriptType) {
 	case script_HOUSE:
-    	    _destinationFile << "[House]" << std::endl;
+    	    _outputStream << "[House]" << std::endl;
 	    break;
 	case script_BUILD:
-    	    _destinationFile << "[Build]" << std::endl;
+    	    _outputStream << "[Build]" << std::endl;
 	    break;
 	case script_UNIT:
-    	    _destinationFile << "[Unit]" << std::endl;
+    	    _outputStream << "[Unit]" << std::endl;
 	    break;
     }
 
@@ -143,10 +118,10 @@ bool EmcFileDisassemble::scriptNextStart() {
 	// In TEAM.EMC for example, two objects use the same script
 	if(_scriptPos == (uint16_t) _headerPointers[count]) {
 	    if(found==false)
-		_destinationFile << std::endl;
+		_outputStream << std::endl;
 
 	    // Write the section name in square brackets
-	    _destinationFile << "[" << _objectNames[count] << "]" << std::endl;
+	    _outputStream << "[" << _objectNames[count] << "]" << std::endl;
 	    found = true;
 	}
     }
@@ -155,8 +130,6 @@ bool EmcFileDisassemble::scriptNextStart() {
 }
 
 bool EmcFileDisassemble::execute() {
-
-    std::cout << "Preprocessing " << _fileName << std::endl;
 
     // Load the script into a _scriptBuffer, then read the header information
     scriptLoad();
@@ -170,9 +143,8 @@ bool EmcFileDisassemble::execute() {
     // Disassemble the script 
     _modePreProcess = false;
 
-    _destinationFile << "[General]" << std::endl;
+    _outputStream << "[General]" << std::endl;
 
-    std::cout << "Decompiling....." << std::endl;
     return scriptDisassemble();
 }
 
@@ -197,7 +169,7 @@ bool EmcFileDisassemble::scriptDisassemble() {
 
 	    // Check if label location, print label if so
 	    if(scriptLabel(_scriptPos) != (size_t)-1)
-		_destinationFile << "l" << _scriptPos << ":" << std::endl;
+		_outputStream << "l" << _scriptPos << ":" << std::endl;
 	}
 
 	_scriptDataNext = 0;
@@ -228,15 +200,15 @@ bool EmcFileDisassemble::scriptDisassemble() {
 
 	    // Print opcode
 	    if(!_modePreProcess)
-		_destinationFile << std::setw(20) << std::left << _opcodes[_opcodeCurrent].description;
+		_outputStream << std::setw(20) << std::left << _opcodes[_opcodeCurrent].description;
 
 	    // Excute opcode
 	    (this->*_opcodes[_opcodeCurrent].function)();
 
-	    //_destinationFile  << setw(20) << " ";
-	    //_destinationFile  << hex << uppercase << "S: 0x" << _stackCount << std::endl;
+	    //_outputStream  << setw(20) << " ";
+	    //_outputStream  << hex << uppercase << "S: 0x" << _stackCount << std::endl;
 	    if(!_modePreProcess)
-		_destinationFile << std::endl;
+		_outputStream << std::endl;
 
 	    _lineCount++;
     }
@@ -252,7 +224,7 @@ void EmcFileDisassemble::o_Goto() {
 	if(labelPos == (size_t)-1)
 	    dataPrint(_scriptData);
 	else
-	    _destinationFile << "l" << _scriptLabels[labelPos]._scriptPos;
+	    _outputStream << "l" << _scriptLabels[labelPos]._scriptPos;
 
     } else {
 	if(labelPos == (size_t)-1)
@@ -323,7 +295,7 @@ void EmcFileDisassemble::o_PushFramePluArg() {
 void EmcFileDisassemble::o_Pop() {
     if(_scriptData == 1) {
 	if(!_modePreProcess)
-	    _destinationFile << " (Return)";
+	    _outputStream << " (Return)";
 	return;
 
     } else 
@@ -372,7 +344,7 @@ void EmcFileDisassemble::o_SubSP() {
 void EmcFileDisassemble::o_Execute() {
 
     if(!_modePreProcess)
-	_destinationFile << std::left << _opcodesExecute[ _scriptData ].description << " ";
+	_outputStream << std::left << _opcodesExecute[ _scriptData ].description << " ";
 
     (this->*_opcodesExecute[ _scriptData ].function)();
 }
@@ -391,7 +363,7 @@ void EmcFileDisassemble::o_IfNotGoto() {
 	    if(labelPos == (size_t)-1)
 		dataPrint(_scriptDataNext & 0x7FFF);
 	    else
-		_destinationFile << "l" << _scriptLabels[labelPos]._scriptPos;
+		_outputStream << "l" << _scriptLabels[labelPos]._scriptPos;
 	}
 
     } else {
@@ -404,7 +376,7 @@ void EmcFileDisassemble::o_IfNotGoto() {
 	    if(labelPos == (size_t)-1)
 		dataPrint(_scriptData);
 	    else
-		_destinationFile << "l" << _scriptLabels[labelPos]._scriptPos;
+		_outputStream << "l" << _scriptLabels[labelPos]._scriptPos;
 	}
     }
 }
@@ -415,7 +387,7 @@ void EmcFileDisassemble::o_Negate() {
 
 void EmcFileDisassemble::o_Evaluate() {
     if(!_modePreProcess)
-	_destinationFile << _opcodesEvaluate[ _scriptData ].description;
+	_outputStream << _opcodesEvaluate[ _scriptData ].description;
 
     (this->*_opcodesEvaluate[ _scriptData ].function)();
 }
@@ -451,7 +423,7 @@ void EmcFileDisassemble::o_execute_Unit_GetDetail() {
 	    "CanTurretRotates",          
 	    "CheckIfHuman"              
 	};
-	_destinationFile << "(" << nameUnitDetails[_scriptLastPush] << ")";
+	_outputStream << "(" << nameUnitDetails[_scriptLastPush] << ")";
     }
 }
 

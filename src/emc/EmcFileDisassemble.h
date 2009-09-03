@@ -27,7 +27,7 @@ namespace eastwood {
 
 class EmcFileDisassemble : public EmcFileBase {
     public:
-	EmcFileDisassemble(const char *fileName);
+	EmcFileDisassemble(std::istream &input, std::ostream &output);
 	~EmcFileDisassemble();
 
 	bool	execute();		// Disassemble a script
@@ -56,7 +56,6 @@ class EmcFileDisassemble : public EmcFileBase {
 	void	o_execute_Unit_GetDetail();
 
     private:
-	std::ofstream	_destinationFile;
 	uint16_t	_scriptLastPush;		// Last push operation value
 
 	// Runtime Data
@@ -74,7 +73,7 @@ class EmcFileDisassemble : public EmcFileBase {
 
 	inline void	dataPrint(uint16_t data) {	// Print a uint16_t to screen in decimal
 	    if(!_modePreProcess)
-		_destinationFile << std::dec << std::uppercase  << data;
+		_outputStream << std::dec << std::uppercase  << data;
 	}
 
 };

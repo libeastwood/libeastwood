@@ -29,15 +29,11 @@
 
 namespace eastwood {
 
-EmcFileAssemble::EmcFileAssemble(const char *fileName) : EmcFileBase(fileName) {
-    _sourceFile = NULL;
+EmcFileAssemble::EmcFileAssemble(std::istream &input, std::ostream &output) :
+    EmcFileBase(input, output), _currentLine(std::string(BUFSIZ, 0)) {
 }
 
 EmcFileAssemble::~EmcFileAssemble() {
-    if(_sourceFile) {
-    	_sourceFile->close();
-    	delete _sourceFile;
-    }
 }
 
 
@@ -92,23 +88,11 @@ bool EmcFileAssemble::headerCreate() {
 }
 
 bool EmcFileAssemble::scriptSave() {
-    std::ofstream _targetFile;
-    std::string file;
-
-    file.append(_fileName);
-    file.append(".EMC");
-
-    _targetFile.open(file.c_str(), std::ios::binary | std::ios::out);
-
-    if(_targetFile.is_open() == false)
-	return false;
-
     // Set the header/pointers in the buffer
     headerCreate();
 
     // Write the header, the pointers and the script
-    _targetFile.write((char*)_scriptBuffer, _scriptSize + (_pointerCount*2) + 0x1C);
-    _targetFile.close();
+    _outputStream.write((char*)_scriptBuffer, _scriptSize + (_pointerCount*2) + 0x1C);
 
     return true;
 }
@@ -139,15 +123,11 @@ int EmcFileAssemble::scriptSectionCheck() {
 
 bool EmcFileAssemble::execute() {
 
-    std::cout << "Preprocessing " << _fileName << std::endl;
+    _scriptBuffer = new uint8_t[0x100000];			// should be big enough :p
 
     // Run the script assembler in pre process mode (find all jump locations)
     if(scriptAssemble() == false)
 	return false;
-
-    // Cleanup script buffer
-    if(_scriptBuffer)
-	delete [] _scriptBuffer;
 
     // Cleanup header pointers
     if(_headerPointers)
@@ -156,7 +136,6 @@ bool EmcFileAssemble::execute() {
     // Disable PreProcess mode
     _modePreProcess = false;
 
-    std::cout << "Compiling....." << std::endl;
     // Properly assemble the script
     if(scriptAssemble() == false)
 	return false;
@@ -169,6 +148,7 @@ bool EmcFileAssemble::execute() {
 bool EmcFileAssemble::scriptAssemble() {
     char nextChar;
     int	objectID = 0;
+    std::streamoff lastOffset = getStreamSize(_inputStream)-1;
 
     _lineCount = 0;
 
@@ -176,39 +156,30 @@ bool EmcFileAssemble::scriptAssemble() {
     _scriptSize	= 0;
     _scriptPos	= 0;
 
-    // Cleanup previous file operation
-    if(_sourceFile)
-	delete _sourceFile;
-
-    // Open source file 
-    _sourceFile = new std::ifstream();
-    _sourceFile->open(_fileName, std::ios::in);
-
-    if(_sourceFile->is_open() == false)
-	return false;
+    _inputStream.seekg(0, std::ios::beg);
 
     // Read file type line
-    *_sourceFile >> _currentLine;
+    _inputStream >> _currentLine;
     _lineCount++;
+
 
     opcodesSetup(_currentLine);
 
+
     // Prepare memory for scriptBuffer and headerPointers
     _headerPointers = new uint16_t[_pointerCount];
-    _scriptBuffer = new uint8_t[0x100000];			// should be big enough :p
 
     // Set the script pointer to the script starting position (in buffer)
     _scriptPtr = (uint16_t*) (_scriptBuffer + (_pointerCount*2) + 0x1C);
 
     // Clear memory
     memset((void*) _headerPointers, 0, _pointerCount * 2);
-    memset((void*) _scriptBuffer, 0, 0x100000);
 
     // Loop until end of source file
-    while(!_sourceFile->eof()) {
+    while(static_cast<std::streamoff>(_inputStream.tellg()) < lastOffset) {
 
 	// Read next line from sourcecode file
-	*_sourceFile >> _currentLine;
+	_inputStream >> _currentLine;
 
 	// Find the opcode in the opcode table
 	_opcode = 0xFFFF;
@@ -231,26 +202,26 @@ bool EmcFileAssemble::scriptAssemble() {
 	    }
 
 	    // Did we reach end of file?
-	    if(_sourceFile->eof() == true)
+	    if(_inputStream.eof() == true)
 		break;
 
 	    // Check if the opcode is valid
 	    if(_opcode == 0xFFFF) {
-		*_sourceFile >> _currentLine;
+		_inputStream >> _currentLine;
 		continue;
 	    }
 
 	    // Skip the spaces and check the next character
-	    while((nextChar = _sourceFile->get()) == 0x20) {
+	    while((nextChar = _inputStream.get()) == 0x20) {
 
 	    }
 
 	    // Move the buffer back
-	    _sourceFile->seekg(-1, std::ios::cur);
+	    _inputStream.seekg(-1, std::ios::cur);
 
 	    // Is it end of line? or is it a parameter?
 	    if(nextChar != '\n')
-		*_sourceFile >> _currentLine;
+		_inputStream >> _currentLine;
 
 	}
 
@@ -278,6 +249,7 @@ bool EmcFileAssemble::scriptAssemble() {
 
     // Set the size of the script to the Line numbers * 2 (sizeof uint16_t)
     _scriptSize = _scriptPos * 2;
+
     return true;
 }
 
@@ -422,7 +394,7 @@ void EmcFileAssemble::o_Return() {
 void EmcFileAssemble::o_execute_Unit_GetDetail() {
     /* What's this for??
     static std::string	detailName;
-    *_sourceFile >> detailName;*/
+    *_inputStream >> detailName;*/
 }
 #endif
 

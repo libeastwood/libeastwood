@@ -50,7 +50,7 @@ enum script_t {
 
 class EmcFileBase {
     public:
-	EmcFileBase(const char *fileName);
+	EmcFileBase(std::istream &input, std::ostream &output);
 	~EmcFileBase();
 
 	uint16_t	scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes);	// Search the opcode table for 'Opcode' string
@@ -128,7 +128,8 @@ class EmcFileBase {
 	const _Opcode	*_opcodesExecute;	// Execute Functions
 
 
-	const char	*_fileName;		// Open File
+	std::istream 	&_inputStream;		// Open File
+	std::ostream	&_outputStream;
 	uint16_t	*_headerPointers;	// function pointers
 
 	uint16_t	_pointerCount;		// Number of script "function" pointers

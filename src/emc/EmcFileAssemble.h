@@ -27,14 +27,12 @@ namespace eastwood {
 
 class EmcFileAssemble : public EmcFileBase {
     public:
-	EmcFileAssemble( const char *fileName );
+	EmcFileAssemble(std::istream &input, std::ostream &output);
 	~EmcFileAssemble();
 
 	bool	execute();			// Assemble a script
 
     private:
-	std::ifstream	*_sourceFile;		// Source-Code file	
-
 	std::string	_currentLine,
 			_opcodeCurrent,
 			_data;

@@ -47,13 +47,15 @@ int main( int argc, char *argv[]) {
 	return 0;
     }
 
+    std::ifstream input(argv[2], std::ios::binary | std::ios::in);
+    std::ofstream output(argv[3], std::ios::binary | std::ios::out);
     // Disassemble Mode
     if( tolower(*argv[1]) == 'd' )
-	script = decompiler = new EmcFileDisassemble( argv[2] );
+	script = decompiler = new EmcFileDisassemble(input, output);
 
     // Assemble Mode
     else if( tolower(*argv[1]) == 'c' )
-	script = compiler = new EmcFileAssemble( argv[2] );
+	script = compiler = new EmcFileAssemble(input, output);
 
     // Do It
     result = script->execute();
@@ -64,6 +66,9 @@ int main( int argc, char *argv[]) {
 	std::cout << "Line Number:" << script->labelCountGet() << std::endl;
     }	else
 	std::cout << "Done" << std::endl;
+
+    input.close();
+    output.close();
 
     if(decompiler)
 	delete decompiler;
