@@ -3,8 +3,7 @@
 
 #include "Decode.h"
 
-class SDL_Palette;
-class SDL_Surface;
+namespace eastwood {
 
 enum compressionFormat {
     UNCOMPRESSED = 0x000,
@@ -15,10 +14,10 @@ enum compressionFormat {
 class CpsFile : public Decode
 {
     public:
-	CpsFile(std::istream &stream, SDL_Palette *palette = NULL);
+	CpsFile(std::istream &stream, Palette *palette = NULL);
 	virtual ~CpsFile();
 
-	SDL_Surface *getSurface();
+	Surface getSurface();
 
     private:
 	compressionFormat _format;
@@ -27,4 +26,5 @@ class CpsFile : public Decode
 
 };
 
+}
 #endif // EASTWOOD_CPSFILE_H

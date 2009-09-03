@@ -5,16 +5,17 @@
 
 #include "Decode.h"
 
+namespace eastwood {
 
 class WsaFile : public Decode
 {
 public:
-	WsaFile(std::istream &stream, SDL_Palette *palette,
-                SDL_Surface *lastframe = NULL);
+	WsaFile(std::istream &stream, Palette *palette,
+                Surface *lastframe = NULL);
 
 	virtual ~WsaFile();
 
-	SDL_Surface *getSurface(uint32_t frameNumber);
+	Surface getSurface(uint32_t frameNumber);
 
 	inline uint32_t getNumFrames() { return _numFrames; };
 	inline uint32_t getFramesPer1024ms() { return _framesPer1024ms; };
@@ -29,4 +30,5 @@ private:
 		 _framesPer1024ms;
 };
 
+}
 #endif // EASTWOOD_WSAFILE_H

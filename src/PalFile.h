@@ -3,15 +3,9 @@
 
 #include <istream>
 
-struct Color {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-};
+#include "Surface.h"
 
-typedef Color Palette[256];
-
-class SDL_Palette;
+namespace eastwood {
 
 class PalFile
 {
@@ -19,12 +13,12 @@ class PalFile
 	PalFile(std::istream &stream);
 	virtual ~PalFile();
 
-	SDL_Palette *getPalette();
+	Palette *getPalette();
 
     private:
 	Palette _palette;
-	SDL_Palette *_SDLPalette;
 
 };
 
+}
 #endif // EASTWOOD_PALETTE_H

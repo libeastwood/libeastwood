@@ -4,7 +4,7 @@
 #include "Log.h"
 #include "PakFile.h"
 
-using namespace eastwood;
+namespace eastwood {
 
 PakFile::PakFile(std::istream &stream) : std::istream(NULL), _stream(stream),_fileEntry(std::vector<PakFileEntry>()) 
 {
@@ -72,4 +72,5 @@ void PakFile::readIndex()
     }
 }
 
+}
 // vim:ts=8:sw=4:et

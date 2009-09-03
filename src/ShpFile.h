@@ -5,6 +5,8 @@
 #include <vector>
 #include "Decode.h"
 
+namespace eastwood {
+
 enum TileType {
     TILE_NORMAL = (1<<16),
     TILE_FLIPH = (1<<20),
@@ -18,13 +20,10 @@ struct ShpFileEntry
     uint32_t endOffset;
 };
 
-class SDL_Palette;
-class SDL_Surface;
-
 class ShpFile : public Decode
 {
     public:
-	ShpFile(std::istream &stream, SDL_Palette *palette);
+	ShpFile(std::istream &stream, Palette *palette);
 	~ShpFile();
 
 	/*!
@@ -33,7 +32,7 @@ class ShpFile : public Decode
 	  @param	IndexOfFile	specifies which picture to return (zero based)
 	  @return	nth picture in this shp-File
 	  */
-	SDL_Surface *getSurface(const uint16_t fileIndex);
+	Surface getSurface(const uint16_t fileIndex);
 
 
 	/*!
@@ -58,8 +57,8 @@ class ShpFile : public Decode
 	  @param	tilesY	how many pictures in one column
 	  @return	picture in this shp-File containing all specified pictures
 	  */
-	SDL_Surface *getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, ...);
-	SDL_Surface *getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles);
+	Surface getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, ...);
+	Surface getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles);
 
 	inline uint16_t getNumFiles() { return _numFiles; }
 
@@ -71,5 +70,5 @@ class ShpFile : public Decode
 	uint16_t _numFiles;	
 };
 
-
+}
 #endif // EASTWOOD_SHPFILE_H

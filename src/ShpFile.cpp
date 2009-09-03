@@ -1,5 +1,4 @@
-#include <SDL.h>
-
+#include <cstdarg>
 #include "StdDef.h"
 
 #include "Log.h"
@@ -7,7 +6,7 @@
 #include "Exception.h"
 #include "ShpFile.h"
 
-using namespace eastwood;
+namespace eastwood {
 
 static inline uint32_t getIndex(const uint32_t x) {
     return (x & (TILE_NORMAL-1));
@@ -17,7 +16,7 @@ static inline TileType getType(const uint32_t x) {
     return (TileType)(x & (TILE_NORMAL-1)<<16);
 }
 
-ShpFile::ShpFile(std::istream &stream, SDL_Palette *palette) :
+ShpFile::ShpFile(std::istream &stream, Palette *palette) :
     Decode(stream, 0, 0, palette), _index(std::vector<ShpFileEntry>(1)), _numFiles(0)
 {
     readIndex();
@@ -129,7 +128,6 @@ static void decode2(const uint8_t *in, uint8_t *out, int size)
     }
 }
 
-
 static void apply_pal_offsets(const uint8_t *offsets, uint8_t *data, uint16_t length)
 {
     for (uint16_t i = 0; i < length; i ++)
@@ -168,7 +166,7 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 
-	    ::decode2(&decodeDestination.front(),&imageOut.front(), imageSize);
+	    eastwood::decode2(&decodeDestination.front(),&imageOut.front(), imageSize);
 	    break;
 
 	case 1:
@@ -180,19 +178,19 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
 	    
-	    ::decode2(&decodeDestination.front(), &imageOut.front(), imageSize);
+	    eastwood::decode2(&decodeDestination.front(), &imageOut.front(), imageSize);
 
 	    apply_pal_offsets(&palOffsets.front(),&imageOut.front(), imageOut.size());
 	    break;
 
 	case 2:
-	    ::decode2(_stream, &imageOut.front(),imageSize);
+	    eastwood::decode2(_stream, &imageOut.front(),imageSize);
 	    break;
 
 	case 3:
 	    palOffsets.resize(16);
 	    readLE(_stream, &palOffsets.front(), palOffsets.size());
-	    ::decode2(_stream, &imageOut.front(), imageSize);
+	    eastwood::decode2(_stream, &imageOut.front(), imageSize);
 
 	    apply_pal_offsets(&palOffsets.front(), &imageOut.front(), imageOut.size());
 	    break;
@@ -206,21 +204,16 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
     return imageOut;    
 }
 
-SDL_Surface *ShpFile::getSurface(uint16_t fileIndex)
+Surface ShpFile::getSurface(uint16_t fileIndex)
 {
-    SDL_Surface *pic = NULL;
     uint8_t width,
 	    height;
     std::vector<uint8_t> imageOut = getImage(fileIndex, width, height);
-    pic = createSurface(&imageOut.front(), width, height, SDL_SWSURFACE);
 
-    SDL_SetColorKey(pic, SDL_SRCCOLORKEY, 0);
-    
-    return pic;
+    return Surface(&imageOut.front(), width, height, 8, _palette);
 }
 
-SDL_Surface *ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
-    SDL_Surface *surface;
+Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
     std::vector<uint32_t> tiles(tilesX*tilesY);
 
     va_list arg_ptr;
@@ -236,12 +229,10 @@ SDL_Surface *ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
     }
 
     va_end(arg_ptr);
-    surface = getSurfaceArray(tilesX, tilesY, &tiles.front());
-    return surface;
+    return getSurfaceArray(tilesX, tilesY, &tiles.front());
 }
 
-SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles) {
-    SDL_Surface *pic = NULL;
+Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles) {
     uint8_t width,
 	    height;
     uint16_t index = getIndex(tiles[0]);
@@ -258,13 +249,7 @@ SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY
 	}
     }
 
-    // create new picture surface
-    if((pic = SDL_CreateRGBSurface(SDL_HWSURFACE,width*tilesX,height*tilesY,8,0,0,0,0)) == NULL) {
-	throw(Exception(LOG_ERROR, "ShpFile","getSurfaceArray(): Cannot create Surface."));
-    }
-
-    SDL_SetColors(pic, _palette->colors, 0, _palette->ncolors);
-    SDL_LockSurface(pic);	
+    Surface pic(width*tilesX, height*tilesY, 8, _palette);
 
     for(uint32_t j = 0; j < tilesY; j++)	{
 	for(uint32_t i = 0; i < tilesX; i++) {
@@ -276,24 +261,24 @@ SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY
 	    switch(getType(tiles[i])) {
 		case TILE_NORMAL:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch , &imageOut.front() + y * width, width);
+			memcpy(	((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch , &imageOut.front() + y * width, width);
 		    break;
 
 		case TILE_FLIPH:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch , &imageOut.front() + (height-1-y) * width, width);
+			memcpy(	((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch , &imageOut.front() + (height-1-y) * width, width);
 		    break;
 
 		case TILE_FLIPV:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch + x) = *(&imageOut.front() + y * width + (width-1-x));
+			    *(((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch + x) = *(&imageOut.front() + y * width + (width-1-x));
 		    break;
 
 		case TILE_ROTATE:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) (pic->pixels)) + i*width + (y+j*height) * pic->pitch + x) = *(&imageOut.front() + (height-1-y) * width + (width-1-x));
+			    *(((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch + x) = *(&imageOut.front() + (height-1-y) * width + (width-1-x));
 		    break;
 
 		default:
@@ -303,8 +288,7 @@ SDL_Surface *ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY
 	}
     }
 
-    SDL_UnlockSurface(pic);
-    SDL_SetColorKey(pic, SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
     return pic;
 }
 
+}

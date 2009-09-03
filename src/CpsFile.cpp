@@ -10,9 +10,9 @@
 #include "Log.h"
 #include "PalFile.h"
 
-using namespace eastwood;
+namespace eastwood {
 
-CpsFile::CpsFile(std::istream &stream, SDL_Palette *palette) :
+CpsFile::CpsFile(std::istream &stream, Palette *palette) :
     Decode(stream, 320, 200, palette), _format(UNCOMPRESSED), _imageSize(0)
 {
     if((uint16_t)(readU16LE(_stream)+_stream.gcount()) != getStreamSize(_stream))
@@ -47,7 +47,7 @@ CpsFile::~CpsFile()
 {	
 }
 
-SDL_Surface *CpsFile::getSurface()
+Surface eastwood::CpsFile::getSurface()
 {
     std::vector<uint8_t> ImageOut(_imageSize);
 
@@ -64,5 +64,7 @@ SDL_Surface *CpsFile::getSurface()
 	break;
     }
 
-    return createSurface(&ImageOut.front(), SDL_SWSURFACE);
+    return Surface(&ImageOut.front(), _width, _height, 8, _palette);
+}
+
 }

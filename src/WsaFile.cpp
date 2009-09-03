@@ -11,8 +11,8 @@
 
 using namespace eastwood;
 
-WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
-	SDL_Surface *lastframe) :
+WsaFile::WsaFile(std::istream &stream, Palette *palette,
+	Surface *lastframe) :
     Decode(stream, 0, 0, palette), _frameOffsTable(std::vector<uint32_t>()),
     _decodedFrames(std::vector<uint8_t>()), _numFrames(0),
     _deltaBufferSize(0), _framesPer1024ms(0)
@@ -50,7 +50,7 @@ WsaFile::WsaFile(std::istream &stream, SDL_Palette *palette,
     _decodedFrames.resize(_width*_height*_numFrames);
 
     if (lastframe != NULL)
-	memcpy(&_decodedFrames.front(), lastframe->pixels, _width*_height);
+	memcpy(&_decodedFrames.front(), lastframe->_pixels, _width*_height);
 
     decodeFrames();
 }
@@ -59,15 +59,15 @@ WsaFile::~WsaFile()
 {
 }
 
-SDL_Surface *WsaFile::getSurface(uint32_t frameNumber)
+Surface WsaFile::getSurface(uint32_t frameNumber)
 {
-    if(frameNumber >= _numFrames) {
+/*    if(frameNumber >= _numFrames) {
 	return NULL;
-    }
+    }*/
 
     uint8_t *frame = &_decodedFrames.front() + (frameNumber * _width * _height);
 
-    return createSurface(frame, SDL_HWSURFACE);
+    return Surface(frame, _width, _height, 8, _palette);
 }
 
 void WsaFile::decodeFrames()

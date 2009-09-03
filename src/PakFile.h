@@ -4,6 +4,8 @@
 #include <istream>
 #include <vector>
 
+namespace eastwood {
+
 struct PakFileEntry {
     uint32_t startOffset;
     uint32_t endOffset;
@@ -14,7 +16,9 @@ class PakFile : public std::istream
 {
     public:
         PakFile(std::istream &stream);
-        virtual ~PakFile();
+        ~PakFile();
+
+        std::istream *getFileStream(std::string fileName);
 
 	void close();
 	void open(std::string fileName);
@@ -36,5 +40,6 @@ class PakFile : public std::istream
         std::vector<PakFileEntry> _fileEntry;
 };
 
+}
 #endif // EASTWOOD_PAKFILE_H
 // vim:ts=8:sw=4:et
