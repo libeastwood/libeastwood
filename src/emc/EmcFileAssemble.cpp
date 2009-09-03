@@ -63,7 +63,7 @@ bool EmcFileAssemble::headerCreate() {
     }
 
     // 0x6 is WORDS, not uint8_ts like 0x10 above
-    buffer += 0x6,
+    buffer += 0x6;
 
     // Write pointer counter
     *buffer++ = htobe16(_pointerCount * 2);
@@ -142,16 +142,16 @@ bool EmcFileAssemble::scriptAssemble() {
     int	objectID = 0;
     std::streamoff lastOffset = getStreamSize(_inputStream)-1;
 
-    _lineCount = 0,
+    _lineCount = 0;
 
     // Reset the script position and the size
-    _scriptSize	= 0,
+    _scriptSize	= 0;
     _scriptPos	= 0;
 
     _inputStream.seekg(0, std::ios::beg);
 
     // Read file type line
-    _inputStream >> _currentLine,
+    _inputStream >> _currentLine;
     _lineCount++;
 
     opcodesSetup(_currentLine);
@@ -222,7 +222,7 @@ bool EmcFileAssemble::scriptAssemble() {
 	//	std::cout << "a";
 
 	// Next Line Number
-	_scriptPos++,
+	_scriptPos++;
 
 	// Next Word in _scriptBuffer pointer
 	_scriptPtr++;
@@ -241,7 +241,7 @@ void EmcFileAssemble::o_Goto() {
     if(!_modePreProcess && labelPos == (size_t)-1)
 	*((uint8_t*) bb) = 01;
 
-    *(_scriptPtr) |= 0x80,
+    *(_scriptPtr) |= 0x80;
     *(_scriptPtr) |= htobe16(labelPos);
 
 }
@@ -252,14 +252,14 @@ void EmcFileAssemble::o_SetReturn() {
 }
 
 void EmcFileAssemble::o_PushOp() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void  EmcFileAssemble::o_PushWord() {
-    *(_scriptPtr) |= 0x20,
-    *(_scriptPtr+1) |= htobe16(atoi(_currentLine.c_str())),
-    _scriptPtr++,
+    *(_scriptPtr) |= 0x20;
+    *(_scriptPtr+1) |= htobe16(atoi(_currentLine.c_str()));
+    _scriptPtr++;
     _scriptPos++;
 }
 
@@ -270,23 +270,23 @@ void EmcFileAssemble::o_Push() {
     if(value > 0xFF)
 	return o_PushWord();
 
-    *(_scriptPtr)  = 0x04,
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr)  = 0x04;
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(value);
 }
 
 void EmcFileAssemble::o_PushReg() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_PushFrameMinArg() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_PushFramePluArg() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
@@ -302,35 +302,35 @@ void EmcFileAssemble::o_Pop() {
 }
 
 void EmcFileAssemble::o_PopReg() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_PopFrameMinArg() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_PopFramePluArg() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_AddSP() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_SubSP() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_Execute() {
     uint16_t opcode = 0;
 
-    *(_scriptPtr) |= 0x40,
-    opcode = scriptOpcodeFind(_currentLine, _opcodesExecute),
+    *(_scriptPtr) |= 0x40;
+    opcode = scriptOpcodeFind(_currentLine, _opcodesExecute);
     *(_scriptPtr) |= htobe16(opcode);
 
     (this->*_opcodesExecute[opcode].function)();
@@ -340,25 +340,25 @@ void EmcFileAssemble::o_IfNotGoto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int line = 0;
 
-    *(_scriptPtr) |= 0x20,
-    line = labelPos,
-    line |= 0x8000,
+    *(_scriptPtr) |= 0x20;
+    line = labelPos;
+    line |= 0x8000;
     *(_scriptPtr+1) = htobe16(line),
 
-    _scriptPtr++,
+    _scriptPtr++;
     _scriptPos++;
 }
 
 void EmcFileAssemble::o_Negate() {
-    *(_scriptPtr) |= 0x40,
+    *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
 void EmcFileAssemble::o_Evaluate() {
     uint16_t opcode = 0;
 
-    *(_scriptPtr) |= 0x40,
-    opcode = scriptOpcodeFind(_currentLine, _opcodesEvaluate),
+    *(_scriptPtr) |= 0x40;
+    opcode = scriptOpcodeFind(_currentLine, _opcodesEvaluate);
     *(_scriptPtr) |= htobe16(opcode);
 }
 
