@@ -124,6 +124,7 @@ int EmcFileAssemble::scriptSectionCheck() {
 bool EmcFileAssemble::execute() {
 
     _scriptBuffer = new uint8_t[0x100000];			// should be big enough :p
+    memset((void*) _scriptBuffer, 0, 0x100000);
 
     // Run the script assembler in pre process mode (find all jump locations)
     if(scriptAssemble() == false)
