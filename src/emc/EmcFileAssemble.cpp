@@ -76,14 +76,7 @@ bool EmcFileAssemble::headerCreate() {
 	buffer++;
     }
 
-    // Write DATA std::string
-    *buffer = ('A'<<8) + 'D';
-    buffer++;
-    *buffer = ('A'<<8) + 'T';
-    buffer++;
-
-    // Not sure if this uint16_t is actually part of a DWORD, or 2 useless uint8_ts?
-    buffer++;
+    buffer += snprintf((char*)buffer, 5, "DATA")-1;
 
     // Write total script size
     *buffer = htobe16(_scriptSize);
