@@ -17,13 +17,13 @@ SET( LIBEASTWOOD_SRCS
   WsaFile.cpp
   adl/emuopl.cpp
   adl/fmopl.c
+  emc/EmcFileBase.cpp
+  emc/EmcFileAssemble.cpp
+  emc/EmcFileDisassemble.cpp
   scaler/scale2xARM.s
   scaler/scale2x.cpp
   scaler/scale3x.cpp
   scaler/scalebit.cpp
-  emc/EmcFileBase.cpp
-  emc/EmcFileAssemble.cpp
-  emc/EmcFileDisassemble.cpp
 )
 
 SET( LIBEASTWOOD_HEADERS
@@ -47,6 +47,7 @@ SET( LIBEASTWOOD_HEADERS
   emc/EmcFileBase.h
   emc/EmcFileAssemble.h
   emc/EmcFileDisassemble.h  
+  scaler/scalebit.h
 )
 
 SET( SDL_LIBEASTWOOD_SRCS

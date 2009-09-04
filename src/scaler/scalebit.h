@@ -38,7 +38,7 @@
 
 #include "Surface.h"
 
-using namespace eastwood;
+namespace eastwood {
 
 /**
  * Check if the scale implementation is applicable at the given arguments.
@@ -66,5 +66,6 @@ bool scale_precondition(Scaler scale, uint8_t bpp, uint16_t width, uint16_t heig
  */
 void scale(Scaler scale, uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, uint16_t srcSlice, uint8_t bpp, uint16_t width, uint16_t height);
 
-#endif
+}
 
+#endif // EASTWOOD_SCALEBIT_H

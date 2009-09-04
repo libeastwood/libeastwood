@@ -47,6 +47,7 @@
 #define SSDST(bits, num) (uint##bits##_t *)dst##num
 #define SSSRC(bits, num) (const uint##bits##_t *)src##num
 
+namespace eastwood {
 /**
  * Apply the Scale2x effect on a group of rows. Used internally.
  */
@@ -489,3 +490,4 @@ void scale(Scaler scale, uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcP
     }
 }
 
+}
