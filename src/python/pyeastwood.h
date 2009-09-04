@@ -1,0 +1,9 @@
+#ifndef EASTWOOD_PYTHON_PYEASTWOOD_H
+#define EASTWOOD_PYTHON_PYEASTWOOD_H
+
+#include <Python.h>
+
+PyObject *module;
+
+#endif // EASTWOOD_PYTHON_PYEASTWOOD_H
+
