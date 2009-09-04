@@ -20,7 +20,7 @@ class CadlPlayer
  public:
   CadlPlayer(Copl *newopl);
   CadlPlayer();
-  ~CadlPlayer();
+  virtual ~CadlPlayer();
 
   static void callback(void *, uint8_t *, int);
   bool load(uint8_t *bufFiledata, int bufsize);
