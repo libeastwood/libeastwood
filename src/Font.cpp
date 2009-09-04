@@ -6,6 +6,8 @@
 #include "Font.h"
 #include "Log.h"
 
+namespace eastwood {
+
 Font::Font(FNTCharacter *characters, FNTHeader *header)
 {
 	m_characters = characters;
@@ -67,3 +69,4 @@ void Font::render(std::string text, SDL_Surface *image, int offx, int offy, uint
 	};
 }
 
+}

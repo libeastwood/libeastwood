@@ -7,6 +7,8 @@
 #define MAX_FONT_SIZE 24
 #define FONTS (MAX_FONT_SIZE - MIN_FONT_SIZE)
 
+namespace eastwood {
+
 struct FNTHeader
 {
     uint16_t fsize;    /* Size of the file              */
@@ -47,4 +49,5 @@ class Font
         uint16_t m_nchars;
 };
 
+}
 #endif // EASTWOOD_FONT_H
