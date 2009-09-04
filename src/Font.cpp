@@ -1,5 +1,4 @@
 #include <iostream>
-#include <SDL.h>
 
 #include "StdDef.h"
 
@@ -9,41 +8,40 @@
 namespace eastwood {
 
 Font::Font(FNTCharacter *characters, FNTHeader *header) :
-    m_characters(characters), m_header(header)
+    _header(header), _characters(characters), _nchars(0)
 {
 }
 
 Font::~Font()
 {
-	delete [] m_characters;
-	delete m_header;
+	delete [] _characters;
+	delete _header;
 }
 
 void Font::extents(std::string text, uint16_t& w, uint16_t& h)
 {
 	FNTCharacter *ch;
 	w = 0;
-    	h = m_header->height;
+    	h = _header->height;
 
     	for (unsigned int c=0; c!=text.length(); c++)
     	{
-		ch = &m_characters[(int)text[c]];
+		ch = &_characters[(int)text[c]];
 		w += (2 * ch->width) + 1;
     };
 }
 
-void Font::render(std::string text, SDL_Surface *image, int offx, int offy, uint8_t paloff)
+void Font::render(std::string text, Surface *surface, int offx, int offy, uint8_t paloff)
 {
 	std::string test = text;
 	FNTCharacter *ch;
 	uint8_t *bitmap;
 
-	SDL_Surface *surface = image;
-	uint8_t* pixels = (uint8_t*)surface->pixels;
+	uint8_t* pixels = (uint8_t*)surface->_pixels;
 
     	for (unsigned int c=0; c!=text.length(); c++)
 	{
-		ch = &m_characters[(int)text[c]];
+		ch = &_characters[(int)text[c]];
 		bitmap = ch->bitmap;
 
 		for (uint8_t y=0; y!=ch->height; y++)
@@ -55,12 +53,12 @@ void Font::render(std::string text, SDL_Surface *image, int offx, int offy, uint
 
 				if (hibyte!=0)
 				{
-					pixels[(offx + x) + ((ch->y_offset + y + offy) * surface->w)] = paloff + uint8_t(hibyte);
+					pixels[(offx + x) + ((ch->y_offset + y + offy) * surface->_width)] = paloff + uint8_t(hibyte);
 				};
 
 				if (lobyte!=0) //(2 < ch->width) lobyte!=0)
 				{
-					pixels[(offx + x + 1) + ((ch->y_offset + y + offy) * surface->w)] = paloff + uint8_t(lobyte);
+					pixels[(offx + x + 1) + ((ch->y_offset + y + offy) * surface->_width)] = paloff + uint8_t(lobyte);
 				};
 			};
 		};

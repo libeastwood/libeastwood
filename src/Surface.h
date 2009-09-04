@@ -33,6 +33,7 @@ class Surface {
 	friend class CpsFile;
 	friend class ShpFile;
 	friend class WsaFile;
+	friend class Font;
 
 	uint8_t _bpp;
 	uint16_t _width,

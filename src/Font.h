@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Surface.h"
+
 #define MIN_FONT_SIZE 6
 #define MAX_FONT_SIZE 24
 #define FONTS (MAX_FONT_SIZE - MIN_FONT_SIZE)
@@ -40,13 +42,13 @@ class Font
         ~Font();
 
         void extents(std::string text, uint16_t& w, uint16_t& h);
-        void render(std::string text, SDL_Surface *image, int x, int y, uint8_t paloff);
+        void render(std::string text, Surface *surface, int x, int y, uint8_t paloff);
 
 
     private:
-        FNTHeader *m_header;
-        FNTCharacter *m_characters;
-        uint16_t m_nchars;
+        FNTHeader *_header;
+        FNTCharacter *_characters;
+        uint16_t _nchars;
 };
 
 }
