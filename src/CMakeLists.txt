@@ -17,6 +17,10 @@ SET( LIBEASTWOOD_SRCS
   WsaFile.cpp
   adl/emuopl.cpp
   adl/fmopl.c
+  scaler/scale2xARM.s
+  scaler/scale2x.cpp
+  scaler/scale3x.cpp
+  scaler/scalebit.cpp
   emc/EmcFileBase.cpp
   emc/EmcFileAssemble.cpp
   emc/EmcFileDisassemble.cpp
