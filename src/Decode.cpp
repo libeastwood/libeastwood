@@ -246,33 +246,20 @@ void Decode::encode2(const uint8_t *source, int len, int slices, std::ostream &d
     int count;
     int limit = len / slices;
 
-    const uint8_t *end = source + len;
-    while (source < end) {
+    for(int i = 0; i < len; i++) {
 	count = 0;
-
-	for (int pixel = 0; pixel < limit; pixel++) {
-	    uint8_t value = *source++;
-
-	    // Read 0
-	    if (value == 0)
+	uint8_t value = *source++;
+	dest.put(value);
+	if(value == 0) {
+	    count++;
+	    while(*source == 0)
+	    {
+		source++;
 		count++;
-
-	    // Read non-0
-	    else {
-		// End of series of 0s, describe series
-		if (count > 0) {
-		    for(int i = 0; i  < count; i++)
-			dest.put(0);
-		    count = 0;
-		}
-		// Write non-0 value
-		dest.put(value);
+		i++;
 	    }
+	    dest.put(count);
 	}
-	// Finish remaining series of 0s (if any)
-	if (count > 0)
-	    for(int i = 0; i  < count; i++)
-		dest.put(0);
     }
 }
 
