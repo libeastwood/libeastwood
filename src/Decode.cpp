@@ -5,6 +5,23 @@
 #include "Decode.h"
 #include "Exception.h"
 
+enum fmtCmd {
+    CMD_OFFSET_THRESHOLD	= 1<<1,
+    CMD_FILL_THRESHOLD		= (1<<2)-1,
+    CMD_OFFSET_MAX		= (1<<3)+CMD_OFFSET_THRESHOLD,
+
+    CMD_SMALL_MAX		= 1<<6,
+    CMD_LARGE_MAX		= (1<<16)-1,
+    CMD_TRANSFER_MAX		= CMD_SMALL_MAX-1,
+
+    CMD_TRANSFER		= 1<<7,
+    CMD_COPY_SMALL		= CMD_SMALL_MAX+CMD_TRANSFER,
+    CMD_COPY_LARGE		= 1<<8,
+
+    CMD_FILL			= CMD_COPY_LARGE-1
+
+};
+
 namespace eastwood {
 
 Decode::Decode(std::istream &stream, uint16_t width, uint16_t height, Palette *palette) :
@@ -222,6 +239,40 @@ void Decode::decode2(const uint8_t *in, uint8_t *out, int size)
 
 	    out += count;
 	}
+    }
+}
+
+void Decode::encode2(const uint8_t *source, int len, int slices, std::ostream &dest) {
+    int count;
+    int limit = len / slices;
+
+    const uint8_t *end = source + len;
+    while (source < end) {
+	count = 0;
+
+	for (int pixel = 0; pixel < limit; pixel++) {
+	    uint8_t value = *source++;
+
+	    // Read 0
+	    if (value == 0)
+		count++;
+
+	    // Read non-0
+	    else {
+		// End of series of 0s, describe series
+		if (count > 0) {
+		    for(int i = 0; i  < count; i++)
+			dest.put(0);
+		    count = 0;
+		}
+		// Write non-0 value
+		dest.put(value);
+	    }
+	}
+	// Finish remaining series of 0s (if any)
+	if (count > 0)
+	    for(int i = 0; i  < count; i++)
+		dest.put(0);
     }
 }
 

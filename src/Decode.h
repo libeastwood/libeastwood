@@ -18,6 +18,9 @@ protected:
 	int decode40(const unsigned char *image_in, unsigned char *image_out);
 	void decode2(std::istream &stream, uint8_t *out, int size);
 	void decode2(const uint8_t *in, uint8_t *out, int size);
+	//FIXME:
+	void encode2(const uint8_t *source, int len, int slices, std::ostream &dest);
+
 
 
 
