@@ -8,10 +8,9 @@
 
 namespace eastwood {
 
-Font::Font(FNTCharacter *characters, FNTHeader *header)
+Font::Font(FNTCharacter *characters, FNTHeader *header) :
+    m_characters(characters), m_header(header)
 {
-	m_characters = characters;
-	m_header = header;
 }
 
 Font::~Font()
