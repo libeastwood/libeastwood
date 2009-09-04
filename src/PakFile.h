@@ -18,8 +18,6 @@ class PakFile : public std::istream
         PakFile(std::istream &stream);
         ~PakFile();
 
-        std::istream *getFileStream(std::string fileName);
-
 	void close();
 	void open(std::string fileName);
 
