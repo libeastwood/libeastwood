@@ -33,6 +33,8 @@
  * - derivative works of the program are allowed.
  */
 
+#include <vector>
+
 #include "StdDef.h"
 
 #include "scalebit.h"
@@ -40,12 +42,7 @@
 #include "scale2x.h"
 #include "scale3x.h"
 
-#if HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
-
 #include <cassert>
-#include <stdlib.h>
 
 #define SSDST(bits, num) (uint##bits##_t *)dst##num
 #define SSSRC(bits, num) (const uint##bits##_t *)src##num
@@ -414,28 +411,16 @@ static void scale4x_buf(uint8_t* dstPtr, uint16_t dstSlice, uint8_t* void_mid, u
 static void scale4x(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, uint16_t srcSlice, uint8_t bpp, uint16_t width, uint16_t height)
 {
 	uint16_t mid_slice;
-	uint8_t* mid;
+	std::vector<uint8_t> mid;
 
 	mid_slice = 2 * bpp * width; /* required space for 1 row buffer */
 
 	mid_slice = (mid_slice + 0x7) & ~0x7; /* align to 8 bytes */
 
-#if HAVE_ALLOCA
-	mid = alloca(6 * mid_slice); /* allocate space for 6 row buffers */
+	mid.resize(6 * mid_slice); /* allocate space for 6 row buffers */
 
-	assert(mid != 0); /* alloca should never fails */
-#else
-	mid = (uint8_t*)malloc(6 * mid_slice); /* allocate space for 6 row buffers */
+	scale4x_buf(dstPtr, dstSlice, &mid.front(), mid_slice, srcPtr, srcSlice, bpp, width, height);
 
-	if (!mid)
-		return;
-#endif
-
-	scale4x_buf(dstPtr, dstSlice, mid, mid_slice, srcPtr, srcSlice, bpp, width, height);
-
-#if !HAVE_ALLOCA
-	free(mid);
-#endif
 }
 
 bool scale_precondition(Scaler scale, uint8_t bpp, uint16_t width, uint16_t height)
