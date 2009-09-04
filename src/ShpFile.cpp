@@ -84,50 +84,6 @@ void ShpFile::readIndex()
     }
 }
 
-static void decode2(std::istream &stream, uint8_t *out, int size)
-{
-    int count;
-    while (size > 0) {
-	stream.getline((char*)out, size, 0);
-	count = stream.gcount();
-	out += count;
-	size -= count;
-	count = stream.get();
-	size--;
-	if (count == 0)
-	    return;
-
-	if(--count) {
-    	    memset(out, 0, count);
-    	    out += count;
-	}
-    }
-}
-
-static void decode2(const uint8_t *in, uint8_t *out, int size)
-{
-    const uint8_t *end = in + size;
-    while (in < end) {
-	uint8_t val = *in;
-	in++;
-
-	if (val != 0) {
-	    *out = val;
-	    out++;
-	} else {
-	    uint8_t count;
-	    count = *in;
-	    in++;
-	    if (count == 0) {
-		return;
-	    }
-	    memset(out, 0, count);
-
-	    out += count;
-	}
-    }
-}
-
 static void apply_pal_offsets(const uint8_t *offsets, uint8_t *data, uint16_t length)
 {
     for (uint16_t i = 0; i < length; i ++)
@@ -166,7 +122,7 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 
-	    eastwood::decode2(&decodeDestination.front(),&imageOut.front(), imageSize);
+	    decode2(&decodeDestination.front(),&imageOut.front(), imageSize);
 	    break;
 
 	case 1:
@@ -178,19 +134,19 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
 	    
-	    eastwood::decode2(&decodeDestination.front(), &imageOut.front(), imageSize);
+	    decode2(&decodeDestination.front(), &imageOut.front(), imageSize);
 
 	    apply_pal_offsets(&palOffsets.front(),&imageOut.front(), imageOut.size());
 	    break;
 
 	case 2:
-	    eastwood::decode2(_stream, &imageOut.front(),imageSize);
+	    decode2(_stream, &imageOut.front(),imageSize);
 	    break;
 
 	case 3:
 	    palOffsets.resize(16);
 	    readLE(_stream, &palOffsets.front(), palOffsets.size());
-	    eastwood::decode2(_stream, &imageOut.front(), imageSize);
+	    decode2(_stream, &imageOut.front(), imageSize);
 
 	    apply_pal_offsets(&palOffsets.front(), &imageOut.front(), imageOut.size());
 	    break;

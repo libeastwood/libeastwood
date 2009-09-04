@@ -181,4 +181,48 @@ int Decode::decode40(const uint8_t *image_in, uint8_t *image_out)
     return (writep - image_out);
 }
 
+void Decode::decode2(std::istream &stream, uint8_t *out, int size)
+{
+    int count;
+    while (size > 0) {
+	stream.getline((char*)out, size, 0);
+	count = stream.gcount();
+	out += count;
+	size -= count;
+	count = stream.get();
+	size--;
+	if (count == 0)
+	    return;
+
+	if(--count) {
+    	    memset(out, 0, count);
+    	    out += count;
+	}
+    }
+}
+
+void Decode::decode2(const uint8_t *in, uint8_t *out, int size)
+{
+    const uint8_t *end = in + size;
+    while (in < end) {
+	uint8_t val = *in;
+	in++;
+
+	if (val != 0) {
+	    *out = val;
+	    out++;
+	} else {
+	    uint8_t count;
+	    count = *in;
+	    in++;
+	    if (count == 0) {
+		return;
+	    }
+	    memset(out, 0, count);
+
+	    out += count;
+	}
+    }
+}
+
 }

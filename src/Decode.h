@@ -16,6 +16,10 @@ public:
 protected:
 	int decode80(uint8_t *image_out, uint32_t checksum);
 	int decode40(const unsigned char *image_in, unsigned char *image_out);
+	void decode2(std::istream &stream, uint8_t *out, int size);
+	void decode2(const uint8_t *in, uint8_t *out, int size);
+
+
 
 	std::istream &_stream;
 	uint16_t _width,
