@@ -8,71 +8,62 @@
 #ifndef EASTWOOD_ADLIBFILE_H
 #define EASTWOOD_ADLIBFILE_H 
 
-#include <SDL.h>
-#include <SDL_mixer.h>
-
 namespace eastwood {
 
 class AdlibDriver;
 class Copl;
 class CadlPlayer
 {
- public:
-  CadlPlayer(Copl *newopl);
-  CadlPlayer();
-  virtual ~CadlPlayer();
+    public:
+	CadlPlayer(Copl *newopl);
+	CadlPlayer();
+	virtual ~CadlPlayer();
 
-  static void callback(void *, uint8_t *, int);
-  bool load(uint8_t *bufFiledata, int bufsize);
-  bool update();
-  void rewind(int subsong);
-  Copl* get_opl() { return opl; }
-  bool init();
-  // refresh rate is fixed at 72Hz
-  float getrefresh()
-    {
-      return 72.0f;
-    }
+	virtual void callback(void *, uint8_t *, int) = 0;
+	bool load(uint8_t *bufFiledata, int bufsize);
+	bool update();
+	void rewind(int subsong);
+	virtual Copl* get_opl() { return _opl; }
+	bool init();
+	// refresh rate is fixed at 72Hz
+	float getrefresh()
+	{
+	    return 72.0f;
+	}
 
-  unsigned int getsubsongs();
-  std::string gettype() { return std::string("Westwood ADL"); }
+	unsigned int getsubsongs();
+	std::string gettype() { return std::string("Westwood ADL"); }
 
- private:
-  int numsubsongs, cursubsong;
+    protected:
+	AdlibDriver *_driver;
+	Copl* _opl;
 
-  AdlibDriver *_driver;
-  Copl* opl;
-  
-  uint8_t _trackEntries[120];
-  uint8_t *_soundDataPtr;
-  int _sfxPlayingSound;
+    private:
+	int numsubsongs, cursubsong;
 
-  uint8_t _sfxPriority;
-  uint8_t _sfxFourthByteOfSong;
+	uint8_t _trackEntries[120];
+	uint8_t *_soundDataPtr;
+	int _sfxPlayingSound;
 
-  int _numSoundTriggers;
-  const int *_soundTriggers;
-  
-  int m_channels;
-  int m_freq;
-  uint16_t m_format;
-  
-  bool playing; //FIXME: It could be used for something, I hope.
+	uint8_t _sfxPriority;
+	uint8_t _sfxFourthByteOfSong;
 
-  static const int _kyra1NumSoundTriggers;
-  static const int _kyra1SoundTriggers[];
+	int _numSoundTriggers;
+	const int *_soundTriggers;
+
+	bool playing; //FIXME: It could be used for something, I hope.
+
+	static const int _kyra1NumSoundTriggers;
+	static const int _kyra1SoundTriggers[];
 
 
-  
-  unsigned char getsampsize() { 
-        return m_channels * (m_format == AUDIO_U8 ? 1 : 2); }
-        
-  void process();
-  void playTrack(uint8_t track);
-  void playSoundEffect(uint8_t track);
-  void play(uint8_t track);
-  void unk1();
-  void unk2();
+
+	void process();
+	void playTrack(uint8_t track);
+	void playSoundEffect(uint8_t track);
+	void play(uint8_t track);
+	void unk1();
+	void unk2();
 
 };
 

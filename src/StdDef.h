@@ -1,12 +1,16 @@
 #ifndef	EASTWOOD_STDDEF_H
 #define	EASTWOOD_STDDEF_H
 
-#include <inttypes.h>
+#include <algorithm>
+#include <istream>
+
+#include <cassert>
+#include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <algorithm>
-#include <istream>
+
+#include <inttypes.h>
 
 #ifdef _WIN32
 #include <tchar.h>

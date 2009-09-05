@@ -48,7 +48,6 @@
  *
  */
 
-#include <cassert>
 #include <string>
 
 #include "StdDef.h"
@@ -2179,34 +2178,21 @@ const int CadlPlayer::_kyra1SoundTriggers[] = {
 
 const int CadlPlayer::_kyra1NumSoundTriggers = ARRAYSIZE(CadlPlayer::_kyra1SoundTriggers);
 
-CadlPlayer::CadlPlayer(Copl *newopl)
+CadlPlayer::CadlPlayer(Copl *newopl) : _opl(newopl), _driver(new AdlibDriver(_opl))
 {
-  opl = newopl;
-
-
-  _driver = new AdlibDriver(newopl);
   assert(_driver);
-  Mix_QuerySpec(&m_freq, &m_format, &m_channels);
-
   init();
 }
 
-CadlPlayer::CadlPlayer()
+CadlPlayer::CadlPlayer() : _opl(NULL), _driver(NULL)
 {
-  Mix_QuerySpec(&m_freq, &m_format, &m_channels);
-
-  opl = new CEmuopl(m_freq, true, true);
-
-
-  _driver = new AdlibDriver(opl);
-  assert(_driver);
-
-  init();
 }
 
 CadlPlayer::~CadlPlayer() {
-  delete [] _soundDataPtr;
-  delete _driver;
+    if(_soundDataPtr)
+      	delete [] _soundDataPtr;
+    if(_driver)
+      	delete _driver;
 }
 
 bool CadlPlayer::init() {
@@ -2238,26 +2224,6 @@ void CadlPlayer::process() {
   } else {
     LOG_WARNING("AdlibDriver", "Unknown sound trigger %d", trigger);
     // TODO: At this point, we really want to clear the trigger...
-  }
-}
-
-void CadlPlayer::callback(void *userdata, uint8_t *audiobuf, int len)
-{
-  CadlPlayer *self = (CadlPlayer *)userdata;
-  static long	minicnt = 0;
-  long		i, towrite = len / self->getsampsize();
-  char		*pos = (char *)audiobuf;
-
-  // Prepare audiobuf with emulator output
-  while(towrite > 0) {
-    while(minicnt < 0) {
-      minicnt += self->m_freq;
-      self->playing = self->update();
-    }
-    i = std::min(towrite, (long)(minicnt / self->getrefresh() + 4) & ~3);
-    self->opl->update((short *)pos, i);
-    pos += i * self->getsampsize(); towrite -= i;
-    minicnt -= (long)(self->getrefresh() * i);
   }
 }
 
@@ -2372,8 +2338,8 @@ bool CadlPlayer::load(uint8_t *bufFiledata, int bufsize)
 
 void CadlPlayer::rewind(int subsong)
 {
-  opl->init();
-  opl->write(1,32);
+  _opl->init();
+  _opl->write(1,32);
   playSoundEffect(subsong);
   cursubsong = subsong;
   update();
