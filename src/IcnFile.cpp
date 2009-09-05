@@ -9,8 +9,7 @@
 #define	SIZE_X	16
 #define SIZE_Y	16
 
-using namespace eastwood;
-  
+namespace eastwood {
 
 IcnFile::IcnFile(const unsigned char *bufFileData, size_t bufSize,
                  const unsigned char *bufMapData, size_t mapSize,
@@ -304,4 +303,6 @@ SDL_Surface *IcnFile::getSurfaceRow(uint32_t startIndex, uint32_t endIndex) {
 int IcnFile::getNumFiles()
 {
 	return m_numFiles;
+}
+
 }

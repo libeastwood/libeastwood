@@ -11,8 +11,10 @@
 
 #include <vector>
 
-class SDL_Palette;
-class SDL_Surface;
+namespace eastwood {
+
+class ::SDL_Palette;
+class ::SDL_Surface;
 class IcnFile
 {
 private:
@@ -98,4 +100,5 @@ private:
 
 };
 
+}
 #endif // EASTWOOD_ICNFILE_H
