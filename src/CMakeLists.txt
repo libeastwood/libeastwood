@@ -4,6 +4,7 @@ SET( LIBEASTWOOD_SRCS
   AdlFile.cpp
   CpsFile.cpp
   Decode.cpp
+  Dune2File.cpp
   Exception.cpp
   Font.cpp
   IcnFile.cpp
@@ -30,6 +31,7 @@ SET( LIBEASTWOOD_HEADERS
   AdlFile.h
   CpsFile.h
   Decode.h
+  Dune2File.h
   Exception.h
   Font.h
   IcnFile.h

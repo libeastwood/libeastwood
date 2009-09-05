@@ -164,7 +164,20 @@ struct unitType {
     uint16_t	weaponSound;
 };
 
-Dune2Version detectDune2Version(std::istream &stream);
+class Dune2File
+{
+    public:
+    	Dune2File(std::istream &stream);
+
+	Dune2Version getVersion() { return _version; }
+
+    private:
+	Dune2Version detectDune2Version();
+	std::istream &_stream;
+	Dune2Version _version;
+
+};
 
 }
+
 #endif // EASTWOOD_DUNE2FILE_H
