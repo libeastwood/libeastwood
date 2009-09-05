@@ -7,7 +7,18 @@
  * Acquired from Nyergud's editor & Olaf van der Spek's XCC Utils.
  */
 
-off_t buildingOffset = 193930;
+enum Dune2Version {
+    D2_DEMO,
+    D2_V1_00,
+    D2_V1_07_US,
+    D2_V1_07_EU,
+    D2_V1_07_HS,
+    D2_V1_00_RU, // TODO
+    D2_VERSIONS
+}
+off_t versionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586, 0 }
+
+off_t buildingOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930, 0 }
 struct buildingType {
     uint16_t	shortNameID;
     uint16_t	nameCodeRef;
@@ -70,7 +81,7 @@ struct buildingType {
     uint16_t	upgradeTechLvl3;	
 };
 
-off_t unitOffset = 195760;
+off_t unitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760, 0 };
 struct unitType {
     uint16_t	shortNameID;
     uint16_t	nameCodeRef;
