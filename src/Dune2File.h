@@ -7,6 +7,8 @@
  * Acquired from Nyergud's editor & Olaf van der Spek's XCC Utils.
  */
 
+#include <istream>
+
 namespace eastwood {
 
 enum Dune2Version {
@@ -17,10 +19,10 @@ enum Dune2Version {
     D2_V1_07_HS,
     D2_V1_00_RU, // TODO
     D2_VERSIONS
-}
-off_t versionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586, 0 }
+};
+off_t versionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586, 0 };
 
-off_t buildingOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930, 0 }
+off_t buildingOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930, 0 };
 struct buildingType {
     uint16_t	shortNameID;
     uint16_t	nameCodeRef;
@@ -161,6 +163,8 @@ struct unitType {
     uint16_t	weaponType;
     uint16_t	weaponSound;
 };
+
+Dune2Version detectDune2Version(std::istream &stream);
 
 }
 #endif // EASTWOOD_DUNE2FILE_H
