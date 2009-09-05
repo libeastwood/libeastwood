@@ -7,6 +7,8 @@
  * Acquired from Nyergud's editor & Olaf van der Spek's XCC Utils.
  */
 
+namespace eastwood {
+
 enum Dune2Version {
     D2_DEMO,
     D2_V1_00,
@@ -160,4 +162,5 @@ struct unitType {
     uint16_t	weaponSound;
 };
 
+}
 #endif // EASTWOOD_DUNE2FILE_H
