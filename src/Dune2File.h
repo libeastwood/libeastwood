@@ -28,14 +28,14 @@ struct buildingType {
     uint16_t	nameCodeRef;
     uint32_t	longNameID;
     uint32_t	wsaFileCodeRef;
-    uint8_t	u005b1:1;
-    uint8_t	constructionScreen:2;
-    uint8_t	u005b3:3;
-    uint8_t	noConreteRequired:4;
-    uint8_t	u005b4:5;
-    uint8_t	u005b5:6;
-    uint8_t	u005b6:7;
-    uint8_t	canBeCaptured:8;
+    uint8_t	u005b1			:1,
+		constructionScreen	:2,
+		u005b3			:3,
+		noConreteRequired	:4,
+		u005b4			:5,
+		u005b5			:6,
+		u005b6			:7,
+		canBeCaptured		:8;
     uint8_t	u005b;
     uint16_t	infantrySpawnCells;
     uint16_t	hitPoints;
@@ -91,22 +91,22 @@ struct unitType {
     uint16_t	nameCodeRef;
     uint32_t	longNameID;
     uint32_t	wsaFileCodeRef;
-    uint8_t	airUnitShadow:1;
-    uint8_t	u005b2:2;
-    uint8_t	u005b3:3;
-    uint8_t	u005b4:4;
-    uint8_t	u005b5:5;
-    uint8_t	wormCamouflage:6;
-    uint8_t	turretRotates:7;
-    uint8_t	u005b8:8;
-    uint8_t	pickupForRepairs:1;
-    uint8_t	u006b2:2;
-    uint8_t	u006b3:3;
-    uint8_t	u006b4:4;
-    uint8_t	u006b5:5;
-    uint8_t	u006b6:6;
-    uint8_t	u006b7:7;
-    uint8_t	u006b8:8;
+    uint8_t	airUnitShadow		:1,
+		u005b2			:2,
+		u005b3			:3,
+		u005b4			:4,
+		u005b5			:5,
+		wormCamouflage		:6,
+		turretRotates		:7,
+		u005b8			:8;
+    uint8_t	pickupForRepairs	:1,
+		u006b2			:2,
+		u006b3			:3,
+		u006b4			:4,
+		u006b5			:5,
+		u006b6			:6,
+		u006b7			:7,
+		u006b8			:8;
     uint16_t	u007a;
     uint16_t	hitPoints;
     uint16_t	sight;
@@ -128,22 +128,22 @@ struct unitType {
     uint32_t	owner;
     uint16_t	unitArrayRangeMin;
     uint16_t	unitArrayRangeMax;
-    uint8_t	u028:1;
-    uint8_t	explodeOnTarget:2;
-    uint8_t	explodeWhenDying:3;
-    uint8_t	sonicImmunity:4;
-    uint8_t	bumpyMovement:5;
-    uint8_t	trackedCrushing:6;
-    uint8_t	hasUnderControl:7;
-    uint8_t	stayOnMap:8;
-    uint8_t	u029b1:1;
-    uint8_t	u029b2:2;
-    uint8_t	firesTwice:3;
-    uint8_t	u029b4:4;
-    uint8_t	u029b5:5;
-    uint8_t	u029b6:6;
-    uint8_t	u029b7:7;
-    uint8_t	notAWeaponType:8;
+    uint8_t	u028			:1,
+		explodeOnTarget		:2,
+		explodeWhenDying	:3,
+		sonicImmunity		:4,
+		bumpyMovement		:5,
+		trackedCrushing		:6,
+		hasUnderControl		:7,
+		stayOnMap		:8;
+    uint8_t	u029b1			:1,
+		u029b2			:2,
+		firesTwice		:3,
+		u029b4			:4,
+		u029b5			:5,
+		u029b6			:6,
+		u029b7			:7,
+		notAWeaponType		:8;
     uint8_t	u030;
     uint8_t	u031;
     uint16_t	u032;
@@ -167,7 +167,7 @@ struct unitType {
 class Dune2File
 {
     public:
-    	Dune2File(std::istream &stream);
+	Dune2File(std::istream &stream);
 
 	Dune2Version getVersion() { return _version; }
 
