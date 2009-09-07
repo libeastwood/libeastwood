@@ -29,13 +29,13 @@ struct buildingType {
     uint32_t	longNameID;
     uint32_t	wsaFileCodeRef;
     uint8_t	u005b1			:1,
-		constructionScreen	:2,
-		u005b3			:3,
-		noConreteRequired	:4,
-		u005b4			:5,
-		u005b5			:6,
-		u005b6			:7,
-		canBeCaptured		:8;
+		constructionScreen	:1,
+		u005b3			:1,
+		noConreteRequired	:1,
+		u005b4			:1,
+		u005b5			:1,
+		u005b6			:1,
+		canBeCaptured		:1;
     uint8_t	u005b;
     uint16_t	infantrySpawnCells;
     uint16_t	hitPoints;
@@ -83,7 +83,7 @@ struct buildingType {
     uint16_t	upgradeTechLvl1;	
     uint16_t	upgradeTechLvl2;	
     uint16_t	upgradeTechLvl3;	
-};
+} __attribute__ ((packed));
 
 off_t unitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760, 0 };
 struct unitType {
@@ -92,21 +92,21 @@ struct unitType {
     uint32_t	longNameID;
     uint32_t	wsaFileCodeRef;
     uint8_t	airUnitShadow		:1,
-		u005b2			:2,
-		u005b3			:3,
-		u005b4			:4,
-		u005b5			:5,
-		wormCamouflage		:6,
-		turretRotates		:7,
-		u005b8			:8;
+		u005b2			:1,
+		u005b3			:1,
+		u005b4			:1,
+		u005b5			:1,
+		wormCamouflage		:1,
+		turretRotates		:1,
+		u005b8			:1;
     uint8_t	pickupForRepairs	:1,
-		u006b2			:2,
-		u006b3			:3,
-		u006b4			:4,
-		u006b5			:5,
-		u006b6			:6,
-		u006b7			:7,
-		u006b8			:8;
+		u006b2			:1,
+		u006b3			:1,
+		u006b4			:1,
+		u006b5			:1,
+		u006b6			:1,
+		u006b7			:1,
+		u006b8			:1;
     uint16_t	u007a;
     uint16_t	hitPoints;
     uint16_t	sight;
@@ -129,21 +129,21 @@ struct unitType {
     uint16_t	unitArrayRangeMin;
     uint16_t	unitArrayRangeMax;
     uint8_t	u028			:1,
-		explodeOnTarget		:2,
-		explodeWhenDying	:3,
-		sonicImmunity		:4,
-		bumpyMovement		:5,
-		trackedCrushing		:6,
-		hasUnderControl		:7,
-		stayOnMap		:8;
+		explodeOnTarget		:1,
+		explodeWhenDying	:1,
+		sonicImmunity		:1,
+		bumpyMovement		:1,
+		trackedCrushing		:1,
+		hasUnderControl		:1,
+		stayOnMap		:1;
     uint8_t	u029b1			:1,
-		u029b2			:2,
-		firesTwice		:3,
-		u029b4			:4,
-		u029b5			:5,
-		u029b6			:6,
-		u029b7			:7,
-		notAWeaponType		:8;
+		u029b2			:1,
+		firesTwice		:1,
+		u029b4			:1,
+		u029b5			:1,
+		u029b6			:1,
+		u029b7			:1,
+		notAWeaponType		:1;
     uint8_t	u030;
     uint8_t	u031;
     uint16_t	u032;
@@ -162,7 +162,7 @@ struct unitType {
     uint16_t	u045;
     uint16_t	weaponType;
     uint16_t	weaponSound;
-};
+} __attribute__ ((packed));
 
 class Dune2File
 {
