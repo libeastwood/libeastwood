@@ -8,10 +8,11 @@
  */
 
 #include <istream>
+#include <vector>
 
 namespace eastwood {
 
-enum	Dune2Version {
+enum	D2ExeVersion {
     D2_DEMO,
     D2_V1_00,
     D2_V1_07_US,
@@ -20,10 +21,10 @@ enum	Dune2Version {
     D2_V1_00_RU, // TODO
     D2_VERSIONS
 };
-off_t	versionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586, 0 };
+off_t	D2ExeVersionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586, 0 };
 
-off_t	buildingOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930, 0 };
-struct	d2ExeStructureData {
+off_t	D2ExeStructureOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930, 0 };
+struct	D2ExeStructureData {
     uint16_t	idShort;
     uint32_t	name;
     uint16_t	idLong;
@@ -77,8 +78,8 @@ struct	d2ExeStructureData {
     uint16_t	techUpgrade3;
 } __attribute__ ((packed));
 
-off_t	unitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760, 0 };
-struct	d2ExeUnitData {
+off_t	D2ExeUnitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760, 0 };
+struct	D2ExeUnitData {
    uint16_t	stringID;        
    uint32_t	name;
    uint16_t	stringLongID;    
@@ -131,13 +132,18 @@ class Dune2File
     public:
 	Dune2File(std::istream &stream);
 
-	Dune2Version getVersion() { return _version; }
+	D2ExeVersion getVersion() { return _version; }
+	D2ExeStructureData getStructureData(int index) { return _structureData[index]; }
+	D2ExeUnitData getUnitData(int index) { return _unitData[index]; }
 
     private:
 	void detectDune2Version();
+	void readDataStructures();
 
 	std::istream &_stream;
-	Dune2Version _version;
+	D2ExeVersion _version;
+	std::vector<D2ExeStructureData> _structureData;
+	std::vector<D2ExeUnitData> _unitData;
 
 };
 
