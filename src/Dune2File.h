@@ -133,7 +133,7 @@ struct	D2ExeHouseData {
    uint16_t	lemonFactor;
    uint16_t	buildingDecay;
    uint16_t	color;
-   uint16_t	PalaceUnitRecharge;
+   uint16_t	palaceUnitRecharge;
    uint16_t	frigateTime;
    uint16_t	houseLetter;
    uint16_t	palaceSpecial;
