@@ -18,8 +18,9 @@ void Dune2File::detectDune2Version()
 	uint8_t tmp[4];
 	readLE(_stream, tmp, sizeof(tmp));
 	if(memcmp(tmp, "DUNE", sizeof(tmp)) == 0)
-	    _version = (Dune2Version)i;
+	    break;
     }
+    _version = (Dune2Version)i;
 }
 
 }
