@@ -18,12 +18,11 @@ enum	D2ExeVersion {
     D2_V1_07_US,
     D2_V1_07_EU,
     D2_V1_07_HS,
-    D2_V1_00_RU, // TODO
     D2_VERSIONS
 };
-off_t	D2ExeVersionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586, 0 };
+off_t	D2ExeVersionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586 };
 
-off_t	D2ExeStructureOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930, 0 };
+off_t	D2ExeStructureOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930 };
 struct	D2ExeStructureData {
     uint16_t	idShort;
     uint32_t	name;
@@ -78,7 +77,7 @@ struct	D2ExeStructureData {
     uint16_t	techUpgrade3;
 } __attribute__ ((packed));
 
-off_t	D2ExeUnitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760, 0 };
+off_t	D2ExeUnitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760 };
 struct	D2ExeUnitData {
    uint16_t	stringID;        
    uint32_t	name;
