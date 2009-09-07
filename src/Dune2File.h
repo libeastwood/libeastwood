@@ -4,7 +4,7 @@
 /*
  * These are data structures used in the DUNE2.EXE binary and the file offsets
  * where they start from.
- * Acquired from Nyergud's editor & Olaf van der Spek's XCC Utils.
+ * Acquired from Nyergud's editor, Olaf van der Spek's XCC Utils & segra.
  */
 
 #include <istream>
@@ -125,6 +125,49 @@ struct	D2ExeUnitData {
    uint16_t	field_54;  
    uint16_t	weaponType;
    uint16_t	weaponSound;
+} __attribute__ ((packed));
+
+struct	D2ExeHouseData {
+   uint32_t	houseName;
+   uint16_t	weakness;
+   uint16_t	lemonFactor;
+   uint16_t	buildingDecay;
+   uint16_t	color;
+   uint16_t	PalaceUnitRecharge;
+   uint16_t	frigateTime;
+   uint16_t	houseLetter;
+   uint16_t	palaceSpecial;
+   uint16_t	missionWinMusic;
+   uint16_t	missionLoseMusic;
+   uint16_t	missionBriefMusic;
+   uint32_t	houseVoice;
+} __attribute__ ((packed));
+
+// Stored internal File table
+struct	D2ExeFileData {
+   uint32_t	fileName;
+   uint16_t	field_4;
+   uint16_t	field_6;
+   uint16_t	field_8;
+   uint16_t	field_A;
+   uint16_t	field_C;
+   uint16_t	field_E;
+   uint8_t	parentIndex;
+   uint8_t	field_11;
+   uint8_t	fileType;
+} __attribute__ ((packed));
+
+// Unit 'Action' commands
+struct	D2ExeActionData {
+   uint8_t	field_0;
+   uint8_t	field_1;
+   uint32_t	name;
+   uint8_t	field_6;
+   uint8_t	field_7;
+   uint8_t	sidebarMode;
+   uint8_t	field_9;
+   uint8_t	field_A;
+   uint8_t	field_B;
 } __attribute__ ((packed));
 
 class Dune2File
