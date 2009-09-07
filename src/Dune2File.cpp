@@ -10,7 +10,7 @@ Dune2File::Dune2File(std::istream &stream) : _stream(stream), _version(D2_VERSIO
     detectDune2Version();
 }
 
-Dune2Version Dune2File::detectDune2Version()
+void Dune2File::detectDune2Version()
 {
     int i;
     for(i = D2_DEMO; i < D2_VERSIONS; i++) {
@@ -18,9 +18,8 @@ Dune2Version Dune2File::detectDune2Version()
 	uint8_t tmp[4];
 	readLE(_stream, tmp, sizeof(tmp));
 	if(memcmp(tmp, "DUNE", sizeof(tmp)) == 0)
-	    break;
+	    _version = (Dune2Version)i;
     }
-    return (Dune2Version)i;
 }
 
 }

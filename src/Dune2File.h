@@ -23,7 +23,7 @@ enum	Dune2Version {
 off_t	versionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586, 0 };
 
 off_t	buildingOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930, 0 };
-struct	structureData {
+struct	d2ExeStructureData {
     uint16_t	idShort;
     uint32_t	name;
     uint16_t	idLong;
@@ -78,7 +78,7 @@ struct	structureData {
 } __attribute__ ((packed));
 
 off_t	unitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760, 0 };
-struct	unitData {
+struct	d2ExeUnitData {
    uint16_t	stringID;        
    uint32_t	name;
    uint16_t	stringLongID;    
@@ -134,7 +134,8 @@ class Dune2File
 	Dune2Version getVersion() { return _version; }
 
     private:
-	Dune2Version detectDune2Version();
+	void detectDune2Version();
+
 	std::istream &_stream;
 	Dune2Version _version;
 
