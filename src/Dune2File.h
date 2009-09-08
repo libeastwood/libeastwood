@@ -136,7 +136,7 @@ struct	D2ExeUnitData {
 static const
 int	D2ExeHouseEntries = 6;
 static const
-off_t	D2ExeHouseOffset[D2_VERSIONS] = { 0, 0, 0, 0, 243724 };
+off_t	D2ExeHouseOffset[D2_VERSIONS] = { 237898, 242308, 240988, 243832, 243724 };
 struct	D2ExeHouseData {
    uint32_t	houseName;
    uint16_t	weakness;
@@ -157,7 +157,7 @@ struct	D2ExeHouseData {
 static const
 int	D2ExeFileEntries = 671;
 static const
-off_t	D2ExeFileOffset[D2_VERSIONS] = { 0, 0, 0, 0, 202240 };
+off_t	D2ExeFileOffset[D2_VERSIONS] = { 208000, 204208, 202240, 202320, 202240 };
 struct	D2ExeFileData {
    uint32_t	fileName;
    uint16_t	field_4;
@@ -175,7 +175,7 @@ struct	D2ExeFileData {
 static const
 int	D2ExeActionEntries = 14;
 static const
-off_t	D2ExeActionOffset[D2_VERSIONS] = { 0, 0, 0, 0, 202062 };
+off_t	D2ExeActionOffset[D2_VERSIONS] = { 207822, 204030, 202062, 202142, 202062 };
 struct	D2ExeActionData {
    uint8_t	field_0;
    uint8_t	field_1;
