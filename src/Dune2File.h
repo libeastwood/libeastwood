@@ -24,7 +24,7 @@ static const
 off_t	D2ExeVersionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586 };
 
 static const
-int	D2ExeStructureNum = 19;
+int	D2ExeStructureEntries = 19;
 static const
 off_t	D2ExeStructureOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930 };
 struct	D2ExeStructureData {
@@ -82,7 +82,7 @@ struct	D2ExeStructureData {
 } __attribute__ ((packed));
 
 static const
-int	D2ExeUnitNum = 27;
+int	D2ExeUnitEntries = 27;
 static const
 off_t	D2ExeUnitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760 };
 struct	D2ExeUnitData {
@@ -134,7 +134,7 @@ struct	D2ExeUnitData {
 } __attribute__ ((packed));
 
 static const
-int	D2ExeHouseNum = 6;
+int	D2ExeHouseEntries = 6;
 static const
 off_t	D2ExeHouseOffset[D2_VERSIONS] = { 0, 0, 0, 0, 243724 };
 struct	D2ExeHouseData {
@@ -155,7 +155,7 @@ struct	D2ExeHouseData {
 
 // Stored internal File table
 static const
-int	D2ExeFileNum = 0;
+int	D2ExeFileEntries = 671;
 static const
 off_t	D2ExeFileOffset[D2_VERSIONS] = { 0, 0, 0, 0, 202240 };
 struct	D2ExeFileData {
@@ -173,7 +173,7 @@ struct	D2ExeFileData {
 
 // Unit 'Action' commands
 static const
-int	D2ExeActionNum = 0;
+int	D2ExeActionEntries = 14;
 static const
 off_t	D2ExeActionOffset[D2_VERSIONS] = { 0, 0, 0, 0, 202062 };
 struct	D2ExeActionData {
