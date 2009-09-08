@@ -86,9 +86,9 @@ int	D2ExeUnitEntries = 27;
 static const
 off_t	D2ExeUnitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760 };
 struct	D2ExeUnitData {
-   uint16_t	stringID;        
+   uint16_t	idShort;        
    uint32_t	name;
-   uint16_t	stringLongID;    
+   uint16_t	idLong;
    uint32_t	picture;
    uint16_t	optsWocaTuro;    
    uint16_t	field_E;        
