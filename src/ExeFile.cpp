@@ -30,13 +30,13 @@ void ExeFile::readHeader()
 
 IStream& ExeFile::seekSegOff(uint32_t segoff)
 {
-    seekg(_codeSegment + segoff, std::ios::beg);
-    return *this;
+    return seekSegOff(segoff >> 16, segoff & ((1<<16)-1));
 }
 
 IStream& ExeFile::seekSegOff(uint16_t seg, uint16_t off)
 {
-    return seekSegOff((seg<<4) + off);
+    seekg(_codeSegment + (seg<<4) + off);
+    return *this;
 }
 
 }
