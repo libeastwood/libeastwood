@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+namespace eastwood {
+
 enum logLevel
 {
     LOG_FATAL,
@@ -11,8 +13,7 @@ enum logLevel
     LOG_WARNING,
     LOG_INFO
 };
-
-namespace eastwood {
+    
     class Exception {
         public:
             Exception(logLevel level, std::string location, std::string message);
