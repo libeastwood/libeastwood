@@ -18,6 +18,11 @@ class IStream : public std::istream
 	IStream& readU16LE(uint16_t *buf, size_t n);
 	IStream& readU32BE(uint32_t *buf, size_t n);
 	IStream& readU32LE(uint32_t *buf, size_t n);
+
+	std::streamsize size();
+
+    private:
+	std::streamsize _size;
 };
 
 }

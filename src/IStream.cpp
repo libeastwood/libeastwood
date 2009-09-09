@@ -10,7 +10,8 @@ static inline T readStream(std::istream &stream) {
     return value;
 }
 
-IStream::IStream(const std::istream &stream) : std::istream(stream.rdbuf())
+IStream::IStream(const std::istream &stream) :
+    std::istream(stream.rdbuf()), _size(-1)
 {
 }
 
@@ -38,13 +39,13 @@ uint32_t IStream::getU32LE()
 #if __BYTE_ORDER == __BIG_ENDIAN
 IStream& IStream::readU16BE(uint16_t *buf, size_t n)
 {
-    read((char*)buf, n/sizeof(buf[0]));
+    read((char*)buf, n*sizeof(buf[0]));
     return *this;
 }
 
 IStream& IStream::readU32BE(uint32_t *buf, size_t n)
 {
-    read((char*)buf, n/sizeof(buf[0]));
+    read((char*)buf, n*sizeof(buf[0]));
     return *this;
 }
 
@@ -78,14 +79,27 @@ IStream& IStream::readU32BE(uint32_t *buf, size_t n)
 
 IStream& IStream::readU16LE(uint16_t *buf, size_t n)
 {
-    read((char*)buf, n/sizeof(buf[0]));
+    read((char*)buf, n*sizeof(buf[0]));
+    printf("%u\n", (uint32_t)gcount());
     return *this;
 }
 
 IStream& IStream::readU32LE(uint32_t *buf, size_t n)
 {
-    read((char*)buf, n/sizeof(buf[0]));
+    read((char*)buf, n*sizeof(buf[0]));
     return *this;
 }
 #endif
+
+std::streamsize IStream::size()
+{
+    if(_size != -1) {
+    	std::streampos pos = tellg();
+    	seekg(0, std::ios::end);
+    	_size = static_cast<std::streamsize>(tellg());
+    	seekg(pos);
+    }
+    return _size;
+}
+
 }
