@@ -2,12 +2,12 @@
 using namespace eastwood;
 
 Exception::Exception(logLevel level, std::string location, std::string message) :
-    m_level(level), m_location(location), m_message(message)
+    _level(level), _location(location), _message(message)
 {
 }
 
 FileException::FileException(logLevel level, std::string location, std::string filename, std::string message) :
-    Exception(level, location, message), m_filename(filename)
+    Exception(level, location, message), _filename(filename)
 {
 }
 
