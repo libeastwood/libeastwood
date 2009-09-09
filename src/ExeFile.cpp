@@ -17,10 +17,10 @@ void ExeFile::readHeader()
 {
     seekg(0, std::ios::beg);
     readU16LE((uint16_t*)&_header, sizeof(_header)/sizeof(uint16_t));
+
     // File header must start with "MZ" or "ZM"
-    if(_header.signature != MAGIC1 || _header.signature != MAGIC2)
+    if(_header.signature != MAGIC1 && _header.signature != MAGIC2)
 	throw(Exception(LOG_ERROR, "ExeFile", "Invalid signature"));
-    printf("%x\n", _header.signature);
     _relocations = std::vector<uint32_t>(_header.relocations);
     seekg(_header.relocTable, std::ios::beg);
     readU32LE(&_relocations.front(), _relocations.size());
