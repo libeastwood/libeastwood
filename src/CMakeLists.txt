@@ -9,6 +9,7 @@ SET( LIBEASTWOOD_SRCS
   Font.cpp
   IcnFile.cpp
   IniFile.cpp
+  IStream.cpp
   MapFile.cpp
   PakFile.cpp
   PalFile.cpp
@@ -36,6 +37,7 @@ SET( LIBEASTWOOD_HEADERS
   Exception.h
   Font.h
   IcnFile.h
+  IStream.h
   MapFile.h
   IniFile.h
   Log.h
