@@ -80,7 +80,6 @@ IStream& IStream::readU32BE(uint32_t *buf, size_t n)
 IStream& IStream::readU16LE(uint16_t *buf, size_t n)
 {
     read((char*)buf, n*sizeof(buf[0]));
-    printf("%u\n", (uint32_t)gcount());
     return *this;
 }
 
