@@ -6,6 +6,7 @@ SET( LIBEASTWOOD_SRCS
   Decode.cpp
   Dune2File.cpp
   Exception.cpp
+  ExeFile.cpp
   Font.cpp
   IcnFile.cpp
   IniFile.cpp
@@ -35,6 +36,7 @@ SET( LIBEASTWOOD_HEADERS
   Decode.h
   Dune2File.h
   Exception.h
+  ExeFile.h
   Font.h
   IcnFile.h
   IStream.h
