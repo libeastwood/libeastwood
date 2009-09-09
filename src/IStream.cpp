@@ -92,7 +92,7 @@ IStream& IStream::readU32LE(uint32_t *buf, size_t n)
 
 std::streamsize IStream::size()
 {
-    if(_size != -1) {
+    if(_size == -1) {
     	std::streampos pos = tellg();
     	seekg(0, std::ios::end);
     	_size = static_cast<std::streamsize>(tellg());
