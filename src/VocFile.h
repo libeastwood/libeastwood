@@ -3,28 +3,9 @@
 
 #include <istream>
 
-enum AudioFormat { 
-    FMT_U8,
-    FMT_S8,
-    FMT_U16LE,
-    FMT_S16LE,
-    FMT_U16BE,
-    FMT_S16BE
-};
+#include "Sound.h"
 
-enum Interpolator
-{
-    I_SINC_BEST_QUALITY		= 0,
-    I_SINC_MEDIUM_QUALITY	= 1,
-    I_SINC_FASTEST		= 2,
-    I_ZERO_ORDER_HOLD		= 3,
-    I_LINEAR			= 4
-};
-
-struct SoundBuffer {
-    uint32_t length;
-    uint8_t *buffer;
-};
+namespace eastwood {
 
 class VocFile 
 {
@@ -52,7 +33,7 @@ class VocFile
 	  \param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
 	  \return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
 	  */
-	SoundBuffer getVOCFromStream(Interpolator interpolator = I_LINEAR);
+//	Sound getVOCFromStream(Interpolator interpolator = I_LINEAR);
 
     protected:
 	int _frequency;
@@ -74,5 +55,7 @@ class VocFile
     
 
 };
-#endif // EASTWOOD_VOCFILE_H
 
+}
+
+#endif // EASTWOOD_VOCFILE_H

@@ -1,16 +1,18 @@
-#include <fstream>
 #include "StdDef.h"
-#include "SDL/VocSDL.h"
+#include "SDL/MixerSound.h"
 
-VocSDL::VocSDL(std::istream &stream, int frequency, int channels, AudioFormat format) :
-    VocFile(stream, frequency, channels, format)
+namespace eastwood {
+
+MixerSound::MixerSound(size_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format) :
+    Sound(size, buffer, frequency, channels, format)
 {
 }
 
-VocSDL::VocSDL(std::istream &stream) : VocFile(stream, 0, 0, FMT_U8)
+MixerSound::MixerSound(size_t size, uint8_t *buffer) :
+    Sound(size, buffer, 0, 0, FMT_INVALID)
 {
     uint16_t format;
-    Mix_QuerySpec(&_frequency, &format, &_channels);
+    Mix_QuerySpec((int*)&_frequency, &format, (int*)&_channels);
     switch(format) {
     default:
     case AUDIO_U8:	_format = FMT_U8;	break;
@@ -23,13 +25,14 @@ VocSDL::VocSDL(std::istream &stream) : VocFile(stream, 0, 0, FMT_U8)
 
 }
 
-Mix_Chunk *VocSDL::getMixChunk(Interpolator interpolator) {
-    SoundBuffer soundBuffer = getVOCFromStream(interpolator);
+Mix_Chunk *MixerSound::getMixChunk(Interpolator interpolator) {
     Mix_Chunk *mixChunk = new Mix_Chunk;
-    mixChunk->abuf = soundBuffer.buffer;
-    mixChunk->alen = soundBuffer.length;
+    mixChunk->abuf = _buffer;
+    mixChunk->alen = _size;
     mixChunk->volume = 128;
     mixChunk->allocated = 1;	
 
     return mixChunk;
+}
+
 }

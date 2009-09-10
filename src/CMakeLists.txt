@@ -15,6 +15,7 @@ SET( LIBEASTWOOD_SRCS
   PakFile.cpp
   PalFile.cpp
   ShpFile.cpp
+  Sound.cpp
   StringFile.cpp
   Surface.cpp
   VocFile.cpp
@@ -46,6 +47,7 @@ SET( LIBEASTWOOD_HEADERS
   PakFile.h
   PalFile.h
   ShpFile.h
+  Sound.h
   StringFile.h
   VocFile.h
   WsaFile.h
@@ -59,13 +61,13 @@ SET( LIBEASTWOOD_HEADERS
 )
 
 SET( SDL_LIBEASTWOOD_SRCS
-    SDL/VocSDL.cpp
+    SDL/MixerSound.cpp
     SDL/Surface.cpp
 )
 
 SET( SDL_LIBEASTWOOD_HEADERS
     SDL/MixerPlayer.cpp
-    SDL/VocSDL.cpp
+    SDL/MixerSound.cpp
     SDL/Surface.h
 )
 
