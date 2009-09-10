@@ -7,8 +7,9 @@
  * Acquired from Nyergud's editor, Olaf van der Spek's XCC Utils & segra.
  */
 
-#include <istream>
 #include <vector>
+
+#include "ExeFile.h"
 
 namespace eastwood {
 
@@ -20,13 +21,14 @@ enum	D2ExeVersion {
     D2_V1_07_HS,
     D2_VERSIONS
 };
-static const
-off_t	D2ExeVersionOffset[D2_VERSIONS] = { 225278, 229282, 228274, 229682, 229586 };
 
 static const
-int	D2ExeStructureEntries = 19;
-static const
-off_t	D2ExeStructureOffset[D2_VERSIONS] = { 199930, 196570, 193930, 194010, 193930 };
+int	D2ExeStructureEntries = 19,
+	D2ExeUnitEntries = 27,
+	D2ExeHouseEntries = 6,
+	D2ExeFileEntries = 671,
+	D2ExeActionEntries = 14;
+
 struct	D2ExeStructureData {
     uint16_t	idShort;
     uint32_t	name;
@@ -81,10 +83,6 @@ struct	D2ExeStructureData {
     uint16_t	techUpgrade3;
 } __attribute__ ((packed));
 
-static const
-int	D2ExeUnitEntries = 27;
-static const
-off_t	D2ExeUnitOffset[D2_VERSIONS] = { 201840, 198480, 195760, 195840, 195760 };
 struct	D2ExeUnitData {
    uint16_t	idShort;        
    uint32_t	name;
@@ -133,12 +131,8 @@ struct	D2ExeUnitData {
    uint16_t	weaponSound;
 } __attribute__ ((packed));
 
-static const
-int	D2ExeHouseEntries = 6;
-static const
-off_t	D2ExeHouseOffset[D2_VERSIONS] = { 237898, 242308, 240988, 243832, 243724 };
 struct	D2ExeHouseData {
-   uint32_t	houseName;
+   uint32_t	name;
    uint16_t	weakness;
    uint16_t	lemonFactor;
    uint16_t	buildingDecay;
@@ -154,12 +148,8 @@ struct	D2ExeHouseData {
 } __attribute__ ((packed));
 
 // Stored internal File table
-static const
-int	D2ExeFileEntries = 671;
-static const
-off_t	D2ExeFileOffset[D2_VERSIONS] = { 208000, 204208, 202240, 202320, 202240 };
 struct	D2ExeFileData {
-   uint32_t	fileName;
+   uint32_t	name;
    uint16_t	field_4;
    uint16_t	field_6;
    uint16_t	field_8;
@@ -172,10 +162,6 @@ struct	D2ExeFileData {
 } __attribute__ ((packed));
 
 // Unit 'Action' commands
-static const
-int	D2ExeActionEntries = 14;
-static const
-off_t	D2ExeActionOffset[D2_VERSIONS] = { 207822, 204030, 202062, 202142, 202062 };
 struct	D2ExeActionData {
    uint8_t	field_0;
    uint8_t	field_1;
@@ -191,7 +177,7 @@ struct	D2ExeActionData {
 class Dune2File
 {
     public:
-	Dune2File(std::istream &stream);
+	Dune2File(ExeFile &stream);
 
 	D2ExeVersion getVersion() { return _version; }
 	D2ExeStructureData getStructureData(int index) { return _structureData[index]; }
@@ -200,12 +186,14 @@ class Dune2File
 	D2ExeFileData getFileData(int index) { return _fileData[index]; }
 	D2ExeActionData getActionData(int index) { return _actionData[index]; }
 
+	std::string stringGet(uint32_t p);
 
     private:
 	void detectDune2Version();
 	void readDataStructures();
 
-	std::istream &_stream;
+
+	ExeFile &_stream;
 	D2ExeVersion _version;
 	std::vector<D2ExeStructureData> _structureData;
 	std::vector<D2ExeUnitData> _unitData;
