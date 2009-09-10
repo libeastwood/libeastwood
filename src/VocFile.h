@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_VOCFILE_H
 #define EASTWOOD_VOCFILE_H
 
-#include <fstream>
+#include <istream>
 
 enum AudioFormat { 
     FMT_U8,
