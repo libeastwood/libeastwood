@@ -17,7 +17,11 @@ Sound::Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency,
 
 Sound::~Sound()
 {
-    delete _buffer;
+    //FIXME:
+#if 0
+    if(_buffer)
+	delete _buffer;
+#endif
 }
 
 #define __HALF_MAX_SIGNED(type) ((type)1 << (sizeof(type)*8-2))
@@ -39,64 +43,59 @@ static inline T float2integer(float x) {
 }
 
 template <typename T>
-static Sound getSound(AudioFormat format, uint32_t frequency,
-	uint8_t channels, uint32_t samples, float *dataFloat,
-	int32_t silenceLength) {
+void Sound::getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t silenceLength) {
     T* data;
-    uint32_t length,
-	     sampleSize = sizeof(T) * channels;
-    length = samples * sampleSize;
-    Sound soundBuffer(length, (uint8_t*)(data = new T[length]), frequency, channels, format);
+    uint32_t sampleSize = sizeof(T) * sound._channels;
+    sound._size = samples * sampleSize;
+    sound._buffer = (uint8_t*)(data = new T[sound._size]);
 
-    for(uint32_t i=0; i < samples*channels; i+=channels) {
-	data[i] = float2integer<T>(dataFloat[(i/channels)+silenceLength]);
-	if(format == FMT_U16LE || format == FMT_S16LE)
+    for(uint32_t i=0; i < samples*sound._channels; i+=sound._channels) {
+	data[i] = float2integer<T>(dataFloat[(i/sound._channels)+silenceLength]);
+	if(sound._format == FMT_U16LE || sound._format == FMT_S16LE)
 	    data[i] = htole16(data[i]);
-	else if(format == FMT_U16BE || format == FMT_S16BE)
+	else if(sound._format == FMT_U16BE || sound._format == FMT_S16BE)
 	    data[i] = htobe16(data[i]);
 	if(sizeof(T) == sizeof(uint8_t))
-	    memset((void*)&data[i+1], data[i], channels);
+	    memset((void*)&data[i+1], data[i], sound._channels);
 	else
-	    wmemset((wchar_t*)&data[i+1], (wchar_t)data[i], channels);
+	    wmemset((wchar_t*)&data[i+1], (wchar_t)data[i], sound._channels);
     }
-
-    return soundBuffer;
 }
 
-Sound Sound::getResampled(Interpolator interpolator) {
+Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator) {
+    size_t size;
     uint32_t targetSamples,
-	     targetSamplesFloat,	     
-	     vocSize;
+	     targetSamplesFloat;
     float conversionRatio,
 	  distance,
 	  *dataFloat,
 	  *targetDataFloat;
     int32_t silenceLength;
-    Sound soundBuffer;
+    Sound sound(0, NULL, channels, frequency, format);
     SRC_DATA src_data;
 
-    vocSize = (_size+2*NUM_SAMPLES_OF_SILENCE)-1;
+    size = (_size+2*NUM_SAMPLES_OF_SILENCE)-1;
     // Convert to floats
-    dataFloat = new float[vocSize*sizeof(float)];
+    dataFloat = new float[size*sizeof(float)];
 
     memset(dataFloat, 0, NUM_SAMPLES_OF_SILENCE*sizeof(float));
-    memset(&dataFloat[vocSize-NUM_SAMPLES_OF_SILENCE], 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)));
-    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < vocSize-NUM_SAMPLES_OF_SILENCE; i++)
+    memset(&dataFloat[size-NUM_SAMPLES_OF_SILENCE], 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)));
+    for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < size-NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = (((float) _buffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
 
     // Convert to audio device frequency
-    conversionRatio = ((float) _frequency) / ((float) _frequency);
-    targetSamplesFloat = (uint32_t) ((float) vocSize * conversionRatio) + 1;
+    conversionRatio = ((float) frequency) / ((float) _frequency);
+    targetSamplesFloat = (uint32_t) ((float) size * conversionRatio) + 1;
     targetDataFloat = new float[targetSamplesFloat*sizeof(float)];
 
     src_data.data_in = dataFloat;
-    src_data.input_frames = vocSize;
+    src_data.input_frames = size;
     src_data.src_ratio = conversionRatio;
     src_data.data_out = targetDataFloat;
     src_data.output_frames = targetSamplesFloat;
 
-    if(src_simple(&src_data, interpolator, _channels) != 0)
+    if(src_simple(&src_data, interpolator, channels) != 0)
 	goto end;
 
     targetSamples = src_data.output_frames_gen;
@@ -118,29 +117,29 @@ Sound Sound::getResampled(Interpolator interpolator) {
     targetSamples -= 2*silenceLength;
 
 
-    switch(_format) {
+    switch(format) {
     case FMT_U8:
-	soundBuffer = getSound<uint8_t>(_format, _frequency, _channels, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint8_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S8:
-	soundBuffer = getSound<int8_t>(_format, _frequency, _channels, targetSamples, targetDataFloat, silenceLength);
+	getSound<int8_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16LE:
-	soundBuffer = getSound<uint16_t>(_format, _frequency, _channels, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16LE:
-	soundBuffer = getSound<int16_t>(_format, _frequency, _channels, targetSamples, targetDataFloat, silenceLength);
+	getSound<int16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16BE:
-	soundBuffer = getSound<uint16_t>(_format, _frequency, _channels, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16BE:
-	soundBuffer = getSound<int16_t>(_format, _frequency, _channels, targetSamples, targetDataFloat, silenceLength);
+	getSound<int16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
     default:
 	throw Exception(LOG_ERROR, "Sound", "Invalid format");
@@ -150,7 +149,7 @@ Sound Sound::getResampled(Interpolator interpolator) {
     delete [] dataFloat;
     delete [] targetDataFloat;
 
-    return soundBuffer;
+    return sound;
 }
 
 }

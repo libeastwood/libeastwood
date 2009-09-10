@@ -29,10 +29,12 @@ class Sound
 	Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format);
 	virtual ~Sound();
 
-	Sound getResampled(Interpolator interpolator = I_LINEAR);
+	Sound getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator = I_LINEAR);
 
     protected:
-	friend class VocFile;
+	template <typename T>
+	void getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t silenceLength);
+
 
     	size_t	_size;
     	uint8_t *_buffer;

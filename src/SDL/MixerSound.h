@@ -6,15 +6,21 @@
 
 namespace eastwood {
 
-class MixerSound : Sound
+class MixerSound : public Sound
 {
     public:
+#if 1
+	MixerSound() : Sound(){};
 	MixerSound(size_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format);
 	MixerSound(size_t size, uint8_t *buffer);
+	MixerSound(const eastwood::Sound &sound);
+	virtual ~MixerSound();
+#endif
+	
 
-	MixerSound(std::istream &stream);	
+	MixerSound getResampled(Interpolator interpolator = I_LINEAR);
 
-	Mix_Chunk *getMixChunk(Interpolator interpolator = I_LINEAR);
+	Mix_Chunk *get();
 
 };
 
