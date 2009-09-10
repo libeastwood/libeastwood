@@ -1,14 +1,17 @@
+Requirements for next milestone:
 * Free library from SDL & SDL_mixer dependency
 * Refactorize code (especially favor C++ STL over C etc.)
 * Update adlib player from scummvm
 * Implement python bindings
+* Update and document the API properly
+* Sanitize constructors and overload various recommended operators etc.
+
+Less urgent:
 * Implement complete exception handling
 * Implement Format 2, Format 40 & Format 80 encoders (for creating new CPS, SHP & WSA graphics)
 * Implement support for loading/saving BMP
 * Implement regression tests
 * Add some example code demonstrating the API.
-* Update and document the API properly
 * Fix issues with other libsamplerate converters than linear
 * Fix portability issues wrt. windows & non-gcc compilers
 * Make API compatible with C
-* Sanitize constructors and overload various recommended operators etc.
