@@ -115,13 +115,13 @@ struct	D2ExeUnitData {
    uint8_t	field_39;        
    uint16_t	field_3A;        
    uint16_t	movementType;    
-   uint16_t	field_3E;        
+   uint16_t	distFrame;        
    uint16_t	speed;
    uint16_t	turningSpeed;
    uint16_t	unitGfxID;
    uint16_t	turretGfxID;
    uint16_t	field_48;
-   uint16_t	field_4A;
+   uint16_t	framesPerAngle;
    uint16_t	deathAnim;
    uint16_t	weaponRateFire;
    uint16_t	weaponRange;
