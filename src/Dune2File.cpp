@@ -50,19 +50,19 @@ void Dune2File::readDataStructures()
 {
     _stream.seekSegOff(D2ExeStructureOffset[_version].segment, D2ExeStructureOffset[_version].offset);
     //FIXME: Need to fix endianness...
-    _stream.read((char*)&_structureData.front(), _structureData.size());
+    _stream.read((char*)&_structureData.front(), _structureData.size() * sizeof(_structureData[0]));
 
     _stream.seekSegOff(D2ExeUnitOffset[_version].segment, D2ExeUnitOffset[_version].offset);
-    _stream.read((char*)&_unitData.front(), _unitData.size());
+    _stream.read((char*)&_unitData.front(), _unitData.size() * sizeof(_unitData[0]));
 
     _stream.seekSegOff(D2ExeHouseOffset[_version].segment, D2ExeHouseOffset[_version].offset);
-    _stream.read((char*)&_houseData.front(), _houseData.size());
+    _stream.read((char*)&_houseData.front(), _houseData.size() * sizeof(_houseData[0]));
 
     _stream.seekSegOff(D2ExeFileOffset[_version].segment, D2ExeFileOffset[_version].offset);
-    _stream.read((char*)&_fileData.front(), _fileData.size());
+    _stream.read((char*)&_fileData.front(), _fileData.size() * sizeof(_fileData[0]));
 
     _stream.seekSegOff(D2ExeActionOffset[_version].segment, D2ExeActionOffset[_version].offset);
-    _stream.read((char*)&_actionData.front(), _actionData.size());
+    _stream.read((char*)&_actionData.front(), _actionData.size()  * sizeof(_actionData[0]));
 
 
 }
