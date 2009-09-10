@@ -79,8 +79,8 @@ Sound Sound::getResampled(Interpolator interpolator) {
     // Convert to floats
     dataFloat = new float[vocSize*sizeof(float)];
 
-    bzero(dataFloat, NUM_SAMPLES_OF_SILENCE*sizeof(float));
-    bzero(&dataFloat[vocSize-NUM_SAMPLES_OF_SILENCE], (NUM_SAMPLES_OF_SILENCE*sizeof(float)));
+    memset(dataFloat, 0, NUM_SAMPLES_OF_SILENCE*sizeof(float));
+    memset(&dataFloat[vocSize-NUM_SAMPLES_OF_SILENCE], 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)));
     for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < vocSize-NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = (((float) _buffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
