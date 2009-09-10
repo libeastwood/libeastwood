@@ -39,9 +39,9 @@ static inline T float2integer(float x) {
 }
 
 template <typename T>
-static Sound getSound(AudioFormat format, int frequency,
-	int channels, uint32_t samples, float *dataFloat,
-	int silenceLength) {
+static Sound getSound(AudioFormat format, uint32_t frequency,
+	uint8_t channels, uint32_t samples, float *dataFloat,
+	int32_t silenceLength) {
     T* data;
     uint32_t length,
 	     sampleSize = sizeof(T) * channels;
