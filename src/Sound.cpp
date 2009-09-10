@@ -78,8 +78,8 @@ Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat form
     // Convert to floats
     dataFloat = new float[size*sizeof(float)];
 
-    memset(dataFloat, 0, NUM_SAMPLES_OF_SILENCE*sizeof(float));
-    memset(&dataFloat[size-NUM_SAMPLES_OF_SILENCE], 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)));
+    memset(dataFloat, 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)*sizeof(float)));
+    memset(&dataFloat[size-NUM_SAMPLES_OF_SILENCE], 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)*sizeof(float)));
     for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < size-NUM_SAMPLES_OF_SILENCE; i++)
 	dataFloat[i] = (((float) _buffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
