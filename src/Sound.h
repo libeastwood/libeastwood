@@ -26,7 +26,7 @@ class Sound
 {
     public:
 	Sound() : _size(0), _buffer(NULL), _channels(0), _frequency(0), _format(FMT_INVALID) {};
-	Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t _size, AudioFormat format);
+	Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format);
 	virtual ~Sound();
 
 	Sound getResampled(Interpolator interpolator = I_LINEAR);
