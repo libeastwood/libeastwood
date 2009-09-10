@@ -10,3 +10,4 @@
 * Update and document the API properly
 * Fix issues with other libsamplerate converters than linear
 * Fix portability issues wrt. windows & non-gcc compilers
+* Make API compatible with C
