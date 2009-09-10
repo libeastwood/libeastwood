@@ -10,7 +10,7 @@ namespace eastwood {
 class VocFile 
 {
     public:
-	VocFile(std::istream &stream, int targetFrequency, int channels, AudioFormat format);
+	VocFile(std::istream &stream);
 	virtual ~VocFile();
 
 	/**
@@ -33,25 +33,22 @@ class VocFile
 	  \param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
 	  \return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
 	  */
-//	Sound getVOCFromStream(Interpolator interpolator = I_LINEAR);
-
-    protected:
-	int _frequency;
-	int _channels;
-	AudioFormat _format;
+	Sound getSound();
 
     private:
 	void parseVocFormat();
 
 	std::istream &_stream;
 
-	uint32_t _vocFrequency,
-		 _vocSize,
-		 _vocBeginLoop,
-		 _vocEndLoop;
+	size_t _size;
+	uint8_t *_buffer;
+	uint8_t _channels;
 	uint16_t _vocLoops;
+	uint32_t _vocBeginLoop,
+		 _vocEndLoop,
+		 _frequency;
+	AudioFormat _format;
 
-	uint8_t *_vocBuffer;
     
 
 };

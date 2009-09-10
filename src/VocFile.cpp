@@ -46,16 +46,16 @@ struct VocFileHeader {
 } __attribute__((packed));
 
 
-VocFile::VocFile(std::istream &stream, int _frequency, int channels, AudioFormat format) :
-    _frequency(_frequency), _channels(channels), _format(format), _stream(stream), 
-    _vocFrequency(0), _vocSize(0), _vocBeginLoop(0), _vocEndLoop(0), _vocLoops(0), _vocBuffer(NULL)
+VocFile::VocFile(std::istream &stream) :
+    _stream(stream), _size(0), _buffer(NULL), _channels(0), _vocLoops(0),
+    _vocBeginLoop(0), _vocEndLoop(0), _frequency(0), _format(FMT_INVALID)
 {
     parseVocFormat();
 }
 
 VocFile::~VocFile()
 {
-    free(_vocBuffer);
+    free(_buffer);
 }
 
 /**
@@ -146,19 +146,24 @@ void VocFile::parseVocFormat() {
 		    packing = _stream.get();
 		    len -= 2;
 		    uint32_t tmp_rate = getSampleRateFromVOCRate(time_constant);
-		    if((_vocFrequency != 0) && (_vocFrequency != _vocFrequency))
-			LOG_ERROR("VocFile", "This voc-file contains data blocks with different sampling rates: old rate: %d, new rate: %d", _vocFrequency,tmp_rate);
-		    _vocFrequency = tmp_rate;
-
+		    if((_frequency != 0) && (_frequency != _frequency))
+			LOG_ERROR("VocFile", "This voc-file contains data blocks with different sampling rates: old rate: %d, new rate: %d", _frequency, tmp_rate);
+		    _frequency = tmp_rate;
+		    _format = FMT_U8;
+		    _channels = 1;
 		} else {
-		    _stream.read((char*)_vocFrequency, sizeof(_vocFrequency));
-		    _vocFrequency = htole32(_vocFrequency);
+		    _stream.read((char*)_frequency, sizeof(_frequency));
+		    _frequency = htole32(_frequency);
 		    int bits = _stream.get();
-		    int channels = _stream.get();
-		    if (bits != 8 || channels != 1) {
+		    _channels = _stream.get();
+		    if (bits != 8 || _channels != 1) {
 			//warning("Unsupported VOC file format (%d bits per sample, %d channels)", bits, channels);
 			break;
 		    }
+		    if(bits == 8)
+			_format = FMT_U8;
+		    else if(bits == 16)
+			_format = FMT_U16LE;
 		    _stream.read((char*)packing, sizeof(packing));
 		    packing = htole16(packing);
 		    _stream.seekg(sizeof(uint32_t), std::ios::cur);
@@ -166,15 +171,15 @@ void VocFile::parseVocFormat() {
 		}
 		//debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
 		if (packing == 0) {
-		    if (_vocSize) {
-			_vocBuffer = (uint8_t*)realloc(_vocBuffer, _vocSize + len);
+		    if (_size) {
+			_buffer = (uint8_t*)realloc(_buffer, _size + len);
 		    } else {
-			_vocBuffer = (uint8_t*)malloc(len);
+			_buffer = (uint8_t*)malloc(len);
 		    }
-		    _stream.read((char*)_vocBuffer + _vocSize, len);
-		    _vocSize += len;
-		    _vocBeginLoop = _vocSize;
-		    _vocEndLoop = _vocSize;
+		    _stream.read((char*)_buffer + _size, len);
+		    _size += len;
+		    _vocBeginLoop = _size;
+		    _vocEndLoop = _size;
 		} else {
 		    /*warning("VOC file packing %d unsupported", packing)*/;
 		}
@@ -187,23 +192,23 @@ void VocFile::parseVocFormat() {
 		uint32_t silenceRate = getSampleRateFromVOCRate(time_constant);
 
 		uint32_t length = 0;
-		if(_vocFrequency != 0) {
-		    length = (uint32_t) ((((double) silenceRate)/((double) _vocFrequency)) * silenceLength) + 1;
+		if(_frequency != 0) {
+		    length = (uint32_t) ((((double) silenceRate)/((double) _frequency)) * silenceLength) + 1;
 		} else {
 		    LOG_ERROR("VocFile", "The silence in this voc-file is right at the beginning.\n"
 			   "Therefore it is not possible to adjust the silence sample rate to the sample rate of the other sound data in this file!");
 		    length = silenceLength; 
 		}
 
-		if (_vocSize) {
-		    _vocBuffer = (uint8_t *)realloc(_vocBuffer, _vocSize + length);
+		if (_size) {
+		    _buffer = (uint8_t *)realloc(_buffer, _size + length);
 		} else {
-		    _vocBuffer = (uint8_t *)malloc(length);
+		    _buffer = (uint8_t *)malloc(length);
 		}
 
-		memset(_vocBuffer + _vocSize, 0x80, length);
+		memset(_buffer + _size, 0x80, length);
 
-		_vocSize += length;
+		_size += length;
 	    } break;
 
 	    case VOC_CODE_CONT:
@@ -229,4 +234,8 @@ void VocFile::parseVocFormat() {
 	}
 }
 
+Sound VocFile::getSound()
+{
+    return Sound(_size, _buffer, _channels, _frequency, _format);
+}
 }
