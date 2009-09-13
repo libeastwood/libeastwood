@@ -16,12 +16,18 @@ class MapFile
 	  Returns the number of tileSets in the map-File.
 	  @return	Number of tileSets
 	  */
-	uint16_t size() {
+	inline uint16_t size() {
 	    return _tileSet.size();
 	};
-	std::vector<uint16_t>::const_iterator getTiles(uint16_t index) {
+
+	inline std::vector<uint16_t>::const_iterator getTilesBegin(uint16_t index) {
 	    return _tileSet[index].begin();
 	}
+
+	inline std::vector<uint16_t>::const_iterator getTilesEnd(uint16_t index) {
+	    return _tileSet[index].end();
+	}
+
 
     private:
 	std::istream &_stream;
