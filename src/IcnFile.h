@@ -11,24 +11,18 @@
 
 #include <vector>
 
+#include "Decode.h"
+#include "MapFile.h"
+
 namespace eastwood {
 
-class ::SDL_Palette;
-class ::SDL_Surface;
-class IcnFile
+class IcnFile : public Decode
 {
-private:
-    //! Internal structure for the MAP-File.
-
-	SDL_Palette *m_palette;
 public:
-	IcnFile(const unsigned char *bufFileData, size_t bufSize, 
-	        const unsigned char *bufMapData, size_t mapsize,
-			SDL_Palette *palette);
+	IcnFile(std::istream &stream, MapFile &map, Palette *palette);
 	~IcnFile();
 
-
-	SDL_Surface *getSurface(uint32_t IndexOfFile);
+	Surface getSurface(uint32_t IndexOfFile);
 
 /// Returns an array of pictures in the icn-File
 /*!
@@ -57,7 +51,7 @@ public:
 	@param	tilesN			how many tilesX*tilesY blocks in a row
 	@return	the result surface with tilesX*tilesY*tilesN tiles
 */
-  	SDL_Surface *getSurfaceArray(uint32_t MapfileIndex, int tilesX = 0, int tilesY = 0, int tilesN = 0);
+  	Surface getSurfaceArray(uint32_t MapfileIndex, int tilesX = 0, int tilesY = 0, int tilesN = 0);
 
 /*!
 	This method returns a SDL_Surface containing multiple tiles/pictures. The returned surface contains all
@@ -67,37 +61,25 @@ public:
 	@param	EndIndex		The last tile to use
 	@return	the result surface with (EndIndex-StartIndex+1) tiles. NULL on errors.
 */
-	SDL_Surface *getSurfaceRow(uint32_t StartIndex, uint32_t EndIndex);
+	Surface getSurfaceRow(uint32_t StartIndex, uint32_t EndIndex);
 
 	/// Returns the number of tiles
 /*!
 	Returns the number of tiles in the icn-File.
     @return	Number of tiles
 */
-	int getNumFiles();
+	int getNumFiles() {
+	    return _SSET->size() / ((_width * _height) / 2);
+	}
 	
-	/// Returns the number of tileSets
-/*!
-	Returns the number of tileSets in the map-File.
-	@return	Number of tileSets
-*/
-	inline uint32_t getNumTileSets() { return m_tileSet->size(); };
-
 private:
-	const unsigned char *m_fileData;
-	size_t m_icnFileSize;
+	void readHeader();
+	MapFile &_map;
+	uint32_t _size;
 
-	uint32_t m_numFiles;
-
-	std::vector<std::vector<uint16_t> > *m_tileSet;
-	
-	unsigned char *m_SSET;
-	uint32_t m_SSET_Length;
-	unsigned char *m_RPAL;
-	uint32_t m_RPAL_Length;
-	unsigned char *m_RTBL;
-	uint32_t m_RTBL_Length;
-
+	std::vector<uint8_t>	*_SSET, // Structure Set Block
+				*_RPAL, // Reference Palette
+				*_RTBL; // Reference Table
 };
 
 }

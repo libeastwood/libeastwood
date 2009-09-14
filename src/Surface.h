@@ -31,6 +31,7 @@ class Surface {
 
     protected:
 	friend class CpsFile;
+	friend class IcnFile;
 	friend class ShpFile;
 	friend class WsaFile;
 	friend class Font;
