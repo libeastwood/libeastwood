@@ -8,7 +8,7 @@ namespace eastwood {
 
 IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette *palette) :
     Decode(stream, 16, 16, palette),
-    _map(map), _size(0), _SSET(NULL), _RPAL(NULL), _RTBL(NULL)
+    _map(map), _SSET(NULL), _RPAL(NULL), _RTBL(NULL)
 {
     readHeader();
 }
@@ -78,111 +78,71 @@ void IcnFile::readHeader()
 
 }
 
-Surface IcnFile::getSurface(uint32_t indexOfFile)
+void IcnFile::createImage(int index, uint8_t *dest, uint16_t pitch)
 {
-	uint8_t *paletteStart = &(*_RPAL)[(*_RTBL)[indexOfFile] << 4],
-    		*fileStart = &(*_SSET)[(indexOfFile * ((_width * _height)>>1))];
-	
-	Surface pic(_width, _height, 8, _palette);
-	
-	//Now we can copy to surface
-	uint8_t *dest = pic._pixels;
-	for(int y = 0; y < _height;y++, dest += pic._pitch)
-	    for(int x = 0; x < _width; x++) {
-		uint8_t startPixel = fileStart[ (y*_width + x) >> 1];
-		dest[x++] = paletteStart[startPixel >> 4];
-		dest[x] = paletteStart[startPixel & 0x0F];
-	    }
+    uint8_t *paletteStart = &(*_RPAL)[(*_RTBL)[index] << 4],
+	    *fileStart = &(*_SSET)[(index * ((_width * _height)>>1))];
 
-	LOG_INFO("IcnFile", "File Nr.: %d (Size: %dx%d)", indexOfFile, _width, _height);
+    for(int y = 0; y < _height;y++, dest += pitch)
+	for(int x = 0; x < _width; x++) {
+	    uint8_t startPixel = fileStart[ (y*_width + x) >> 1];
+	    dest[x++] = paletteStart[startPixel >> 4];
+	    dest[x] = paletteStart[startPixel & 0x0F];
+	}
 
-	return pic;
 }
 
-
-Surface IcnFile::getSurfaceArray(uint32_t mapFileIndex, int tilesX, int tilesY, int tilesN)
+Surface IcnFile::getSurface(int index)
 {
-    std::vector<uint16_t> &row = _map[mapFileIndex];
+    Surface pic(_width, _height, 8, _palette);
 
-    int size = row.size();
+    createImage(index, pic._pixels, pic._pitch);
 
-    if((tilesX == 0) && (tilesY == 0) && (tilesN == 0)) {
+    LOG_INFO("IcnFile", "File Nr.: %d (Size: %dx%d)", index, _width, _height);
+
+    return pic;
+}
+
+Surface IcnFile::getTiles(int index, bool frame)
+{
+    std::vector<uint16_t> &row = _map[index];
+
+    int tilesX = 1,
+	tilesY = 1,
+	tilesN = row.size();
+
+    if(frame) {
 	// guess what is best
-	if(size == 24) {
+	if(tilesN == 24) {
 	    // special case (radar station and light factory)
 	    tilesX = 2;
 	    tilesY = 2;
 	    tilesN = 6;
-	} else if((size % 9) == 0) {
+	} else if((tilesN % 9) == 0) {
 	    tilesX = 3;
 	    tilesY = 3;
-	    tilesN = size / 9;
-	} else if((size % 6) == 0) {
+	    tilesN /= 9;
+	} else if((tilesN % 6) == 0) {
 	    tilesX = 3;
 	    tilesY = 2;
-	    tilesN = size / 6;
-	} else if((size % 4) == 0) {
+	    tilesN /= 6;
+	} else if((tilesN % 4) == 0) {
 	    tilesX = 2;
 	    tilesY = 2;
-	    tilesN = size / 4;
-	} else if((size>=40) && ((size % 5) == 0)) {
-	    tilesX = size/5;
+	    tilesN /= 4;
+	} else if((tilesN>=40) && ((tilesN % 5) == 0)) {
+	    tilesX = tilesN/5;
 	    tilesY = 5;
 	    tilesN = 1;
-	} else {
-	    tilesX = 1;
-	    tilesY = 1;
-	    tilesN = size;
 	}
-
-    } else if( ((tilesX == 0) || (tilesY == 0)) && (tilesN == 0))
-	throw Exception(LOG_ERROR, "IcnFile", "Invalid tile geometry");
-    else if((tilesX == 0) && (tilesY == 0) && (tilesN != 0)) {
-	if(size % tilesN == 0) {
-	    // guess what is best
-	    if((size % 3) == 0) {
-		tilesX = size/3;
-		tilesY = 3;
-	    } else if((size % 2) == 0) {
-		tilesX = size/2;
-		tilesY = 2;
-	    } else {
-		tilesX = size;
-		tilesY = 1;
-	    }
-	} else
-    	    throw Exception(LOG_ERROR, "IcnFile", "Invalid tile geometry");
-    } else if(tilesX*tilesY*tilesN != size)
-    	    throw Exception(LOG_ERROR, "IcnFile", "Invalid tile geometry");
-
+    }
     Surface pic(_width*tilesX*tilesN,_height*tilesY, 8, _palette);
 
     std::vector<uint16_t>::const_iterator idx = row.begin();
     for(int n = 0; n < tilesN; n++)
 	for(int y = 0; y < tilesY; y++)
-	    for(int x = 0; x < tilesX; x++, idx++) {
-		Surface subPic = getSurface(*idx);
-		uint8_t *dest = pic._pixels + (pic._pitch)*y*_height + (x+n*tilesX) * _width;
-		for(int y = 0; y < _height;y++, dest += pic._pitch)
-		    memcpy(dest, &subPic._pixels[y*_width], _width);
-	    }
-
-    return pic;
-}
-
-Surface IcnFile::getSurfaceRow(uint32_t startIndex, uint32_t endIndex) {
-    uint32_t numTiles = endIndex - startIndex + 1;
-    Surface pic(_width*numTiles,_height, 8, _palette);
-
-    for(unsigned int i = 0; i < numTiles; i++) {
-	int indexOfFile = i+startIndex;
-	Surface subPic = getSurface(indexOfFile);
-
-	//Now we can copy to surface
-	uint8_t *dest = pic._pixels + i*_width;
-	for(int y = 0; y < _height;y++, dest += pic._pitch)
-	    memcpy(dest, &subPic._pixels[y*_width], _width);
-    }
+	    for(int x = 0; x < tilesX; x++, idx++)
+		createImage(*idx, pic._pixels + (pic._pitch)*y*_height + (x+n*tilesX) * _width, pic._pitch);
 
     return pic;
 }

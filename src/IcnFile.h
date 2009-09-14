@@ -22,7 +22,9 @@ public:
 	IcnFile(std::istream &stream, MapFile &map, Palette *palette);
 	~IcnFile();
 
-	Surface getSurface(uint32_t IndexOfFile);
+	Surface getSurface(int IndexOfFile);
+
+	Surface getTiles(int index, bool frame = true);
 
 /// Returns an array of pictures in the icn-File
 /*!
@@ -51,7 +53,7 @@ public:
 	@param	tilesN			how many tilesX*tilesY blocks in a row
 	@return	the result surface with tilesX*tilesY*tilesN tiles
 */
-  	Surface getSurfaceArray(uint32_t MapfileIndex, int tilesX = 0, int tilesY = 0, int tilesN = 0);
+//  	Surface getSurfaceArray(uint32_t MapfileIndex, int tilesX = 0, int tilesY = 0, int tilesN = 0);
 
 /*!
 	This method returns a SDL_Surface containing multiple tiles/pictures. The returned surface contains all
@@ -61,21 +63,21 @@ public:
 	@param	EndIndex		The last tile to use
 	@return	the result surface with (EndIndex-StartIndex+1) tiles. NULL on errors.
 */
-	Surface getSurfaceRow(uint32_t StartIndex, uint32_t EndIndex);
+//	Surface getSurfaceRow(uint32_t StartIndex, uint32_t EndIndex);
 
 	/// Returns the number of tiles
 /*!
 	Returns the number of tiles in the icn-File.
     @return	Number of tiles
 */
-	int getNumFiles() {
-	    return _SSET->size() / ((_width * _height) / 2);
+	inline int size() {
+	    return (_SSET != NULL) ? _SSET->size() / ((_width * _height) / 2) : 0;
 	}
 	
 private:
 	void readHeader();
+	void createImage(int index, uint8_t *dest, uint16_t pitch);
 	MapFile &_map;
-	uint32_t _size;
 
 	std::vector<uint8_t>	*_SSET, // Structure Set Block
 				*_RPAL, // Reference Palette
