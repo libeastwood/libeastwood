@@ -4,7 +4,7 @@ Requirements for next milestone:
 * Update adlib player from scummvm
 * Implement python bindings
 * Update and document the API properly
-* Sanitize constructors and overload various recommended operators etc.
+* Sanitize constructors, destructors and overload various recommended operators etc.
 
 Less urgent:
 * Implement complete exception handling
@@ -14,3 +14,4 @@ Less urgent:
 * Add some example code demonstrating the API.
 * Fix portability issues wrt. windows & non-gcc compilers
 * Make API compatible with C
+* Move seed generator from doonlunacy to this library
