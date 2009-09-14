@@ -10,6 +10,7 @@
 #define MISSION_LOSE			2
 #define MISSION_ADVICE			3
 
+namespace eastwood {
 
 /// A class for loading a encoded textfiles.
 /*!
@@ -47,4 +48,5 @@ private:
 	std::vector<std::string> strings;
 };
 
+}
 #endif // EASTWOOD_STRINGFILE_H

@@ -5,7 +5,7 @@
 #include "Exception.h"
 #include "StringFile.h"
 
-using namespace eastwood;
+namespace eastwood {
 
 StringFile::StringFile(const unsigned char *bufFileData) {
     int numStrings = ((int)htole16(((uint16_t*) bufFileData)[0]))/2 - 1;
@@ -211,4 +211,5 @@ std::string StringFile::decodeString(std::string text) {
     return out;
 }
 
+}
 // vim:ts=8:sw=4:et
