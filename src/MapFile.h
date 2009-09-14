@@ -12,26 +12,19 @@ class MapFile
 	MapFile(std::istream &stream);
 	virtual ~MapFile();
 
+	std::vector<uint16_t>& operator[] (uint16_t i) { return (*_tileSet)[i]; }
+
 	/*!
 	  Returns the number of tileSets in the map-File.
 	  @return	Number of tileSets
 	  */
 	inline uint16_t size() {
-	    return _tileSet.size();
+	    return _tileSet->size();
 	};
-
-	inline std::vector<uint16_t>::const_iterator getTilesBegin(uint16_t index) {
-	    return _tileSet[index].begin();
-	}
-
-	inline std::vector<uint16_t>::const_iterator getTilesEnd(uint16_t index) {
-	    return _tileSet[index].end();
-	}
-
 
     private:
 	std::istream &_stream;
-	std::vector<std::vector<uint16_t> > _tileSet;
+	std::vector<std::vector<uint16_t> > *_tileSet;
 };
 
 }
