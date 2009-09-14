@@ -103,7 +103,7 @@ Surface IcnFile::getSurface(int index)
     return pic;
 }
 
-Surface IcnFile::getTiles(int index, bool frame)
+Surface IcnFile::getTiles(int index, bool frameByFrame)
 {
     std::vector<uint16_t> &row = _map[index];
 
@@ -111,7 +111,7 @@ Surface IcnFile::getTiles(int index, bool frame)
 	tilesY = 1,
 	tilesN = row.size();
 
-    if(frame) {
+    if(frameByFrame) {
 	// guess what is best
 	if(tilesN == 24) {
 	    // special case (radar station and light factory)

@@ -24,7 +24,7 @@ public:
 
 	Surface getSurface(int IndexOfFile);
 
-	Surface getTiles(int index, bool frame = true);
+	Surface getTiles(int index, bool frameByFrame = true);
 
 /// Returns an array of pictures in the icn-File
 /*!
