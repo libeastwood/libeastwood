@@ -1,13 +1,11 @@
-#include <fstream>
 #include <iostream>
-#include <cctype>
-#include <algorithm>
-#include <stdio.h>
+
+#include "StdDef.h"
 
 #include "IniFile.h"
 #include "Exception.h"
 
-using namespace eastwood;
+namespace eastwood {
 
 // public methods
 
@@ -17,32 +15,15 @@ using namespace eastwood;
 	reading the file is closed immediately. If the file does not exist, it is treated as empty.
 	\param	filename	The file to be opened.
 */
-IniFile::IniFile(unsigned char *bufFiledata, int bufSize)
+IniFile::IniFile(std::istream &stream) :
+    _stream(stream)
 {
 	FirstLine = NULL;
 	SectionRoot = NULL;
 	
-	SDL_RWops *RWopsFile = SDL_RWFromMem(bufFiledata, bufSize);
-	
-	readfile(RWopsFile);
-	SDL_RWclose(RWopsFile);
+	readFile();
 }
 
-/// Constructor for reading the INI-File from a SDL_RWops.
-/**
-	This constructor reads the INI-File from RWopsFile. The RWopsFile can be readonly.
-	\param	RWopsFile	Pointer to RWopsFile (can be readonly)
-*/
-IniFile::IniFile(SDL_RWops *RWopsFile)
-{
-	FirstLine = NULL;
-	SectionRoot = NULL;
-	
-	if(RWopsFile == NULL)
-	    throw(Exception(LOG_ERROR, "IniFile", "RWopsFile == NULL!"));
-	
-	readfile(RWopsFile);
-}
 
 ///	Destructor.
 /**
@@ -411,47 +392,22 @@ void IniFile::KeyList_Close(KeyListHandle *handle) {
 		*handle = NULL;
 }
 
-/// Saves the changes made in the INI-File to a file.
+/// Saves the changes made in the INI-File to an output stream.
 /**
-	Saves the changes made in the INI-File to a file specified by filename.
+	Saves the changes made in the INI-File to an output stream specified by output.
 	If something goes wrong false is returned otherwise true.
-	\param	filename	Filename of the file. This file is opened for writing.
+	\param	output	ostream that is used for writing. (Cannot be readonly)
 	\return	true on success otherwise false.
 */
-bool IniFile::SaveChangesTo(std::string filename) {
-	SDL_RWops *file;
-	if((file = SDL_RWFromFile(filename.c_str(),"w")) == NULL) {
-		return false;
-	}
-	
-	bool ret = SaveChangesTo(file);
-	SDL_RWclose(file);
-	return ret;
-}
-
-/// Saves the changes made in the INI-File to a RWop.
-/**
-	Saves the changes made in the INI-File to a RWop specified by file.
-	If something goes wrong false is returned otherwise true.
-	\param	file	SDL_RWops that is used for writing. (Cannot be readonly)
-	\return	true on success otherwise false.
-*/
-bool IniFile::SaveChangesTo(SDL_RWops *file) {
+bool IniFile::SaveChangesTo(std::ostream &output) {
 	CommentEntry *curEntry = FirstLine;
 	
-	bool error = false;
-	unsigned int written;
 	while(curEntry != NULL) {
-		written = SDL_RWwrite(file, curEntry->CompleteLine.c_str(), 1, curEntry->CompleteLine.size());
-		if(written != curEntry->CompleteLine.size())
-			throw(Exception(LOG_ERROR, "IniFile", SDL_GetError()));
-
-		if((written = SDL_RWwrite(file,"\n",1,1)) != 1)
-			error = true;
-		curEntry = curEntry->nextEntry;
+	    output.write(curEntry->CompleteLine.c_str(), curEntry->CompleteLine.size());
+	    curEntry = curEntry->nextEntry;
 	}
 	
-	return !error;
+	return true;
 }
 
 // private methods
@@ -469,7 +425,7 @@ void IniFile::flush()
 
 }
 
-void IniFile::readfile(SDL_RWops *file)
+void IniFile::readFile()
 {	
 	if((SectionRoot = new SectionEntry("",0,0)) == NULL)
     	    throw(std::bad_alloc());
@@ -493,9 +449,10 @@ void IniFile::readfile(SDL_RWops *file)
 		unsigned char tmp;
 		int readbytes;
 		
-		while(1) {
-			readbytes = SDL_RWread(file,&tmp,1,1);
-			if(readbytes <= 0) {
+		size_t size = getStreamSize(_stream);
+		while((uint32_t)_stream.tellg() < size-1) {
+			tmp = _stream.get();
+			if((uint32_t)_stream.tellg() == size-1) {
 				readfinished = true;
 				break;
 			} else if(tmp == '\n') {
@@ -812,4 +769,6 @@ bool IniFile::isNormalChar(unsigned char s) {
 	} else {
 		return false;
 	}
+}
+
 }

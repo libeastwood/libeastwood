@@ -2,8 +2,10 @@
 #define EASTWOOD_INIFILE_H
 
 #include <string>
-#include <SDL_rwops.h>
-#include <SDL.h>
+#include <istream>
+#include <ostream>
+
+namespace eastwood {
 
 //!  A class for reading and writing *.ini configuration files. 
 /*!
@@ -87,8 +89,7 @@ private:
 public:
 	typedef IniFile::KeyEntry* KeyListHandle;		///< A handle to a KeyList opened with KeyList_Open().
 
-	IniFile(unsigned char *bufFiledata, int bufsize);
-	IniFile(SDL_RWops *RWopsFile);
+	IniFile(std::istream &stream);
 	~IniFile();
 	
 	std::string getStringValue(std::string section, std::string key, std::string defaultValue = "");
@@ -104,16 +105,16 @@ public:
 	std::string KeyList_GetNextKey(KeyListHandle *handle);
 	void KeyList_Close(KeyListHandle *handle);
 	
-	bool SaveChangesTo(std::string filename);
-	bool SaveChangesTo(SDL_RWops *file);
+	bool SaveChangesTo(std::ostream &output);
 	
 	
 private:
+	std::istream &_stream;
 	CommentEntry *FirstLine;
 	SectionEntry *SectionRoot;
 	
 	void flush();
-	void readfile(SDL_RWops *file);
+	void readFile();
 	
 	void InsertSection(SectionEntry *newSection);
 	void InsertKey(SectionEntry *section, KeyEntry *newKeyEntry);
@@ -131,4 +132,5 @@ private:
 	bool isNormalChar(unsigned char s);
 };
 
+}
 #endif // EASTWOOD_INIFILE_H
