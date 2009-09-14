@@ -4,19 +4,16 @@
 #include <SDL_mixer.h>
 #include "Sound.h"
 
-namespace eastwood {
+namespace eastwood { namespace SDL {
 
 class MixerSound : public Sound
 {
     public:
-#if 1
 	MixerSound() : Sound(){};
 	MixerSound(size_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format);
 	MixerSound(size_t size, uint8_t *buffer);
 	MixerSound(const eastwood::Sound &sound);
 	virtual ~MixerSound();
-#endif
-	
 
 	MixerSound getResampled(Interpolator interpolator = I_LINEAR);
 
@@ -24,5 +21,5 @@ class MixerSound : public Sound
 
 };
 
-}
+}}
 #endif // EASTWOOD_SDL_VOCSDL_H

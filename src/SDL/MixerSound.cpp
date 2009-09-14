@@ -1,7 +1,7 @@
 #include "StdDef.h"
 #include "SDL/MixerSound.h"
 
-namespace eastwood {
+namespace eastwood { namespace SDL {
 
 MixerSound::MixerSound(const eastwood::Sound &sound) : eastwood::Sound(sound)
 {
@@ -46,4 +46,4 @@ Mix_Chunk *MixerSound::get() {
     return mixChunk;
 }
 
-}
+}}
