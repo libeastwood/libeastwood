@@ -16,3 +16,4 @@ Less urgent:
 * Make API compatible with C
 * Move seed generator from doonlunacy to this library
 * Fix reading of CREDITS.ENG
+* Rewrite Font class?
