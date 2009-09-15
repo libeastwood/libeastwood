@@ -19,7 +19,7 @@ namespace eastwood {
 class StringFile
 {
 public:
-	StringFile(const unsigned char *bufFileData);
+	StringFile(std::istream &stream);
 	~StringFile();
 
 	/*!
@@ -30,22 +30,27 @@ public:
 	 *  @return the text for this mission and of this type.
 	*/
 	inline std::string getString(unsigned int mission, unsigned int texttype) {
-		return strings[mission*4+texttype];
+		return _strings[mission*4+texttype];
 	}
 
 	inline std::string getString(int i){
-		return strings[i];
+		return _strings[i];
+	}
+
+	inline uint16_t size() {
+	    return _strings.size();
 	}
 
 private:
     /*!
      *  This method decodes a string to ANSI Code
-     *  The parameter text is decoded to ANSI Code and returned
-     *  @param text	Text to decode
+     *  The parameter offset is the end offset of the text to decode to ANSI Code and returned
+     *  @param offset	End offset of text to decode
      *  @return The decoded text
      */
-	std::string decodeString(std::string text);
-	std::vector<std::string> strings;
+	std::string decodeString(uint16_t offset);
+	std::istream &_stream;
+	std::vector<std::string> _strings;
 };
 
 }

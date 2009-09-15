@@ -7,25 +7,30 @@
 
 namespace eastwood {
 
-StringFile::StringFile(const unsigned char *bufFileData) {
-    int numStrings = ((int)htole16(((uint16_t*) bufFileData)[0]))/2 - 1;
-    strings.resize(numStrings);
-    for(int i = 0; i < numStrings; i++) {
-        uint16_t index = htole16(((uint16_t*)bufFileData)[i]);
-        strings[i] = decodeString((const char*)(bufFileData+index));
-    }
+StringFile::StringFile(std::istream &stream)
+    : _stream(stream), _strings(0)
+{
+    _strings.resize((readU16LE(stream)/2)-1);
+
+    std::vector<uint16_t> offsets(_strings.size());
+
+    for(uint16_t i = 0; i < _strings.size(); i++)
+        offsets[i] = readU16LE(stream);
+
+    for(uint16_t i = 0; i < _strings.size(); i++)
+        _strings[i] = decodeString(offsets[i]);
 }
 
 StringFile::~StringFile() {
 }
 
 
-std::string StringFile::decodeString(std::string text) {
+std::string StringFile::decodeString(uint16_t size) {
     std::string out = "";
     unsigned char databyte;
 
-    for(unsigned int i = 0; i < text.length(); i++) {
-        databyte = text[i];
+    while((uint32_t)_stream.tellg() < size) {
+        databyte = _stream.get();
 
         switch(databyte) {
             case 0x00: break;
@@ -39,7 +44,7 @@ std::string StringFile::decodeString(std::string text) {
             case 0x82: out += " s"; break;
             case 0x83: out += " i"; break;
             case 0x84: out += " o"; break;
-            case 0x85: out += "  "; break; // maybe something else
+            case 0x85: out += "  "; break; // might be something else
             case 0x86: out += " w"; break;
             case 0x87: out += " b"; break;
             case 0x88: out += "e "; break;
@@ -172,11 +177,10 @@ std::string StringFile::decodeString(std::string text) {
 
             case 0x1B: {
                            // special character
-                           i++;
-                           if(i == text.length())
+                           if((uint32_t)_stream.tellg() == size)
                                throw (Exception(LOG_ERROR, "StringFile", "decodeString: Special character escape sequence at end of string!"));
 
-                           unsigned char special = text[i];
+                           unsigned char special = _stream.get();
                            switch(special) {
                                // e.g. german "umlaute"
                                case 0x02: out += (unsigned char) 252 /*"ue"*/; break;
