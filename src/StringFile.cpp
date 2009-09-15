@@ -29,7 +29,7 @@ StringFile::~StringFile()
 std::string StringFile::decodeString(uint16_t offset)
 {
     std::string out = "";
-    unsigned char databyte;
+    uint8_t databyte;
 
     while((uint32_t)_stream.tellg() < offset) {
         databyte = _stream.get();
@@ -182,15 +182,15 @@ std::string StringFile::decodeString(uint16_t offset)
                            if((uint32_t)_stream.tellg() == offset)
                                throw (Exception(LOG_ERROR, "StringFile", "decodeString: Special character escape sequence at end of string!"));
 
-                           unsigned char special = _stream.get();
+                           uint8_t special = _stream.get();
                            switch(special) {
                                // e.g. german "umlaute"
-                               case 0x02: out += (unsigned char) 252 /*"ue"*/; break;
-                               case 0x05: out += (unsigned char) 228 /*"ae"*/; break;
-                               case 0x0F: out += (unsigned char) 197 /*"Ae"*/; break;
-                               case 0x15: out += (unsigned char) 246 /*"oe"*/; break;
-                               case 0x1B: out += (unsigned char) 220 /*"Ue"*/; break;
-                               case 0x62: out += (unsigned char) 223 /*"ss"*/; break;
+                               case 0x02: out += (uint8_t) 252 /*"ue"*/; break;
+                               case 0x05: out += (uint8_t) 228 /*"ae"*/; break;
+                               case 0x0F: out += (uint8_t) 197 /*"Ae"*/; break;
+                               case 0x15: out += (uint8_t) 246 /*"oe"*/; break;
+                               case 0x1B: out += (uint8_t) 220 /*"Ue"*/; break;
+                               case 0x62: out += (uint8_t) 223 /*"ss"*/; break;
                                default: {
                                             char tmp[20];
                                             sprintf(tmp,"---Unknown char:%X---",special);
