@@ -45,7 +45,7 @@ Surface Surface::getScaled(Scaler scaler)
 	case Scale2X4:
 	case Scale3X:
 	case Scale4X:
-	    scaled = Surface(_width * (scaler & 0xff), _height * (scaler>>8), _bpp, _palette);
+	    scaled = Surface(_width * (scaler & (1<<8)-1), _height * (scaler>>8), _bpp, _palette);
     	break;
 	default:
 	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
