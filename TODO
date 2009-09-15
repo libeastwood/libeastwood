@@ -1,5 +1,4 @@
 Requirements for next milestone:
-* Free library from SDL & SDL_mixer dependency
 * Refactorize code (especially favor C++ STL over C etc.)
 * Update adlib player from scummvm
 * Implement python bindings
