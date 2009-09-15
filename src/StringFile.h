@@ -4,11 +4,12 @@
 #include <string>
 #include <vector>
 
-
-#define MISSION_DESCRIPTION		0
-#define MISSION_WIN			1
-#define MISSION_LOSE			2
-#define MISSION_ADVICE			3
+enum MissionType {
+    MISSION_DESCRIPTION = 0,
+    MISSION_WIN = 1,
+    MISSION_LOSE = 2,
+    MISSION_ADVICE = 3
+};
 
 namespace eastwood {
 
@@ -29,7 +30,7 @@ class StringFile
 	 *  @param texttype one of MISSION_DESCRIPTION, MISSION_WIN, MISSION_LOSE, MISSION_ADVICE
 	 *  @return the text for this mission and of this type.
 	 */
-	inline std::string getString(unsigned int mission, unsigned int texttype) {
+	inline std::string getString(uint16_t mission, MissionType texttype) {
 	    return _strings[mission*4+texttype];
 	}
 
