@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string>
-
 #include "StdDef.h"
 #include "Exception.h"
 #include "StringFile.h"
