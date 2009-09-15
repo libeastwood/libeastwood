@@ -20,7 +20,7 @@ class StringFile
 {
 public:
 	StringFile(std::istream &stream);
-	~StringFile();
+	virtual ~StringFile();
 
 	/*!
 	 * This method returns the briefing/debriefing text for the mission specified by the parameter mission. The second
