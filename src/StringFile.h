@@ -18,7 +18,7 @@ namespace eastwood {
 */
 class StringFile
 {
-public:
+    public:
 	StringFile(std::istream &stream);
 	virtual ~StringFile();
 
@@ -28,26 +28,26 @@ public:
 	 *  @param mission the mission number (0=House description; 1,2,...,9 = mission description).
 	 *  @param texttype one of MISSION_DESCRIPTION, MISSION_WIN, MISSION_LOSE, MISSION_ADVICE
 	 *  @return the text for this mission and of this type.
-	*/
+	 */
 	inline std::string getString(unsigned int mission, unsigned int texttype) {
-		return _strings[mission*4+texttype];
+	    return _strings[mission*4+texttype];
 	}
 
 	inline std::string getString(int i){
-		return _strings[i];
+	    return _strings[i];
 	}
 
 	inline uint16_t size() {
 	    return _strings.size();
 	}
 
-private:
-    /*!
-     *  This method decodes a string to ANSI Code
-     *  The parameter offset is the end offset of the text to decode to ANSI Code and returned
-     *  @param offset	End offset of text to decode
-     *  @return The decoded text
-     */
+    private:
+	/*!
+	 *  This method decodes a string to ANSI Code
+	 *  The parameter offset is the end offset of the text to decode to ANSI Code and returned
+	 *  @param offset	End offset of text to decode
+	 *  @return The decoded text
+	 */
 	std::string decodeString(uint16_t offset);
 	std::istream &_stream;
 	std::vector<std::string> _strings;

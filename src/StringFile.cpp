@@ -21,15 +21,17 @@ StringFile::StringFile(std::istream &stream)
         _strings[i] = decodeString(offsets[i]);
 }
 
-StringFile::~StringFile() {
+StringFile::~StringFile()
+{
 }
 
 
-std::string StringFile::decodeString(uint16_t size) {
+std::string StringFile::decodeString(uint16_t offset)
+{
     std::string out = "";
     unsigned char databyte;
 
-    while((uint32_t)_stream.tellg() < size) {
+    while((uint32_t)_stream.tellg() < offset) {
         databyte = _stream.get();
 
         switch(databyte) {
@@ -60,9 +62,9 @@ std::string StringFile::decodeString(uint16_t size) {
             case 0x91: out += "t "; break;
             case 0x92: out += "ti"; break;
             case 0x93: out += "te"; break;
-            case 0x94: out += "to";	break;
-            case 0x95: out += "tr";	break;
-            case 0x96: out += "ta";	break;
+            case 0x94: out += "to"; break;
+            case 0x95: out += "tr"; break;
+            case 0x96: out += "ta"; break;
             case 0x97: out += "ts"; break;
             case 0x98: out += "an"; break;
             case 0x99: out += "ar"; break;
@@ -150,7 +152,7 @@ std::string StringFile::decodeString(uint16_t size) {
             case 0xE6: out += "do"; break;
             case 0xE7: out += "da"; break;
             case 0xE8: out += "un"; break;
-            case 0xE9: out += "us";	break;
+            case 0xE9: out += "us"; break;
             case 0xEA: out += "ur"; break;
             case 0xEB: out += "uc"; break;
             case 0xEC: out += "ut"; break;
@@ -177,7 +179,7 @@ std::string StringFile::decodeString(uint16_t size) {
 
             case 0x1B: {
                            // special character
-                           if((uint32_t)_stream.tellg() == size)
+                           if((uint32_t)_stream.tellg() == offset)
                                throw (Exception(LOG_ERROR, "StringFile", "decodeString: Special character escape sequence at end of string!"));
 
                            unsigned char special = _stream.get();
