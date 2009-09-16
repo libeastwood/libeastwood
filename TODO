@@ -4,11 +4,11 @@ Requirements for next milestone:
 * Implement python bindings
 * Update and document the API properly
 * Sanitize constructors, destructors and overload various recommended operators etc.
+* Implement support for loading/saving BMP
 
 Less urgent:
 * Implement complete exception handling
 * Implement Format 2, Format 40 & Format 80 encoders (for creating new CPS, SHP & WSA graphics)
-* Implement support for loading/saving BMP
 * Implement regression tests
 * Add some example code demonstrating the API.
 * Fix portability issues wrt. windows & non-gcc compilers
