@@ -12,6 +12,7 @@ SET( LIBEASTWOOD_SRCS
   IniFile.cpp
   IStream.cpp
   MapFile.cpp
+  OStream.cpp
   PakFile.cpp
   PalFile.cpp
   ShpFile.cpp
@@ -40,9 +41,10 @@ SET( LIBEASTWOOD_HEADERS
   ExeFile.h
   Font.h
   IcnFile.h
+  IniFile.h
   IStream.h
   MapFile.h
-  IniFile.h
+  OStream.h
   Log.h
   PakFile.h
   PalFile.h
