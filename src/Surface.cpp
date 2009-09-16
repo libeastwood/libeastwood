@@ -1,5 +1,6 @@
 #include "StdDef.h"
 #include "Surface.h"
+#include "OStream.h"
 #include "Exception.h"
 
 #include "scaler/scalebit.h"
@@ -85,63 +86,65 @@ Surface Surface::getScaled(Scaler scaler)
     return scaled;
 }
 
-bool Surface::SaveBMP(OStream &output)
+bool Surface::SaveBMP(std::ostream &output)
 {
     uint32_t fp_offset;
     uint8_t *bits;
     BMPHeader header = {{'B', 'M'}, 0, 0, 0,0 };
     BMPInfoHeader info = { sizeof(BMPInfoHeader), _width, _height, 1, _bpp, BMP_RGB, _pitch, 0, 0, sizeof(*_palette)/sizeof((*_palette)[0]), 0};
+    OStream &os(const_cast<OStream&>(reinterpret_cast<const OStream&>(output)));
+
 
     if (!_palette || _bpp != 8)
 	throw Exception(LOG_ERROR, "Surface", "Format not supported");
 
     /* Write the BMP file header values */
-    fp_offset = (uint32_t)output.tellp();
-    output.write(header.magic, sizeof(header.magic));
-    output.putU32LE(header.size);
-    output.putU16LE(header.reserved1);
-    output.putU16LE(header.reserved2);
-    output.putU32LE(header.offBits);
+    fp_offset = (uint32_t)os.tellp();
+    os.write(header.magic, sizeof(header.magic));
+    os.putU32LE(header.size);
+    os.putU16LE(header.reserved1);
+    os.putU16LE(header.reserved2);
+    os.putU32LE(header.offBits);
 
     /* Write the BMP info values */
-    output.putU32LE(info.size);
-    output.putU32LE(info.width);
-    output.putU32LE(info.height);
-    output.putU16LE(info.planes);
-    output.putU16LE(info.bitCount);
-    output.putU32LE(info.compression);
-    output.putU32LE(info.sizeImage);
-    output.putU32LE(info.xPelsPerMeter);
-    output.putU32LE(info.xPelsPerMeter);
-    output.putU32LE(info.colorsUsed);
-    output.putU32LE(info.colorsImportant);
+    os.putU32LE(info.size);
+    os.putU32LE(info.width);
+    os.putU32LE(info.height);
+    os.putU16LE(info.planes);
+    os.putU16LE(info.bitCount);
+    os.putU32LE(info.compression);
+    os.putU32LE(info.sizeImage);
+    os.putU32LE(info.xPelsPerMeter);
+    os.putU32LE(info.xPelsPerMeter);
+    os.putU32LE(info.colorsUsed);
+    os.putU32LE(info.colorsImportant);
 
     /* Write the palette (in BGR color order) */
     if (_palette ) {
 	for (uint16_t i = 0; i < sizeof(*_palette)/sizeof((*_palette)[0]); i++) {
-	    output.put(_palette[i]->b);
-	    output.put(_palette[i]->g);
-	    output.put(_palette[i]->r);
-	    output.put(0);
+	    os.put(_palette[i]->b);
+	    os.put(_palette[i]->g);
+	    os.put(_palette[i]->r);
+	    os.put(0);
 	}
     }
 
     /* Write the bitmap offset */
-    header.offBits = (uint32_t)output.tellp()-fp_offset;
-    output.seekp(fp_offset+10, std::ios::beg);
+    header.offBits = (uint32_t)os.tellp()-fp_offset;
+    os.seekp(fp_offset+10, std::ios::beg);
     
-    output.putU32LE(header.offBits);
-    output.seekp(fp_offset+header.offBits);
+    os.putU32LE(header.offBits);
+    os.seekp(fp_offset+header.offBits);
 
     /* Write the bitmap image upside down */
     for(bits = _pixels+(_height*_pitch); bits > _pixels; bits-= _pitch)
-	output.write((char*)bits, _pitch);
+	os.write((char*)bits, _pitch);
 
     /* Write the BMP file size */
-    header.size = (uint32_t)output.tellp()-fp_offset;
-    output.seekp(fp_offset+2, std::ios::beg);
-    output.putU32LE(header.size);
-    output.seekp(fp_offset+header.size, std::ios::beg);
+    header.size = (uint32_t)os.tellp()-fp_offset;
+    os.seekp(fp_offset+2, std::ios::beg);
+    os.putU32LE(header.size);
+    os.seekp(fp_offset+header.size, std::ios::beg);
 
     return true;
 }

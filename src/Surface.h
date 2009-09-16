@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_SURFACE_H
 #define EASTWOOD_SURFACE_H
 
-#include "OStream.h"
+#include <ostream>
 
 namespace eastwood {
 
@@ -30,7 +30,7 @@ class Surface {
 
 	bool scalePrecondition(Scaler scale);
 	Surface getScaled(Scaler scale);
-	bool SaveBMP(OStream &output);
+	bool SaveBMP(std::ostream &output);
 
     protected:
 	friend class CpsFile;
