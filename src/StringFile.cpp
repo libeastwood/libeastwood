@@ -34,12 +34,12 @@ void StringFile::readHeader()
     else {
         _strings.push_back("");
         while(!_stream.eof()) {
-            char tmp = _stream.get();
+            uint8_t byte = _stream.get();
             //TODO: Figure out what these non-alpha numeric characters are for,
             //      some sort of formatting perhaps? Let's just treat them as
             //      separators for now... 
-            if(tmp >= 0x20 && tmp <= 0x7e)
-                _strings.back() += tmp;
+            if(byte >= 0x20 && byte <= 0x7e)
+                _strings.back() += byte;
             else if(_strings.back().size() != 0)
                     _strings.push_back("");
         }
