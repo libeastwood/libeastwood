@@ -16,8 +16,8 @@ static inline TileType getType(const uint32_t x) {
     return (TileType)(x & (TILE_NORMAL-1)<<16);
 }
 
-ShpFile::ShpFile(std::istream &stream, Palette *palette) :
-    Decode(stream, 0, 0, palette), _index(std::vector<ShpFileEntry>(1)), _numFiles(0)
+ShpFile::ShpFile(const std::istream &stream, Palette *palette) :
+    Decode(stream, 0, 0, palette), _index(1), _numFiles(0)
 {
     readIndex();
 }
@@ -29,15 +29,15 @@ ShpFile::~ShpFile()
 void ShpFile::readIndex()
 {
     // First get number of files in shp-file
-    _numFiles = readU16LE(_stream);
+    _numFiles = _stream.getU16LE();
 
     if(_numFiles == 0) {
 	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this shp-File!"));
     }
 
     if(_numFiles == 1) {
-	uint16_t start = readU16LE(_stream),
-		 end = readU16LE(_stream);
+	uint16_t start = _stream.getU16LE(),
+		 end = _stream.getU16LE();
 	/* files with only one image might be different */
 	if (end != 0) {
 	    /* File has special header with only 2 byte offset */
@@ -53,7 +53,7 @@ void ShpFile::readIndex()
 	}
 
     } else {
-    	uint32_t fileSize = getStreamSize(_stream);
+    	uint32_t fileSize = _stream.size();
 
 	/* File contains more than one image */
 
@@ -67,7 +67,7 @@ void ShpFile::readIndex()
 
 	// now fill Index with start and end-offsets
 	for(int i = 0; i < _numFiles; i++) {
-	    _index[i].startOffset = readU32LE(_stream) + 2;
+	    _index[i].startOffset = _stream.getU32LE() + 2;
 
 	    if(i > 0) {
 		char error[256];
@@ -80,7 +80,7 @@ void ShpFile::readIndex()
 	}
 
 	// Add the endOffset for the last file
-	_index[_numFiles-1].endOffset = readU16LE(_stream) - 1 + 2;
+	_index[_numFiles-1].endOffset = _stream.getU16LE() - 1 + 2;
     }
 }
 
@@ -102,15 +102,15 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
 	imageOut;
 
     _stream.seekg(_index[fileIndex].startOffset, std::ios::beg);
-    flags = readU16LE(_stream);
+    flags = _stream.getU16LE();
 
     slices = _stream.get();
-    width = readU16LE(_stream);
+    width = _stream.getU16LE();
     height = _stream.get();
 
-    fileSize = readU16LE(_stream);
+    fileSize = _stream.getU16LE();
     /* size and also checksum */
-    imageSize = readU16LE(_stream);
+    imageSize = _stream.getU16LE();
     imageOut.resize(width*height);
 
     LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
@@ -129,7 +129,7 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
 	    decodeDestination.resize(imageSize);
 	    palOffsets.resize(16);
 
-	    readLE(_stream, &palOffsets.front(), palOffsets.size());
+	    _stream.read(reinterpret_cast<char*>(&palOffsets.front()), palOffsets.size());
 
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
@@ -145,7 +145,7 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
 
 	case 3:
 	    palOffsets.resize(16);
-	    readLE(_stream, &palOffsets.front(), palOffsets.size());
+	    _stream.read(reinterpret_cast<char*>(&palOffsets.front()), palOffsets.size());
 	    decode2(_stream, &imageOut.front(), imageSize);
 
 	    apply_pal_offsets(&palOffsets.front(), &imageOut.front(), imageOut.size());
@@ -195,7 +195,7 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
     std::vector<uint8_t> imageOut;
 
     _stream.seekg(_index[index].startOffset+3, std::ios::beg);
-    width = readU16LE(_stream);
+    width = _stream.getU16LE();
     height = _stream.get();    
 
     for(uint32_t i = 1; i < tilesX*tilesY; i++) {

@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include "IStream.h"
+
 namespace eastwood {
 
 class EmcFileBase;
@@ -51,7 +53,7 @@ enum script_t {
 
 class EmcFileBase {
     public:
-	EmcFileBase(std::istream &input, std::ostream &output);
+	EmcFileBase(const std::istream &input, std::ostream &output);
 	virtual ~EmcFileBase();
 
 	uint16_t	scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes);	// Search the opcode table for 'Opcode' string
@@ -123,7 +125,7 @@ class EmcFileBase {
 	// Houses
 	virtual void	 o_execute_House_Null(){}
 
-	std::istream 	&_inputStream;
+	IStream 	&_inputStream;
 	std::ostream	&_outputStream;
 
 	// Opcode Functions

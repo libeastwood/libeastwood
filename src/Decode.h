@@ -1,8 +1,7 @@
 #ifndef EASTWOOD_DECODE_H
 #define EASTWOOD_DECODE_H
 
-#include <istream>
-
+#include "IStream.h"
 #include "Surface.h"
 
 namespace eastwood {
@@ -10,7 +9,7 @@ namespace eastwood {
 class Decode
 {
 public:
-	Decode(std::istream &stream, uint16_t width, uint16_t height, Palette *palette);
+	Decode(const std::istream &stream, uint16_t width, uint16_t height, Palette *palette);
 	virtual ~Decode();
 
 protected:
@@ -24,7 +23,7 @@ protected:
 
 
 
-	std::istream &_stream;
+	IStream &_stream;
 	uint16_t _width,
 		 _height;
 	Palette *_palette;

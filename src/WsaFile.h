@@ -1,6 +1,5 @@
 #ifndef EASTWOOD_WSAFILE_H
 #define EASTWOOD_WSAFILE_H
-#include <istream>
 #include <vector>
 
 #include "Decode.h"
@@ -10,7 +9,7 @@ namespace eastwood {
 class WsaFile : public Decode
 {
 public:
-	WsaFile(std::istream &stream, Palette *palette,
+	WsaFile(const std::istream &stream, Palette *palette,
                 Surface *lastframe = NULL);
 
 	virtual ~WsaFile();

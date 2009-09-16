@@ -15,8 +15,8 @@ namespace eastwood {
 	reading the file is closed immediately. If the file does not exist, it is treated as empty.
 	\param	filename	The file to be opened.
 */
-IniFile::IniFile(std::istream &stream) :
-    _stream(stream)
+IniFile::IniFile(const std::istream &stream) :
+    _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream)))
 {
 	FirstLine = NULL;
 	SectionRoot = NULL;
@@ -449,7 +449,7 @@ void IniFile::readFile()
 		unsigned char tmp;
 		int readbytes;
 		
-		size_t size = getStreamSize(_stream);
+		size_t size = _stream.size();
 		while((uint32_t)_stream.tellg() < size-1) {
 			tmp = _stream.get();
 			if((uint32_t)_stream.tellg() == size-1) {

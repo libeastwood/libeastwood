@@ -2,14 +2,15 @@
 #define EASTWOOD_MAPFILE_H
 
 #include <vector>
-#include <istream>
+
+#include "IStream.h"
 
 namespace eastwood {
 
 class MapFile
 {
     public:
-	MapFile(std::istream &stream);
+	MapFile(const std::istream &stream);
 	virtual ~MapFile();
 
 	std::vector<uint16_t>& operator[] (uint16_t i) { return (*_tileSet)[i]; }
@@ -23,7 +24,7 @@ class MapFile
 	};
 
     private:
-	std::istream &_stream;
+	IStream &_stream;
 	std::vector<std::vector<uint16_t> > *_tileSet;
 };
 

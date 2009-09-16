@@ -24,8 +24,9 @@ enum fmtCmd {
 
 namespace eastwood {
 
-Decode::Decode(std::istream &stream, uint16_t width, uint16_t height, Palette *palette) :
-    _stream(stream), _width(width), _height(height), _palette(palette)
+Decode::Decode(const std::istream &stream, uint16_t width, uint16_t height, Palette *palette) :
+    _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),
+    _width(width), _height(height), _palette(palette)
 {
 }
 
@@ -84,22 +85,22 @@ int Decode::decode80(uint8_t *image_out, uint32_t checksum)
 		if(count < 0x3e) {
 		    // 11cccccc p p (3)
 		    count += 3;
-		    pos = readU16LE(_stream);
+		    pos = _stream.getU16LE();
 		    //printf("Cmd 3(0x%x), count: %d, pos: %d\n", command, count, pos);
 		    my_memcpy(writep, image_out + pos, count);
 		    writep += count;
 		    pos += count;
 		} else if (count == 0x3e) {
 		    // 11111110 c c v(4) 
-		    count = readU16LE(_stream);
+		    count = _stream.getU16LE();
 		    uint8_t color = _stream.get();
 		    //printf("Cmd 4(0x%x), count: %d, color: %d\n", command, count, color);
 		    memset(writep, color, count);
 		    writep += count;
 		} else {
 		    // 11111111 c c p p (5)
-		    count = readU16LE(_stream);
-		    pos = readU16LE(_stream);
+		    count = _stream.getU16LE();
+		    pos = _stream.getU16LE();
 		    //printf("Cmd 5(0x%x), count: %d, pos: %d\n", command, count, pos);
 		    my_memcpy(writep, image_out + pos, count);
 		    writep += count;
@@ -244,7 +245,6 @@ void Decode::decode2(const uint8_t *in, uint8_t *out, int size)
 
 void Decode::encode2(const uint8_t *source, int len, int slices, std::ostream &dest) {
     int count;
-    int limit = len / slices;
 
     for(int i = 0; i < len; i++) {
 	count = 0;

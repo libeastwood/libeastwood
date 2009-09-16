@@ -12,13 +12,13 @@
 
 namespace eastwood {
 
-CpsFile::CpsFile(std::istream &stream, Palette *palette) :
+CpsFile::CpsFile(const std::istream &stream, Palette *palette) :
     Decode(stream, 320, 200, palette), _format(UNCOMPRESSED), _imageSize(0)
 {
-    if((uint16_t)(readU16LE(_stream)+_stream.gcount()) != getStreamSize(_stream))
+    if((uint16_t)(_stream.getU16LE()+_stream.gcount()) != _stream.size())
 	throw(Exception(LOG_ERROR, "CpsFile", "Invalid file size"));
 
-    _format = (compressionFormat)readU16LE(_stream);
+    _format = (compressionFormat)_stream.getU16LE();
     switch(_format) {
 	case UNCOMPRESSED:
 	case FORMAT_80:
@@ -31,12 +31,12 @@ CpsFile::CpsFile(std::istream &stream, Palette *palette) :
 	    throw(Exception(LOG_ERROR, "CpsFile", error));
     }
 
-    if((_imageSize = readU16LE(_stream)) != _width*_height)
+    if((_imageSize = _stream.getU16LE()) != _width*_height)
 	throw(Exception(LOG_ERROR, "CpsFile", "Invalid image size"));
 
     _stream.ignore(2);
 
-    if(readU16LE(_stream)== sizeof(Palette)){
+    if(_stream.getU16LE()== sizeof(Palette)){
 	LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 	PalFile pal(_stream);
 	_palette = pal.getPalette();
@@ -53,7 +53,7 @@ Surface eastwood::CpsFile::getSurface()
 
     switch(_format) {
 	case UNCOMPRESSED:
-	    readLE(_stream, &ImageOut.front(), _imageSize);
+	    _stream.read(reinterpret_cast<char*>(&ImageOut.front()), _imageSize);
 	    break;
 	case FORMAT_LBM:
 	    //TODO: implement?

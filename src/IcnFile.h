@@ -19,7 +19,7 @@ namespace eastwood {
 class IcnFile : public Decode
 {
 public:
-	IcnFile(std::istream &stream, MapFile &map, Palette *palette);
+	IcnFile(const std::istream &stream, MapFile &map, Palette *palette);
 	~IcnFile();
 
 	Surface getSurface(int IndexOfFile);

@@ -4,14 +4,15 @@
 
 namespace eastwood {
 
-StringFile::StringFile(std::istream &stream)
-    : _stream(stream), _strings(0), _compressed(true)
+StringFile::StringFile(const std::istream &stream)
+    : _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),
+    _strings(0), _compressed(true)
 {
     //FIXME: This is a "bit" poor detection...
     if(_stream.peek() == 0x2)
         _compressed = false;
     else
-        _strings.resize((readU16LE(_stream)/2)-1);
+        _strings.resize((_stream.getU16LE()/2)-1);
 
     readHeader();
 }
@@ -26,7 +27,7 @@ void StringFile::readHeader()
         std::vector<uint16_t> offsets(_strings.size());
 
         for(uint16_t i = 0; i < _strings.size(); i++)
-            offsets[i] = readU16LE(_stream);
+            offsets[i] = _stream.getU16LE();
 
         for(uint16_t i = 0; i < _strings.size(); i++)
             _strings[i] = decodeString(offsets[i]);

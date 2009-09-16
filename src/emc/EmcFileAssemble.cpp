@@ -29,7 +29,7 @@
 
 namespace eastwood {
 
-EmcFileAssemble::EmcFileAssemble(std::istream &input, std::ostream &output) :
+EmcFileAssemble::EmcFileAssemble(const std::istream &input, std::ostream &output) :
     EmcFileBase(input, output), _currentLine(""), _opcodeCurrent(""), _data(""),
     _opcode(0)
 {
@@ -140,7 +140,7 @@ bool EmcFileAssemble::execute() {
 // -1 Disassembles the script at _scriptStart
 bool EmcFileAssemble::scriptAssemble() {
     int	objectID = 0;
-    std::streamoff lastOffset = getStreamSize(_inputStream)-1;
+    std::streamoff lastOffset = _inputStream.size()-1;
 
     _lineCount = 0;
 

@@ -2,8 +2,9 @@
 #define EASTWOOD_INIFILE_H
 
 #include <string>
-#include <istream>
 #include <ostream>
+
+#include "IStream.h"
 
 namespace eastwood {
 
@@ -89,7 +90,7 @@ private:
 public:
 	typedef IniFile::KeyEntry* KeyListHandle;		///< A handle to a KeyList opened with KeyList_Open().
 
-	IniFile(std::istream &stream);
+	IniFile(const std::istream &stream);
 	~IniFile();
 	
 	std::string getStringValue(std::string section, std::string key, std::string defaultValue = "");
@@ -109,7 +110,7 @@ public:
 	
 	
 private:
-	std::istream &_stream;
+	IStream &_stream;
 	CommentEntry *FirstLine;
 	SectionEntry *SectionRoot;
 	

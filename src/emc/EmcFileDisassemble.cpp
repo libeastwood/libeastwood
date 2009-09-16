@@ -32,7 +32,7 @@
 
 namespace eastwood {
 
-EmcFileDisassemble::EmcFileDisassemble(std::istream &input, std::ostream &output) :
+EmcFileDisassemble::EmcFileDisassemble(const std::istream &input, std::ostream &output) :
     EmcFileBase(input, output), _scriptLastPush(0), _opcodeCurrent(0), _stackCount(0),
     _scriptData(0), _scriptDataNext(0), _scriptPtrEnd(NULL)
 {
@@ -44,9 +44,8 @@ EmcFileDisassemble::~EmcFileDisassemble() {
 bool EmcFileDisassemble::scriptLoad() {
     size_t scriptSize;
 
-
     // Read File Size
-    scriptSize = getStreamSize(_inputStream);
+    scriptSize = _inputStream.size();
     if(scriptSize < sizeof(emcHeader))
 	throw(FileException(LOG_ERROR, "EmcFile", "_inputStream", "File is too small!"));
 

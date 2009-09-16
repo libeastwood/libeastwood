@@ -11,34 +11,34 @@
 
 using namespace eastwood;
 
-WsaFile::WsaFile(std::istream &stream, Palette *palette,
+WsaFile::WsaFile(const std::istream &stream, Palette *palette,
 	Surface *lastframe) :
-    Decode(stream, 0, 0, palette), _frameOffsTable(std::vector<uint32_t>()),
-    _decodedFrames(std::vector<uint8_t>()), _numFrames(0),
+    Decode(stream, 0, 0, palette), _frameOffsTable(0),
+    _decodedFrames(0), _numFrames(0),
     _deltaBufferSize(0), _framesPer1024ms(0)
 
 
 {
     LOG_INFO("WsaFile", "Loading wsa with size %d...", bufSize);
 
-    _numFrames = readU16LE(_stream);
+    _numFrames = _stream.getU16LE();
     LOG_INFO("WsaFile", "numframes = %d", _numFrames);
 
-    _width = readU16LE(_stream);
-    _height = readU16LE(_stream);
+    _width = _stream.getU16LE();
+    _height = _stream.getU16LE();
     LOG_INFO("WsaFile", "size %d x %d", _width, _height);
 
-    _deltaBufferSize = readU32LE(_stream);
+    _deltaBufferSize = _stream.getU32LE();
 
-    uint32_t frameDataOffs = readU32LE(_stream);
+    uint32_t frameDataOffs = _stream.getU32LE();
     if (frameDataOffs == 0) {
-	frameDataOffs = readU32LE(_stream);
+	frameDataOffs = _stream.getU32LE();
 	_numFrames--;
     }
 
     _frameOffsTable.resize(_numFrames+2);
     for (uint32_t i = 1; i < _frameOffsTable.size(); ++i) {
-	_frameOffsTable[i] = readU32LE(_stream);
+	_frameOffsTable[i] = _stream.getU32LE();
 	if (_frameOffsTable[i])
 	    _frameOffsTable[i] -= frameDataOffs;
     }

@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "IStream.h"
+
 enum MissionType {
     MISSION_DESCRIPTION = 0,
     MISSION_WIN = 1,
@@ -20,7 +22,7 @@ namespace eastwood {
 class StringFile
 {
     public:
-	StringFile(std::istream &stream);
+	StringFile(const std::istream &stream);
 	virtual ~StringFile();
 
 	/*!
@@ -51,7 +53,7 @@ class StringFile
 	 */
 	void readHeader();
 	std::string decodeString(uint16_t offset);
-	std::istream &_stream;
+	IStream &_stream;
 	std::vector<std::string> _strings;
 	bool _compressed;
 };

@@ -23,7 +23,7 @@ struct ShpFileEntry
 class ShpFile : public Decode
 {
     public:
-	ShpFile(std::istream &stream, Palette *palette);
+	ShpFile(const std::istream &stream, Palette *palette);
 	~ShpFile();
 
 	/*!

@@ -6,7 +6,10 @@
 
 namespace eastwood {
 
-PakFile::PakFile(std::istream &stream) : std::istream(NULL), _stream(stream),_fileEntry(std::vector<PakFileEntry>()) 
+PakFile::PakFile(const std::istream &stream) :
+    std::istream(NULL),
+    _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),
+    _fileEntry(std::vector<PakFileEntry>()) 
 {
     readIndex();
 }
@@ -53,7 +56,7 @@ void PakFile::readIndex()
 
     while(1) {
         // pak-files are always little endian encoded
-        PakFileEntry fileEntry = { readU32LE(_stream), 0, "" };
+        PakFileEntry fileEntry = { _stream.getU32LE(), 0, "" };
 
 	_stream.getline(name, 256, 0);
         fileEntry.fileName += name;
@@ -66,7 +69,7 @@ void PakFile::readIndex()
         _fileEntry.push_back(fileEntry);
         if(_stream.peek() == 0x0)
         {
-            _fileEntry.back().endOffset = getStreamSize(_stream) - 1;
+            _fileEntry.back().endOffset = _stream.size() - 1;
             break;
         }
     }

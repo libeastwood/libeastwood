@@ -6,7 +6,7 @@
 
 namespace eastwood {
 
-IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette *palette) :
+IcnFile::IcnFile(const std::istream &stream, MapFile &map, Palette *palette) :
     Decode(stream, 16, 16, palette),
     _map(map), _SSET(NULL), _RPAL(NULL), _RTBL(NULL)
 {
@@ -34,7 +34,7 @@ void IcnFile::readHeader()
     if(strncmp(signature, "FORM", 4))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: Missing signature"));
 
-    if(readU32BE(_stream) != getStreamSize(_stream) - (uint32_t)_stream.tellg())
+    if(_stream.getU32BE() != _stream.size() - (uint32_t)_stream.tellg())
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: File size doesn't match size specified in header"));
 
     _stream.read(signature, 8);
@@ -56,7 +56,7 @@ void IcnFile::readHeader()
     // LL: SSET section size - header size is stored again as 16 bit integer, little endian
 
     // So yeah, let's use this a sort of sanity check...
-    if(readU32BE(_stream) - 8 != (sectionSize = readU16LE(_stream) + readU16LE(_stream)))
+    if(_stream.getU32BE() - 8 != (sectionSize = _stream.getU16LE() + _stream.getU16LE()))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: SSET-Section size mismatch"));
     _stream.ignore(4);
     _SSET = new std::vector<uint8_t>(sectionSize);
@@ -65,7 +65,7 @@ void IcnFile::readHeader()
     _stream.read(signature, 4);
     if(strncmp(signature, "RPAL", 4))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found"));
-    _RPAL = new std::vector<uint8_t>(readU32BE(_stream));
+    _RPAL = new std::vector<uint8_t>(_stream.getU32BE());
     _stream.read((char*)&_RPAL->front(), _RPAL->size());
 
     
@@ -73,7 +73,7 @@ void IcnFile::readHeader()
     _stream.read(signature, 4);
     if(strncmp(signature, "RTBL", 4))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found"));
-    _RTBL = new std::vector<uint8_t>(readU32BE(_stream));
+    _RTBL = new std::vector<uint8_t>(_stream.getU32BE());
     _stream.read((char*)&_RTBL->front(), _RTBL->size());
 
 }

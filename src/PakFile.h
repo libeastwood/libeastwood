@@ -1,8 +1,9 @@
 #ifndef	EASTWOOD_PAKFILE_H
 #define	EASTWOOD_PAKFILE_H
 
-#include <istream>
 #include <vector>
+
+#include "IStream.h"
 
 namespace eastwood {
 
@@ -15,7 +16,7 @@ struct PakFileEntry {
 class PakFile : public std::istream
 {
     public:
-        PakFile(std::istream &stream);
+        PakFile(const std::istream &stream);
         ~PakFile();
 
 	void close();
@@ -34,7 +35,7 @@ class PakFile : public std::istream
     private:
         void readIndex();
 
-        std::istream &_stream;
+        IStream &_stream;
         std::vector<PakFileEntry> _fileEntry;
 };
 

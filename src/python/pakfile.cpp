@@ -71,7 +71,7 @@ PakFile_open(Py_PakFile *self, PyObject *args)
 	return NULL;
 
     self->pakFile->open(fileName);
-    self->fileSize = getStreamSize(*self->pakFile);
+    self->fileSize = self->pakFile->size();
     self->mode = MODE_READ;
     return Py_True;
 }
