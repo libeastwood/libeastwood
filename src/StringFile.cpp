@@ -5,23 +5,46 @@
 namespace eastwood {
 
 StringFile::StringFile(std::istream &stream)
-    : _stream(stream), _strings(0)
+    : _stream(stream), _strings(0), _compressed(true)
 {
-    _strings.resize((readU16LE(stream)/2)-1);
+    //FIXME: This is a "bit" poor detection...
+    if(_stream.peek() == 0x2)
+        _compressed = false;
+    else
+        _strings.resize((readU16LE(_stream)/2)-1);
 
-    std::vector<uint16_t> offsets(_strings.size());
-
-    for(uint16_t i = 0; i < _strings.size(); i++)
-        offsets[i] = readU16LE(stream);
-
-    for(uint16_t i = 0; i < _strings.size(); i++)
-        _strings[i] = decodeString(offsets[i]);
+    readHeader();
 }
 
 StringFile::~StringFile()
 {
 }
 
+void StringFile::readHeader()
+{
+    if(_compressed) {
+        std::vector<uint16_t> offsets(_strings.size());
+
+        for(uint16_t i = 0; i < _strings.size(); i++)
+            offsets[i] = readU16LE(_stream);
+
+        for(uint16_t i = 0; i < _strings.size(); i++)
+            _strings[i] = decodeString(offsets[i]);
+    }
+    else {
+        _strings.push_back("");
+        while(!_stream.eof()) {
+            char tmp = _stream.get();
+            //TODO: Figure out what these non-alpha numeric characters are for,
+            //      some sort of formatting perhaps? Let's just treat them as
+            //      separators for now... 
+            if(tmp >= 0x20 && tmp <= 0x7e)
+                _strings.back() += tmp;
+            else if(_strings.back().size() != 0)
+                    _strings.push_back("");
+        }
+    }
+}
 
 std::string StringFile::decodeString(uint16_t offset)
 {

@@ -49,9 +49,11 @@ class StringFile
 	 *  @param offset	End offset of text to decode
 	 *  @return The decoded text
 	 */
+	void readHeader();
 	std::string decodeString(uint16_t offset);
 	std::istream &_stream;
 	std::vector<std::string> _strings;
+	bool _compressed;
 };
 
 }
