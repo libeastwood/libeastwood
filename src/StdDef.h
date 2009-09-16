@@ -37,25 +37,4 @@ static inline uint32_t htobe32(uint32_t x) {
 #endif
 #endif
 
-template <typename T>
-static inline void writeStream(T value, std::ostream &stream) {
-    stream.write((char*)&value, sizeof(value));
-}
-
-static inline void writeU16BE(uint16_t x, std::ostream &stream) {
-    writeStream<uint16_t>(htobe16(x), stream);
-}
-
-static inline void writeU16LE(uint16_t x, std::ostream &stream) {
-    writeStream<uint16_t>(htole16(x), stream);
-}
-
-static inline void writeU32BE(uint16_t x, std::ostream &stream) {
-    writeStream<uint32_t>(htobe32(x), stream);
-}
-
-static inline void writeU32LE(uint16_t x, std::ostream &stream) {
-    writeStream<uint32_t>(htole32(x), stream);
-}
-
 #endif // EASTWOOD_STDDEF_H

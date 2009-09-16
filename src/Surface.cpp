@@ -85,7 +85,7 @@ Surface Surface::getScaled(Scaler scaler)
     return scaled;
 }
 
-bool Surface::SaveBMP(std::ostream &output)
+bool Surface::SaveBMP(OStream &output)
 {
     uint32_t fp_offset;
     uint8_t *bits;
@@ -98,23 +98,23 @@ bool Surface::SaveBMP(std::ostream &output)
     /* Write the BMP file header values */
     fp_offset = (uint32_t)output.tellp();
     output.write(header.magic, sizeof(header.magic));
-    writeU32LE(header.size, output);
-    writeU16LE(header.reserved1, output);
-    writeU16LE(header.reserved2, output);
-    writeU32LE(header.offBits, output);
+    output.putU32LE(header.size);
+    output.putU16LE(header.reserved1);
+    output.putU16LE(header.reserved2);
+    output.putU32LE(header.offBits);
 
     /* Write the BMP info values */
-    writeU32LE(info.size, output);
-    writeU32LE(info.width, output);
-    writeU32LE(info.height, output);
-    writeU16LE(info.planes, output);
-    writeU16LE(info.bitCount, output);
-    writeU32LE(info.compression, output);
-    writeU32LE(info.sizeImage, output);
-    writeU32LE(info.xPelsPerMeter, output);
-    writeU32LE(info.xPelsPerMeter, output);
-    writeU32LE(info.colorsUsed, output);
-    writeU32LE(info.colorsImportant, output);
+    output.putU32LE(info.size);
+    output.putU32LE(info.width);
+    output.putU32LE(info.height);
+    output.putU16LE(info.planes);
+    output.putU16LE(info.bitCount);
+    output.putU32LE(info.compression);
+    output.putU32LE(info.sizeImage);
+    output.putU32LE(info.xPelsPerMeter);
+    output.putU32LE(info.xPelsPerMeter);
+    output.putU32LE(info.colorsUsed);
+    output.putU32LE(info.colorsImportant);
 
     /* Write the palette (in BGR color order) */
     if (_palette ) {
@@ -130,7 +130,7 @@ bool Surface::SaveBMP(std::ostream &output)
     header.offBits = (uint32_t)output.tellp()-fp_offset;
     output.seekp(fp_offset+10, std::ios::beg);
     
-    writeU32LE(header.offBits, output);
+    output.putU32LE(header.offBits);
     output.seekp(fp_offset+header.offBits);
 
     /* Write the bitmap image upside down */
@@ -140,7 +140,7 @@ bool Surface::SaveBMP(std::ostream &output)
     /* Write the BMP file size */
     header.size = (uint32_t)output.tellp()-fp_offset;
     output.seekp(fp_offset+2, std::ios::beg);
-    writeU32LE(header.size, output);
+    output.putU32LE(header.size);
     output.seekp(fp_offset+header.size, std::ios::beg);
 
     return true;
