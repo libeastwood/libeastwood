@@ -10,8 +10,7 @@ IStream::IStream(const std::istream &stream) :
 
 template <typename T> inline
 IStream& IStream::readT(T &value) {
-    read((char*)&value, sizeof(value));
-    return *this;
+    return reinterpret_cast<IStream&>(read((char*)&value, sizeof(value)));
 }
 
 template <typename T> inline
@@ -46,14 +45,12 @@ uint32_t IStream::getU32LE()
 #if __BYTE_ORDER == __BIG_ENDIAN
 IStream& IStream::readU16BE(uint16_t *buf, size_t n)
 {
-    read((char*)buf, n*sizeof(buf[0]));
-    return *this;
+    return reinterpret_cast<IStream&>(read((char*)buf, n*sizeof(buf[0])));
 }
 
 IStream& IStream::readU32BE(uint32_t *buf, size_t n)
 {
-    read((char*)buf, n*sizeof(buf[0]));
-    return *this;
+    return reinterpret_cast<IStream&>(read((char*)buf, n*sizeof(buf[0])));
 }
 
 IStream& IStream::readU16LE(uint16_t *buf, size_t n)
@@ -86,14 +83,12 @@ IStream& IStream::readU32BE(uint32_t *buf, size_t n)
 
 IStream& IStream::readU16LE(uint16_t *buf, size_t n)
 {
-    read((char*)buf, n*sizeof(buf[0]));
-    return *this;
+    return reinterpret_cast<IStream&>(read((char*)buf, n*sizeof(buf[0])));
 }
 
 IStream& IStream::readU32LE(uint32_t *buf, size_t n)
 {
-    read((char*)buf, n*sizeof(buf[0]));
-    return *this;
+    return reinterpret_cast<IStream&>(read((char*)buf, n*sizeof(buf[0])));
 }
 #endif
 
