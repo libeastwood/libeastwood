@@ -29,7 +29,7 @@
 
 namespace eastwood {
 
-EmcFileAssemble::EmcFileAssemble(const std::istream &input, std::ostream &output) :
+EmcFileAssemble::EmcFileAssemble(const std::istream &input, const std::ostream &output) :
     EmcFileBase(input, output), _currentLine(""), _opcodeCurrent(""), _data(""),
     _opcode(0)
 {

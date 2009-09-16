@@ -28,9 +28,9 @@
 
 namespace eastwood {
 
-EmcFileBase::EmcFileBase(const std::istream &input, std::ostream &output) :
+EmcFileBase::EmcFileBase(const std::istream &input, const std::ostream &output) :
     _inputStream(const_cast<IStream&>(reinterpret_cast<const IStream&>(input))),
-    _outputStream(output),
+    _outputStream(const_cast<OStream&>(reinterpret_cast<const OStream&>(output))),
     _opcodes(NULL), _opcodesEvaluate(NULL), _opcodesExecute(NULL),
     _headerPointers(0), _pointerCount(0), _scriptSize(0), _modePreProcess(true),
     _objectNames(NULL), _objectFunctions(NULL), _lineCount(0),
