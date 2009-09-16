@@ -48,9 +48,6 @@
 #define SSSRC(bits, num) (const uint##bits##_t *)src##num
 
 namespace eastwood {
-/**
- * Apply the Scale2x effect on a group of rows. Used internally.
- */
 
 #if defined __i386__
 static inline bool detect_mmx()
@@ -72,6 +69,9 @@ static inline bool detect_mmx()
 }
 #endif
 
+/**
+ * Apply the Scale2x effect on a group of rows. Used internally.
+ */
 static inline void stage_scale2x(uint8_t* dst0, uint8_t* dst1, const uint8_t* src0, const uint8_t* src1, const uint8_t* src2, uint8_t bpp, uint32_t bpp_per_row)
 {
 #if defined(__GNUC__) && defined(__i386__)
