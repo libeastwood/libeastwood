@@ -28,6 +28,7 @@ class Surface {
 
 	bool scalePrecondition(Scaler scale);
 	Surface getScaled(Scaler scale);
+	bool SaveBMP(std::ostream &output);
 
     protected:
 	friend class CpsFile;
