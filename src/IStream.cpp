@@ -3,37 +3,44 @@
 
 namespace eastwood {
 
-template <typename T>
-static inline T readStream(std::istream &stream) {
-    T value;
-    stream.read((char*)&value, sizeof(value));
-    return value;
+IStream::IStream(const std::istream &stream) :
+    std::istream(stream.rdbuf())
+{
 }
 
-IStream::IStream(const std::istream &stream) :
-    std::istream(stream.rdbuf()), _size(-1)
+template <typename T> inline
+IStream& IStream::readT(T &value) {
+    read((char*)&value, sizeof(value));
+    return *this;
+}
+
+template <typename T> inline
+T IStream::getT() 
 {
+    T value;
+    readT<T>(value);
+    return value;
 }
 
 uint16_t IStream::getU16BE() 
 {
-    return htobe16(readStream<uint16_t>(*this));
+    return htobe16(getT<uint16_t>());
 }
 
 uint16_t IStream::getU16LE() 
 {
-    return htole16(readStream<uint16_t>(*this));
+    return htole16(getT<uint16_t>());
 }
 
 
 uint32_t IStream::getU32BE() 
 {
-    return htobe32(readStream<uint32_t>(*this));    
+    return htobe32(getT<uint32_t>());
 }
 
 uint32_t IStream::getU32LE() 
 {
-    return htole32(readStream<uint32_t>(*this));
+    return htole32(getT<uint32_t>());
 }
 
 #if __BYTE_ORDER == __BIG_ENDIAN
@@ -92,13 +99,12 @@ IStream& IStream::readU32LE(uint32_t *buf, size_t n)
 
 std::streamsize IStream::size()
 {
-    if(_size == -1) {
-    	std::streampos pos = tellg();
-    	seekg(0, std::ios::end);
-    	_size = static_cast<std::streamsize>(tellg());
-    	seekg(pos);
-    }
-    return _size;
+    std::streamsize size;
+    std::streampos pos = tellg();
+    seekg(0, std::ios::end);
+    size = static_cast<std::streamsize>(tellg());
+    seekg(pos);
+    return size;
 }
 
 }

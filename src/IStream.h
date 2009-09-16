@@ -22,7 +22,11 @@ class IStream : public std::istream
 	std::streamsize size();
 
     private:
-	std::streamsize _size;
+	template <typename T> inline
+	    IStream& readT(T &value);
+	template <typename T> inline
+	    T getT();
+
 };
 
 }
