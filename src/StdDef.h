@@ -44,6 +44,11 @@ static inline T readStream(std::istream &stream) {
     return value;
 }
 
+template <typename T>
+static inline void writeStream(T value, std::ostream &stream) {
+    stream.write((char*)&value, sizeof(value));
+}
+
 static inline uint16_t readU16BE(std::istream &stream) {
     return htobe16(readStream<uint16_t>(stream));
 }
@@ -58,6 +63,22 @@ static inline uint32_t readU32BE(std::istream &stream) {
 
 static inline uint32_t readU32LE(std::istream &stream) {
     return htole32(readStream<uint32_t>(stream));
+}
+
+static inline void writeU16BE(uint16_t x, std::ostream &stream) {
+    writeStream<uint16_t>(htobe16(x), stream);
+}
+
+static inline void writeU16LE(uint16_t x, std::ostream &stream) {
+    writeStream<uint16_t>(htole16(x), stream);
+}
+
+static inline void writeU32BE(uint16_t x, std::ostream &stream) {
+    writeStream<uint32_t>(htobe32(x), stream);
+}
+
+static inline void writeU32LE(uint16_t x, std::ostream &stream) {
+    writeStream<uint32_t>(htole32(x), stream);
 }
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
