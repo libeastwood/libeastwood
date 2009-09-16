@@ -51,8 +51,40 @@ namespace eastwood {
 /**
  * Apply the Scale2x effect on a group of rows. Used internally.
  */
+
+#if defined __i386__
+static inline bool detect_mmx()
+{
+    uint32_t eax,
+	     ebx,
+	     ecx,
+	     edx;
+
+    __asm__ __volatile__ ("xchgl	%%ebx,%0\n\t"
+	    "cpuid	\n\t"
+	    "xchgl	%%ebx,%0\n\t"
+	    : "+r" (ebx), "=a" (eax), "=c" (ecx), "=d" (edx)
+	    : "1" (1), "2" (ecx));
+    
+    if(edx & (1<<23))
+	return true;
+    return false;
+}
+#endif
+
 static inline void stage_scale2x(uint8_t* dst0, uint8_t* dst1, const uint8_t* src0, const uint8_t* src1, const uint8_t* src2, uint8_t bpp, uint32_t bpp_per_row)
 {
+#if defined(__GNUC__) && defined(__i386__)
+	if(!detect_mmx()) {
+	switch (bpp) {
+		case 1 : scale2x_8_def(SSDST(8,0), SSDST(8,1), SSSRC(8,0), SSSRC(8,1), SSSRC(8,2), bpp_per_row); break;
+		case 2 : scale2x_16_def(SSDST(16,0), SSDST(16,1), SSSRC(16,0), SSSRC(16,1), SSSRC(16,2), bpp_per_row); break;
+		case 4 : scale2x_32_def(SSDST(32,0), SSDST(32,1), SSSRC(32,0), SSSRC(32,1), SSSRC(32,2), bpp_per_row); break;
+	}
+	return;
+	}
+#endif
+
 	switch (bpp) {
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 		case 1 : scale2x_8_mmx(SSDST(8,0), SSDST(8,1), SSSRC(8,0), SSSRC(8,1), SSSRC(8,2), bpp_per_row); break;
