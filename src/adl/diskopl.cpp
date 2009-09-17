@@ -27,20 +27,19 @@ namespace eastwood {
 //static const unsigned short note_table[12] = {363,385,408,432,458,485,514,544,577,611,647,686};
 const unsigned char CDiskopl::op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
-CDiskopl::CDiskopl(std::string filename)
-  : old_freq(0.0f), del(1), nowrite(false)
+CDiskopl::CDiskopl(const std::ostream &stream) :
+  _stream(const_cast<OStream&>(reinterpret_cast<const OStream&>(stream))),
+  old_freq(0.0f), del(1), nowrite(false)
 {
   unsigned short clock = 0xffff;
 
   currType = TYPE_OPL3;
-  f = fopen(filename.c_str(),"wb");
-  fwrite("RAWADATA",8,1,f);
-  fwrite(&clock,sizeof(clock),1,f);
+  _stream.write("RAWADATA",8);
+  _stream.write((char*)&clock, sizeof(clock));
 }
 
 CDiskopl::~CDiskopl()
 {
-  fclose(f);
 }
 
 void CDiskopl::update(CadlPlayer *p)
@@ -52,12 +51,12 @@ void CDiskopl::update(CadlPlayer *p)
     old_freq = p->getrefresh();
     del = wait = (unsigned int)(18.2f / old_freq);
     clock = (unsigned short)(1192737/(old_freq*(wait+1)));
-    fputc(0,f); fputc(2,f);
-    fwrite(&clock,2,1,f);
+    _stream.put(0); _stream.put(2);
+    _stream.write((char*)&clock, sizeof(clock));
   }
   if(!nowrite) {
-    fputc(del+1,f);
-    fputc(0,f);
+    _stream.put(del+1);
+    _stream.put(0);
   }
 }
 
@@ -66,8 +65,8 @@ void CDiskopl::setchip(int n)
   Copl::setchip(n);
 
   if(!nowrite) {
-    fputc(currChip + 1, f);
-    fputc(2, f);
+    _stream.put(currChip + 1);
+    _stream.put(2);
   }
 }
 
@@ -88,8 +87,8 @@ void CDiskopl::init()
 
 void CDiskopl::diskwrite(int reg, int val)
 {
-  fputc(val,f);
-  fputc(reg,f);
+  _stream.put(val);
+  _stream.put(reg);
 }
 
 }

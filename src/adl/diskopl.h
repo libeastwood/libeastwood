@@ -22,17 +22,16 @@
 #ifndef EASTWOOD_ADL_DISKOPL_H
 #define EASTWOOD_ADL_DISKOPL_H
 
-#include <string>
-#include <stdio.h>
 #include "adl/opl.h"
 #include "AdlFile.h"
+#include "OStream.h"
 
 namespace eastwood {
 
 class CDiskopl: public Copl
 {
  public:
-  CDiskopl(std::string filename);
+  CDiskopl(const std::ostream &stream);
   virtual ~CDiskopl();
 
   void update(CadlPlayer *p);			// write to file
@@ -48,7 +47,7 @@ class CDiskopl: public Copl
  private:
   static const unsigned char	op_table[9];
 
-  FILE		*f;
+  OStream	&_stream;
   float		old_freq;
   unsigned char	del;
   bool		nowrite;			// don't write to file, if true
