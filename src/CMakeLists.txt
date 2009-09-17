@@ -22,6 +22,7 @@ SET( LIBEASTWOOD_SRCS
   VocFile.cpp
   WsaFile.cpp
   adl/adlibemu.c
+  adl/analopl.cpp
   adl/emuopl.cpp
   adl/fmopl.c
   adl/realopl.cpp
@@ -57,6 +58,7 @@ SET( LIBEASTWOOD_HEADERS
   VocFile.h
   WsaFile.h
   adl/adlibemu.h
+  adl/analopl.h
   adl/emuopl.h
   adl/fmopl.h
   adl/kemuopl.h

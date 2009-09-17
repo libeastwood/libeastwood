@@ -15,5 +15,4 @@ Less urgent:
 * Make API compatible with C
 * Move seed generator from doonlunacy to this library
 * Rewrite Font class?
-* Add support for other OPL emulators
 * Add support for MIDI SFX
