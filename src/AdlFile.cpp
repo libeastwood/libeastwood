@@ -48,8 +48,6 @@
  *
  */
 
-#include <string>
-
 #include "StdDef.h"
 
 #include "Log.h"
@@ -111,6 +109,8 @@ class AdlibDriver {
 	bool endOfData() const { return false; }
 	// 	int getRate() const { return _mixer->getOutputRate(); }
 
+	void setSyncJumpMask(uint16_t mask) { _syncJumpMask = mask; }
+
 	struct OpcodeEntry {
 	    typedef int (AdlibDriver::*DriverOpcode)(va_list &list);
 	    DriverOpcode function;
@@ -164,6 +164,7 @@ class AdlibDriver {
 	// unk41 - Sound-effect. Used for primaryEffect2()
 
 	struct Channel {
+	    bool lock;
 	    uint8_t opExtraLevel2;
 	    uint8_t *dataptr;
 	    uint8_t duration;
@@ -414,6 +415,8 @@ class AdlibDriver {
 	static const uint8_t _unkTable2_3[];
 	static const uint8_t _unkTables[][32];
 
+	uint16_t _syncJumpMask;	
+
 	Copl *opl;
 };
 
@@ -455,6 +458,8 @@ AdlibDriver::AdlibDriver(Copl *newopl) :
     // 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
     _samplesTillCallback = 0;
     _samplesTillCallbackRemainder = 0;
+
+    _syncJumpMask = 0;    
 }
 
 AdlibDriver::~AdlibDriver() {
@@ -662,6 +667,11 @@ void AdlibDriver::setupPrograms() {
 	    unkOutput2(chan);
 	}
 
+	// What we have set up now is, probably, the controlling
+	// channel for the sound. It is assumed that this program will
+	// set up all the other channels it needs, clearing their locks
+	// along the way.
+
 	++_lastProcessed;
 	_lastProcessed &= 0x0F;
     }
@@ -706,12 +716,33 @@ void AdlibDriver::executePrograms() {
     // each Adlib channel (0-8), plus one "control channel" (9) which is
     // the one that tells the other channels what to do. 
 
+    if (_syncJumpMask) {
+	bool forceUnlock = true;
+
+	for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
+	    if ((_syncJumpMask & (1 << _curChannel)) == 0)
+		continue;
+
+	    if (_channels[_curChannel].dataptr && !_channels[_curChannel].lock)
+		forceUnlock = false;
+	}
+
+	if (forceUnlock) {
+	    for (_curChannel = 9; _curChannel >= 0; --_curChannel)
+		if (_syncJumpMask & (1 << _curChannel))
+		    _channels[_curChannel].lock = false;
+	}
+    }
+
     for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
 	int result = 1;
 
 	if (!_channels[_curChannel].dataptr) {
 	    continue;
 	}
+
+	if (_channels[_curChannel].lock && (_syncJumpMask & (1 << _curChannel)))
+	    continue;
 
 	Channel &channel = _channels[_curChannel];
 	_curRegOffset = _regOffset[_curChannel];
@@ -818,6 +849,7 @@ void AdlibDriver::initChannel(Channel &channel) {
     channel.primaryEffect = 0;
     channel.secondaryEffect = 0;
     channel.spacing1 = 1;
+    channel.lock = false;
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
@@ -1280,6 +1312,8 @@ int AdlibDriver::update_jump(uint8_t *&dataptr, __attribute__((unused)) Channel 
     --dataptr;
     int16_t add = READ_LE_UINT16(dataptr); dataptr += 2;
     dataptr += add;
+    if (_syncJumpMask & (1 << (&channel - _channels)))
+	channel.lock = true;
     return 0;
 }
 
@@ -2239,6 +2273,7 @@ void CadlPlayer::process() {
 // }
 
 void CadlPlayer::playTrack(uint8_t track) {
+    _driver->setSyncJumpMask(0);
     play(track);
 }
 

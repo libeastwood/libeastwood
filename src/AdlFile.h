@@ -37,6 +37,7 @@ class CadlPlayer
     protected:
 	AdlibDriver *_driver;
 	Copl* _opl;
+	bool playing;
 
     private:
 	int numsubsongs, cursubsong;
@@ -51,7 +52,6 @@ class CadlPlayer
 	int _numSoundTriggers;
 	const int *_soundTriggers;
 
-	bool playing; //FIXME: It could be used for something, I hope.
 
 	static const int _kyra1NumSoundTriggers;
 	static const int _kyra1SoundTriggers[];
