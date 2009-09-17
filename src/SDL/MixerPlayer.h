@@ -16,14 +16,15 @@ class MixerPlayer: public CadlPlayer
 	static void callback(void *, uint8_t *, int);
 
     private:
-	int _channels;
-	int _freq;
-	uint16_t _format;
-	
-      	uint8_t getsampsize() {
+      	inline uint8_t getsampsize() {
     	    return _channels * (_format == AUDIO_U8 ? 1 : 2);
 	}
 
+	int _channels;
+	int _freq;
+	uint16_t _format;
+	bool _playing;
+	
 };
 
 }}

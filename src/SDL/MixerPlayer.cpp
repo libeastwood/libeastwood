@@ -6,12 +6,14 @@
 namespace eastwood { namespace SDL {
 
 MixerPlayer::MixerPlayer(int channels, int freq, uint16_t format, Copl* opl) :
-    CadlPlayer(opl), _channels(channels), _freq(freq), _format(format)
+    CadlPlayer(opl),
+    _channels(channels), _freq(freq), _format(format), _playing(false)
 {
 }
 
 MixerPlayer::MixerPlayer() :
-   CadlPlayer(), _channels(0), _freq(0), _format(0)
+   CadlPlayer(),
+    _channels(0), _freq(0), _format(0), _playing(false)
 {
   Mix_QuerySpec(&_freq, &_format, &_channels);
 
@@ -31,7 +33,7 @@ void MixerPlayer::callback(void *userdata, uint8_t *audiobuf, int len)
   while(towrite > 0) {
     while(minicnt < 0) {
       minicnt += self->_freq;
-      self->playing = self->update();
+      self->_playing = self->update();
     }
     i = std::min(towrite, (long)(minicnt / self->getrefresh() + 4) & ~3);
     self->_opl->update((short *)pos, i);
