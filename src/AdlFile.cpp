@@ -2212,7 +2212,7 @@ const int CadlPlayer::_kyra1SoundTriggers[] = {
 
 const int CadlPlayer::_kyra1NumSoundTriggers = ARRAYSIZE(CadlPlayer::_kyra1SoundTriggers);
 
-CadlPlayer::CadlPlayer(Copl *newopl) : _opl(newopl), _driver(new AdlibDriver(_opl))
+CadlPlayer::CadlPlayer(Copl *newopl) : _opl(newopl), _driver(new AdlibDriver(newopl))
 {
     assert(_driver);
     init();
