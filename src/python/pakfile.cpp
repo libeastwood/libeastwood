@@ -56,8 +56,8 @@ PakFile_dealloc(Py_PakFile *self)
 static PyObject *
 PakFile_listfiles(Py_PakFile *self)
 {
-    PyObject *fileList = PyTuple_New(self->pakFile->size());
-    for(uint32_t i = 0; i < self->pakFile->size(); i++)
+    PyObject *fileList = PyTuple_New(self->pakFile->entries());
+    for(uint32_t i = 0; i < self->pakFile->entries(); i++)
 	PyTuple_SetItem(fileList, i, PyString_FromString(self->pakFile->getFileName(i).c_str()));
     return fileList;
 }
