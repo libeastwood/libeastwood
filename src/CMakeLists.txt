@@ -23,6 +23,7 @@ SET( LIBEASTWOOD_SRCS
   WsaFile.cpp
   adl/emuopl.cpp
   adl/fmopl.c
+  adl/temuopl.cpp
   emc/EmcFileBase.cpp
   emc/EmcFileAssemble.cpp
   emc/EmcFileDisassemble.cpp
@@ -56,6 +57,7 @@ SET( LIBEASTWOOD_HEADERS
   adl/emuopl.h
   adl/fmopl.h
   adl/opl.h
+  adl/temuopl.h
   emc/EmcFileBase.h
   emc/EmcFileAssemble.h
   emc/EmcFileDisassemble.h  
