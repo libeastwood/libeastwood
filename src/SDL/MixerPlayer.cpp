@@ -1,20 +1,21 @@
+#include "StdDef.h"
+
+#include "adl/emuopl.h"
 #include "SDL/MixerPlayer.h"
 
 namespace eastwood { namespace SDL {
 
-MixerPlayer::MixerPlayer(Copl* opl) : CadlPlayer(opl)
+MixerPlayer::MixerPlayer(int channels, int freq, uint16_t format, Copl* opl) :
+    CadlPlayer(opl), _channels(0), _freq(0), _format(0)
 {
 }
 
-MixerPlayer::MixerPlayer() : CadlPlayer()
+MixerPlayer::MixerPlayer() :
+   CadlPlayer(), _channels(0), _freq(0), _format(0)
 {
   Mix_QuerySpec(&_freq, &_format, &_channels);
 
   _opl = new CEmuopl(_freq, true, true);
-
-
-  _driver = new AdlibDriver(opl);
-  assert(_driver);
 
   init();
 }
@@ -29,11 +30,11 @@ void MixerPlayer::callback(void *userdata, uint8_t *audiobuf, int len)
   // Prepare audiobuf with emulator output
   while(towrite > 0) {
     while(minicnt < 0) {
-      minicnt += self->m_freq;
+      minicnt += self->_freq;
       self->playing = self->update();
     }
     i = std::min(towrite, (long)(minicnt / self->getrefresh() + 4) & ~3);
-    self->opl->update((short *)pos, i);
+    self->_opl->update((short *)pos, i);
     pos += i * self->getsampsize(); towrite -= i;
     minicnt -= (long)(self->getrefresh() * i);
   }

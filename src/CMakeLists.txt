@@ -63,6 +63,7 @@ SET( LIBEASTWOOD_HEADERS
 )
 
 SET( SDL_LIBEASTWOOD_SRCS
+    SDL/MixerPlayer.cpp
     SDL/MixerSound.cpp
     SDL/Surface.cpp
 )

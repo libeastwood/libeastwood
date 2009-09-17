@@ -19,7 +19,6 @@ class CadlPlayer
 	CadlPlayer();
 	virtual ~CadlPlayer();
 
-	virtual void callback(void *, uint8_t *, int) = 0;
 	bool load(uint8_t *bufFiledata, int bufsize);
 	bool update();
 	void rewind(int subsong);
