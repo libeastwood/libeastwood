@@ -7,7 +7,6 @@
 namespace eastwood {
 
 PakFile::PakFile(const std::istream &stream) :
-    std::istream(NULL),
     _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),
     _fileEntry(std::vector<PakFileEntry>()) 
 {
