@@ -19,7 +19,7 @@ class CadlPlayer
 	CadlPlayer();
 	virtual ~CadlPlayer();
 
-	bool load(uint8_t *bufFiledata, int bufsize);
+	bool load(const std::istream &stream);
 	bool update();
 	void rewind(int subsong);
 	virtual Copl* get_opl() { return _opl; }

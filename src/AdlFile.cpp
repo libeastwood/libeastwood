@@ -50,8 +50,9 @@
 
 #include "StdDef.h"
 
-#include "Log.h"
 #include "AdlFile.h"
+#include "Log.h"
+#include "IStream.h"
 #include "adl/emuopl.h"
 
 namespace eastwood {
@@ -2339,33 +2340,25 @@ void CadlPlayer::play(uint8_t track) {
 // 	playSoundEffect(1);
 // }
 
-bool CadlPlayer::load(uint8_t *bufFiledata, int bufsize)
+bool CadlPlayer::load(const std::istream &stream)
 {
-    //  unsigned char * file_data = ResMan::Instance()->readFile(filename, &file_size);
+    IStream &is(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream)));
+    int soundDataSize;
 
     unk2();
     unk1();
 
     _driver->callback(8, int(-1));
-    _soundDataPtr = 0;
 
-    uint8_t *p = bufFiledata;
-    memcpy(_trackEntries, p, 120*sizeof(uint8_t));
-    p += 120;
+    is.read((char*)_trackEntries, 120);
 
-    int soundDataSize = bufsize - 120;
+    soundDataSize = is.size() - (int)is.tellg();
 
     _soundDataPtr = new uint8_t[soundDataSize];
-    assert(_soundDataPtr);
 
-    memcpy(_soundDataPtr, p, soundDataSize*sizeof(uint8_t));
-
-    bufFiledata = p = 0;
-    bufsize = 0;
+    is.read((char*)_soundDataPtr, soundDataSize);
 
     _driver->callback(4, _soundDataPtr);
-
-    // 	_soundFileLoaded = file;
 
     for(int i = 0; i < 120; i++)
 	if(_trackEntries[i] != 0xff)
