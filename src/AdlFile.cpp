@@ -432,38 +432,27 @@ class AdlibDriver {
 };
 
 AdlibDriver::AdlibDriver(Copl *newopl, bool v2) :
-   opl(newopl), _v2(v2)
+    _opcodeList(NULL), _opcodesEntries(0), _parserOpcodeTable(NULL), _parserOpcodeTableSize(0),
+    _samplesPerCallback(0), _samplesPerCallbackRemainder(0), _samplesTillCallback(0),
+    _samplesTillCallbackRemainder(0), _lastProcessed(0), _flagTrigger(0), _curChannel(0),
+    _soundTrigger(0), _soundsPlaying(0), _rnd(0x1234), _unkValue1(0), _unkValue2(0), _unkValue3(0xff),
+    _unkValue4(0), _unkValue5(0), _unkValue6(0), _unkValue7(0), _unkValue8(0), _unkValue9(0),
+    _unkValue10(0), _unkValue11(0), _unkValue12(0), _unkValue13(0), _unkValue14(0), _unkValue15(0),
+    _unkValue16(0), _unkValue17(0), _unkValue18(0), _unkValue19(0), _unkValue20(0), _flags(0), 
+    _soundData(NULL), _vibratoAndAMDepthBits(0), _rhythmSectionBits(0), _curRegOffset(0), _tempo(0),
+    _tablePtr1(0), _tablePtr2(0), _syncJumpMask(0),  _v2(v2), opl(newopl)
 {
     setupOpcodeList();
     setupParserOpcodeTable();
 
-    // 	_mixer = mixer;
-
-    _flags = 0;
-    // 	_adlib = makeAdlibOPL(getRate());
-    // 	assert(_adlib);
-
     memset(_channels, 0, sizeof(_channels));
-    _soundData = 0;
-
-    _vibratoAndAMDepthBits = _curRegOffset = 0;
-
-    _lastProcessed = _flagTrigger = _curChannel = _rhythmSectionBits = 0;
-    _soundsPlaying = 0;
-    _rnd = 0x1234;
-
-    _tempo = 0;
-    _soundTrigger = 0;
-
-    _unkValue3 = 0xFF;
-    _unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
-    _unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
-    _unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
-	_unkValue16 = _unkValue17 = _unkValue18 = _unkValue19 = _unkValue20 = 0;
-
-    _tablePtr1 = _tablePtr2 = 0;
 
 #if 0
+    _mixer = mixer;
+
+    _adlib = makeAdlibOPL(getRate());
+    assert(_adlib);
+
     // HACK: We use MusicSoundType here for now so we can adjust the volume in the launcher dialog.
     // This affects SFX too, but if we want to support different volumes for SFX and music we would
     // have to change our player implementation, currently we setup the volume for an AdLib channel
@@ -476,10 +465,7 @@ AdlibDriver::AdlibDriver(Copl *newopl, bool v2) :
     _samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
     _samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
 #endif
-    _samplesTillCallback = 0;
-    _samplesTillCallbackRemainder = 0;
 
-    _syncJumpMask = 0;    
 }
 
 AdlibDriver::~AdlibDriver() {
