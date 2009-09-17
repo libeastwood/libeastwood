@@ -1277,30 +1277,30 @@ int AdlibDriver::update_checkRepeat(uint8_t *&dataptr, Channel &channel, __attri
     return 0;
 }
 
-    int AdlibDriver::update_setupProgram(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
-	if (value == 0xFF)
-	    return 0;
-
-	uint8_t *ptr = getProgram(value);
-	uint8_t chan = *ptr++;
-	uint8_t priority = *ptr++;
-
-	Channel &channel2 = _channels[chan];
-
-	if (priority >= channel2.priority) {
-	    _flagTrigger = 1;
-	    _flags |= 8;
-	    initChannel(channel2);
-	    channel2.priority = priority;
-	    channel2.dataptr = ptr;
-	    channel2.tempo = 0xFF;
-	    channel2.position = 0xFF;
-	    channel2.duration = 1;
-	    unkOutput2(chan);
-	}
-
+int AdlibDriver::update_setupProgram(__attribute__((unused)) uint8_t *&dataptr, __attribute__((unused)) Channel &channel, uint8_t value) {
+    if (value == 0xFF)
 	return 0;
+
+    uint8_t *ptr = getProgram(value);
+    uint8_t chan = *ptr++;
+    uint8_t priority = *ptr++;
+
+    Channel &channel2 = _channels[chan];
+
+    if (priority >= channel2.priority) {
+	_flagTrigger = 1;
+	_flags |= 8;
+	initChannel(channel2);
+	channel2.priority = priority;
+	channel2.dataptr = ptr;
+	channel2.tempo = 0xFF;
+	channel2.position = 0xFF;
+	channel2.duration = 1;
+	unkOutput2(chan);
     }
+
+    return 0;
+}
 
 int AdlibDriver::update_setNoteSpacing(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
     channel.spacing1 = value;
