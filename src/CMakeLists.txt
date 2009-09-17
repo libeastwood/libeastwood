@@ -21,8 +21,10 @@ SET( LIBEASTWOOD_SRCS
   Surface.cpp
   VocFile.cpp
   WsaFile.cpp
+  adl/adlibemu.c
   adl/emuopl.cpp
   adl/fmopl.c
+  adl/realopl.cpp
   adl/temuopl.cpp
   emc/EmcFileBase.cpp
   emc/EmcFileAssemble.cpp
@@ -54,9 +56,12 @@ SET( LIBEASTWOOD_HEADERS
   StringFile.h
   VocFile.h
   WsaFile.h
+  adl/adlibemu.h
   adl/emuopl.h
   adl/fmopl.h
+  adl/kemuopl.h
   adl/opl.h
+  adl/realopl.h
   adl/temuopl.h
   emc/EmcFileBase.h
   emc/EmcFileAssemble.h
