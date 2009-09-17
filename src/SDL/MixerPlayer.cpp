@@ -6,7 +6,7 @@
 namespace eastwood { namespace SDL {
 
 MixerPlayer::MixerPlayer(int channels, int freq, uint16_t format, Copl* opl) :
-    CadlPlayer(opl), _channels(0), _freq(0), _format(0)
+    CadlPlayer(opl), _channels(channels), _freq(freq), _format(format)
 {
 }
 
@@ -15,7 +15,7 @@ MixerPlayer::MixerPlayer() :
 {
   Mix_QuerySpec(&_freq, &_format, &_channels);
 
-  _opl = new CEmuopl(_freq, true, true);
+  _opl = new CEmuopl(_freq, (_format & AUDIO_U16LSB), (_channels > 1));
 
   init();
 }
