@@ -66,6 +66,7 @@ SET( LIBEASTWOOD_HEADERS
   adl/kemuopl.h
   adl/opl.h
   adl/realopl.h
+  adl/silentopl.h  
   adl/temuopl.h
   emc/EmcFileBase.h
   emc/EmcFileAssemble.h
