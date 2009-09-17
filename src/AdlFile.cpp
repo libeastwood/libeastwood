@@ -2240,6 +2240,9 @@ bool CadlPlayer::init() {
     // 	_soundFileLoaded = "";
 
     _soundTriggers = _kyra1SoundTriggers;
+    if(!_driver)
+      	_driver = new AdlibDriver(_opl);
+    assert(_driver);
 
     _driver->callback(2);
     _driver->callback(16, int(4));
