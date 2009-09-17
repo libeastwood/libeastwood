@@ -23,9 +23,9 @@
 #define EASTWOOD_ADL_EMUOPL_H
 
 
-#include "opl.h"
+#include "adl/opl.h"
 extern "C" {
-#include "fmopl.h"
+#include "adl/fmopl.h"
 }
 
 namespace eastwood {
