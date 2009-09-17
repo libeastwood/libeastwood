@@ -19,7 +19,7 @@
  * temuopl.cpp - Tatsuyuki Satoh's OPL2 emulator, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include "temuopl.h"
+#include "adl/temuopl.h"
 
 namespace eastwood {
 

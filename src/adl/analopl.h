@@ -19,10 +19,10 @@
  * analopl.h - Spectrum analyzing hardware OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#ifndef H_ADPLUG_ANALOPL
-#define H_ADPLUG_ANALOPL
+#ifndef EASTWOOD_ADL_ANALOPL_H
+#define EASTWOOD_ADL_ANALOPL_H
 
-#include "realopl.h"
+#include "adl/realopl.h"
 
 namespace eastwood {
 
@@ -44,4 +44,5 @@ class CAnalopl: public CRealopl
 };
 
 }
-#endif
+
+#endif // EASTWOOD_ADL_ANALOPL_H

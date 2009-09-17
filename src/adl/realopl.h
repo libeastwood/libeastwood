@@ -19,10 +19,10 @@
  * realopl.h - Real hardware OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#ifndef H_ADPLUG_REALOPL
-#define H_ADPLUG_REALOPL
+#ifndef EASTWOOD_ADL_REALOPL_H
+#define EASTWOOD_ADL_REALOPL_H
 
-#include "opl.h"
+#include "adl/opl.h"
 
 #define DFL_ADLIBPORT	0x388		// default adlib baseport
 
@@ -72,4 +72,4 @@ class CRealopl: public Copl
 };
 
 }
-#endif
+#endif // EASTWOOD_ADL_REALOPL_H

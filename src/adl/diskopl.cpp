@@ -20,7 +20,7 @@
  */
 
 #include "StdDef.h"
-#include "diskopl.h"
+#include "adl/diskopl.h"
 
 namespace eastwood {
 

@@ -20,12 +20,12 @@
  *             <dn.tlp@gmx.net>
  */
 
-#ifndef H_ADPLUG_KEMUOPL
-#define H_ADPLUG_KEMUOPL
+#ifndef EASTWOOD_ADL_KEMUOPL_H
+#define EASTWOOD_ADL_KEMUOPL_H
 
-#include "opl.h"
+#include "adl/opl.h"
 extern "C" {
-#include "adlibemu.h"
+#include "adl/adlibemu.h"
 }
 
 namespace eastwood {
@@ -61,4 +61,4 @@ private:
 };
 
 }
-#endif
+#endif // EASTWOOD_ADL_KEMUOPL_H
