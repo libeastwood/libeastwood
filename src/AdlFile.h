@@ -15,15 +15,13 @@ class Copl;
 class CadlPlayer
 {
     public:
-	CadlPlayer(Copl *newopl);
-	CadlPlayer();
+	CadlPlayer(Copl *newopl = NULL, bool v2 = false);
 	virtual ~CadlPlayer();
 
 	bool load(const std::istream &stream);
 	bool update();
 	void rewind(int subsong);
 	virtual Copl* get_opl() { return _opl; }
-	bool init();
 	// refresh rate is fixed at 72Hz
 	float getrefresh()
 	{
@@ -34,14 +32,16 @@ class CadlPlayer
 	std::string gettype() { return std::string("Westwood ADL"); }
 
     protected:
+	void init();
+
 	AdlibDriver *_driver;
 	Copl* _opl;
-	bool playing;
 
     private:
 	int numsubsongs, cursubsong;
 
-	uint8_t _trackEntries[120];
+	bool _v2;
+	uint8_t _trackEntries[500];
 	uint8_t *_soundDataPtr;
 	int _sfxPlayingSound;
 
@@ -59,6 +59,8 @@ class CadlPlayer
 
 	void process();
 	void playTrack(uint8_t track);
+	bool isPlaying();
+
 	void playSoundEffect(uint8_t track);
 	void play(uint8_t track);
 	void unk1();

@@ -74,7 +74,7 @@ static inline uint16_t READ_BE_UINT16(const void *ptr) {
 
 class AdlibDriver {
     public:
-	AdlibDriver(Copl *opl);
+	AdlibDriver(Copl *opl, bool v2);
 	~AdlibDriver();
 
 	int callback(int opcode, ...);
@@ -127,7 +127,7 @@ class AdlibDriver {
 	int snd_setSoundData(va_list &list);
 	int snd_unkOpcode1(va_list &list);
 	int snd_startSong(va_list &list);
-	int snd_unkOpcode2(va_list &list);
+	int snd_isChannelPlaying(va_list &list);
 	int snd_unkOpcode3(va_list &list);
 	int snd_readByte(va_list &list);
 	int snd_writeByte(va_list &list);
@@ -199,7 +199,7 @@ class AdlibDriver {
 	    uint8_t opLevel2;
 	    uint8_t opExtraLevel3;
 	    uint8_t twoChan;
-	    uint8_t unk39;	
+	    uint8_t unk39;
 	    uint8_t unk40;
 	    uint8_t spacing1;
 	    uint8_t durationRandomness;
@@ -250,11 +250,16 @@ class AdlibDriver {
 	// * One for instruments, starting at offset 500.
 
 	uint8_t *getProgram(int progId) {
+	    uint16_t offset = READ_LE_UINT16(_soundData + 2 * progId);
+	    //TODO: Check in LoL CD Adlib driver
+	    if (offset == 0xFFFF)
+		return 0;
+
 	    return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
 	}
 
 	uint8_t *getInstrument(int instrumentId) {
-	    return _soundData + READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
+	    return _soundData + READ_LE_UINT16(_soundData + (_v2 ? 1000 : 500) + 2 * instrumentId);
 	}
 
 	void setupPrograms();
@@ -415,12 +420,19 @@ class AdlibDriver {
 	static const uint8_t _unkTables[][32];
 
 	uint16_t _syncJumpMask;	
+#if 0
+ 	Common::Mutex _mutex;
+ 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
+#endif
+
+	bool _v2;
 
 	Copl *opl;
 };
 
-AdlibDriver::AdlibDriver(Copl *newopl) :
-   opl(newopl)
+AdlibDriver::AdlibDriver(Copl *newopl, bool v2) :
+   opl(newopl), _v2(v2)
 {
     setupOpcodeList();
     setupParserOpcodeTable();
@@ -451,10 +463,19 @@ AdlibDriver::AdlibDriver(Copl *newopl) :
 
     _tablePtr1 = _tablePtr2 = 0;
 
-    // 	_mixer->setupPremix(this);
+#if 0
+    // HACK: We use MusicSoundType here for now so we can adjust the volume in the launcher dialog.
+    // This affects SFX too, but if we want to support different volumes for SFX and music we would
+    // have to change our player implementation, currently we setup the volume for an AdLib channel
+    // in AdlibDriver::adjustVolume, so if that would be called, we would have to know if the channel
+    // is used by SFX or music, and then adjust the volume accordingly. Since Kyrandia 2 supports
+    // different volumes for SFX and music, looking at the disasm and checking how the original does it
+    // would be a good idea.
+    _mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
-    // 	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
-    // 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
+    _samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
+    _samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
+#endif
     _samplesTillCallback = 0;
     _samplesTillCallbackRemainder = 0;
 
@@ -462,9 +483,11 @@ AdlibDriver::AdlibDriver(Copl *newopl) :
 }
 
 AdlibDriver::~AdlibDriver() {
-    // 	_mixer->setupPremix(0);
-    // 	OPLDestroy(_adlib);
-    // 	_adlib = 0;
+#if 0
+    _mixer->stopHandle(_soundHandle);
+    OPLDestroy(_adlib);
+    _adlib = 0;
+#endif
 }
 
 int AdlibDriver::callback(int opcode, ...) {
@@ -507,7 +530,7 @@ int AdlibDriver::snd_deinitDriver(__attribute__((unused)) va_list &list) {
 
 int AdlibDriver::snd_setSoundData(va_list &list) {
     if (_soundData) {
-	delete [] _soundData;
+	delete[] _soundData;
 	_soundData = 0;
     }
     _soundData = va_arg(list, uint8_t*);
@@ -543,8 +566,10 @@ int AdlibDriver::snd_startSong(va_list &list) {
     return 0;
 }
 
-int AdlibDriver::snd_unkOpcode2(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("AdlibDriver", "unimplemented snd_unkOpcode2");
+int AdlibDriver::snd_isChannelPlaying(va_list &list) {
+    int channel = va_arg(list, int);
+    if (_channels[channel].dataptr)
+	return 1;
     return 0;
 }
 
@@ -563,9 +588,8 @@ int AdlibDriver::snd_unkOpcode3(va_list &list) {
 	Channel &channel = _channels[_curChannel];
 	channel.priority = 0;
 	channel.dataptr = 0;
-	if (value != 9) {
+	if (value != 9)
 	    noteOff(channel);
-	}
 	++value;
     }
 
@@ -736,9 +760,8 @@ void AdlibDriver::executePrograms() {
     for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
 	int result = 1;
 
-	if (!_channels[_curChannel].dataptr) {
+	if (!_channels[_curChannel].dataptr)
 	    continue;
-	}
 
 	if (_channels[_curChannel].lock && (_syncJumpMask & (1 << _curChannel)))
 	    continue;
@@ -746,9 +769,8 @@ void AdlibDriver::executePrograms() {
 	Channel &channel = _channels[_curChannel];
 	_curRegOffset = _regOffset[_curChannel];
 
-	if (channel.tempoReset) {
+	if (channel.tempoReset)
 	    channel.tempo = _tempo;
-	}
 
 	uint8_t backup = channel.position;
 	channel.position += channel.tempo;
@@ -804,7 +826,7 @@ void AdlibDriver::executePrograms() {
     }
 }
 
-// 
+//
 
 void AdlibDriver::resetAdlibState() {
     LOG_INFO("AdlibDriver", "resetAdlibState()");
@@ -936,9 +958,8 @@ void AdlibDriver::setupDuration(uint8_t duration, Channel &channel) {
 	channel.duration = duration + (getRandomNr() & channel.durationRandomness);
 	return;
     }
-    if (channel.fractionalSpacing) {
+    if (channel.fractionalSpacing)
 	channel.spacing2 = (duration >> 3) * channel.fractionalSpacing;
-    }
     channel.duration = duration;
 }
 
@@ -1228,9 +1249,8 @@ void AdlibDriver::secondaryEffect1(Channel &channel) {
     uint8_t temp = channel.unk18;
     channel.unk18 += channel.unk19;
     if (channel.unk18 < temp) {
-	if (--channel.unk21 < 0) {
+	if (--channel.unk21 < 0)
 	    channel.unk21 = channel.unk20;
-	}
 	writeOPL(channel.unk22 + _curRegOffset, _soundData[channel.offset + channel.unk21]);
     }
 }
@@ -1282,6 +1302,9 @@ int AdlibDriver::update_setupProgram(__attribute__((unused)) uint8_t *&dataptr, 
 	return 0;
 
     uint8_t *ptr = getProgram(value);
+    //TODO: Check in LoL CD Adlib driver
+    if (!ptr)
+	return 0;
     uint8_t chan = *ptr++;
     uint8_t priority = *ptr++;
 
@@ -1336,9 +1359,8 @@ int AdlibDriver::update_setBaseOctave(__attribute__((unused)) uint8_t *&dataptr,
 
 int AdlibDriver::update_stopChannel(uint8_t *&dataptr, Channel &channel, __attribute__((unused)) uint8_t value) {
     channel.priority = 0;
-    if (_curChannel != 9) {
+    if (_curChannel != 9)
 	noteOff(channel);
-    }
     dataptr = 0;
     return 2;
 }
@@ -1388,9 +1410,8 @@ int AdlibDriver::update_waitForEndOfProgram(uint8_t *&dataptr, __attribute__((un
     uint8_t *ptr = getProgram(value);
     uint8_t chan = *ptr;
 
-    if (!_channels[chan].dataptr) {
+    if (!_channels[chan].dataptr)
 	return 0;
-    }
 
     dataptr -= 2;
     return 2;
@@ -1454,9 +1475,8 @@ int AdlibDriver::updateCallback24(uint8_t *&dataptr, Channel &channel, uint8_t v
 	}
     }
 
-    if (!(value & _unkValue4)) {
+    if (!(value & _unkValue4))
 	++_unkValue5;
-    }
 
     dataptr -= 2;
     channel.duration = 1;
@@ -1893,7 +1913,7 @@ void AdlibDriver::setupOpcodeList() {
 	COMMAND(snd_setSoundData),
 	COMMAND(snd_unkOpcode1),
 	COMMAND(snd_startSong),
-	COMMAND(snd_unkOpcode2),
+	COMMAND(snd_isChannelPlaying),
 	COMMAND(snd_unkOpcode3),
 	COMMAND(snd_readByte),
 	COMMAND(snd_writeByte),
@@ -2202,8 +2222,10 @@ const uint8_t AdlibDriver::_unkTables[][32] = {
 
 // #pragma mark -
 
-// At the time of writing, the only known case where Kyra 1 uses sound triggers
-// is in the castle, to cycle between three different songs.
+// Kyra 1 sound triggers. Most noticeably, these are used towards the end of
+// the game, in the castle, to cycle between different songs. The same music is
+// used in other places throughout the game, but the player is less likely to
+// spend enough time there to notice
 
 const int CadlPlayer::_kyra1SoundTriggers[] = {
     0, 4, 5, 3
@@ -2211,41 +2233,42 @@ const int CadlPlayer::_kyra1SoundTriggers[] = {
 
 const int CadlPlayer::_kyra1NumSoundTriggers = ARRAYSIZE(CadlPlayer::_kyra1SoundTriggers);
 
-CadlPlayer::CadlPlayer(Copl *newopl) : _opl(newopl), _driver(new AdlibDriver(newopl))
+CadlPlayer::CadlPlayer(Copl *newopl, bool v2) :
+    _driver(NULL), _opl(newopl), numsubsongs(0), cursubsong(0), _v2(v2),
+    _soundDataPtr(NULL), _sfxPlayingSound(0), _sfxPriority(0), _sfxFourthByteOfSong(0),
+    _numSoundTriggers(0), _soundTriggers(NULL)
 {
-    assert(_driver);
-    init();
+    if(_opl)
+    	init();
 }
 
-CadlPlayer::CadlPlayer() : _opl(NULL), _driver(NULL)
-{
+CadlPlayer::~CadlPlayer() {
+    if(_soundDataPtr)
+	delete[] _soundDataPtr;
+    if(_driver)
+	delete _driver;
 }
 
-    CadlPlayer::~CadlPlayer() {
-	if(_soundDataPtr)
-	    delete [] _soundDataPtr;
-	if(_driver)
-	    delete _driver;
+void CadlPlayer::init() {
+    if(!_driver) {
+	assert(_opl);
+      	_driver = new AdlibDriver(_opl, _v2);
+    	assert(_driver);
     }
 
-bool CadlPlayer::init() {
-    numsubsongs = 0;
-    _soundDataPtr= 0;  
-    _numSoundTriggers = _kyra1NumSoundTriggers;
     memset(_trackEntries, 0, sizeof(_trackEntries));
 
+    // 	_soundFileLoaded.clear();
 
-    _sfxPlayingSound = -1;
-    // 	_soundFileLoaded = "";
+    // TODO: Figure out if Kyra 2 uses sound triggers at all.
 
-    _soundTriggers = _kyra1SoundTriggers;
-    if(!_driver)
-      	_driver = new AdlibDriver(_opl);
-    assert(_driver);
+    if (!_v2) {
+	_soundTriggers = _kyra1SoundTriggers;
+	_numSoundTriggers = _kyra1NumSoundTriggers;
+    }
 
     _driver->callback(2);
     _driver->callback(16, int(4));
-    return true;
 }
 
 void CadlPlayer::process() {
@@ -2254,57 +2277,82 @@ void CadlPlayer::process() {
     if (trigger < _numSoundTriggers) {
 	int soundId = _soundTriggers[trigger];
 
-	if (soundId) {
+	if (soundId)
 	    playTrack(soundId);
-	}
     } else {
 	LOG_WARNING("AdlibDriver", "Unknown sound trigger %d", trigger);
 	// TODO: At this point, we really want to clear the trigger...
     }
 }
 
-// void CadlPlayer::setVolume(int volume) {
-// }
-
-// int CadlPlayer::getVolume() {
-// 	return 0;
-// }
-
-// void CadlPlayer::loadMusicFile(const char *file) {
-// 	loadSoundFile(file);
-// }
-
 void CadlPlayer::playTrack(uint8_t track) {
+#if 0
+    // WORKAROUND: There is a bug in the Kyra 1 "Pool of Sorrow"
+    // music which causes the channels to get progressively out of
+    // sync for each loop. To avoid that, we declare that all four
+    // of the song channels have to jump "in sync".
+
+    if (track == 4 && _soundFileLoaded.equalsIgnoreCase("KYRA1B.ADL"))
+	_driver->setSyncJumpMask(0x000F);
+    else
+#endif
     _driver->setSyncJumpMask(0);
     play(track);
 }
 
-// void CadlPlayer::haltTrack() {
-// 	unk1();
-// 	unk2();
-// 	//_engine->_system->delayMillis(3 * 60);
-// }
+#if 0
+void CadlPlayer::haltTrack() {
+    unk1();
+    unk2();
+    //_vm->_system->delayMillis(3 * 60);
+}
+#endif
+
+bool CadlPlayer::isPlaying() {
+    return _driver->callback(7, int(0)) != 0;
+}
 
 void CadlPlayer::playSoundEffect(uint8_t track) {
     play(track);
 }
 
 void CadlPlayer::play(uint8_t track) {
-    uint8_t soundId = _trackEntries[track];
-    if ((int8_t)soundId == -1 || !_soundDataPtr)
+    uint16_t soundId = 0;
+
+    if (_v2)
+	soundId = READ_LE_UINT16(&_trackEntries[track<<1]);
+    else
+	soundId = _trackEntries[track];
+
+    if ((soundId == 0xFFFF && _v2) || (soundId == 0xFF && !_v2) || !_soundDataPtr)
 	return;
-    soundId &= 0xFF;
-    _driver->callback(16, 0);
-    // 	while ((_driver->callback(16, 0) & 8)) {
-    // We call the system delay and not the game delay to avoid concurrency issues.
-    // 		_engine->_system->delayMillis(10);
-    // 	}
+
+#if 0
+    // HACK: Since we might call this when the engines is paused (on game load via GMM)
+    // we must unpause the engine here, so this will work properly
+
+    int pauseCount = 0;
+    while (_vm->isPaused()) {
+	++pauseCount;
+	_vm->pauseEngine(false);
+    }
+#endif
+
+    while ((_driver->callback(16, 0) & 8)) {
+	// We call the system delay and not the game delay to avoid concurrency issues.
+	delayMillis(10);
+    }
     if (_sfxPlayingSound != -1) {
 	// Restore the sounds's normal values.
 	_driver->callback(10, _sfxPlayingSound, int(1), int(_sfxPriority));
 	_driver->callback(10, _sfxPlayingSound, int(3), int(_sfxFourthByteOfSong));
 	_sfxPlayingSound = -1;
     }
+
+#if 0
+    while (pauseCount--)
+	_vm->pauseEngine(true);
+#endif
 
     int chan = _driver->callback(9, soundId, int(0));
 
@@ -2348,7 +2396,10 @@ bool CadlPlayer::load(const std::istream &stream)
 
     _driver->callback(8, int(-1));
 
-    is.read((char*)_trackEntries, 120);
+    if(_v2)
+    	is.read((char*)_trackEntries, 500);
+    else
+    	is.read((char*)_trackEntries, 120);
 
     soundDataSize = is.size() - (int)is.tellg();
 
@@ -2358,7 +2409,7 @@ bool CadlPlayer::load(const std::istream &stream)
 
     _driver->callback(4, _soundDataPtr);
 
-    for(int i = 0; i < 120; i++)
+    for(uint16_t i = 0; i < sizeof(_trackEntries)/sizeof(_trackEntries[0]); i++)
 	if(_trackEntries[i] != 0xff)
 	    numsubsongs = i + 1;
 
@@ -2397,7 +2448,7 @@ bool CadlPlayer::update()
 
 void CadlPlayer::unk1() {
     playSoundEffect(0);
-    //_engine->_system->delayMillis(5 * 60);
+    //_vm->_system->delayMillis(5 * 60);
 }
 
 void CadlPlayer::unk2() {
