@@ -92,7 +92,9 @@ SET( EMC_INTERPRETER
 
 SET( PYEASTWOOD_SRCS
     python/pyeastwood.c
+    python/cpsfile.cpp
     python/pakfile.cpp
+    python/palfile.cpp    
 )
 
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )

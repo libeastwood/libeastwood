@@ -158,7 +158,7 @@ static PyMethodDef PakFile_methods[] = {
 PyTypeObject PakFile_Type = {
 	PyObject_HEAD_INIT(NULL)
 	0,					/*ob_size*/
-	"eastwood.PakFile",			/*tp_name*/
+	"eastwood.pakfile",			/*tp_name*/
 	sizeof(Py_PakFile),			/*tp_basicsize*/
 	0,					/*tp_itemsize*/
 	(destructor)PakFile_dealloc,		/*tp_dealloc*/

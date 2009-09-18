@@ -3,7 +3,5 @@
 
 #include <Python.h>
 
-PyObject *module;
-
 #endif // EASTWOOD_PYTHON_PYEASTWOOD_H
 
