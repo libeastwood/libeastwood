@@ -32,14 +32,18 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(buffer, size)));
-    if(!self->stream->good())
-    {
+    if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
     	return -1;
     }
-    if(palette && Py_TYPE(palette)->tp_name == PalFile_Type.tp_name)
-	self->palette = ((Py_PalFile*)palette)->palFile->getPalette();
-    else
+    if(palette) {
+       if(Py_TYPE(palette)->tp_name == PalFile_Type.tp_name)
+   	   self->palette = ((Py_PalFile*)palette)->palFile->getPalette();
+       else {
+   	   PyErr_SetString(PyExc_TypeError, "Object is not a palette");
+	   return -1;
+       }
+    } else
 	self->palette = NULL;
 
 
