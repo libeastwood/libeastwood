@@ -32,7 +32,7 @@ class ShpFile : public Decode
 	  @param	IndexOfFile	specifies which picture to return (zero based)
 	  @return	nth picture in this shp-File
 	  */
-	Surface getSurface(const uint16_t fileIndex);
+	Surface* getSurface(const uint16_t fileIndex);
 
 
 	/*!
@@ -57,17 +57,17 @@ class ShpFile : public Decode
 	  @param	tilesY	how many pictures in one column
 	  @return	picture in this shp-File containing all specified pictures
 	  */
-	Surface getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, ...);
-	Surface getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles);
+	Surface* getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, ...);
+	Surface* getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles);
 
-	inline uint16_t getNumFiles() { return _numFiles; }
+	inline uint16_t size() { return _size; }
 
     private:
 	std::vector<uint8_t> getImage(const uint16_t fileIndex, uint8_t &width, uint8_t &height);
 	void readIndex();
 
 	std::vector<ShpFileEntry> _index;
-	uint16_t _numFiles;	
+	uint16_t _size;
 };
 
 }

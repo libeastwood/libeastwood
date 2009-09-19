@@ -17,7 +17,7 @@ static inline TileType getType(const uint32_t x) {
 }
 
 ShpFile::ShpFile(const std::istream &stream, Palette *palette) :
-    Decode(stream, 0, 0, palette), _index(1), _numFiles(0)
+    Decode(stream, 0, 0, palette), _index(1), _size(0)
 {
     readIndex();
 }
@@ -29,13 +29,13 @@ ShpFile::~ShpFile()
 void ShpFile::readIndex()
 {
     // First get number of files in shp-file
-    _numFiles = _stream.getU16LE();
+    _size = _stream.getU16LE();
 
-    if(_numFiles == 0) {
+    if(_size == 0) {
 	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this shp-File!"));
     }
 
-    if(_numFiles == 1) {
+    if(_size == 1) {
 	uint16_t start = _stream.getU16LE(),
 		 end = _stream.getU16LE();
 	/* files with only one image might be different */
@@ -57,16 +57,16 @@ void ShpFile::readIndex()
 
 	/* File contains more than one image */
 
-	if( fileSize < (uint32_t) ((_numFiles * 4) + 2 + 2)) {
+	if( fileSize < (uint32_t) ((_size * 4) + 2 + 2)) {
 	    char error[256];
-	    sprintf(error, "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(_numFiles * 4) + 2 + 2, fileSize);
+	    sprintf(error, "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(_size * 4) + 2 + 2, fileSize);
 	    throw(Exception(LOG_ERROR, "ShpFile", error));
 	}
 
-	_index.resize(_numFiles);
+	_index.resize(_size);
 
 	// now fill Index with start and end-offsets
-	for(int i = 0; i < _numFiles; i++) {
+	for(int i = 0; i < _size; i++) {
 	    _index[i].startOffset = _stream.getU32LE() + 2;
 
 	    if(i > 0) {
@@ -80,7 +80,7 @@ void ShpFile::readIndex()
 	}
 
 	// Add the endOffset for the last file
-	_index[_numFiles-1].endOffset = _stream.getU16LE() - 1 + 2;
+	_index[_size-1].endOffset = _stream.getU16LE() - 1 + 2;
     }
 }
 
@@ -160,16 +160,16 @@ std::vector<uint8_t> ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8
     return imageOut;    
 }
 
-Surface ShpFile::getSurface(uint16_t fileIndex)
+Surface* ShpFile::getSurface(uint16_t fileIndex)
 {
     uint8_t width,
 	    height;
     std::vector<uint8_t> imageOut = getImage(fileIndex, width, height);
 
-    return Surface(&imageOut.front(), width, height, 8, _palette);
+    return new Surface(&imageOut.front(), width, height, 8, _palette);
 }
 
-Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
+Surface* ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
     std::vector<uint32_t> tiles(tilesX*tilesY);
 
     va_list arg_ptr;
@@ -177,9 +177,9 @@ Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
 
     for(uint32_t i = 0; i < tilesX*tilesY; i++) {
 	tiles[i] = va_arg( arg_ptr, uint32_t );
-	if(getIndex(tiles[i]) >= _numFiles) {
+	if(getIndex(tiles[i]) >= _size) {
 	    char error[256];
-	    sprintf(error, "getSurfaceArray(): There exist only %d files in this *.shp.",_numFiles);
+	    sprintf(error, "getSurfaceArray(): There exist only %d files in this *.shp.",_size);
 	    throw(Exception(LOG_ERROR, "ShpFile", error));
 	}
     }
@@ -188,7 +188,7 @@ Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
     return getSurfaceArray(tilesX, tilesY, &tiles.front());
 }
 
-Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles) {
+Surface* ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles) {
     uint8_t width,
 	    height;
     uint16_t index = getIndex(tiles[0]);
@@ -205,7 +205,7 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
 	}
     }
 
-    Surface pic(width*tilesX, height*tilesY, 8, _palette);
+    Surface *pic = new Surface(width*tilesX, height*tilesY, 8, _palette);
 
     for(uint32_t j = 0; j < tilesY; j++)	{
 	for(uint32_t i = 0; i < tilesX; i++) {
@@ -217,24 +217,24 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
 	    switch(getType(tiles[i])) {
 		case TILE_NORMAL:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch , &imageOut.front() + y * width, width);
+			memcpy(	((char*) (pic->_pixels)) + i*width + (y+j*height) * pic->_pitch , &imageOut.front() + y * width, width);
 		    break;
 
 		case TILE_FLIPH:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch , &imageOut.front() + (height-1-y) * width, width);
+			memcpy(	((char*) (pic->_pixels)) + i*width + (y+j*height) * pic->_pitch , &imageOut.front() + (height-1-y) * width, width);
 		    break;
 
 		case TILE_FLIPV:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch + x) = *(&imageOut.front() + y * width + (width-1-x));
+			    *(((char*) (pic->_pixels)) + i*width + (y+j*height) * pic->_pitch + x) = *(&imageOut.front() + y * width + (width-1-x));
 		    break;
 
 		case TILE_ROTATE:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) (pic._pixels)) + i*width + (y+j*height) * pic._pitch + x) = *(&imageOut.front() + (height-1-y) * width + (width-1-x));
+			    *(((char*) (pic->_pixels)) + i*width + (y+j*height) * pic->_pitch + x) = *(&imageOut.front() + (height-1-y) * width + (width-1-x));
 		    break;
 
 		default:
