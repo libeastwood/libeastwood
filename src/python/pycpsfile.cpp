@@ -36,12 +36,12 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
     	return -1;
     }
     if(palette) {
-       if(Py_TYPE(palette)->tp_name == PalFile_Type.tp_name)
-   	   self->palette = ((Py_PalFile*)palette)->palFile->getPalette();
-       else {
-   	   PyErr_SetString(PyExc_TypeError, "Object is not a palette");
-	   return -1;
-       }
+	if(PyObject_TypeCheck(palette, &PalFile_Type))
+	    self->palette = ((Py_PalFile*)palette)->palFile->getPalette();
+	else {
+	    PyErr_SetString(PyExc_TypeError, "Object is not a palette");
+	    return -1;
+	}
     } else
 	self->palette = NULL;
 

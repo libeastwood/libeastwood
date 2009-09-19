@@ -37,7 +37,7 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
 	PyBuffer_Release(&pdata);
     	return -1;
     }
-    if(Py_TYPE(palette)->tp_name == PalFile_Type.tp_name)
+    if(PyObject_TypeCheck(palette, &PalFile_Type))
     	self->palette = ((Py_PalFile*)palette)->palFile->getPalette();
     else
 	PyErr_SetString(PyExc_TypeError, "Need palette!");
