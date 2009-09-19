@@ -1,7 +1,6 @@
 // TODO: This is *very* crude for now, need to figure out some neat way for
 // 	 python to deal with C++ streams ...
 #include <istream>
-#include <fstream>
 #include <sstream>
 #include "pyeastwood.h"
 
