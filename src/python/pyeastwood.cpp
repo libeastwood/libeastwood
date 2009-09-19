@@ -1,9 +1,11 @@
 #include "pyeastwood.h"
+#include "ShpFile.h"
 #include "Surface.h"
 
 #include "pycpsfile.h"
 #include "pypakfile.h"
 #include "pypalfile.h"
+#include "pyshpfile.h"
 #include "pysurface.h"
 
 using namespace eastwood;
@@ -32,6 +34,9 @@ initpyeastwood(void)
     if (PyType_Ready(&PalFile_Type) < 0)
 	return;
 
+    if (PyType_Ready(&ShpFile_Type) < 0)
+	return;
+
     if (PyType_Ready(&Surface_Type) < 0)
 	return;
 
@@ -48,6 +53,9 @@ initpyeastwood(void)
     Py_INCREF(&PalFile_Type);
     PyModule_AddObject(module, "PalFile", (PyObject *)&PalFile_Type);
 
+    Py_INCREF(&ShpFile_Type);
+    PyModule_AddObject(module, "ShpFile", (PyObject *)&ShpFile_Type);
+
     Py_INCREF(&Surface_Type);
     PyModule_AddObject(module, "Surface", (PyObject *)&Surface_Type);
 
@@ -59,6 +67,11 @@ initpyeastwood(void)
     PyModule_AddIntConstant(module, "Scale2X4", Scale2X4);
     PyModule_AddIntConstant(module, "Scale3X", Scale3X);
     PyModule_AddIntConstant(module, "Scale4X", Scale4X);
+
+    PyModule_AddIntConstant(module, "TILE_NORMAL", TILE_NORMAL);
+    PyModule_AddIntConstant(module, "TILE_FLIPH", TILE_FLIPH);
+    PyModule_AddIntConstant(module, "TILE_FLIPV", TILE_FLIPV);
+    PyModule_AddIntConstant(module, "TILE_ROTATE", TILE_ROTATE);
 
 }
 

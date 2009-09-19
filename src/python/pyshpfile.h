@@ -1,0 +1,6 @@
+#ifndef EASTWOOD_PYTHON_PYSHPFILE_H
+#define EASTWOOD_PYTHON_PYSHPFILE_H
+
+extern PyTypeObject ShpFile_Type;
+
+#endif // EASTWOOD_PYTHON_PYSHPFILE_H
