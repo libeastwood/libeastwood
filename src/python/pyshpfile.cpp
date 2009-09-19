@@ -2,9 +2,8 @@
 // 	 python to deal with C++ streams ...
 #include <istream>
 #include <sstream>
-#include <Python.h>
-#include <structmember.h>
 #include "pyeastwood.h"
+#include <structmember.h>
 
 #include "StdDef.h"
 #include "ShpFile.h"
