@@ -48,9 +48,9 @@ PakFile_init(Py_PakFile *self, PyObject *args)
 static void
 PakFile_dealloc(Py_PakFile *self)
 {
-    delete self->pakFile;
-    self->stream->close();
-    delete self->stream;
+//    delete self->pakFile;
+//    self->stream->close();
+//    delete self->stream;
 }
 
 static PyObject *
@@ -103,6 +103,7 @@ PakFile_read(Py_PakFile *self, PyObject *args)
 	v = PyString_FromStringAndSize((char *)buffer, bytesrequested);
 	if (v == NULL)
 		return NULL;
+	Py_XINCREF(v);
 	return v;
 }
 
