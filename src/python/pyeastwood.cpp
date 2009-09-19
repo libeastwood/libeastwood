@@ -18,8 +18,6 @@ static PyMethodDef pyeastwood_methods[] = {
     {0, 0, 0, 0}
 };
 
-/* declare function before defining it to avoid compile warnings */
-PyMODINIT_FUNC initpyeastwood(void);
 PyMODINIT_FUNC
 initpyeastwood(void)
 {
