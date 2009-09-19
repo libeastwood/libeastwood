@@ -103,7 +103,7 @@ static PyMethodDef ShpFile_methods[] = {
 };
 
 static PyMemberDef ShpFile_members[] = {
-    {const_cast<char*>("size"), T_SHORT, offsetof(Py_ShpFile, size), RO, NULL},
+    {const_cast<char*>("size"), T_USHORT, offsetof(Py_ShpFile, size), RO, NULL},
     {NULL, 0, 0, 0, NULL}
 };
 
