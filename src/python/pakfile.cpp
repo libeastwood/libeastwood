@@ -11,17 +11,17 @@
 using namespace eastwood;
 
 enum file_mode {
-	MODE_CLOSED	= 0,
-	MODE_READ	= 1,
-	MODE_READ_EOF	= 2
+    MODE_CLOSED	= 0,
+    MODE_READ	= 1,
+    MODE_READ_EOF	= 2
 };
 
 struct Py_PakFile {
-	PyObject_HEAD
-	std::ifstream *stream;
-	PakFile *pakFile;
-	uint32_t fileSize;
-	file_mode mode;
+    PyObject_HEAD
+    std::ifstream *stream;
+    PakFile *pakFile;
+    uint32_t fileSize;
+    file_mode mode;
 };
 
 static int
@@ -148,11 +148,11 @@ cleanup:
 }
 
 static PyMethodDef PakFile_methods[] = {
-	{"listfiles", (PyCFunction)PakFile_listfiles, METH_NOARGS, NULL},
-	{"open", (PyCFunction)PakFile_open, METH_VARARGS, NULL},
-	{"read", (PyCFunction)PakFile_read, METH_VARARGS, NULL},
-	{"seek", (PyCFunction)PakFile_seek, METH_VARARGS, NULL},
-	{NULL, NULL, 0, NULL}		/* sentinel */
+    {"listfiles", (PyCFunction)PakFile_listfiles, METH_NOARGS, NULL},
+    {"open", (PyCFunction)PakFile_open, METH_VARARGS, NULL},
+    {"read", (PyCFunction)PakFile_read, METH_VARARGS, NULL},
+    {"seek", (PyCFunction)PakFile_seek, METH_VARARGS, NULL},
+    {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
 

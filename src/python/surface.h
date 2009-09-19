@@ -5,8 +5,8 @@
 #include "PalFile.h"
 
 struct Py_Surface {
-	PyObject_HEAD
-	eastwood::Surface *surface;
+    PyObject_HEAD
+    eastwood::Surface *surface;
 };
 
 extern PyTypeObject Surface_Type;

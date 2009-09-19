@@ -16,10 +16,10 @@
 using namespace eastwood;
 
 struct Py_CpsFile {
-	PyObject_HEAD
-	std::istream *stream;
-	CpsFile *cpsFile;
-	Palette *palette;
+    PyObject_HEAD
+    std::istream *stream;
+    CpsFile *cpsFile;
+    Palette *palette;
 };
 
 static int
@@ -66,8 +66,8 @@ CpsFile_getSurface(Py_CpsFile *self)
 
 
 static PyMethodDef CpsFile_methods[] = {
-	{"getSurface", (PyCFunction)CpsFile_getSurface, METH_NOARGS, NULL},
-	{NULL, NULL, 0, NULL}		/* sentinel */
+    {"getSurface", (PyCFunction)CpsFile_getSurface, METH_NOARGS, NULL},
+    {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
 
