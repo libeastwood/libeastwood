@@ -68,21 +68,21 @@ bool Surface::scalePrecondition(Scaler scaler)
     return scale_precondition(scaler, _bpp/8, _width, _height);
 }
 
-Surface Surface::getScaled(Scaler scaler)
+Surface* Surface::getScaled(Scaler scaler)
 {
-    Surface scaled;
+    Surface *scaled;
     switch(scaler) {
 	case Scale2X:
 	case Scale2X3:
 	case Scale2X4:
 	case Scale3X:
 	case Scale4X:
-	    scaled = Surface(_width * (scaler & ((1<<8)-1)), _height * (scaler>>8), _bpp, _palette);
+	    scaled = new Surface(_width * (scaler & ((1<<8)-1)), _height * (scaler>>8), _bpp, _palette);
     	break;
 	default:
 	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
     }
-    scale(scaler, scaled._pixels, scaled._pitch, _pixels - _pitch, _pitch, _bpp/8, _width, _height);
+    scale(scaler, scaled->_pixels, scaled->_pitch, _pixels - _pitch, _pitch, _bpp/8, _width, _height);
     return scaled;
 }
 

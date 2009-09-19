@@ -21,6 +21,11 @@ enum Scaler {
     Scale4X = 4 + (4<<8)
 };
 
+struct Point {
+    uint16_t x;
+    uint16_t y;
+};
+
 class Surface {
     public:
 	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixels(NULL), _palette(NULL) {};
@@ -29,8 +34,12 @@ class Surface {
 	virtual ~Surface();
 
 	bool scalePrecondition(Scaler scale);
-	Surface getScaled(Scaler scale);
+	Surface* getScaled(Scaler scale);
 	bool SaveBMP(std::ostream &output);
+	inline Point size() {
+	    Point point = { _width, _height };
+	    return point;
+	}
 
     protected:
 	friend class CpsFile;
