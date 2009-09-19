@@ -24,16 +24,15 @@ struct Py_CpsFile {
 static int
 CpsFile_init(Py_CpsFile *self, PyObject *args)
 {
-    //FIXME: why does things break unless it's initialized here???
-    Py_ssize_t size = 0;
-    char *buffer = NULL;
+    Py_buffer pdata;
     PyObject *palette = NULL;
-    if (!PyArg_ParseTuple(args, "s#|O", &buffer, &size, &palette))
+    if (!PyArg_ParseTuple(args, "s*|O", &pdata, &palette))
 	return -1;
 
-    self->stream = new std::istream(new std::stringbuf(std::string(buffer, size)));
+    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
+	PyBuffer_Release(&pdata);	
     	return -1;
     }
     if(palette) {
@@ -49,6 +48,7 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 
     self->cpsFile = new CpsFile(*self->stream, self->palette);
 
+    PyBuffer_Release(&pdata);
     return 0;
 }
 

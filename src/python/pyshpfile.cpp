@@ -27,16 +27,15 @@ struct Py_ShpFile {
 static int
 ShpFile_init(Py_ShpFile *self, PyObject *args)
 {
-    //FIXME: why does things break unless it's initialized here???
-    Py_ssize_t size = 0;
-    char *buffer = NULL;
+    Py_buffer pdata;
     PyObject *palette = NULL;
-    if (!PyArg_ParseTuple(args, "s#O", &buffer, &size, &palette))
+    if (!PyArg_ParseTuple(args, "s*O", &pdata, &palette))
 	return -1;
 
-    self->stream = new std::istream(new std::stringbuf(std::string(buffer, size)));
+    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
+	PyBuffer_Release(&pdata);
     	return -1;
     }
     if(Py_TYPE(palette)->tp_name == PalFile_Type.tp_name)
@@ -48,6 +47,7 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
     self->shpFile = new ShpFile(*self->stream, self->palette);
     self->size = self->shpFile->size();
 
+    PyBuffer_Release(&pdata);
     return 0;
 }
 

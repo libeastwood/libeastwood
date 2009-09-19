@@ -15,20 +15,20 @@ using namespace eastwood;
 static int
 PalFile_init(Py_PalFile *self, PyObject *args)
 {
-    Py_ssize_t size = 0;
-    char *buffer = NULL;
-    if (!PyArg_ParseTuple(args, "s#", &buffer, &size))
+    Py_buffer pdata;
+    if (!PyArg_ParseTuple(args, "s*", &pdata))
 	return -1;
 
-    self->stream = new std::istream(new std::stringbuf(std::string(buffer, size)));
-    if(!self->stream->good())
-    {
+    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
+    if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
+	PyBuffer_Release(&pdata);	
     	return -1;
     }
 
     self->palFile = new PalFile(*self->stream);
 
+    PyBuffer_Release(&pdata);	
     return 0;
 }
 
