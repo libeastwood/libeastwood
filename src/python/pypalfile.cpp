@@ -15,7 +15,7 @@ using namespace eastwood;
 static int
 PalFile_init(Py_PalFile *self, PyObject *args)
 {
-    Py_ssize_t size;
+    Py_ssize_t size = 0;
     char *buffer = NULL;
     if (!PyArg_ParseTuple(args, "s#", &buffer, &size))
 	return -1;
