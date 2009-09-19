@@ -1,0 +1,6 @@
+#ifndef EASTWOOD_PYTHON_PYCPSFILE_H
+#define EASTWOOD_PYTHON_PYCPSFILE_H
+
+extern PyTypeObject CpsFile_Type;
+
+#endif // EASTWOOD_PYTHON_PYCPSFILE_H

@@ -7,7 +7,7 @@
 #include "Surface.h"
 #include "PalFile.h"
 
-#include "surface.h"
+#include "pysurface.h"
 
 using namespace eastwood;
 

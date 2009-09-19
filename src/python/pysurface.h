@@ -1,7 +1,6 @@
-#ifndef EASTWOOD_PYTHON_SURFACE_H
-#define EASTWOOD_PYTHON_SURFACE_H
+#ifndef EASTWOOD_PYTHON_PYSURFACE_H
+#define EASTWOOD_PYTHON_PYSURFACE_H
 
-#include <istream>
 #include "PalFile.h"
 
 struct Py_Surface {
@@ -11,4 +10,4 @@ struct Py_Surface {
 
 extern PyTypeObject Surface_Type;
 
-#endif // EASTWOOD_PYTHON_SURFACE_H
+#endif // EASTWOOD_PYTHON_PYSURFACE_H

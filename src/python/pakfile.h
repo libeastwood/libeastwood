@@ -1,6 +1,0 @@
-#ifndef EASTWOOD_PYTHON_PAKFILE_H
-#define EASTWOOD_PYTHON_PAKFILE_H
-
-extern PyTypeObject PakFile_Type;
-
-#endif // EASTWOOD_PYTHON_PAKFILE_H
