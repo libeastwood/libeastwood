@@ -47,7 +47,7 @@ CpsFile::~CpsFile()
 {	
 }
 
-Surface eastwood::CpsFile::getSurface()
+Surface* eastwood::CpsFile::getSurface()
 {
     std::vector<uint8_t> ImageOut(_imageSize);
 
@@ -64,7 +64,7 @@ Surface eastwood::CpsFile::getSurface()
 	break;
     }
 
-    return Surface(&ImageOut.front(), _width, _height, 8, _palette);
+    return new Surface(&ImageOut.front(), _width, _height, 8, _palette);
 }
 
 }
