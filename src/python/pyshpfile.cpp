@@ -61,7 +61,7 @@ static PyObject *
 ShpFile_getSurface(Py_ShpFile *self, PyObject *args)
 {
     uint16_t index;
-    if (!PyArg_ParseTuple(args, "h", &index))
+    if (!PyArg_ParseTuple(args, "H", &index))
 	return NULL;
 
     Surface *surface = self->shpFile->getSurface(index);
@@ -75,7 +75,7 @@ ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
     PyObject *array = NULL;
     uint8_t x = 0,
 	    y = 0;
-    if (!PyArg_ParseTuple(args, "bbO", &x, &y, &array))
+    if (!PyArg_ParseTuple(args, "BBO", &x, &y, &array))
 	return NULL;
     if(!PyTuple_Check(array)) {
 	PyErr_SetString(PyExc_TypeError, "Third argument must be a tuple!");

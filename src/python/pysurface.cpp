@@ -36,7 +36,7 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
 {
     Scaler scaler;
     Surface *scaled;
-    if (!PyArg_ParseTuple(args, "i", &scaler))
+    if (!PyArg_ParseTuple(args, "I", &scaler))
 	return NULL;
 
     //TODO: throw exception
