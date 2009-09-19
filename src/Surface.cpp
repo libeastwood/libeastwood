@@ -137,7 +137,7 @@ bool Surface::SaveBMP(std::ostream &output)
     os.seekp(fp_offset+header.offBits);
 
     /* Write the bitmap image upside down */
-    for(bits = _pixels+(_height*_pitch)-1; bits > _pixels; bits-= _pitch)
+    for(bits = _pixels+((_height-1)*_pitch); bits > _pixels; bits-= _pitch)
 	os.write((char*)bits, _pitch);
 
     /* Write the BMP file size */
