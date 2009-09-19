@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include "pyeastwood.h"
+#include <structmember.h>
 
 #include "StdDef.h"
 #include "Surface.h"
@@ -14,10 +15,12 @@ using namespace eastwood;
 static PyObject *
 Surface_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *kwargs)
 {
-    Py_Surface *self;
+    Py_Surface *self = NULL;
     self = (Py_Surface *)type->tp_alloc(type, 0);
-    if (self != NULL)
+    if (self != NULL) {
 	self->surface = reinterpret_cast<Surface*>(args);
+	self->size = Py_BuildValue("(HH)", self->surface->size().x, self->surface->size().y);
+    }
 
     return (PyObject *)self;
 }
@@ -67,6 +70,11 @@ static PyMethodDef Surface_methods[] = {
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
+static PyMemberDef Surface_members[] = {
+    {const_cast<char*>("size"), T_OBJECT, offsetof(Py_Surface, size), RO, NULL},
+    {NULL, 0, 0, 0, NULL}
+};
+
 PyTypeObject Surface_Type = {
     PyObject_HEAD_INIT(NULL)
     0,						/*ob_size*/
@@ -97,7 +105,7 @@ PyTypeObject Surface_Type = {
     0,						/*tp_iter*/
     0,						/*tp_iternext*/
     Surface_methods,				/*tp_methods*/
-    0,						/*tp_members*/
+    Surface_members,				/*tp_members*/
     0,						/*tp_getset*/
     0,                      			/*tp_base*/
     0,                      			/*tp_dict*/
