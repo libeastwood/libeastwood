@@ -1,10 +1,10 @@
 #include "pyeastwood.h"
 #include "Surface.h"
 
-#include "cpsfile.h"
-#include "pakfile.h"
-#include "palfile.h"
-#include "surface.h"
+#include "pycpsfile.h"
+#include "pypakfile.h"
+#include "pypalfile.h"
+#include "pysurface.h"
 
 using namespace eastwood;
 
