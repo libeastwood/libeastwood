@@ -74,7 +74,7 @@ static PyMethodDef CpsFile_methods[] = {
 PyTypeObject CpsFile_Type = {
     PyObject_HEAD_INIT(NULL)
     0,						/*ob_size*/
-    "eastwood.cpsfile",				/*tp_name*/
+    "pyeastwood.CpsFile",			/*tp_name*/
     sizeof(Py_CpsFile),				/*tp_basicsize*/
     0,						/*tp_itemsize*/
     (destructor)CpsFile_dealloc,		/*tp_dealloc*/

@@ -42,16 +42,16 @@ initpyeastwood(void)
 	return;
 
     Py_INCREF(&CpsFile_Type);
-    PyModule_AddObject(module, "cpsfile", (PyObject *)&CpsFile_Type);
+    PyModule_AddObject(module, "CpsFile", (PyObject *)&CpsFile_Type);
 
     Py_INCREF(&PakFile_Type);
-    PyModule_AddObject(module, "pakfile", (PyObject *)&PakFile_Type);
+    PyModule_AddObject(module, "PakFile", (PyObject *)&PakFile_Type);
 
     Py_INCREF(&PalFile_Type);
-    PyModule_AddObject(module, "palfile", (PyObject *)&PalFile_Type);
+    PyModule_AddObject(module, "PalFile", (PyObject *)&PalFile_Type);
 
     Py_INCREF(&Surface_Type);
-    PyModule_AddObject(module, "surface", (PyObject *)&Surface_Type);
+    PyModule_AddObject(module, "Surface", (PyObject *)&Surface_Type);
 
     PyModule_AddObject(module, "__author__", PyString_FromString(__author__));
 
