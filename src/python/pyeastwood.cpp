@@ -57,10 +57,10 @@ initpyeastwood(void)
 
 
     PyModule_AddIntConstant(module, "Scale2X", Scale2X);
-    PyModule_AddIntConstant(module, "Scale2X3", Scale2X);
-    PyModule_AddIntConstant(module, "Scale2X4", Scale2X);
-    PyModule_AddIntConstant(module, "Scale3X", Scale2X);
-    PyModule_AddIntConstant(module, "Scale4X", Scale2X);
+    PyModule_AddIntConstant(module, "Scale2X3", Scale2X3);
+    PyModule_AddIntConstant(module, "Scale2X4", Scale2X4);
+    PyModule_AddIntConstant(module, "Scale3X", Scale3X);
+    PyModule_AddIntConstant(module, "Scale4X", Scale4X);
 
 }
 
