@@ -7,6 +7,7 @@
 struct Py_PalFile {
 	PyObject_HEAD
 	eastwood::PalFile *palFile;
+	eastwood::Palette *palette;
 };
 
 extern PyTypeObject PalFile_Type;

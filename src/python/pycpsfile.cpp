@@ -18,15 +18,14 @@ struct Py_CpsFile {
     PyObject_HEAD
     std::istream *stream;
     CpsFile *cpsFile;
-    Palette *palette;
 };
 
 static int
 CpsFile_init(Py_CpsFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    PyObject *palette = NULL;
-    if (!PyArg_ParseTuple(args, "s*|O", &pdata, &palette))
+    PyObject *palFile = NULL;
+    if (!PyArg_ParseTuple(args, "s*|O", &pdata, &palFile))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
@@ -35,18 +34,14 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 	PyBuffer_Release(&pdata);	
     	return -1;
     }
-    if(palette) {
-	if(PyObject_TypeCheck(palette, &PalFile_Type))
-	    self->palette = ((Py_PalFile*)palette)->palFile->getPalette();
-	else {
-	    PyErr_SetString(PyExc_TypeError, "Object is not a palette");
-	    return -1;
-	}
-    } else
-	self->palette = NULL;
+    if(palFile) {
+    	if(!PyObject_TypeCheck(palFile, &PalFile_Type)) {
+	    PyErr_SetString(PyExc_TypeError, "If given, second argument must be a PalFile object");
+ 	    return -1;
+ 	}
+    }
 
-
-    self->cpsFile = new CpsFile(*self->stream, self->palette);
+    self->cpsFile = new CpsFile(*self->stream, palFile ? ((Py_PalFile*)palFile)->palette : NULL);
 
     PyBuffer_Release(&pdata);
     return 0;

@@ -27,6 +27,7 @@ PalFile_init(Py_PalFile *self, PyObject *args)
     }
 
     self->palFile = new PalFile(stream);
+    self->palette = self->palFile->getPalette();
 
     PyBuffer_Release(&pdata);	
     return 0;
@@ -36,6 +37,7 @@ static void
 PalFile_dealloc(Py_PalFile *self)
 {
     delete self->palFile;
+    delete self->palette;
 }
 
 PyTypeObject PalFile_Type = {
