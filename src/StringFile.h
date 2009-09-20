@@ -7,10 +7,10 @@
 #include "IStream.h"
 
 enum MissionType {
-    MISSION_DESCRIPTION = 0,
-    MISSION_WIN = 1,
-    MISSION_LOSE = 2,
-    MISSION_ADVICE = 3
+    MISSION_DESCRIPTION	= 0,
+    MISSION_WIN		= 1,
+    MISSION_LOSE	= 2,
+    MISSION_ADVICE	= 3
 };
 
 namespace eastwood {
@@ -33,11 +33,11 @@ class StringFile
 	 *  @return the text for this mission and of this type.
 	 */
 	inline std::string getString(uint16_t mission, MissionType texttype) {
-	    return _strings[mission*4+texttype];
+	    return _strings.at(mission*4+texttype);
 	}
 
 	inline std::string getString(int i){
-	    return _strings[i];
+	    return _strings.at(i);
 	}
 
 	inline uint16_t size() {
