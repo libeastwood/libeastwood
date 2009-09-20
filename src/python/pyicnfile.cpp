@@ -20,23 +20,23 @@ static int
 IcnFile_init(Py_IcnFile *self, PyObject *args)
 {
     Py_buffer pdata;
+    self->stream = NULL;
     if (!PyArg_ParseTuple(args, "s*OO", &pdata, &self->mapFile, &self->palFile))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-	PyBuffer_Release(&pdata);
-    	return -1;
+	goto error;
     }
     if(!PyObject_TypeCheck(self->mapFile, &MapFile_Type)) {
 	PyErr_SetString(PyExc_TypeError, "Second argument must be a MapFile object");
-	return -1;
+	goto error;
     }
 
     if(!PyObject_TypeCheck(self->palFile, &PalFile_Type)) {
 	PyErr_SetString(PyExc_TypeError, "Third argument must be a PalFile object");
-	return -1;
+	goto error;
     }
 
     self->icnFile = new IcnFile(*self->stream, *((Py_MapFile*)self->mapFile)->mapFile, ((Py_PalFile*)self->palFile)->palette);
@@ -47,6 +47,12 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
 
     PyBuffer_Release(&pdata);
     return 0;
+    
+error:
+    PyBuffer_Release(&pdata);
+    if(self->stream)
+	delete self->stream;
+    return -1;
 }
 
 static void

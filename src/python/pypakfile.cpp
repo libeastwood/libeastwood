@@ -16,14 +16,14 @@ PakFile_init(Py_PakFile *self, PyObject *args)
 {
     Py_ssize_t size;
     char *fileName = NULL;
+    self->stream = NULL;
     if (!PyArg_ParseTuple(args, "s#", &fileName, &size))
 	return -1;
 
     self->stream = new std::ifstream(fileName, std::ios::in | std::ios::binary);
-    if(!self->stream->good())
-    {
+    if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-    	return -1;
+	delete self->stream;
     }
 
     self->pakFile = new PakFile(*self->stream);

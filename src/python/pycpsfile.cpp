@@ -19,19 +19,19 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 {
     Py_buffer pdata;
     self->palFile = NULL;
+    self->stream = NULL;
     if (!PyArg_ParseTuple(args, "s*|O", &pdata, &self->palFile))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-	PyBuffer_Release(&pdata);	
-    	return -1;
+	goto error;
     }
     if(self->palFile) {
     	if(!PyObject_TypeCheck(self->palFile, &PalFile_Type)) {
 	    PyErr_SetString(PyExc_TypeError, "If given, second argument must be a PalFile object");
- 	    return -1;
+	    goto error;
  	}
     	Py_INCREF(self->palFile);
     }
@@ -40,6 +40,12 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 
     PyBuffer_Release(&pdata);
     return 0;
+
+error:
+    PyBuffer_Release(&pdata);
+    if(self->stream)
+	delete self->stream;
+    return -1;
 }
 
 static void
