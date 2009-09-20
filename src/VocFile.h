@@ -14,6 +14,17 @@ class VocFile
 	virtual ~VocFile();
 
 	/**
+	  Try to load a VOC from the stream. Returns a pointer to Mix_Chunk.
+	  It is the callers responsibility to deallocate that data again later on
+	  with Mix_FreeChunk()!
+	  \param	stream	The stream to load load VOC from. The sample is loaded from this VOC-File.
+	  \param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
+	  \return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
+	  */
+	Sound* getSound();
+
+    private:
+	/**
 	 * Take a sample rate parameter as it occurs in a VOC sound header, and
 	 * return the corresponding sample frequency.
 	 *
@@ -25,17 +36,6 @@ class VocFile
 	 */
 	int getSampleRateFromVOCRate(int vocSR);
 
-	/**
-	  Try to load a VOC from the stream. Returns a pointer to Mix_Chunk.
-	  It is the callers responsibility to deallocate that data again later on
-	  with Mix_FreeChunk()!
-	  \param	stream	The stream to load load VOC from. The sample is loaded from this VOC-File.
-	  \param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
-	  \return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
-	  */
-	Sound* getSound();
-
-    private:
 	void parseVocFormat();
 
 	std::istream &_stream;
