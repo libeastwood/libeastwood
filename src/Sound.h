@@ -4,13 +4,13 @@
 namespace eastwood {
 
 enum AudioFormat { 
-    FMT_U8,
-    FMT_S8,
-    FMT_U16LE,
-    FMT_S16LE,
-    FMT_U16BE,
-    FMT_S16BE,
-    FMT_INVALID = -1
+    FMT_U8	= 0x0008,
+    FMT_S8	= 0x8008,
+    FMT_U16LE	= 0x0010,
+    FMT_S16LE	= 0x8010,
+    FMT_U16BE	= 0x1010,
+    FMT_S16BE	= 0x9010,
+    FMT_INVALID	= -1
 };
 
 enum Interpolator
