@@ -54,13 +54,8 @@ Surface::Surface(const uint8_t *buffer, uint16_t width, uint16_t height, uint8_t
 }
 
 Surface::~Surface() {
-    //FIXME:
-#if 0
     if(_pixels)
     	delete [] _pixels;
-    if(_palette)
-	delete [] _palette;
-#endif
 }
 
 bool Surface::scalePrecondition(Scaler scaler)

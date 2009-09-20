@@ -18,14 +18,14 @@ VocFile_init(Py_VocFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "s*", &pdata))
 	return -1;
 
-    std::istream stream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
-    if(!stream.good()) {
+    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
+    if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
     	PyBuffer_Release(&pdata);
     	return -1;
     }
 
-    self->vocFile = new VocFile(stream);
+    self->vocFile = new VocFile(*self->stream);
 
     PyBuffer_Release(&pdata);
     return 0;
@@ -35,6 +35,7 @@ static void
 VocFile_dealloc(Py_VocFile *self)
 {
     delete self->vocFile;
+    delete self->stream;
 }
 
 static PyObject *

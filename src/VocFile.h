@@ -24,6 +24,8 @@ class VocFile
 	Sound* getSound();
 
     private:
+	inline void readHeader();
+
 	/**
 	 * Take a sample rate parameter as it occurs in a VOC sound header, and
 	 * return the corresponding sample frequency.
@@ -36,21 +38,7 @@ class VocFile
 	 */
 	int getSampleRateFromVOCRate(int vocSR);
 
-	void parseVocFormat();
-
 	std::istream &_stream;
-
-	size_t _size;
-	uint8_t *_buffer;
-	uint8_t _channels;
-	uint16_t _vocLoops;
-	uint32_t _vocBeginLoop,
-		 _vocEndLoop,
-		 _frequency;
-	AudioFormat _format;
-
-    
-
 };
 
 }

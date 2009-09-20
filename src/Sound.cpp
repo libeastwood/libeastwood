@@ -34,11 +34,8 @@ Sound::Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency,
 
 Sound::~Sound()
 {
-    //FIXME:
-#if 0
     if(_buffer)
-	delete _buffer;
-#endif
+	free(_buffer);
 }
 
 #define __HALF_MAX_SIGNED(type) ((type)1 << (sizeof(type)*8-2))
@@ -64,7 +61,7 @@ void Sound::getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t s
     T* data;
     uint32_t sampleSize = sizeof(T) * sound._channels;
     sound._size = samples * sampleSize;
-    sound._buffer = (uint8_t*)(data = new T[sound._size]);
+    sound._buffer = (uint8_t*)(data = (T*)calloc(sound._size, sizeof(T)));
 
     for(uint32_t i=0; i < samples*sound._channels; i+=sound._channels) {
 	data[i] = float2integer<T>(dataFloat[(i/sound._channels)+silenceLength]);
