@@ -17,7 +17,7 @@ class Surface : public eastwood::Surface
 	Surface(const eastwood::Surface& surface);
 	virtual ~Surface();
 
-    	::SDL_Surface *get(uint32_t flags);
+    	::SDL_Surface *get(uint32_t flags = SDL_HWSURFACE);
 	::SDL_Palette *getPalette();
 
 };
