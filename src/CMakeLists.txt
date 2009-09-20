@@ -56,6 +56,7 @@ SET( LIBEASTWOOD_HEADERS
   ShpFile.h
   Sound.h
   StringFile.h
+  Surface.h
   VocFile.h
   WsaFile.h
 )
