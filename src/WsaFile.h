@@ -14,7 +14,7 @@ public:
 
 	virtual ~WsaFile();
 
-	Surface getSurface(uint32_t frameNumber);
+	Surface* getSurface(uint32_t frameNumber);
 
 	inline uint32_t getNumFrames() { return _numFrames; };
 	inline uint32_t getFramesPer1024ms() { return _framesPer1024ms; };

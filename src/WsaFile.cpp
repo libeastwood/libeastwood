@@ -59,7 +59,7 @@ WsaFile::~WsaFile()
 {
 }
 
-Surface WsaFile::getSurface(uint32_t frameNumber)
+Surface* WsaFile::getSurface(uint32_t frameNumber)
 {
 /*    if(frameNumber >= _numFrames) {
 	return NULL;
@@ -67,7 +67,7 @@ Surface WsaFile::getSurface(uint32_t frameNumber)
 
     uint8_t *frame = &_decodedFrames.front() + (frameNumber * _width * _height);
 
-    return Surface(frame, _width, _height, 8, _palette);
+    return new Surface(frame, _width, _height, 8, _palette);
 }
 
 void WsaFile::decodeFrames()
