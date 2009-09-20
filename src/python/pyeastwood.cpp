@@ -8,6 +8,7 @@
 #include "pypakfile.h"
 #include "pypalfile.h"
 #include "pyshpfile.h"
+#include "pystringfile.h"
 #include "pysurface.h"
 
 using namespace eastwood;
@@ -45,6 +46,9 @@ initpyeastwood(void)
     if (PyType_Ready(&ShpFile_Type) < 0)
 	return;
 
+    if (PyType_Ready(&StringFile_Type) < 0)
+	return;
+
     if (PyType_Ready(&Surface_Type) < 0)
 	return;
 
@@ -69,6 +73,9 @@ initpyeastwood(void)
 
     Py_INCREF(&ShpFile_Type);
     PyModule_AddObject(module, "ShpFile", (PyObject *)&ShpFile_Type);
+
+    Py_INCREF(&StringFile_Type);
+    PyModule_AddObject(module, "StringFile", (PyObject *)&StringFile_Type);
 
     Py_INCREF(&Surface_Type);
     PyModule_AddObject(module, "Surface", (PyObject *)&Surface_Type);

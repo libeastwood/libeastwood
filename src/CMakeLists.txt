@@ -98,6 +98,7 @@ SET( PYEASTWOOD_SRCS
     python/pypakfile.cpp
     python/pypalfile.cpp
     python/pyshpfile.cpp
+    python/pystringfile.cpp
     python/pysurface.cpp
 )
 
