@@ -4,10 +4,10 @@ SET( CMAKE_MODULE_PATH ${LIBEASTWOOD_SOURCE_DIR}/cmake/modules )
 cmake_minimum_required(VERSION 2.6)
 
 
-SET(LIBEASTWOOD_MAJOR "0")
+SET(LIBEASTWOOD_MAJOR "1")
 SET(LIBEASTWOOD_MINOR "0")
-SET(LIBEASTWOOD_PATCH "2")
-SET(VERSION "0.2")
+SET(LIBEASTWOOD_PATCH "0")
+SET(VERSION "0.3")
 
 SET( CMAKE_CXX_FLAGS "-Wall -Wextra -Weffc++ -pedantic -O3 -Wno-long-long -Wno-variadic-macros -fPIC -g -O0 ${CMAKE_CXX_FLAGS}" )
 
