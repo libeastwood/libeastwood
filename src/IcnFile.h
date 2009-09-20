@@ -22,9 +22,9 @@ public:
 	IcnFile(const std::istream &stream, MapFile &map, Palette *palette);
 	~IcnFile();
 
-	Surface getSurface(uint16_t IndexOfFile);
+	Surface *getSurface(uint16_t IndexOfFile);
 
-	Surface getTiles(uint16_t index, bool frameByFrame = true);
+	Surface *getTiles(uint16_t index, bool frameByFrame = true);
 
 /// Returns an array of pictures in the icn-File
 /*!
