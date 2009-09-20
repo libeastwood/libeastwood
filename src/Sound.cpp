@@ -170,7 +170,8 @@ void Sound::saveWAV(std::ostream &output)
 {
     OStream &os(const_cast<OStream&>(reinterpret_cast<const OStream&>(output)));
 
-    bool bigEndian = (_format >> 12) & ((1<<3)-1);
+    bool bigEndian = _format & (1<<12);
+
     waveHeader header = {
 	{'R', 'I', 'F', bigEndian ? 'X' : 'F'},
 	_size+sizeof(waveHeader)-sizeof(offsetof(waveHeader, riffSize)),
