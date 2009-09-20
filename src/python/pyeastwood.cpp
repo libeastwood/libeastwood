@@ -21,46 +21,19 @@ static const char __author__[] =
     Per Øyvind Karlsen <peroyvind@mandriva.org>\n\
 ";
 
-static PyMethodDef pyeastwood_methods[] = {
-    {0, 0, 0, 0}
-};
-
 PyMODINIT_FUNC
 initpyeastwood(void)
 {
     PyObject *module;
 
-    if (PyType_Ready(&CpsFile_Type) < 0)
-	return;
-
-    if (PyType_Ready(&IcnFile_Type) < 0)
-	return;
-
-    if (PyType_Ready(&MapFile_Type) < 0)
-	return;
-
-    if (PyType_Ready(&PakFile_Type) < 0)
-	return;
-
-    if (PyType_Ready(&PalFile_Type) < 0)
-	return;
-
-    if (PyType_Ready(&ShpFile_Type) < 0)
-	return;
-
-    if (PyType_Ready(&Sound_Type) < 0)
-	return;
-
-    if (PyType_Ready(&StringFile_Type) < 0)
-	return;
-
-    if (PyType_Ready(&Surface_Type) < 0)
-	return;
-
-    if (PyType_Ready(&VocFile_Type) < 0)
+    if((PyType_Ready(&CpsFile_Type) < 0) || (PyType_Ready(&IcnFile_Type) < 0)
+	    || (PyType_Ready(&MapFile_Type) < 0) || (PyType_Ready(&PakFile_Type) < 0)
+	    || (PyType_Ready(&PalFile_Type) < 0) || (PyType_Ready(&ShpFile_Type) < 0)
+	    || (PyType_Ready(&Sound_Type) < 0) || (PyType_Ready(&StringFile_Type) < 0)
+	    || (PyType_Ready(&Surface_Type) < 0) || (PyType_Ready(&VocFile_Type) < 0))
 	return;    
 
-    module = Py_InitModule("pyeastwood", pyeastwood_methods);
+    module = Py_InitModule("pyeastwood", NULL);
     if (module == NULL)
 	return;
 
