@@ -6,6 +6,8 @@
 
 #include "IStream.h"
 
+namespace eastwood {
+
 enum MissionType {
     MISSION_DESCRIPTION	= 0,
     MISSION_WIN		= 1,
@@ -13,8 +15,6 @@ enum MissionType {
     MISSION_ADVICE	= 3,
     MISSION_INVALID
 };
-
-namespace eastwood {
 
 /// A class for loading a encoded textfiles.
 /*!
