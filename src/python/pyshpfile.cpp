@@ -15,13 +15,6 @@
 
 using namespace eastwood;
 
-struct Py_ShpFile {
-    PyObject_HEAD
-    std::istream *stream;
-    ShpFile *shpFile;
-    uint16_t size;
-};
-
 static int
 ShpFile_init(Py_ShpFile *self, PyObject *args)
 {

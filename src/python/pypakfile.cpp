@@ -3,26 +3,13 @@
 #include <istream>
 #include <fstream>
 #include <sstream>
-#include "pyeastwood.h"
-
-#include "PakFile.h"
 #include "StdDef.h"
 
+#include "pyeastwood.h"
+#include "python/pypakfile.h"
+
+
 using namespace eastwood;
-
-enum file_mode {
-    MODE_CLOSED	= 0,
-    MODE_READ	= 1,
-    MODE_READ_EOF	= 2
-};
-
-struct Py_PakFile {
-    PyObject_HEAD
-    std::ifstream *stream;
-    PakFile *pakFile;
-    uint32_t fileSize;
-    file_mode mode;
-};
 
 static int
 PakFile_init(Py_PakFile *self, PyObject *args)

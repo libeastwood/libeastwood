@@ -14,12 +14,6 @@
 
 using namespace eastwood;
 
-struct Py_CpsFile {
-    PyObject_HEAD
-    std::istream *stream;
-    CpsFile *cpsFile;
-};
-
 static int
 CpsFile_init(Py_CpsFile *self, PyObject *args)
 {

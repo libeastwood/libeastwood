@@ -1,7 +1,6 @@
 #ifndef EASTWOOD_PYTHON_PYPALFILE_H
 #define EASTWOOD_PYTHON_PYPALFILE_H
 
-#include <istream>
 #include "PalFile.h"
 
 struct Py_PalFile {
