@@ -10,7 +10,8 @@ enum MissionType {
     MISSION_DESCRIPTION	= 0,
     MISSION_WIN		= 1,
     MISSION_LOSE	= 2,
-    MISSION_ADVICE	= 3
+    MISSION_ADVICE	= 3,
+    MISSION_INVALID
 };
 
 namespace eastwood {
@@ -36,7 +37,7 @@ class StringFile
 	    return _strings.at(mission*4+texttype);
 	}
 
-	inline std::string getString(int i){
+	inline std::string getString(uint16_t i){
 	    return _strings.at(i);
 	}
 
