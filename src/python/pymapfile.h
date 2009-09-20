@@ -1,0 +1,6 @@
+#ifndef EASTWOOD_PYTHON_PYMAPFILE_H
+#define EASTWOOD_PYTHON_PYMAPFILE_H
+
+extern PyTypeObject MapFile_Type;
+
+#endif // EASTWOOD_PYTHON_PYMAPFILE_H
