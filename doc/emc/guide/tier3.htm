@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+<TITLE>EMC Scripts Guide: Tier 3: Master</TITLE>
+</HEAD>
+<BODY>
+<H1>Tier 3</H1>
+<P ALIGN=Justify>
+<H3>Custom procedures, Arguments and Variables</H3>
+<P ALIGN=Justify>
+If you wish
+to make advanced scripts you must read the text below.
+<P>
+These things have the very same purpose like in C. But the difference is
+that you need to know how to prepare the stuff in order to get them to work.
+Let's begin from custom procedures. This can be any piece of your script, you don't
+need to declare anything. However it's good to mark it with useful label.
+To call your procedure use the very same <I>Goto</I> command preceeded by new <I>Save</I> command.
+The Save command pushes the current position in script to retrieve it later with <I>Return</I> command.
+The arguments and return code are carried the very same way like <I>Exec</I> instruction, so the code:
+<OL><CODE>
+<LI>Push 2</LI>
+<LI>Push 7</LI>
+<LI>Save</LI>
+<LI>Goto <U>bizkit</U></LI>
+<LI>AddSP 2</LI>
+<LI>Return</LI>
+</CODE></OL>
+will <I>call</I> the routine "bizkit" with two arguments, When the routine done the job
+execution of the script is continued from next instruction - "AddSP 1" in our example, then the "Return" command should <B>stop</B>
+the script (note that it will only stop when the stack is <I>empty</I> which means there is no address we may return to).
+<P>
+Let's say that our "bizkit" procedure will count a power of a number.
+How would the actual routine look like? Before we will write it we must get to know of how to
+access function arguments within the routine. There are two special commands provided for this purpose.
+They are:
+<UL>
+<LI>PushArg - pushes routine argument on stack,</LI>
+<LI>PopArg - pops routine argument from stack.</LI>
+</UL>
+<STRONG>Do not mix <I>PopArg</I> up with providing arguments for routine.</STRONG>
+It's used aswell as the PushArg to read/write arguments <U>within</U> a routine.
+Index the arguments from 1 (not from 0). Remember also that EMC stack stores 16bit values only.
+There is no support for bigger numbers. OK, so how our route would it like then? Here's example implementation:
+<OL><PRE>
+<LI>PushArg  2</LI>
+<LI>Goto     <U>5</U></LI>
+<LI>PushArg  2</LI>
+<LI>Multiply</LI>
+<LI>PushArg  1</LI>
+<LI>Push     1</LI>
+<LI>Subtract</LI>
+<LI>PopArg   1</LI>
+<LI>PushArg  1</LI>
+<LI>False</LI>
+<LI>IfNotGo  <U>3</U></LI>
+<LI>PopRC</LI>
+<LI>Return</LI>
+</PRE></OL>
+Things begin to look messy here. But this function works. Don't try to call this routine with  a power lower or equal to zero.
+As an exercise you can try to modify it to handle such arguments. Another fine tool that make use of stack space are <I>local variables</I>.
+To use local variables first you must make space on stack using new <I>SubSP</I> instruction (as opposite to AddSP)
+<STRONG>Call SubSP always as your first command in a sub-routine</STRONG>
+or you'll encounter problems with accessing your variables. The stack space is also called as stack <I>frame</I>. Remember
+to retrieve stack space with AddSP on the <U>end</U> of the routine.
+Using the variables is similiar to routine arguments:
+<UL>
+<LI>PushVar - pushes variable on stack,</LI>
+<LI>PopVar - pops variable from stack.</LI>
+</UL>
+
+And one last note: remember to use the stack with care becasue very intensive use of it
+will result in stack <I>overflow</I>. Needless to say avoid overflow at all costs or unexpected things may happen. As a tip keep in mind that
+the actual stack size is only 16 values. Hurrah! You reached the end. I suggest that you look at <I>Appendice</I> also because it
+will give you the best start to make the <U>working</U> changes to script.
+</P>
+</BODY>
+</HTML>

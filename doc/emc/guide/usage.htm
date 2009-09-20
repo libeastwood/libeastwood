@@ -1,0 +1,28 @@
+<HTML>
+<HEAD>
+ <TITLE>EMC Encoder/Decoder Readme</TITLE>
+</HEAD>
+<BODY>
+<P ALIGN=Justify>
+<H1>How to use it?</H1>
+<FONT SIZE="+1">
+<HR>
+It's very easy to use these programs. They are designed to work in command-line environment
+but if you don't like it you can also make shortcuts for Windows which is very easy.
+The usage is simple, here's for decoder:
+<UL><LI><KBD>
+DEMC in >out</KBD></LI></UL>
+The ">" character is needed to redirect output because <I>demc</I> is using standard output (f.e. console).
+So if you wish to decode BUILD.EMC and store the output in BUILD.TXT just type:
+<UL><LI><KBD>
+DEMC <U>build.emc</U> ><U>build.txt</U></KBD></LI></UL>
+<I>Emcc</I> works in reverse way. It takes text file and saves it as EMC file. The usage is:
+<UL><LI><KBD>
+EMCC in out</KBD></LI></UL>
+So if you like to make a BUILD.EMC out of text file called NEW.TXT simply write:
+<UL><LI><KBD>
+EMCC <U>new.txt</U> <U>build.emc</U></KBD></LI></UL>
+<HR>
+</P>
+</BODY>
+</HTML>

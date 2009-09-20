@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+<TITLE>EMC Scripts Guide: Tier 1: Novice</TITLE>
+</HEAD>
+<BODY>
+<H1>Tier 1</H1>
+<P ALIGN=Justify>
+<H3>Stack and Math operations</H3>
+<P ALIGN=Justify>
+This is very basic term you need to know of to start the adventure with low-level EMC.
+Don't worry if you don't understand it the first time. You can also
+learn about it in various programming guidebooks. If you're familiar with
+it you can omit this section.
+<P ALIGN=Justify>
+<I>Stack</I> is organisation of data that accepts two basic types of operations:
+<UL>
+<LI><B>Push</B> value on stack</LI>
+<LI><B>Pop</B> value from stack</LI>
+</UL>
+The first one is used to store given value on top of the stack. Succesive
+values will be stored always on top of the stack. The second one removes
+element from top of the stack and retrieves its value.
+<P ALIGN=Justify>
+The basic rule of stack is: what you pushed the first will be popped as the last also known as FILO.
+The stack is used basically to remember the place in the script and retrieve
+it later (calling sub-routines) and also in calculating math expressions.
+Additionally stack provides some space for data which can be used as
+a space for function arguments or local variables.
+I guess that this sounds terrible but be patient. I will try to describe
+these terms one by one across the guide.
+<P ALIGN=Justify>
+There are several commands to work on stack in EMC, but let's start from
+most simple:
+<UL>
+<LI>Push - this one pushes 16bit signed value on stack,</LI>
+<LI>Eval - performs math or logic operation on two values on stack,</LI>
+<LI>False, Neg, Not - performs negation on value on stack, appropriately:
+boolean, arithmetic and bitwise.</LI>
+</UL>
+With these commands you can calculate almost everything. The types of
+math operations are add, subtract, multiply and divide.
+Note that the <I>Eval</I> will <B>pop</B> two values from the stack,
+perform an action, then <B>push</B> the result. The <I>False, Neg, Not</I>
+works on one value only.
+This part of script adds two numbers: 450 and 125.
+Note that I use operation name instead of <I>Eval</I> in this guide.
+<OL><CODE>
+<LI>Push  450</LI>
+<LI>Push  125</LI>
+<LI>Add</LI>
+</CODE></OL>
+<P ALIGN=Justify>
+This one calculates more complicated phrase: <CODE>(60 * 5) / (10 + 5)</CODE>
+<OL><CODE>
+<LI>Push  60</LI>
+<LI>Push  5</LI>
+<LI>Multiply</LI>
+<LI>Push  10</LI>
+<LI>Push  5</LI>
+<LI>Add</LI>
+<LI>Divide</LI>
+</CODE></OL>
+In this example division is performed on <U>results</U> of previous operations.
+Note that you must provide arguments in reverse order because of the FILO rule (add, multiply
+are simetric).
+Simply? If so you can proceed to next section. If not then don't worry.
+This guide is too small to provide all important informations. You could refer to any
+programming book or wait for high-level compiler for EMC...
+</P>
+</BODY>
+</HTML>

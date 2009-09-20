@@ -1,0 +1,147 @@
+<HTML>
+<HEAD>
+<TITLE>EMC Scripts Guide: Appendice</TITLE>
+</HEAD>
+<BODY>
+<H1>Appendice</H1>
+<P ALIGN=Justify>
+<H3>Global variables</H3>
+This section is created for fast reference to available external
+procedures and global variables. However the second term wasn't explained yet.
+Once you read <I>Tier 3</I> you should be familiar with variables. They act
+exactly like variables expect one thing: <STRONG>There are only 5 global registers
+given to the object. They are indexed from 0 to 4.</STRONG> There is an exception but
+read <I>Cheats</I> section in that case. The global registers have special meaning
+and cannot be used as temporary variables. To access them call either:
+<UL>
+<LI>PushReg - pushes global register on stack, or</LI>
+<LI>PopReg - pops global register from stack</LI>
+</UL>
+For now I know very few of them but they aren't used especially often in the BUILD.EMC.
+<UL>
+<LI>Reg 0 - If set to <B>1</B> the building has been <B>destroyed.</B></LI>
+<LI>Reg 4 - Contains <B>ID</B> of the unit that is <B>attached</B> or zero</LI>
+</UL>
+<A NAME="Part2"><H3>Reference for external routines</H3></A>
+Below you will find all the info that is needed to use them ie. <B>arguments</B> and the <B>return code</B>,
+how they work and where to use them.
+<DL>
+<DT>Delay()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>number of ticks</B> where one tick is 1/60 of second in ideal environment.</LI>
+	<LI>Delays the script for some time while no command is executed.</LI>
+</UL></DD>
+<DT>Reveal()</DT>
+<DD><UL>
+	<LI>Reveals the terrain around structure.</LI>
+</UL></DD>
+<DT>Explode()</DT>
+<DD><UL>
+	<LI>Shows explode animation. Does not hurt the building.</LI>
+</UL></DD>
+<DT>Destroy()</DT>
+<DD><UL>
+	<LI>Destroys building. Also stops the script.</LI>
+</UL></DD>
+<DT>Text()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>text number</B> to use and <B>3 arguments</B> that replace % entries.</LI>
+	<LI>Shows text. Note that the text must be in <U>TEXT</U> chunk of EMC file (not supported by version 1.0 of emcc).</LI>
+</UL></DD>
+<DT>PlaySfx()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>sound number</B> to play.</LI>
+	<LI>Plays sound effect. Note that some sound numbers have special meaning.</LI>
+</UL></DD>
+<DT>SetFrame()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>state number</B> to set.</LI>
+	<LI>Sets state number (aka frame). What is this? Here's a brief answer:
+	<UL>
+		<LI>If set to <B>-1</B> means buildup frame (displayed when the building is placed).</LI>
+		<LI>If set to <B>0</B> means normal frame.</LI>
+		<LI>If set to <B>1</B> means f.e. unit is heading to structure.</LI>
+		<LI>If set to <B>2</B> means unit is in structure.</LI>
+	</UL>
+</UL></DD>
+<DT>GetFrame()</DT>
+<DD><UL>
+	<LI><U>Output</U>: <B>state number</B>.</LI>
+	<LI>Gets current state number. Used to obtain the state of the structure.</LI>
+</UL></DD>
+<DT>RefineSpice()</DT>
+<DD><UL>
+	<LI><U>Output</U>: returns <B>TRUE</B> if the harvester is empty.</LI>
+	<LI>Refines 1% of cargo. Use this in loop to obtain whole cargo.</LI>
+</UL></DD>
+<DT>GetTarget()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>range</B> of the turret. to calc this argument multiply 256 by number of cells.</LI>
+	<LI><U>Output</U>: <B>ID</B> of the unit found or zero.</LI>
+	<LI>Seeks target for the turret in specified range.</LI>
+</UL></DD>
+<DT>GetAngle()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>ID</B> of the unit.</LI>
+	<LI><U>Output</U>: <B>angle</B> between turret and the target.</LI>
+	<LI>Returns the angle between turret and the target.</LI>
+</UL></DD>
+<DT>SetAngle()</DT>
+<DD><UL>
+	<LI><U>Input</U>: destiny <B>angle</B>.</LI>
+	<LI><U>Output</U>: returns <B>TRUE</B> if the target is aimed.</LI>
+	<LI>Rotates the turret a bit. Use this in loop with short delays (f.e. 60 ticks) to aim the target.</LI>
+</UL></DD>
+<DT>ShootTarget()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>ID</B> of the unit to shoot, obtained by GetTarget().</LI>
+	<LI>Shoots at target. The turret should already aim the target.</LI>
+</UL></DD>
+<DT>Attach()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>Type</B> of the unit, 0 for Carryall.</LI>
+	<LI><U>Outpur</U>: <B>ID</B> of the unit.</LI>
+	<LI>Finds the unit of that type. If the structure is surrounded
+	and there is no unit of that type, new one is created.
+	Note: you <U>must</U> store the return code in global register 4, to actually
+	attach this unit. Attached unit will head to the structure.</LI>
+</UL></DD>
+<DT>Disattach()</DT>
+<DD><UL>
+	<LI><U>Input</U>: <B>ID</B> of the unit.</LI>
+	<LI>As opposite to above it disattaches the unit. Call this when attached
+	unit is no longer needed.</LI>
+</UL></DD>
+<DT>Deploy()</DT>
+<DD><UL>
+	<LI>Deploys unit from structure (factory, repair facility or refinery).</LI>
+</DD></UL>
+<DT>VerifyAtch()</DT>
+<DD><UL>
+	<LI><U>Output</U>: <B>ID</B> of attached unit that is heading to structure.</LI>
+	<LI>This can be used to obtain ID of attached unit and also to remove obsolete attachments.
+	Note: you can obtain ID of attached unit also by accessing global register 4.</LI>
+</UL></DD>
+</DL>
+The best method to get to know how to use these procedures is to check the original script.
+For example to get units back on battlefield from Repair Facility without need to surround the structure
+you can copy part of script from refinery (Harvesters are always picked-up first). The main issue
+is to replace Deploy() and Attach() call order.
+<A NAME="Part3"><H3>Cheats</h3></A>
+Yes. EMC has some features that are illegal to use, but very powerful.
+Note that it's risky to use them because it will affect private data that are used
+elsewhere within the game. All cheats are based on fact that the place when global registers are stored
+is located close to other data related to the object and the register position is obtained on <U>offset</U>.
+So you can give some special values to Push/PopReg in order to access them. They are:
+<UL>
+<LI>-15 - index of object</LI>
+<LI>-14 - type of object</LI>
+<LI>-13 - flags of object</LI>
+<LI>-11 - house of object (higher byte)</LI>
+<LI>-10 - Y position in pixels</LI>
+<LI>-9 - X position in pixels</LI>
+<LI>-8 - hitpoints (dmg)</LI>
+</UL>
+</P>
+</BODY>
+</HTML>

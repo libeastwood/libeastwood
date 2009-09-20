@@ -1,0 +1,106 @@
+<HTML>
+<HEAD>
+ <TITLE>EMC Scripts Guide: Tier 2: Expert</TITLE>
+</HEAD>
+<BODY>
+<H1>Tier 2</H1>
+<H3>External proceduress and Return code</H3>
+<P ALIGN=Justify>
+
+EMC Script would be only an expanded calculator without external procedures.
+They're performing tasks related to the object that can not be complete using pure EMC.
+<STRONG>Note that EMC is only language interpreted by Dune 2 itself, not the program executed by CPU.</STRONG>
+<P>What the <U>BUILD.EMC</U> provides? Here's an anwer: You can:
+<UL>
+ <LI>Provide relations with unit (deploying it, lifting it etc.)
+ <UL>
+  <LI><B>Attach</B> an unit (<B>Carryall</B>) to the structure.</LI>
+  <LI><B>Disattach</B> this unit.</LI>
+  <LI><B>Check</B> whether ther's an unit (<B>Carryall</B>) attached.</LI>
+  <LI><B>Deploy</B> unit from structure.</B></LI>
+ </UL>
+ <LI>Reading and writing state of the structure.</LI>
+ <UL>
+  <LI><B>Set State</B> of the structure.</LI>
+  <LI><B>Get State</B> of the structure.</LI>
+ </UL>
+ <LI>Full control of turrets.</LI>
+ <UL>
+  <LI><B>Seek Target</B> for the turret in specified range.</LI>
+  <LI><B>Get Angle</B> between turret and its target.</LI>
+  <LI><B>Rotate</B> the turret.</LI>
+  <LI><B>Shoot Target</B>.</LI>
+ </UL>
+ <LI>Refinery stuff.</LI>
+ <UL>
+  <LI><B>Get Money</B> from the harvester.</LI>
+ </UL>
+ <LI>Some common used features.</LI>
+ <UL>
+  <LI><B>Delay</B> the script for some time.</LI>
+  <LI><B>Reveal</B> terrain around structure.</LI>
+  <LI>Show animation of <B>Explosion</B>.</LI>
+  <LI><B>Destroy</B> the structure.</LI>
+ </UL>
+ <LI>Finally some special features.</LI>
+ <UL>
+  <LI><B>Display Text</B> on screen.</LI>
+  <LI><B>Play Sound</B> effect.</LI>
+ </UL>
+</UL>
+
+<P>
+As far as I know the <U>UNIT.EMC</U> can control many more behaviors of the units. For example if
+the unit is requested to move the script's responsible to move that unit etc.
+However I am not competent to provide more informations.
+<P>
+OK. How to call the external routine? Here's an example script
+<CODE><OL>
+<LI>Push   60</LI>
+<LI>Exec   Delay()</LI>
+<LI>AddSP  1</LI>
+</OL></CODE>
+This piece of code should delay the script for about one second (it's dependent on game speed).
+You're wondering what the Push and AddSP are doing here?
+<I>Push</I> provides the <B>arguments</B> for a routines. The routine will access those
+arguments by looking on the stack (more about it in next section).
+But it <B>won't pop</B> this values. So we must do it manually.
+<I>AddSP</I> will do it for us. It retrieves the stack space just by adding desired number
+to <B>stack pointer (SP)</B>. (Note that the stack grows in up direction so Push will
+<U>decrease</U> this pointer). Remember that you must still obey FILO rule that forces
+you to push arguments in reverse order.
+<P>
+In most cases the function will return a value called <B>return code</B> (RC).
+This can be for example information whether the harvester is empty after we flushed whole cargo.
+There are special functions provided to access return code. They are:
+<UL>
+<LI>PushRC - pushes return code on stack,</LI>
+<LI>PopRC - pops return code from the stack,</LI>
+<LI>SetRC - allows manually set the return code with <I>constant</I> number.</LI>
+</UL>
+</P>
+<A NAME="Part2"><H3>Jumps, Loops and Condition codes</H3></A>
+<P>
+To immediately jump from one place in script to another you can use <I>Goto</I> command.
+As argument put the name of the label of the desired place. Additionally you can make a <B>condition</B>
+upon which the jump is performed. How this works? If the last value on stack is <U>equal to zero</U>
+the script continues from the specified label. In another case nothing happens.
+Note that the <I>Eval</I> command can calculate boolean expressions. This means that there is almost
+infinite number of possible conditions.
+<P>
+Let's look at the example which contains both usage of external procedures, return code and condition codes.
+This piece of script is taken from original BUILD.EMC. It's the part of the script of Refinery
+responsible on refining spice:
+<OL><CODE>
+<LI>Exec     RefineSpice() ; refine one percent of cargo</LI>
+<LI>PushRC</LI>
+<LI>IfNotGo  <U>5</U> ; exit loop if harvester is empty</LI>
+<LI>Goto     <U>1</U> ; if not continue</LI>
+<LI>...</LI>
+</CODE></OL>
+Note that there is no need to retrieve stack space because <I>IfNotGo</I> (you can call this also ElseGo or whatever)
+<B>do pop</B> the value from stack. Clear to a degree? If so you can say about
+yourself as an expert. However to achieve master rank you must read <I>Tier 3</I> aswell ;).
+</P>
+</BODY>
+</HTML>
