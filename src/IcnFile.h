@@ -70,7 +70,7 @@ public:
 	Returns the number of tiles in the icn-File.
     @return	Number of tiles
 */
-	inline int size() {
+	inline uint16_t size() {
 	    return (_SSET != NULL) ? _SSET->size() / ((_width * _height) / 2) : 0;
 	}
 	
