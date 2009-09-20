@@ -1,6 +1,8 @@
 #ifndef EASTWOOD_SOUND_H
 #define EASTWOOD_SOUND_H
 
+#include <ostream>
+
 namespace eastwood {
 
 enum AudioFormat { 
@@ -30,6 +32,7 @@ class Sound
 	virtual ~Sound();
 
 	Sound getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator = I_LINEAR);
+	void saveWAV(std::ostream &output);
 
     protected:
 	template <typename T>

@@ -4,11 +4,28 @@
 #include "StdDef.h"
 #include "Sound.h"
 
+#include "OStream.h"
 #include "Exception.h"
 
 #define NUM_SAMPLES_OF_SILENCE 250
 
 namespace eastwood {
+
+struct waveHeader {
+    char riffMagic[4];
+    uint32_t riffSize;
+    char waveMagic[4];
+    char fmtMagic[4];
+    uint32_t fmtSize;
+    uint16_t formatTag;
+    uint16_t channels;
+    uint32_t frequency;
+    uint32_t avgBytesPerSec;
+    uint16_t blockAlign;
+    uint16_t bits;
+    char dataMagic[4];
+    uint32_t dataSize;
+};
 
 Sound::Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format) :
     _size(size), _buffer(buffer), _channels(channels), _frequency(frequency), _format(format)
@@ -150,6 +167,53 @@ Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat form
     delete [] targetDataFloat;
 
     return sound;
+}
+
+void Sound::saveWAV(std::ostream &output)
+{
+    OStream &os(const_cast<OStream&>(reinterpret_cast<const OStream&>(output)));
+
+    bool bigEndian = (_format >> 12) == 9;
+    waveHeader header = {
+	{'R', 'I', 'F', bigEndian ? 'X' : 'F'},
+	_size+sizeof(waveHeader)-sizeof(offsetof(waveHeader, riffSize)),
+	{'W', 'A', 'V', 'E'},
+	{'f', 'm', 't', ' '},
+	16,
+	0x0001U,
+	_channels,
+	_frequency,
+	(double)(_channels * _frequency+1) / (double) 1 + 0.5,
+	_channels * ((_format & ((1<<8)-1))>>3),
+	_format & ((1<<8)-1),
+	{'d', 'a', 't', 'a'},
+	_size
+    };
+    
+    os.write((char*)&header.riffMagic, sizeof(header.riffMagic));
+    bigEndian ? os.putU32BE(header.riffSize) : os.putU32LE(header.riffSize);
+    os.write((char*)&header.waveMagic, sizeof(header.waveMagic));
+    os.write((char*)&header.fmtMagic, sizeof(header.fmtMagic));
+    if(bigEndian) {
+	os.putU32BE(header.fmtSize);
+	os.putU16BE(header.formatTag);
+	os.putU16BE(header.channels);
+	os.putU32BE(header.frequency);
+	os.putU32BE(header.avgBytesPerSec);
+	os.putU16BE(header.blockAlign);
+	os.putU16BE(header.bits);
+    } else {
+	os.putU32LE(header.fmtSize);
+	os.putU16LE(header.formatTag);
+	os.putU16LE(header.channels);
+	os.putU32LE(header.frequency);
+	os.putU32LE(header.avgBytesPerSec);
+	os.putU16LE(header.blockAlign);
+	os.putU16LE(header.bits);
+    }
+    os.write((char*)&header.dataMagic, sizeof(header.dataMagic));
+    bigEndian ? os.putU32BE(header.dataSize) : os.putU32LE(header.dataSize);    
+    os.write((char*)_buffer, _size);
 }
 
 }
