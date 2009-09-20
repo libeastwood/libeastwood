@@ -15,9 +15,9 @@ class MixerSound : public Sound
 	MixerSound(const eastwood::Sound &sound);
 	virtual ~MixerSound();
 
-	MixerSound getResampled(Interpolator interpolator = I_LINEAR);
+	MixerSound* getResampled(Interpolator interpolator = I_LINEAR);
 
-	Mix_Chunk *get();
+	Mix_Chunk* get();
 
 };
 

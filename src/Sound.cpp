@@ -79,7 +79,7 @@ void Sound::getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t s
     }
 }
 
-Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator) {
+Sound* Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator) {
     size_t size;
     uint32_t targetSamples,
 	     targetSamplesFloat;
@@ -88,7 +88,7 @@ Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat form
 	  *dataFloat,
 	  *targetDataFloat;
     int32_t silenceLength;
-    Sound sound(0, NULL, channels, frequency, format);
+    Sound *sound = new Sound(0, NULL, channels, frequency, format);
     SRC_DATA src_data;
 
     size = (_size+2*NUM_SAMPLES_OF_SILENCE)-1;
@@ -136,27 +136,27 @@ Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat form
 
     switch(format) {
     case FMT_U8:
-	getSound<uint8_t>(sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint8_t>(*sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S8:
-	getSound<int8_t>(sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<int8_t>(*sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16LE:
-	getSound<uint16_t>(sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16LE:
-	getSound<int16_t>(sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<int16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16BE:
-	getSound<uint16_t>(sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16BE:
-	getSound<int16_t>(sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<int16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
 	break;
     default:
 	throw Exception(LOG_ERROR, "Sound", "Invalid format");

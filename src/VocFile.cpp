@@ -234,8 +234,8 @@ void VocFile::parseVocFormat() {
 	}
 }
 
-Sound VocFile::getSound()
+Sound* VocFile::getSound()
 {
-    return Sound(_size, _buffer, _channels, _frequency, _format);
+    return new Sound(_size, _buffer, _channels, _frequency, _format);
 }
 }
