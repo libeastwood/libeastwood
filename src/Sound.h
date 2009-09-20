@@ -12,7 +12,7 @@ enum AudioFormat {
     FMT_S16LE	= 0x8010,
     FMT_U16BE	= 0x1010,
     FMT_S16BE	= 0x9010,
-    FMT_INVALID	= -1
+    FMT_INVALID	= (uint16_t)-1
 };
 
 enum Interpolator
