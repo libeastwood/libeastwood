@@ -94,5 +94,8 @@ initpyeastwood(void)
     PyModule_AddIntConstant(module, "TILE_FLIPV", TILE_FLIPV);
     PyModule_AddIntConstant(module, "TILE_ROTATE", TILE_ROTATE);
 
+    PyModule_AddIntConstant(module, "MISSION_DESCRIPTION", MISSION_DESCRIPTION);
+    PyModule_AddIntConstant(module, "MISSION_WIN", MISSION_WIN);
+    PyModule_AddIntConstant(module, "MISSION_LOSE", MISSION_LOSE);
+    PyModule_AddIntConstant(module, "MISSION_ADVICE", MISSION_ADVICE);
 }
-
