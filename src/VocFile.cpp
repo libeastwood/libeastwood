@@ -35,7 +35,8 @@ enum VocCode {
     VOC_CODE_LOOPBEGIN,
     VOC_CODE_LOOPEND,
     VOC_CODE_EXTENDED,
-    VOC_CODE_DATA_16
+    VOC_CODE_DATA_16,
+    VOC_CODE_INVALID
 };
 
 struct VocFileHeader {
@@ -136,7 +137,7 @@ Sound* VocFile::getSound()
 	     vocBeginLoop = 0,
 	     vocEndLoop = 0;
     AudioFormat format = FMT_INVALID;
-    VocCode code;
+    VocCode code = VOC_CODE_INVALID;
 
 
     _stream.seekg(sizeof(VocFileHeader), std::ios::beg);
