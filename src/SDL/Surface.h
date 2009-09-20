@@ -8,6 +8,9 @@
 
 namespace eastwood { namespace SDL {
 
+//TODO: need to do way better...
+SDL_Palette* convertPalette(eastwood::Palette palette);
+
 class Surface : public eastwood::Surface
 {
     public:

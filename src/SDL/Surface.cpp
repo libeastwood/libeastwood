@@ -6,6 +6,24 @@
 
 namespace eastwood { namespace SDL {
 
+SDL_Palette* convertPalette(eastwood::Palette *palette)
+{    
+    SDL_Palette *newPalette = new SDL_Palette;
+
+    newPalette->ncolors = sizeof(*palette)/sizeof(*palette[0]);
+
+    newPalette->colors = new SDL_Color[newPalette->ncolors];
+
+    for (int i = 0; i < newPalette->ncolors; i++){
+	newPalette->colors[i].r = palette[i]->r;
+	newPalette->colors[i].g = palette[i]->g;
+	newPalette->colors[i].b = palette[i]->b;
+	newPalette->colors[i].unused = 0;
+    }
+
+    return newPalette;
+}
+
 Surface::Surface(const eastwood::Surface& surface) : eastwood::Surface(surface)
 {
 }
@@ -35,20 +53,7 @@ Surface::~Surface()
 
 ::SDL_Palette *Surface::getPalette()
 {
-    ::SDL_Palette *palette = new ::SDL_Palette;
-
-    palette->ncolors = sizeof(*_palette)/sizeof(*_palette[0]);
-
-    palette->colors = new ::SDL_Color[palette->ncolors];
-
-    for (int i = 0; i < palette->ncolors; i++){
-	palette->colors[i].r = _palette[i]->r;
-	palette->colors[i].g = _palette[i]->g;
-	palette->colors[i].b = _palette[i]->b;
-	palette->colors[i].unused = 0;
-    }
-
-    return palette;
+    return convertPalette(_palette);
 }
 
 }}
