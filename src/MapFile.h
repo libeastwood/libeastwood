@@ -13,7 +13,7 @@ class MapFile
 	MapFile(const std::istream &stream);
 	virtual ~MapFile();
 
-	std::vector<uint16_t>& operator[] (uint16_t i) { return (*_tileSet)[i]; }
+	std::vector<uint16_t>& operator[] (uint16_t i) { return _tileSet->at(i); }
 
 	/*!
 	  Returns the number of tileSets in the map-File.
