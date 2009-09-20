@@ -21,7 +21,8 @@ enum Interpolator
     I_SINC_MEDIUM_QUALITY	= 1,
     I_SINC_FASTEST		= 2,
     I_ZERO_ORDER_HOLD		= 3,
-    I_LINEAR			= 4
+    I_LINEAR			= 4,
+    I_INVALID			= -1
 };
 
 class Sound
