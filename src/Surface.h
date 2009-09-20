@@ -35,7 +35,7 @@ class Surface {
 
 	bool scalePrecondition(Scaler scale);
 	Surface* getScaled(Scaler scale);
-	bool SaveBMP(std::ostream &output);
+	bool saveBMP(std::ostream &output);
 	inline Point size() {
 	    Point point = { _width, _height };
 	    return point;

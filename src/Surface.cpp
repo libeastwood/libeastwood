@@ -86,7 +86,7 @@ Surface* Surface::getScaled(Scaler scaler)
     return scaled;
 }
 
-bool Surface::SaveBMP(std::ostream &output)
+bool Surface::saveBMP(std::ostream &output)
 {
     uint32_t fp_offset;
     uint8_t *bits;

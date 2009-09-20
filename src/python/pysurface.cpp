@@ -57,7 +57,7 @@ Surface_saveBMP(Py_Surface *self, PyObject *args)
 	return NULL;
 
     std::ofstream out(fileName);
-    self->surface->SaveBMP(out);
+    self->surface->saveBMP(out);
     out.close();
  
     Py_RETURN_TRUE;
