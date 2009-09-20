@@ -22,9 +22,9 @@ public:
 	IcnFile(const std::istream &stream, MapFile &map, Palette *palette);
 	~IcnFile();
 
-	Surface getSurface(int IndexOfFile);
+	Surface getSurface(uint16_t IndexOfFile);
 
-	Surface getTiles(int index, bool frameByFrame = true);
+	Surface getTiles(uint16_t index, bool frameByFrame = true);
 
 /// Returns an array of pictures in the icn-File
 /*!
@@ -76,7 +76,7 @@ public:
 	
 private:
 	void readHeader();
-	void createImage(int index, uint8_t *dest, uint16_t pitch);
+	void createImage(uint16_t index, uint8_t *dest, uint16_t pitch);
 	MapFile &_map;
 
 	std::vector<uint8_t>	*_SSET, // Structure Set Block

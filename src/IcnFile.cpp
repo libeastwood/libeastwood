@@ -78,7 +78,7 @@ void IcnFile::readHeader()
 
 }
 
-void IcnFile::createImage(int index, uint8_t *dest, uint16_t pitch)
+void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 {
     uint8_t *paletteStart = &(*_RPAL)[(*_RTBL)[index] << 4],
 	    *fileStart = &(*_SSET)[(index * ((_width * _height)>>1))];
@@ -92,7 +92,7 @@ void IcnFile::createImage(int index, uint8_t *dest, uint16_t pitch)
 
 }
 
-Surface IcnFile::getSurface(int index)
+Surface IcnFile::getSurface(uint16_t index)
 {
     Surface pic(_width, _height, 8, _palette);
 
@@ -103,7 +103,7 @@ Surface IcnFile::getSurface(int index)
     return pic;
 }
 
-Surface IcnFile::getTiles(int index, bool frameByFrame)
+Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
 {
     std::vector<uint16_t> &row = _map[index];
 
