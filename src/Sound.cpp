@@ -171,6 +171,7 @@ void Sound::saveWAV(std::ostream &output)
     OStream &os(const_cast<OStream&>(reinterpret_cast<const OStream&>(output)));
 
     bool bigEndian = _format & (1<<12);
+    bool isSigned = _format >> 15;
 
     waveHeader header = {
 	{'R', 'I', 'F', bigEndian ? 'X' : 'F'},
@@ -213,7 +214,7 @@ void Sound::saveWAV(std::ostream &output)
     bigEndian ? os.putU32BE(header.dataSize) : os.putU32LE(header.dataSize);    
     // PCM requires data to be unsigned for 8 bit and signed for 16, so if not,
     // we need to convert it
-    if((header.bits == 8 && _format & (1<<15)) || (header.bits == 16 && _format >> 15)) {
+    if((header.bits == 8 && isSigned) || (header.bits == 16 && !isSigned)) {
 	for(uint32_t i = 0; i < _size; i++)
 	    os.put(_buffer[i] ^ (1<<7));
     } else
