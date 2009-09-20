@@ -55,6 +55,7 @@ IcnFile_dealloc(Py_IcnFile *self)
     delete self->icnFile;
     delete self->stream;
     Py_XDECREF(self->palFile);
+    Py_XDECREF(self->mapFile);
 }
 
 static PyObject *
