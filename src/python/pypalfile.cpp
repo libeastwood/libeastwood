@@ -19,14 +19,14 @@ PalFile_init(Py_PalFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "s*", &pdata))
 	return -1;
 
-    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
-    if(!self->stream->good()) {
+    std::istream stream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
+    if(!stream.good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
 	PyBuffer_Release(&pdata);	
     	return -1;
     }
 
-    self->palFile = new PalFile(*self->stream);
+    self->palFile = new PalFile(stream);
 
     PyBuffer_Release(&pdata);	
     return 0;
@@ -36,7 +36,6 @@ static void
 PalFile_dealloc(Py_PalFile *self)
 {
     delete self->palFile;
-    delete self->stream;
 }
 
 PyTypeObject PalFile_Type = {
