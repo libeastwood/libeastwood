@@ -60,7 +60,7 @@ PakFile_open(Py_PakFile *self, PyObject *args)
     self->pakFile->open(fileName);
     self->fileSize = self->pakFile->size();
     self->mode = MODE_READ;
-    return Py_True;
+    Py_RETURN_TRUE;
 }
 
 static PyObject *

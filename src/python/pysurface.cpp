@@ -41,7 +41,7 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
 
     //TODO: throw exception
     if(!self->surface->scalePrecondition(scaler))
-	return Py_None;
+	return NULL;
     scaled = self->surface->getScaled(scaler);
 
     return Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(scaled), NULL);
@@ -60,7 +60,7 @@ Surface_saveBMP(Py_Surface *self, PyObject *args)
     self->surface->SaveBMP(out);
     out.close();
  
-    return Py_True;
+    Py_RETURN_TRUE;
 }
 
 
