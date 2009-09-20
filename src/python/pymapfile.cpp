@@ -15,12 +15,6 @@
 
 using namespace eastwood;
 
-struct Py_MapFile {
-    PyObject_HEAD
-    MapFile *mapFile;
-    uint16_t size;
-};
-
 static int
 MapFile_init(Py_MapFile *self, PyObject *args)
 {
