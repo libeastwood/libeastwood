@@ -6,7 +6,6 @@
 struct Py_Sound {
     PyObject_HEAD
     eastwood::Sound *sound;
-    PyObject *size;
 };
 
 extern PyTypeObject Sound_Type;

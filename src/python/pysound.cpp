@@ -69,11 +69,6 @@ static PyMethodDef Sound_methods[] = {
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
-static PyMemberDef Sound_members[] = {
-    {const_cast<char*>("size"), T_OBJECT, offsetof(Py_Sound, size), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
-};
-
 PyTypeObject Sound_Type = {
     PyObject_HEAD_INIT(NULL)
     0,						/*ob_size*/
@@ -104,7 +99,7 @@ PyTypeObject Sound_Type = {
     0,						/*tp_iter*/
     0,						/*tp_iternext*/
     Sound_methods,				/*tp_methods*/
-    Sound_members,				/*tp_members*/
+    0,						/*tp_members*/
     0,						/*tp_getset*/
     0,                      			/*tp_base*/
     0,                      			/*tp_dict*/
