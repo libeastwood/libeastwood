@@ -15,12 +15,12 @@
 
 using namespace eastwood;
 
+
 static int
 ShpFile_init(Py_ShpFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    PyObject *palFile = NULL;
-    if (!PyArg_ParseTuple(args, "s*O", &pdata, &palFile))
+    if (!PyArg_ParseTuple(args, "s*O", &pdata, &self->palFile))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
@@ -29,12 +29,13 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
 	PyBuffer_Release(&pdata);
     	return -1;
     }
-    if(!PyObject_TypeCheck(palFile, &PalFile_Type)) {
-	PyErr_SetString(PyExc_TypeError, "Third argument must be a PalFile object");
+    if(!PyObject_TypeCheck(self->palFile, &PalFile_Type)) {
+	PyErr_SetString(PyExc_TypeError, "Second argument must be a PalFile object");
 	return -1;
     }
 
-    self->shpFile = new ShpFile(*self->stream, ((Py_PalFile*)palFile)->palette);
+    Py_INCREF(self->palFile);
+    self->shpFile = new ShpFile(*self->stream, ((Py_PalFile*)self->palFile)->palette);
     self->size = self->shpFile->size();
 
     PyBuffer_Release(&pdata);
@@ -46,6 +47,7 @@ ShpFile_dealloc(Py_ShpFile *self)
 {
     delete self->shpFile;
     delete self->stream;
+    Py_XDECREF(self->palFile);
 }
 
 static PyObject *

@@ -10,6 +10,8 @@ struct Py_IcnFile {
     PyObject_HEAD
     std::istream *stream;
     eastwood::IcnFile *icnFile;
+    PyObject *mapFile,
+	     *palFile;
     uint16_t size;
 };
 
