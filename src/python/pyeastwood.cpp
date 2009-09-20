@@ -8,8 +8,10 @@
 #include "pypakfile.h"
 #include "pypalfile.h"
 #include "pyshpfile.h"
+#include "pysound.h"
 #include "pystringfile.h"
 #include "pysurface.h"
+#include "pyvocfile.h"
 
 using namespace eastwood;
 
@@ -46,11 +48,17 @@ initpyeastwood(void)
     if (PyType_Ready(&ShpFile_Type) < 0)
 	return;
 
+    if (PyType_Ready(&Sound_Type) < 0)
+	return;
+
     if (PyType_Ready(&StringFile_Type) < 0)
 	return;
 
     if (PyType_Ready(&Surface_Type) < 0)
 	return;
+
+    if (PyType_Ready(&VocFile_Type) < 0)
+	return;    
 
     module = Py_InitModule("pyeastwood", pyeastwood_methods);
     if (module == NULL)
@@ -74,11 +82,18 @@ initpyeastwood(void)
     Py_INCREF(&ShpFile_Type);
     PyModule_AddObject(module, "ShpFile", (PyObject *)&ShpFile_Type);
 
+    Py_INCREF(&Sound_Type);
+    PyModule_AddObject(module, "Sound", (PyObject *)&Sound_Type);
+    
     Py_INCREF(&StringFile_Type);
     PyModule_AddObject(module, "StringFile", (PyObject *)&StringFile_Type);
 
     Py_INCREF(&Surface_Type);
     PyModule_AddObject(module, "Surface", (PyObject *)&Surface_Type);
+
+    Py_INCREF(&VocFile_Type);
+    PyModule_AddObject(module, "VocFile", (PyObject *)&VocFile_Type);
+
 
     PyModule_AddObject(module, "__author__", PyString_FromString(__author__));
 
@@ -98,4 +113,18 @@ initpyeastwood(void)
     PyModule_AddIntConstant(module, "MISSION_WIN", MISSION_WIN);
     PyModule_AddIntConstant(module, "MISSION_LOSE", MISSION_LOSE);
     PyModule_AddIntConstant(module, "MISSION_ADVICE", MISSION_ADVICE);
+
+    PyModule_AddIntConstant(module, "I_SINC_BEST_QUALITY", I_SINC_BEST_QUALITY);
+    PyModule_AddIntConstant(module, "I_SINC_MEDIUM_QUALITY", I_SINC_MEDIUM_QUALITY);
+    PyModule_AddIntConstant(module, "I_SINC_FASTEST", I_SINC_FASTEST);
+    PyModule_AddIntConstant(module, "I_ZERO_ORDER_HOLD", I_ZERO_ORDER_HOLD);
+    PyModule_AddIntConstant(module, "I_LINEAR", I_LINEAR);    
+
+    PyModule_AddIntConstant(module, "FMT_U8", FMT_U8);
+    PyModule_AddIntConstant(module, "FMT_S8", FMT_S8);
+    PyModule_AddIntConstant(module, "FMT_U16LE", FMT_U16LE);
+    PyModule_AddIntConstant(module, "FMT_S16LE", FMT_S16LE);
+    PyModule_AddIntConstant(module, "FMT_U16BE", FMT_U16BE);
+    PyModule_AddIntConstant(module, "FMT_S16BE", FMT_S16BE);
+
 }

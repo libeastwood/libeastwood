@@ -98,8 +98,10 @@ SET( PYEASTWOOD_SRCS
     python/pypakfile.cpp
     python/pypalfile.cpp
     python/pyshpfile.cpp
+    python/pysound.cpp
     python/pystringfile.cpp
     python/pysurface.cpp
+    python/pyvocfile.cpp
 )
 
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
