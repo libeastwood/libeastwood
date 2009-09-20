@@ -50,7 +50,6 @@ SET( LIBEASTWOOD_HEADERS
   IStream.h
   MapFile.h
   OStream.h
-  Log.h
   PakFile.h
   PalFile.h
   ShpFile.h
