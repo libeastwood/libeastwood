@@ -210,7 +210,13 @@ void Sound::saveWAV(std::ostream &output)
     }
     os.write((char*)&header.dataMagic, sizeof(header.dataMagic));
     bigEndian ? os.putU32BE(header.dataSize) : os.putU32LE(header.dataSize);    
-    os.write((char*)_buffer, _size);
+    // PCM requires data to be unsigned for 8 bit and signed for 16, so if not,
+    // we need to convert it
+    if((header.bits == 8 && _format & (1<<15)) || (header.bits == 16 && _format >> 15)) {
+	for(uint32_t i = 0; i < _size; i++)
+	    os.put(_buffer[i] ^ (1<<7));
+    } else
+    	os.write((char*)_buffer, _size);
 }
 
 }
