@@ -91,8 +91,9 @@ SET( EMC_INTERPRETER
 )
 
 SET( PYEASTWOOD_SRCS
-    python/pyeastwood.cpp
     python/pycpsfile.cpp
+    python/pyeastwood.cpp
+    python/pyicnfile.cpp
     python/pymapfile.cpp
     python/pypakfile.cpp
     python/pypalfile.cpp

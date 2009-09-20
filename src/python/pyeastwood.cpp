@@ -3,6 +3,7 @@
 #include "Surface.h"
 
 #include "pycpsfile.h"
+#include "pyicnfile.h"
 #include "pymapfile.h"
 #include "pypakfile.h"
 #include "pypalfile.h"
@@ -29,6 +30,9 @@ initpyeastwood(void)
     if (PyType_Ready(&CpsFile_Type) < 0)
 	return;
 
+    if (PyType_Ready(&IcnFile_Type) < 0)
+	return;
+
     if (PyType_Ready(&MapFile_Type) < 0)
 	return;
 
@@ -50,6 +54,9 @@ initpyeastwood(void)
 
     Py_INCREF(&CpsFile_Type);
     PyModule_AddObject(module, "CpsFile", (PyObject *)&CpsFile_Type);
+
+    Py_INCREF(&IcnFile_Type);
+    PyModule_AddObject(module, "IcnFile", (PyObject *)&IcnFile_Type);
 
     Py_INCREF(&MapFile_Type);
     PyModule_AddObject(module, "MapFile", (PyObject *)&MapFile_Type);
