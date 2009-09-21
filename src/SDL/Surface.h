@@ -8,18 +8,16 @@
 
 namespace eastwood { namespace SDL {
 
-//TODO: need to do way better...
-SDL_Palette* convertPalette(eastwood::Palette palette);
-
-class Surface : public eastwood::Surface
+class Surface : public SDL_Surface, public eastwood::Surface
 {
     public:
-	Surface(const eastwood::Surface& surface);
+	Surface(const eastwood::Surface& surface, uint32_t flags = SDL_HWSURFACE,
+		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0);
+	Surface(const SDL_Surface& surface);
 	virtual ~Surface();
 
-    	::SDL_Surface *get(uint32_t flags = SDL_HWSURFACE);
-	::SDL_Palette *getPalette();
-
+    private:
+	SDL_Surface *_surface;
 };
 
 }}

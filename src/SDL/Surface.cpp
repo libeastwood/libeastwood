@@ -6,54 +6,55 @@
 
 namespace eastwood { namespace SDL {
 
-SDL_Palette* convertPalette(eastwood::Palette *palette)
-{    
-    SDL_Palette *newPalette = new SDL_Palette;
+static SDL_Surface *tmp = NULL;
+Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
+	uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) :
+    SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, surface.size().x, surface.size().y, surface.bpp(), Rmask, Gmask, Bmask, Amask))),
+    eastwood::Surface(surface), _surface(tmp)
+{
+    free(pixels);
+    tmp = NULL;
+    pixels = _pixels;
 
-    newPalette->ncolors = sizeof(*palette)/sizeof(*palette[0]);
+#define ncolors sizeof(*_palette)/sizeof(*_palette[0])
+    SDL_Color colors[ncolors];
 
-    newPalette->colors = new SDL_Color[newPalette->ncolors];
-
-    for (int i = 0; i < newPalette->ncolors; i++){
-	newPalette->colors[i].r = palette[i]->r;
-	newPalette->colors[i].g = palette[i]->g;
-	newPalette->colors[i].b = palette[i]->b;
-	newPalette->colors[i].unused = 0;
+    for (uint16_t i = 0; i < ncolors; i++){
+	colors[i].r = _palette[i]->r;
+	colors[i].g = _palette[i]->g;
+	colors[i].b = _palette[i]->b;
+	colors[i].unused = 0;
     }
 
-    return newPalette;
+
+    SDL_SetColors(this, colors, 0, ncolors);
 }
 
-Surface::Surface(const eastwood::Surface& surface) : eastwood::Surface(surface)
+Surface::Surface(const SDL_Surface& surface) :
+    _surface(NULL)
 {
+    _bpp = format->BitsPerPixel;
+    _width = w;
+    _height = h;
+    _pitch = pitch;
+    _pixels = reinterpret_cast<uint8_t*>(pixels);
+
+    for (uint16_t i = 0; i < sizeof(*_palette)/sizeof(*_palette[0]); i++){
+	_palette[i]->r = surface.format->palette->colors[i].r;
+	_palette[i]->g = surface.format->palette->colors[i].g;
+	_palette[i]->b = surface.format->palette->colors[i].b;
+    }
 }
+
 
 Surface::~Surface()
 {
-}
-
-::SDL_Surface *Surface::get(uint32_t flags)
-{
-    ::SDL_Surface *surface;
-    if((surface = SDL_CreateRGBSurface(flags, _width, _height, _bpp, 0, 0, 0, 0))== NULL)
-	throw(Exception(LOG_ERROR, "SDL::Surface", "Unable to create SDL_Surface"));
-
-    ::SDL_LockSurface(surface);
-
-    memcpy(surface->pixels, _pixels, _pitch * _height);
-
-    ::SDL_UnlockSurface(surface);
-
-    ::SDL_Palette *palette = getPalette();
-
-    ::SDL_SetColors(surface, palette->colors, 0, palette->ncolors);
-    return surface;
-}
-
-
-::SDL_Palette *Surface::getPalette()
-{
-    return convertPalette(_palette);
+    if(_surface) {
+    	// This (which actually is pointing to the same are as _pixels) will be
+	// freed in parent destructor
+	_surface->pixels = NULL;
+	SDL_FreeSurface(_surface);
+    }
 }
 
 }}
