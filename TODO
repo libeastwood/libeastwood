@@ -15,3 +15,4 @@ Less urgent:
 * Move seed generator from doonlunacy to this library
 * Rewrite Font class?
 * Add support for MIDI SFX
+* Do better for conversion to ie. SDL::Surface etc.?
