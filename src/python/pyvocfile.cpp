@@ -41,7 +41,7 @@ VocFile_dealloc(Py_VocFile *self)
 static PyObject *
 VocFile_getSound(Py_VocFile *self)
 {
-    Sound *sound = self->vocFile->getSound();
+    Sound *sound = new Sound(self->vocFile->getSound());
     PyObject *pysound = Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(sound), NULL);
     return pysound;
 }

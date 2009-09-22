@@ -41,7 +41,7 @@ Sound_getResampled(Py_Sound *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "BIHI", &channels, &frequency, &audioFormat, &interpolator))
 	return NULL;
 
-    resampled = self->sound->getResampled(channels, frequency, audioFormat, interpolator);
+    resampled = new Sound(self->sound->getResampled(channels, frequency, audioFormat, interpolator));
 
     return Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(resampled), NULL);
 }

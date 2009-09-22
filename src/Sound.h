@@ -3,6 +3,8 @@
 
 #include <ostream>
 
+#include "Buffer.h"
+
 namespace eastwood {
 
 enum AudioFormat { 
@@ -28,11 +30,20 @@ enum Interpolator
 class Sound
 {
     public:
-	Sound() : _size(0), _buffer(NULL), _channels(0), _frequency(0), _format(FMT_INVALID) {};
+	Sound() : _size(0), _buffer(), _channels(0), _frequency(0), _format(FMT_INVALID) {};
 	Sound(uint32_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format);
 	virtual ~Sound();
 
-	Sound* getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator = I_LINEAR);
+	Sound &operator=(const Sound &sound) {
+	    _size = sound._size;
+	    _buffer = sound._buffer;
+	    _channels = sound._channels;
+	    _frequency = sound._frequency;
+	    _format = sound._format;
+	    return *this;
+	}
+
+	Sound getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator = I_LINEAR);
 	void saveWAV(std::ostream &output);
 
     protected:
@@ -41,7 +52,7 @@ class Sound
 
 
     	uint32_t _size;
-    	uint8_t *_buffer;
+    	BytesPtr _buffer;
 	uint8_t _channels;
 	uint32_t _frequency;
 	AudioFormat _format;

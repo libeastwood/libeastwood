@@ -16,7 +16,7 @@ MixerSound::~MixerSound()
 {
 }
 
-MixerSound* MixerSound::getResampled(Interpolator interpolator)
+MixerSound MixerSound::getResampled(Interpolator interpolator)
 {
     uint8_t channels;
     uint16_t format;
@@ -33,12 +33,12 @@ MixerSound* MixerSound::getResampled(Interpolator interpolator)
     case AUDIO_S16MSB:	aformat = FMT_S16BE;	break;
     }
 
-    return reinterpret_cast<MixerSound*>(Sound::getResampled(channels, frequency, aformat, interpolator));
+    return MixerSound(Sound::getResampled(channels, frequency, aformat, interpolator));
 }
 
 Mix_Chunk *MixerSound::get() {
     Mix_Chunk *mixChunk = new Mix_Chunk;
-    mixChunk->abuf = _buffer;
+    mixChunk->abuf = *_buffer.get();
     mixChunk->alen = _size;
     mixChunk->volume = 128;
     mixChunk->allocated = 1;	

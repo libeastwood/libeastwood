@@ -126,7 +126,7 @@ invalid:
 
 
 
-Sound* VocFile::getSound()
+Sound VocFile::getSound()
 {
     uint8_t *buffer = NULL,
 	    channels = 0;
@@ -189,11 +189,12 @@ Sound* VocFile::getSound()
 		}
 		//debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
 		if (packing == 0) {
-		    if (size) {
-			buffer = (uint8_t*)realloc(buffer, size + len);
-		    } else {
-			buffer = (uint8_t*)malloc(len);
-		    }
+    		    if (size) {
+    			uint8_t *newBuffer = new uint8_t[size + len];
+    			buffer = (uint8_t*)memcpy(newBuffer, buffer, size);
+    		    } else
+    			buffer = new uint8_t[len];
+
 		    _stream.read((char*)buffer + size, len);
 		    size += len;
 		    vocBeginLoop = size;
@@ -220,10 +221,10 @@ Sound* VocFile::getSound()
 		}
 
 		if (size) {
-		    buffer = (uint8_t *)realloc(buffer, size + length);
-		} else {
-		    buffer = (uint8_t *)malloc(length);
-		}
+		    uint8_t *newBuffer = new uint8_t[size + length];
+		    buffer = (uint8_t*)memcpy(newBuffer, buffer, size);
+		} else
+		    buffer = new uint8_t[length];
 
 		memset(buffer + size, 0x80, length);
 
@@ -251,7 +252,7 @@ Sound* VocFile::getSound()
 	}
     }
 
-    return new Sound(size, buffer, channels, frequency, format);
+    return Sound(size, buffer, channels, frequency, format);
 }
 
 }

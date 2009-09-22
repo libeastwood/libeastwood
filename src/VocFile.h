@@ -21,7 +21,7 @@ class VocFile
 	  \param	quality	Interpolator type, 0 gives best quality, 4 is fastest. (see libsamplerate API)
 	  \return	a pointer to the sample as a Mix_Chunk. NULL is returned on errors.
 	  */
-	Sound* getSound();
+	Sound getSound();
 
     private:
 	inline void readHeader();

@@ -28,14 +28,12 @@ struct waveHeader {
 };
 
 Sound::Sound(uint32_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format) :
-    _size(size), _buffer(buffer), _channels(channels), _frequency(frequency), _format(format)
+    _size(size), _buffer(new Bytes(buffer)), _channels(channels), _frequency(frequency), _format(format)
 {
 }
 
 Sound::~Sound()
 {
-    if(_buffer)
-	free(_buffer);
 }
 
 #define __HALF_MAX_SIGNED(type) ((type)1 << (sizeof(type)*8-2))
@@ -61,7 +59,7 @@ void Sound::getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t s
     T* data;
     uint32_t sampleSize = sizeof(T) * sound._channels;
     sound._size = samples * sampleSize;
-    sound._buffer = (uint8_t*)(data = (T*)calloc(sound._size, sizeof(T)));
+    sound._buffer.reset(new Bytes((uint8_t*)(data = new T[(sound._size *sizeof(T))+1])));
 
     for(uint32_t i=0; i < samples*sound._channels; i+=sound._channels) {
 	data[i] = float2integer<T>(dataFloat[(i/sound._channels)+silenceLength]);
@@ -76,7 +74,7 @@ void Sound::getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t s
     }
 }
 
-Sound* Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator) {
+Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator) {
     uint32_t size;
     uint32_t targetSamples,
 	     targetSamplesFloat;
@@ -85,8 +83,9 @@ Sound* Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat for
 	  *dataFloat,
 	  *targetDataFloat;
     int32_t silenceLength;
-    Sound *sound = new Sound(0, NULL, channels, frequency, format);
+    Sound sound = Sound(0, NULL, channels, frequency, format);
     SRC_DATA src_data;
+    uint8_t *buffer = *_buffer.get();
 
     size = (_size+2*NUM_SAMPLES_OF_SILENCE)-1;
     // Convert to floats
@@ -95,7 +94,7 @@ Sound* Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat for
     memset(dataFloat, 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)*sizeof(float)));
     memset(&dataFloat[size-NUM_SAMPLES_OF_SILENCE], 0, (NUM_SAMPLES_OF_SILENCE*sizeof(float)*sizeof(float)));
     for(uint32_t i=NUM_SAMPLES_OF_SILENCE; i < size-NUM_SAMPLES_OF_SILENCE; i++)
-	dataFloat[i] = (((float) _buffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
+	dataFloat[i] = (((float) buffer[i-NUM_SAMPLES_OF_SILENCE])/128.0) - 1.0;
 
 
     // Convert to audio device frequency
@@ -130,30 +129,29 @@ Sound* Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat for
     silenceLength = (int32_t) ((NUM_SAMPLES_OF_SILENCE * conversionRatio)*(3.0/4.0));
     targetSamples -= 2*silenceLength;
 
-
     switch(format) {
     case FMT_U8:
-	getSound<uint8_t>(*sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint8_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S8:
-	getSound<int8_t>(*sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<int8_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16LE:
-	getSound<uint16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16LE:
-	getSound<int16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<int16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_U16BE:
-	getSound<uint16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<uint16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
 
     case FMT_S16BE:
-	getSound<int16_t>(*sound, targetSamples, targetDataFloat, silenceLength);
+	getSound<int16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
     default:
 	throw Exception(LOG_ERROR, "Sound", "Invalid format");
@@ -188,6 +186,8 @@ void Sound::saveWAV(std::ostream &output)
 	{'d', 'a', 't', 'a'},
 	_size
     };
+
+    uint8_t *buffer = *_buffer.get();
     
     os.write((char*)&header.riffMagic, sizeof(header.riffMagic));
     bigEndian ? os.putU32BE(header.riffSize) : os.putU32LE(header.riffSize);
@@ -216,9 +216,9 @@ void Sound::saveWAV(std::ostream &output)
     // we need to convert it
     if((header.bits == 8 && isSigned) || (header.bits == 16 && !isSigned)) {
 	for(uint32_t i = 0; i < _size; i++)
-	    os.put(_buffer[i] ^ (1<<7));
+	    os.put(buffer[i] ^ (1<<7));
     } else
-    	os.write((char*)_buffer, _size);
+    	os.write((char*)buffer, _size);
 }
 
 }
