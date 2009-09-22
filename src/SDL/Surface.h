@@ -11,7 +11,7 @@ namespace eastwood { namespace SDL {
 class Surface : public SDL_Surface, public eastwood::Surface
 {
     public:
-	Surface(const eastwood::Surface& surface, uint32_t flags = SDL_HWSURFACE,
+	Surface(eastwood::Surface& surface, uint32_t flags = SDL_HWSURFACE,
 		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0);
 	Surface(const SDL_Surface& surface);
 	virtual ~Surface();

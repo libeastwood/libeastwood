@@ -39,23 +39,20 @@ struct BMPInfoHeader {
 };
 
 Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette *palette) :
-    _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)), _pixels(NULL), _palette(palette)
+    _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
+    _pixelsPtr(new Bytes( new uint8_t[(width*(bpp/8)) * _height])),
+    _pixels((uint8_t*)*_pixelsPtr.get()), _palette(palette)
 {
-    _pixels = new uint8_t[_pitch * _height];
 }
 
-Surface::Surface(const uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette *palette) :
-    _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)), _pixels(NULL), _palette(palette)
+Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette *palette) :
+    _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
+    _pixelsPtr(new Bytes(buffer)), _pixels((uint8_t*)*_pixelsPtr.get()),
+    _palette(palette)
 {
-    _pixels = new uint8_t[_pitch * _height];
-    for(int y = 0; y < _height; y++)
-	memcpy(((uint8_t*)(_pixels)) + y * _pitch , buffer + y * _width, _width);
-
 }
 
 Surface::~Surface() {
-    if(_pixels)
-    	delete [] _pixels;
 }
 
 bool Surface::scalePrecondition(Scaler scaler)
@@ -63,21 +60,21 @@ bool Surface::scalePrecondition(Scaler scaler)
     return scale_precondition(scaler, _bpp/8, _width, _height);
 }
 
-Surface* Surface::getScaled(Scaler scaler)
+Surface Surface::getScaled(Scaler scaler)
 {
-    Surface *scaled;
+    Surface scaled;
     switch(scaler) {
 	case Scale2X:
 	case Scale2X3:
 	case Scale2X4:
 	case Scale3X:
 	case Scale4X:
-	    scaled = new Surface(_width * (scaler & ((1<<8)-1)), _height * (scaler>>8), _bpp, _palette);
+	    scaled = Surface(_width * (scaler & ((1<<8)-1)), _height * (scaler>>8), _bpp, _palette);
     	break;
 	default:
 	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
     }
-    scale(scaler, scaled->_pixels, scaled->_pitch, _pixels - _pitch, _pitch, _bpp/8, _width, _height);
+    scale(scaler, scaled._pixels, scaled._pitch, _pixels - _pitch, _pitch, _bpp/8, _width, _height);
     return scaled;
 }
 

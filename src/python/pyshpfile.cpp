@@ -63,7 +63,7 @@ ShpFile_getSurface(Py_ShpFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "H", &index))
 	return NULL;
 
-    Surface *surface = self->shpFile->getSurface(index);
+    Surface *surface = new Surface(self->shpFile->getSurface(index));
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
@@ -88,8 +88,7 @@ ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
 	tiles[i] = PyInt_AsLong(item);
     }
 
-
-    Surface *surface = self->shpFile->getSurfaceArray(x,y, &tiles.front());
+    Surface *surface = new Surface(self->shpFile->getSurfaceArray(x,y, &tiles.front()));
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }

@@ -42,7 +42,7 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
     //TODO: throw exception
     if(!self->surface->scalePrecondition(scaler))
 	return NULL;
-    scaled = self->surface->getScaled(scaler);
+    scaled = new Surface(self->surface->getScaled(scaler));
 
     return Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(scaled), NULL);
 }

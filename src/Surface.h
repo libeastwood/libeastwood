@@ -2,6 +2,9 @@
 #define EASTWOOD_SURFACE_H
 
 #include <ostream>
+#include <memory>
+
+#include "Buffer.h"
 
 namespace eastwood {
 
@@ -28,13 +31,28 @@ struct Point {
 
 class Surface {
     public:
-	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixels(NULL), _palette(NULL) {};
+	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixelsPtr(NULL), _pixels(NULL), _palette(NULL) {};
 	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette *palette);
-	Surface(const uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette *palette);
+	Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette *palette);
 	virtual ~Surface();
 
+	Surface(const Surface &surface) :
+	    _bpp(surface._bpp), _width(surface._width), _height(surface._height), _pitch(surface._pitch),
+	    _pixelsPtr(NULL), _pixels(surface._pixels), _palette(surface._palette)  {}
+
+	Surface &operator=(const Surface &surface) {
+	    _bpp = surface._bpp;
+	    _width = surface._width;
+	    _height = surface._height;
+	    _pitch = surface._pitch;
+//	    _pixelsPtr = surface._pixelsPtr;
+	    _pixels = surface._pixels;
+	    _palette = surface._palette;
+	    return *this;
+	}
+
 	bool scalePrecondition(Scaler scale);
-	Surface* getScaled(Scaler scale);
+	Surface getScaled(Scaler scale);
 	bool saveBMP(std::ostream &output);
 
 	inline Point size() const {
@@ -57,6 +75,7 @@ class Surface {
 	uint16_t _width,
 		 _height,
 		 _pitch;
+	BytesPtr _pixelsPtr;
 	uint8_t *_pixels;
 	Palette *_palette;
 };

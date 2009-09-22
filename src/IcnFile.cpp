@@ -92,18 +92,18 @@ void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 
 }
 
-Surface* IcnFile::getSurface(uint16_t index)
+Surface IcnFile::getSurface(uint16_t index)
 {
-    Surface *pic = new Surface(_width, _height, 8, _palette);
+    Surface pic(_width, _height, 8, _palette);
 
-    createImage(index, pic->_pixels, pic->_pitch);
+    createImage(index, pic._pixels, pic._pitch);
 
     LOG_INFO("IcnFile", "File Nr.: %d (Size: %dx%d)", index, _width, _height);
 
     return pic;
 }
 
-Surface* IcnFile::getTiles(uint16_t index, bool frameByFrame)
+Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
 {
     std::vector<uint16_t> &row = _map[index];
 
@@ -136,13 +136,13 @@ Surface* IcnFile::getTiles(uint16_t index, bool frameByFrame)
 	    tilesN = 1;
 	}
     }
-    Surface *pic = new Surface(_width*tilesX*tilesN,_height*tilesY, 8, _palette);
+    Surface pic(_width*tilesX*tilesN,_height*tilesY, 8, _palette);
 
     std::vector<uint16_t>::const_iterator idx = row.begin();
     for(int n = 0; n < tilesN; n++)
 	for(int y = 0; y < tilesY; y++)
 	    for(int x = 0; x < tilesX; x++, idx++)
-		createImage(*idx, pic->_pixels + (pic->_pitch)*y*_height + (x+n*tilesX) * _width, pic->_pitch);
+		createImage(*idx, pic._pixels + (pic._pitch)*y*_height + (x+n*tilesX) * _width, pic._pitch);
 
     return pic;
 }

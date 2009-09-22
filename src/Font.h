@@ -42,7 +42,7 @@ class Font
         ~Font();
 
         void extents(std::string text, uint16_t& w, uint16_t& h);
-        void render(std::string text, Surface *surface, int x, int y, uint8_t paloff);
+        void render(std::string text, Surface &surface, int x, int y, uint8_t paloff);
 
 
     private:

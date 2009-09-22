@@ -47,24 +47,25 @@ CpsFile::~CpsFile()
 {	
 }
 
-Surface* eastwood::CpsFile::getSurface()
+Surface eastwood::CpsFile::getSurface()
 {
-    std::vector<uint8_t> ImageOut(_imageSize);
+    uint8_t *imageOut = new uint8_t[_imageSize];
 
     switch(_format) {
 	case UNCOMPRESSED:
-	    _stream.read(reinterpret_cast<char*>(&ImageOut.front()), _imageSize);
+	    _stream.read(reinterpret_cast<char*>(imageOut), _imageSize);
 	    break;
 	case FORMAT_LBM:
 	    //TODO: implement?
 	    break;
 	case FORMAT_80:
-    	if(decode80(&ImageOut.front(),0) == -2)
+    	if(decode80(imageOut,0) == -2)
     	    throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
 	break;
     }
+    Surface pic(imageOut, _width, _height, 8, _palette);    
 
-    return new Surface(&ImageOut.front(), _width, _height, 8, _palette);
+    return pic;
 }
 
 }

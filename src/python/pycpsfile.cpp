@@ -59,7 +59,7 @@ CpsFile_dealloc(Py_CpsFile *self)
 static PyObject *
 CpsFile_getSurface(Py_CpsFile *self)
 {
-    Surface *surface = self->cpsFile->getSurface();
+    Surface *surface = new Surface(self->cpsFile->getSurface());
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }

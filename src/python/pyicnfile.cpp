@@ -71,7 +71,7 @@ IcnFile_getSurface(Py_IcnFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "H", &index))
 	return NULL;
 
-    Surface *surface = self->icnFile->getSurface(index);
+    Surface *surface = new Surface(self->icnFile->getSurface(index));
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
@@ -86,7 +86,7 @@ IcnFile_getTiles(Py_IcnFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "HB", &index, &frameByFrame))
 	return NULL;
 
-    tiles = self->icnFile->getTiles(index, frameByFrame);
+    tiles = new Surface(self->icnFile->getTiles(index, frameByFrame));
     pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(tiles), NULL);
     return pysurface;
 }

@@ -17,7 +17,7 @@ class CpsFile : public Decode
 	CpsFile(const std::istream &stream, Palette *palette = NULL);
 	virtual ~CpsFile();
 
-	Surface* getSurface();
+	Surface getSurface();
 
     private:
 	compressionFormat _format;

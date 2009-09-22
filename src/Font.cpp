@@ -31,13 +31,13 @@ void Font::extents(std::string text, uint16_t& w, uint16_t& h)
     };
 }
 
-void Font::render(std::string text, Surface *surface, int offx, int offy, uint8_t paloff)
+void Font::render(std::string text, Surface &surface, int offx, int offy, uint8_t paloff)
 {
     std::string test = text;
     FNTCharacter *ch;
     uint8_t *bitmap;
 
-    uint8_t* pixels = (uint8_t*)surface->_pixels;
+    uint8_t* pixels = surface._pixels;
 
     for (unsigned int c=0; c!=text.length(); c++) {
 	ch = &_characters[(int)text[c]];
@@ -49,10 +49,10 @@ void Font::render(std::string text, Surface *surface, int offx, int offy, uint8_
 		uint8_t hibyte = bitmap[(x/2) + (y*ch->width)] & 0x0F;
 
 		if (hibyte!=0)
-		    pixels[(offx + x) + ((ch->y_offset + y + offy) * surface->_width)] = paloff + uint8_t(hibyte);
+		    pixels[(offx + x) + ((ch->y_offset + y + offy) * surface._width)] = paloff + uint8_t(hibyte);
 
 		if (lobyte!=0) //(2 < ch->width) lobyte!=0)
-		    pixels[(offx + x + 1) + ((ch->y_offset + y + offy) * surface->_width)] = paloff + uint8_t(lobyte);
+		    pixels[(offx + x + 1) + ((ch->y_offset + y + offy) * surface._width)] = paloff + uint8_t(lobyte);
 	    };
 	};
 	offx += (2*ch->width) + 1;
