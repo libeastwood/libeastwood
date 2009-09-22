@@ -1,7 +1,8 @@
 #ifndef EASTWOOD_BUFFER_H
 #define EASTWOOD_BUFFER_H
 
-#include <memory>
+#include <tr1/memory>
+#include <tr1/shared_ptr.h>
 
 namespace eastwood {
 
@@ -33,7 +34,7 @@ class Buffer
 };
 
 typedef Buffer<uint8_t> Bytes;
-typedef std::auto_ptr<Bytes > BytesPtr;
+typedef std::tr1::shared_ptr<Bytes> BytesPtr;
 }
 
 #endif // EASTWOOD_BUFFER_H
