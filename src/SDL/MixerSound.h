@@ -6,18 +6,19 @@
 
 namespace eastwood { namespace SDL {
 
-class MixerSound : public Sound
+class MixerSound : public Sound, public Mix_Chunk
 {
     public:
-	MixerSound() : Sound(){};
-	MixerSound(size_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format);
-	MixerSound(size_t size, uint8_t *buffer);
+	MixerSound();
+	MixerSound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format);
+	MixerSound(uint32_t size, uint8_t *buffer);
 	MixerSound(const eastwood::Sound &sound);
 	virtual ~MixerSound();
 
 	MixerSound getResampled(Interpolator interpolator = I_LINEAR);
 
-	Mix_Chunk* get();
+    private:
+	Mix_Chunk *_sound;
 
 };
 

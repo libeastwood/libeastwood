@@ -3,17 +3,46 @@
 
 namespace eastwood { namespace SDL {
 
-MixerSound::MixerSound(const eastwood::Sound &sound) : eastwood::Sound(sound)
+static Mix_Chunk* createChunk(bool allocated, uint8_t *buffer, uint32_t length, uint8_t volume = 128)
 {
+    Mix_Chunk *chunk = (Mix_Chunk*)malloc(sizeof(Mix_Chunk));
+    chunk->allocated = allocated;
+    chunk->abuf = buffer;
+    chunk->alen = length;
+    chunk->volume = volume;
+    return chunk;
 }
 
-MixerSound::MixerSound(size_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format) :
-    Sound(size, buffer, frequency, channels, format)
+static Mix_Chunk *tmp = NULL;
+
+MixerSound::MixerSound() :
+    Sound(), Mix_Chunk(*(tmp = createChunk(false, NULL, 0))), _sound(tmp)
 {
+    tmp = NULL;
+}
+
+MixerSound::MixerSound(const eastwood::Sound &sound) :
+    eastwood::Sound(sound), Mix_Chunk(*(tmp = createChunk(false, NULL, 0))),
+    _sound(tmp)
+{
+    tmp = NULL;
+    allocated = true;
+    abuf = *_buffer.get();
+    alen = _size;
+}
+
+
+MixerSound::MixerSound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format) :
+    Sound(size, buffer, frequency, channels, format),
+    Mix_Chunk(*(tmp = createChunk(true, buffer, size))), _sound(tmp)
+{
+    tmp = NULL;
 }
 
 MixerSound::~MixerSound()
 {
+    _sound->abuf = NULL;
+    Mix_FreeChunk(_sound);
 }
 
 MixerSound MixerSound::getResampled(Interpolator interpolator)
@@ -34,16 +63,6 @@ MixerSound MixerSound::getResampled(Interpolator interpolator)
     }
 
     return MixerSound(Sound::getResampled(channels, frequency, aformat, interpolator));
-}
-
-Mix_Chunk *MixerSound::get() {
-    Mix_Chunk *mixChunk = new Mix_Chunk;
-    mixChunk->abuf = *_buffer.get();
-    mixChunk->alen = _size;
-    mixChunk->volume = 128;
-    mixChunk->allocated = 1;	
-
-    return mixChunk;
 }
 
 }}
