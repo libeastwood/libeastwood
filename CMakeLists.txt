@@ -9,7 +9,7 @@ SET(LIBEASTWOOD_MINOR "0")
 SET(LIBEASTWOOD_PATCH "0")
 SET(VERSION "0.3")
 
-SET( CMAKE_CXX_FLAGS "-Wall -Wextra -Weffc++ -pedantic -O3 -Wno-long-long -Wno-variadic-macros -fPIC -g -O0 ${CMAKE_CXX_FLAGS}" )
+SET( CMAKE_CXX_FLAGS "-Wall -Wextra -Weffc++ -pedantic -O3 -Wno-long-long -Wno-variadic-macros -fPIC -g -O0 -std=gnu++0x ${CMAKE_CXX_FLAGS}" )
 
 SET( LIBEASTWOOD_VERSION_INFO "${VERSION}" )
 SET( LIBEASTWOOD_SOVERSION_INFO "${LIBEASTWOOD_MAJOR}.${LIBEASTWOOD_MINOR}.${LIBEASTWOOD_PATCH}" )
