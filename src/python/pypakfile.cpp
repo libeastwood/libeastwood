@@ -69,7 +69,6 @@ PakFile_read(Py_PakFile *self, PyObject *args)
 	std::streamoff	offset = static_cast<std::streamoff>(self->pakFile->tellg());
 	size_t bytesrequested = -1,
 	       left = self->fileSize - offset;
-	uint8_t *buffer = NULL;
 	PyObject *v;
 
 	if (!PyArg_ParseTuple(args, "|l:read", &bytesrequested))
@@ -82,14 +81,13 @@ PakFile_read(Py_PakFile *self, PyObject *args)
 	"requested number of bytes is more than a Python string can hold");
 		return NULL;
 	}
-	buffer = (uint8_t*)malloc(bytesrequested);
-	self->pakFile->read((char*)buffer, bytesrequested);
+	v = PyString_FromStringAndSize(NULL, bytesrequested);
+	if (v == NULL)
+		return NULL;
+	self->pakFile->read(PyString_AS_STRING(v), bytesrequested);
 	if(static_cast<std::streamoff>(self->pakFile->tellg())  == self->fileSize-1)
 	    self->mode = MODE_READ_EOF;
 
-	v = PyString_FromStringAndSize((char *)buffer, bytesrequested);
-	if (v == NULL)
-		return NULL;
 	Py_XINCREF(v);
 	return v;
 }
