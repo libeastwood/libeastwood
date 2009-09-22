@@ -29,7 +29,7 @@ class Sound
 {
     public:
 	Sound() : _size(0), _buffer(NULL), _channels(0), _frequency(0), _format(FMT_INVALID) {};
-	Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format);
+	Sound(uint32_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format);
 	virtual ~Sound();
 
 	Sound* getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator = I_LINEAR);
@@ -40,7 +40,7 @@ class Sound
 	void getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t silenceLength);
 
 
-    	size_t	_size;
+    	uint32_t _size;
     	uint8_t *_buffer;
 	uint8_t _channels;
 	uint32_t _frequency;

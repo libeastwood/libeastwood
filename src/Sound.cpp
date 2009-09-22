@@ -27,7 +27,7 @@ struct waveHeader {
     uint32_t dataSize;
 };
 
-Sound::Sound(size_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format) :
+Sound::Sound(uint32_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format) :
     _size(size), _buffer(buffer), _channels(channels), _frequency(frequency), _format(format)
 {
 }
@@ -77,7 +77,7 @@ void Sound::getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t s
 }
 
 Sound* Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator) {
-    size_t size;
+    uint32_t size;
     uint32_t targetSamples,
 	     targetSamplesFloat;
     float conversionRatio,
@@ -175,16 +175,16 @@ void Sound::saveWAV(std::ostream &output)
 
     waveHeader header = {
 	{'R', 'I', 'F', bigEndian ? 'X' : 'F'},
-	_size+sizeof(waveHeader)-sizeof(offsetof(waveHeader, riffSize)),
+	(uint32_t)(_size+sizeof(waveHeader)-sizeof(offsetof(waveHeader, riffSize))),
 	{'W', 'A', 'V', 'E'},
 	{'f', 'm', 't', ' '},
 	16,
 	0x0001U,
 	_channels,
 	_frequency,
-	(double)(_channels * _frequency+1) / (double) 1 + 0.5,
-	_channels * ((_format & ((1<<8)-1))>>3),
-	_format & ((1<<8)-1),
+	(uint32_t)((double)(_channels * _frequency+1) / (double) 1 + 0.5),
+	(uint16_t)(_channels * ((_format & ((1<<8)-1))>>3)),
+	(uint16_t)(_format & ((1<<8)-1)),
 	{'d', 'a', 't', 'a'},
 	_size
     };
