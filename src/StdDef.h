@@ -9,8 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-#include <inttypes.h>
+#include <tr1/cinttypes>
 
 #ifdef _WIN32
 #include <tchar.h>
