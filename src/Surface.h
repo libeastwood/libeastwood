@@ -45,7 +45,7 @@ class Surface {
 	    _width = surface._width;
 	    _height = surface._height;
 	    _pitch = surface._pitch;
-//	    _pixelsPtr = surface._pixelsPtr;
+	    _pixelsPtr = surface._pixelsPtr;
 	    _pixels = surface._pixels;
 	    _palette = surface._palette;
 	    return *this;
