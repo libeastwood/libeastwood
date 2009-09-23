@@ -8,7 +8,7 @@
 
 namespace eastwood { namespace SDL {
 
-class Surface : public SDL_Surface, public eastwood::Surface
+class Surface : public eastwood::Surface, public SDL_Surface
 {
     public:
 	Surface(const eastwood::Surface& surface, uint32_t flags = SDL_HWSURFACE,
