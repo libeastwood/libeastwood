@@ -5,7 +5,7 @@
 namespace eastwood { namespace SDL {
 
 static SDL_Surface *tmp = NULL;
-Surface::Surface(eastwood::Surface& surface, uint32_t flags,
+Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
 	uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) :
     SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, surface.size().x, surface.size().y, surface.bpp(), Rmask, Gmask, Bmask, Amask))),
     eastwood::Surface(surface), _surface(tmp)
