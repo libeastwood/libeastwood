@@ -16,3 +16,4 @@ Less urgent:
 * Rewrite Font class?
 * Add support for MIDI SFX
 * Do better for conversion to ie. SDL::Surface etc.?
+* Add back debug logging, only new and improved
