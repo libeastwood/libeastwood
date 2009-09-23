@@ -84,14 +84,14 @@ SET( LIBEASTWOOD_SCALER_HEADERS
 )
 
 SET( SDL_LIBEASTWOOD_SRCS
-    SDL/MixerPlayer.cpp
-    SDL/MixerSound.cpp
+    SDL/Mixer/Player.cpp
+    SDL/Mixer/Sound.cpp
     SDL/Surface.cpp
 )
 
 SET( SDL_LIBEASTWOOD_HEADERS
-    SDL/MixerPlayer.h
-    SDL/MixerSound.h
+    SDL/Mixer/Player.h
+    SDL/Mixer/Sound.h
     SDL/Surface.h
 )
 

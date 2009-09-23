@@ -1,17 +1,17 @@
-#ifndef EASTWOOD_SDL_MIXERPLAYER_H
-#define EASTWOOD_SDL_MIXERPLAYER_H
+#ifndef EASTWOOD_SDL_MIXER_PLAYER_H
+#define EASTWOOD_SDL_MIXER_PLAYER_H
 
 #include <SDL_mixer.h>
 
 #include "AdlFile.h"
 
-namespace eastwood { namespace SDL {
+namespace eastwood { namespace SDL { namespace Mixer {
 
-class MixerPlayer: public CadlPlayer
+class Player: public CadlPlayer
 {
     public:
-	MixerPlayer(int channels, int freq, uint16_t format, Copl *nopl);
-	MixerPlayer();
+	Player(int channels, int freq, uint16_t format, Copl *nopl);
+	Player();
 
 	static void callback(void *, uint8_t *, int);
 
@@ -27,5 +27,5 @@ class MixerPlayer: public CadlPlayer
 	
 };
 
-}}
-#endif // EASTWOOD_SDL_MIXERPLAYER_H
+}}}
+#endif // EASTWOOD_SDL_MIXER_PLAYER_H

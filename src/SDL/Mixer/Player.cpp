@@ -1,17 +1,17 @@
 #include "StdDef.h"
 
 #include "adl/emuopl.h"
-#include "SDL/MixerPlayer.h"
+#include "SDL/Mixer/Player.h"
 
-namespace eastwood { namespace SDL {
+namespace eastwood { namespace SDL { namespace Mixer {
 
-MixerPlayer::MixerPlayer(int channels, int freq, uint16_t format, Copl* opl) :
+Player::Player(int channels, int freq, uint16_t format, Copl* opl) :
     CadlPlayer(opl),
     _channels(channels), _freq(freq), _format(format), _playing(false)
 {
 }
 
-MixerPlayer::MixerPlayer() :
+Player::Player() :
    CadlPlayer(),
     _channels(0), _freq(0), _format(0), _playing(false)
 {
@@ -22,9 +22,9 @@ MixerPlayer::MixerPlayer() :
   init();
 }
 
-void MixerPlayer::callback(void *userdata, uint8_t *audiobuf, int len)
+void Player::callback(void *userdata, uint8_t *audiobuf, int len)
 {
-  MixerPlayer *self = (MixerPlayer *)userdata;
+  Player *self = (Player *)userdata;
   static long	minicnt = 0;
   long		i, towrite = len / self->getsampsize();
   char		*pos = (char *)audiobuf;
@@ -42,4 +42,4 @@ void MixerPlayer::callback(void *userdata, uint8_t *audiobuf, int len)
   }
 }
 
-}}
+}}}
