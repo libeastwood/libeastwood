@@ -5,9 +5,9 @@
 #include "pyeastwood.h"
 #include <structmember.h>
 
-#include "StdDef.h"
-#include "IcnFile.h"
-#include "PalFile.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/IcnFile.h"
+#include "eastwood/PalFile.h"
 
 #include "pyicnfile.h"
 #include "pymapfile.h"

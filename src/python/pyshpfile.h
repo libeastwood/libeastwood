@@ -2,7 +2,8 @@
 #define EASTWOOD_PYTHON_PYSHPFILE_H
 
 #include <istream>
-#include "ShpFile.h"
+
+#include "eastwood/ShpFile.h"
 
 extern PyTypeObject ShpFile_Type;
 

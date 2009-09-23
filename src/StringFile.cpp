@@ -1,6 +1,6 @@
-#include "StdDef.h"
-#include "Exception.h"
-#include "StringFile.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/Exception.h"
+#include "eastwood/StringFile.h"
 
 namespace eastwood {
 

@@ -1,7 +1,7 @@
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "Exception.h"
-#include "MapFile.h"
+#include "eastwood/Exception.h"
+#include "eastwood/MapFile.h"
 
 
 namespace eastwood {

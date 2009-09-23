@@ -2,7 +2,7 @@
 #define EASTWOOD_PYTHON_PYVOCFILE_H
 
 #include <istream>
-#include "VocFile.h"
+#include "eastwood/VocFile.h"
 
 extern PyTypeObject VocFile_Type;
 

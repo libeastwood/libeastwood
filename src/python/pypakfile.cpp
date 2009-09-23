@@ -3,10 +3,11 @@
 #include <istream>
 #include <fstream>
 #include <sstream>
-#include "StdDef.h"
+
+#include "eastwood/StdDef.h"
 
 #include "pyeastwood.h"
-#include "python/pypakfile.h"
+#include "pypakfile.h"
 
 
 using namespace eastwood;

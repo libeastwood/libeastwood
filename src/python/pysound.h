@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_PYTHON_PYSOUND_H
 #define EASTWOOD_PYTHON_PYSOUND_H
 
-#include "Sound.h"
+#include "eastwood/Sound.h"
 
 struct Py_Sound {
     PyObject_HEAD

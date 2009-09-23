@@ -1,6 +1,6 @@
 #include "pyeastwood.h"
-#include "ShpFile.h"
-#include "Surface.h"
+#include "eastwood/ShpFile.h"
+#include "eastwood/Surface.h"
 
 #include "pycpsfile.h"
 #include "pyicnfile.h"

@@ -17,11 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "Exception.h"
-#include "Log.h"
-#include "VocFile.h"
+#include "eastwood/Exception.h"
+#include "eastwood/Log.h"
+#include "eastwood/VocFile.h"
 
 namespace eastwood {
 

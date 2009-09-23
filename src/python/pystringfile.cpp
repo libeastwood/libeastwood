@@ -2,13 +2,13 @@
 // 	 python to deal with C++ streams ...
 #include <istream>
 #include <sstream>
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
 #include "pyeastwood.h"
 #include <structmember.h>
 
-#include "StringFile.h"
-#include "PalFile.h"
+#include "eastwood/StringFile.h"
+#include "eastwood/PalFile.h"
 
 #include "pystringfile.h"
 #include "pypalfile.h"

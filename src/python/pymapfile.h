@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_PYTHON_PYMAPFILE_H
 #define EASTWOOD_PYTHON_PYMAPFILE_H
 
-#include "MapFile.h"
+#include "eastwood/MapFile.h"
 
 extern PyTypeObject MapFile_Type;
 

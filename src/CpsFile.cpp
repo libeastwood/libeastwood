@@ -3,12 +3,12 @@
 #include <vector>
 #include <SDL.h>
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "CpsFile.h"
-#include "Exception.h"
-#include "Log.h"
-#include "PalFile.h"
+#include "eastwood/CpsFile.h"
+#include "eastwood/Exception.h"
+#include "eastwood/Log.h"
+#include "eastwood/PalFile.h"
 
 namespace eastwood {
 

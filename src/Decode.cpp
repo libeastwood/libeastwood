@@ -1,9 +1,9 @@
 #include <SDL/SDL_video.h>
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "Decode.h"
-#include "Exception.h"
+#include "eastwood/Decode.h"
+#include "eastwood/Exception.h"
 
 enum fmtCmd {
     CMD_OFFSET_THRESHOLD	= 1<<1,

@@ -1,10 +1,14 @@
-INCLUDE_DIRECTORIES(${LIBEASTWOOD_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${LIBEASTWOOD_SOURCE_DIR}/include)
+
 
 SET( LIBEASTWOOD_SRCS
   AdlFile.cpp
   CpsFile.cpp
   Decode.cpp
   Dune2File.cpp
+  EmcFileAssemble.cpp
+  EmcFileBase.cpp
+  EmcFileDisassemble.cpp
   Exception.cpp
   ExeFile.cpp
   Font.cpp
@@ -28,9 +32,6 @@ SET( LIBEASTWOOD_SRCS
   adl/fmopl.c
   adl/realopl.cpp
   adl/temuopl.cpp
-  emc/EmcFileBase.cpp
-  emc/EmcFileAssemble.cpp
-  emc/EmcFileDisassemble.cpp
   scaler/scale2xARM.s
   scaler/scale2x.cpp
   scaler/scale3x.cpp
@@ -42,6 +43,9 @@ SET( LIBEASTWOOD_HEADERS
   CpsFile.h
   Decode.h
   Dune2File.h
+  EmcFileAssemble.h
+  EmcFileBase.h
+  EmcFileDisassemble.h
   Exception.h
   ExeFile.h
   Font.h
@@ -61,26 +65,20 @@ SET( LIBEASTWOOD_HEADERS
 )
 
 SET( LIBEASTWOOD_ADLIB_HEADERS
-  adl/adlibemu.h
-  adl/analopl.h
-  adl/diskopl.h
-  adl/emuopl.h
-  adl/fmopl.h
-  adl/kemuopl.h
-  adl/opl.h
-  adl/realopl.h
-  adl/silentopl.h  
-  adl/temuopl.h
-)
-
-SET( LIBEASTWOOD_EMC_HEADERS
-  emc/EmcFileBase.h
-  emc/EmcFileAssemble.h
-  emc/EmcFileDisassemble.h
+  eastwood/adl/adlibemu.h
+  eastwood/adl/analopl.h
+  eastwood/adl/diskopl.h
+  eastwood/adl/emuopl.h
+  eastwood/adl/fmopl.h
+  eastwood/adl/kemuopl.h
+  eastwood/adl/opl.h
+  eastwood/adl/realopl.h
+  eastwood/adl/silentopl.h  
+  eastwood/adl/temuopl.h
 )
 
 SET( LIBEASTWOOD_SCALER_HEADERS
-  scaler/scalebit.h
+  eastwood/scaler/scalebit.h
 )
 
 SET( SDL_LIBEASTWOOD_SRCS
@@ -90,13 +88,9 @@ SET( SDL_LIBEASTWOOD_SRCS
 )
 
 SET( SDL_LIBEASTWOOD_HEADERS
-    SDL/Mixer/Player.h
-    SDL/Mixer/Sound.h
-    SDL/Surface.h
-)
-
-SET( DUNE2_SCRIPT_TOOLS
-    emc/dst.cpp
+    eastwood/SDL/Mixer/Player.h
+    eastwood/SDL/Mixer/Sound.h
+    eastwood/SDL/Surface.h
 )
 
 SET( PYEASTWOOD_SRCS
@@ -117,10 +111,10 @@ ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
 TARGET_LINK_LIBRARIES( eastwood ${LIBSAMPLERATE_LIBRARIES} )
 SET_TARGET_PROPERTIES( eastwood PROPERTIES SOVERSION "${LIBEASTWOOD_SOVERSION_INFO}" )
 INSTALL(TARGETS eastwood LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-INSTALL( FILES ${LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood" )
-INSTALL( FILES ${LIBEASTWOOD_ADLIB_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood/adl" )
-INSTALL( FILES ${LIBEASTWOOD_EMC_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood/emc" )
-INSTALL( FILES ${LIBEASTWOOD_SCALER_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood/scaler" )
+INSTALL( FILES ${LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/eastwood" )
+INSTALL( FILES ${LIBEASTWOOD_ADLIB_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/eastwood/adl" )
+INSTALL( FILES ${LIBEASTWOOD_EMC_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/eastwood/emc" )
+INSTALL( FILES ${LIBEASTWOOD_SCALER_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/eastwood/scaler" )
 
 
 IF(LIBEASTWOOD_BUILD_SDL)
@@ -130,13 +124,8 @@ TARGET_LINK_LIBRARIES( eastwood ${SDL_LIBRARY} )
 TARGET_LINK_LIBRARIES( eastwood ${SDLMIXER_LIBRARY} )
 SET_TARGET_PROPERTIES( SDL_eastwood PROPERTIES SOVERSION "${LIBEASTWOOD_SOVERSION_INFO}" )
 INSTALL(TARGETS SDL_eastwood LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-INSTALL( FILES ${SDL_LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/include/eastwood/SDL" )
+INSTALL( FILES ${SDL_LIBEASTWOOD_HEADERS} DESTINATION "${CMAKE_INSTALL_PREFIX}/eastwood/SDL" )
 ENDIF(LIBEASTWOOD_BUILD_SDL)
-
-IF(LIBEASTWOOD_BUILD_DST)
-ADD_EXECUTABLE( dst ${DUNE2_SCRIPT_TOOLS} )
-TARGET_LINK_LIBRARIES( dst eastwood )
-ENDIF(LIBEASTWOOD_BUILD_DST)
 
 IF(LIBEASTWOOD_BUILD_PYTHON)
   GET_FILENAME_COMPONENT(PYTHON_LIB_INSTALL "${PYTHON_LIBRARY}" PATH)

@@ -4,9 +4,9 @@
 #include <sstream>
 #include "pyeastwood.h"
 
-#include "StdDef.h"
-#include "CpsFile.h"
-#include "PalFile.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/CpsFile.h"
+#include "eastwood/PalFile.h"
 
 #include "pycpsfile.h"
 #include "pypalfile.h"

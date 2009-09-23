@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_PYTHON_PYSURFACE_H
 #define EASTWOOD_PYTHON_PYSURFACE_H
 
-#include "PalFile.h"
+#include "eastwood/PalFile.h"
 
 struct Py_Surface {
     PyObject_HEAD

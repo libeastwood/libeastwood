@@ -19,8 +19,8 @@
  * diskopl.cpp - Disk Writer OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include "StdDef.h"
-#include "adl/diskopl.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/adl/diskopl.h"
 
 namespace eastwood {
 

@@ -35,12 +35,12 @@
 
 #include <vector>
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "scalebit.h"
+#include "eastwood/scaler/scalebit.h"
 
-#include "scale2x.h"
-#include "scale3x.h"
+#include "eastwood/scaler/scale2x.h"
+#include "eastwood/scaler/scale3x.h"
 
 #include <cassert>
 

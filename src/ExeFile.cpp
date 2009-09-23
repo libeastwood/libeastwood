@@ -1,6 +1,6 @@
-#include "StdDef.h"
-#include "ExeFile.h"
-#include "Exception.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/ExeFile.h"
+#include "eastwood/Exception.h"
 
 #define MAGIC1 0x5a4d
 #define MAGIC2 0x4d5a

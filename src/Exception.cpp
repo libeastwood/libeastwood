@@ -1,5 +1,6 @@
-#include "Exception.h"
-using namespace eastwood;
+#include "eastwood/Exception.h"
+
+namespace eastwood {
 
 Exception::Exception(logLevel level, std::string location, std::string message) :
     _level(level), _location(location), _message(message)
@@ -21,3 +22,4 @@ NullSizeException::NullSizeException(logLevel level, std::string location, std::
 {
 }
 
+}

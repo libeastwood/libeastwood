@@ -2,7 +2,8 @@
 #define EASTWOOD_PYTHON_PYICNFILE_H
 
 #include <istream>
-#include "IcnFile.h"
+
+#include "eastwood/IcnFile.h"
 
 extern PyTypeObject IcnFile_Type;
 

@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "Font.h"
-#include "Log.h"
+#include "eastwood/Font.h"
+#include "eastwood/Log.h"
 
 namespace eastwood {
 

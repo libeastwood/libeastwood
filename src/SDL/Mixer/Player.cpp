@@ -1,7 +1,7 @@
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "adl/emuopl.h"
-#include "SDL/Mixer/Player.h"
+#include "eastwood/adl/emuopl.h"
+#include "eastwood/SDL/Mixer/Player.h"
 
 namespace eastwood { namespace SDL { namespace Mixer {
 

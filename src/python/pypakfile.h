@@ -2,7 +2,8 @@
 #define EASTWOOD_PYTHON_PYPAKFILE_H
 
 #include <istream>
-#include "PakFile.h"
+
+#include "eastwood/PakFile.h"
 
 extern PyTypeObject PakFile_Type;
 

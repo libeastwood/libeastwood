@@ -39,7 +39,8 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
-#include "fmopl.h"
+
+#include "eastwood/adl/fmopl.h"
 
 #ifndef PI
 #define PI 3.14159265358979323846

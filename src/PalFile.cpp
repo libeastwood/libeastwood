@@ -1,10 +1,10 @@
 #include <istream>
 #include <SDL_video.h>
 
-#include "StdDef.h"
-#include "Log.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/Log.h"
 
-#include "PalFile.h"
+#include "eastwood/PalFile.h"
 
 namespace eastwood {
 

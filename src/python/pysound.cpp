@@ -4,9 +4,9 @@
 #include "pyeastwood.h"
 #include <structmember.h>
 
-#include "StdDef.h"
-#include "Sound.h"
-#include "PalFile.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/Sound.h"
+#include "eastwood/PalFile.h"
 
 #include "pysound.h"
 

@@ -5,16 +5,15 @@
 #include "pyeastwood.h"
 #include <structmember.h>
 
-#include "StdDef.h"
-#include "ShpFile.h"
-#include "PalFile.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/ShpFile.h"
+#include "eastwood/PalFile.h"
 
 #include "pyshpfile.h"
 #include "pypalfile.h"
 #include "pysurface.h"
 
 using namespace eastwood;
-
 
 static int
 ShpFile_init(Py_ShpFile *self, PyObject *args)

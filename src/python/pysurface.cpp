@@ -4,9 +4,9 @@
 #include "pyeastwood.h"
 #include <structmember.h>
 
-#include "StdDef.h"
-#include "Surface.h"
-#include "PalFile.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/Surface.h"
+#include "eastwood/PalFile.h"
 
 #include "pysurface.h"
 

@@ -5,8 +5,8 @@
 #include <sstream>
 #include "pyeastwood.h"
 
-#include "PalFile.h"
-#include "StdDef.h"
+#include "eastwood/PalFile.h"
+#include "eastwood/StdDef.h"
 
 #include "pypalfile.h"
 

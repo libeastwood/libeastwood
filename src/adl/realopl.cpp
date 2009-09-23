@@ -45,7 +45,7 @@ int __cdecl _outp(unsigned short, int);
 #	define OUTP(reg, val)
 #endif
 
-#include "adl/realopl.h"
+#include "eastwood/adl/realopl.h"
 
 #define SHORTDELAY		6	// short delay in I/O port-reads after OPL hardware output
 #define LONGDELAY		35	// long delay in I/O port-reads after OPL hardware output

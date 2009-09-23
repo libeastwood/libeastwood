@@ -1,8 +1,6 @@
-#include "StdDef.h"
-#include "SDL/Surface.h"
-#include "Exception.h"
-
-#include <algorithm>
+#include "eastwood/StdDef.h"
+#include "eastwood/SDL/Surface.h"
+#include "eastwood/Exception.h"
 
 namespace eastwood { namespace SDL {
 

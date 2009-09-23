@@ -1,5 +1,5 @@
-#include "StdDef.h"
-#include "OStream.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/OStream.h"
 
 namespace eastwood {
 

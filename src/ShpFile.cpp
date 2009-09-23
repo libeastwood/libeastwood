@@ -1,10 +1,10 @@
 #include <cstdarg>
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "Log.h"
+#include "eastwood/Log.h"
 
-#include "Exception.h"
-#include "ShpFile.h"
+#include "eastwood/Exception.h"
+#include "eastwood/ShpFile.h"
 
 namespace eastwood {
 

@@ -1,8 +1,8 @@
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "Exception.h"
-#include "IcnFile.h"
-#include "Log.h"
+#include "eastwood/Exception.h"
+#include "eastwood/IcnFile.h"
+#include "eastwood/Log.h"
 
 namespace eastwood {
 

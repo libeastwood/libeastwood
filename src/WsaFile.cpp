@@ -1,15 +1,14 @@
 #include <vector>
-#include <SDL.h>
 
-#include "WsaFile.h"
+#include "eastwood/StdDef.h"
 
-#include "StdDef.h"
+#include "eastwood/WsaFile.h"
 
-#include "Exception.h"
-#include "Font.h"
-#include "Log.h"
+#include "eastwood/Exception.h"
+#include "eastwood/Font.h"
+#include "eastwood/Log.h"
 
-using namespace eastwood;
+namespace eastwood {
 
 WsaFile::WsaFile(const std::istream &stream, Palette *palette,
 	Surface *lastframe) :
@@ -81,4 +80,6 @@ void WsaFile::decodeFrames()
 	if (i < _numFrames - 1)
 	    memcpy(&_decodedFrames.front() + (i+1) * _width * _height, &_decodedFrames.front() + i * _width * _height,_width * _height);
     }
+}
+
 }

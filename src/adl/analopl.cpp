@@ -19,7 +19,7 @@
  * analopl.cpp - Spectrum analyzing hardware OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include "adl/analopl.h"
+#include "eastwood/adl/analopl.h"
 
 namespace eastwood {
 

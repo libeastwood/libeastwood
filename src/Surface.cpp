@@ -1,9 +1,9 @@
-#include "StdDef.h"
-#include "Surface.h"
-#include "OStream.h"
-#include "Exception.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/Surface.h"
+#include "eastwood/OStream.h"
+#include "eastwood/Exception.h"
 
-#include "scaler/scalebit.h"
+#include "eastwood/scaler/scalebit.h"
 
 namespace eastwood {
 

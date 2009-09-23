@@ -1,7 +1,7 @@
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 #include <iostream>
 
-#include "Dune2File.h"
+#include "eastwood/Dune2File.h"
 
 namespace eastwood {
 

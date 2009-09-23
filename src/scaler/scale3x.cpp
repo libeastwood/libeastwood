@@ -32,9 +32,9 @@
  * - derivative works of the program are allowed.
  */
 
-#include "scaler/scale3x.h"
+#include "eastwood/scaler/scale3x.h"
 
-#include <assert.h>
+#include <cassert>
 
 /***************************************************************************/
 /* Scale3x C implementation */

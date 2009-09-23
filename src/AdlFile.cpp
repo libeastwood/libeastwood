@@ -48,12 +48,12 @@
  *
  */
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "AdlFile.h"
-#include "Log.h"
-#include "IStream.h"
-#include "adl/emuopl.h"
+#include "eastwood/AdlFile.h"
+#include "eastwood/Log.h"
+#include "eastwood/IStream.h"
+#include "eastwood/adl/emuopl.h"
 
 namespace eastwood {
 

@@ -19,8 +19,8 @@
  * emuopl.cpp - Emulated OPL, by Simon Peter <dn.tlp@gmx.net>
  */
 
-#include "adl/emuopl.h"
-#include "adl/fmopl.h"
+#include "eastwood/adl/emuopl.h"
+#include "eastwood/adl/fmopl.h"
 
 namespace eastwood {
 

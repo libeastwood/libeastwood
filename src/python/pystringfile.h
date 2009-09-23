@@ -2,7 +2,7 @@
 #define EASTWOOD_PYTHON_PYSTRINGFILE_H
 
 #include <istream>
-#include "StringFile.h"
+#include "eastwood/StringFile.h"
 
 extern PyTypeObject StringFile_Type;
 

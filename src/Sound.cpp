@@ -1,11 +1,11 @@
 #include <cmath>
 #include <samplerate.h>
 
-#include "StdDef.h"
-#include "Sound.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/Sound.h"
 
-#include "OStream.h"
-#include "Exception.h"
+#include "eastwood/OStream.h"
+#include "eastwood/Exception.h"
 
 #define NUM_SAMPLES_OF_SILENCE 250
 

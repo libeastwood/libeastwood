@@ -4,7 +4,7 @@
 #include <sstream>
 #include "pyeastwood.h"
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
 #include "pysound.h"
 #include "pyvocfile.h"

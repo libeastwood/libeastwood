@@ -32,9 +32,9 @@
  * - derivative works of the program are allowed.
  */
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "scaler/scale2x.h"
+#include "eastwood/scaler/scale2x.h"
 
 #include <cassert>
 

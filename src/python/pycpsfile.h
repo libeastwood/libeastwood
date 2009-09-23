@@ -2,7 +2,8 @@
 #define EASTWOOD_PYTHON_PYCPSFILE_H
 
 #include <istream>
-#include "CpsFile.h"
+
+#include "eastwood/CpsFile.h"
 
 extern PyTypeObject CpsFile_Type;
 

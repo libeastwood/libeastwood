@@ -1,5 +1,5 @@
-#include "StdDef.h"
-#include "SDL/Mixer/Sound.h"
+#include "eastwood/StdDef.h"
+#include "eastwood/SDL/Mixer/Sound.h"
 
 namespace eastwood { namespace SDL { namespace Mixer {
 

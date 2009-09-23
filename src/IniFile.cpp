@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "StdDef.h"
+#include "eastwood/StdDef.h"
 
-#include "IniFile.h"
-#include "Exception.h"
+#include "eastwood/IniFile.h"
+#include "eastwood/Exception.h"
 
 namespace eastwood {
 
