@@ -21,7 +21,6 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
 {
     Py_buffer pdata;
     PyObject *palObject = NULL;
-    self->stream = NULL;
     if (!PyArg_ParseTuple(args, "s*OO", &pdata, &self->mapFile, &palObject))
 	return -1;
 
@@ -50,16 +49,27 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
     
 error:
     PyBuffer_Release(&pdata);
-    if(self->stream)
-	delete self->stream;
     return -1;
+}
+
+static PyObject *
+IcnFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_IcnFile *self = (Py_IcnFile *)PyType_GenericAlloc(type, nitems);
+    self->stream = NULL;
+    self->icnFile = NULL;
+    self->mapFile = NULL;
+
+    return (PyObject *)self;
 }
 
 static void
 IcnFile_dealloc(Py_IcnFile *self)
 {
-    delete self->icnFile;
-    delete self->stream;
+    if(self->icnFile)
+	delete self->icnFile;
+    if(self->stream)
+    	delete self->stream;
     Py_XDECREF(self->mapFile);
 }
 
@@ -139,7 +149,7 @@ PyTypeObject IcnFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)IcnFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    IcnFile_alloc,	    			/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

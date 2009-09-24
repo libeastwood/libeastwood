@@ -20,7 +20,6 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
 {
     Py_buffer pdata;
     PyObject *palObject = NULL;
-    self->stream = NULL;
     if (!PyArg_ParseTuple(args, "s*O", &pdata, &palObject))
 	return -1;
 
@@ -42,16 +41,26 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
 
 error:
     PyBuffer_Release(&pdata);
-    if(self->stream)
-	delete self->stream;
     return -1;
+}
+
+static PyObject *
+ShpFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_ShpFile *self = (Py_ShpFile *)PyType_GenericAlloc(type, nitems);
+    self->shpFile = NULL;
+    self->stream = NULL;
+
+    return (PyObject *)self;
 }
 
 static void
 ShpFile_dealloc(Py_ShpFile *self)
 {
-    delete self->shpFile;
-    delete self->stream;
+    if(self->shpFile)
+    	delete self->shpFile;
+    if(self->stream)
+    	delete self->stream;
 }
 
 static PyObject *
@@ -140,7 +149,7 @@ PyTypeObject ShpFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)ShpFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    ShpFile_alloc,	    			/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

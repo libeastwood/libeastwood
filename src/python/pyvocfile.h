@@ -10,7 +10,6 @@ struct Py_VocFile {
     PyObject_HEAD
     std::istream *stream;
     eastwood::VocFile *vocFile;
-    PyObject *palFile;
 };
 
 #endif // EASTWOOD_PYTHON_PYVOCFILE_H

@@ -31,11 +31,23 @@ VocFile_init(Py_VocFile *self, PyObject *args)
     return 0;
 }
 
+static PyObject *
+VocFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_VocFile *self = (Py_VocFile *)PyType_GenericAlloc(type, nitems);
+    self->stream = NULL;
+    self->vocFile = NULL;
+
+    return (PyObject *)self;
+}
+
 static void
 VocFile_dealloc(Py_VocFile *self)
 {
-    delete self->vocFile;
-    delete self->stream;
+    if(self->vocFile)
+    	delete self->vocFile;
+    if(self->stream)
+    	delete self->stream;
 }
 
 static PyObject *
@@ -91,7 +103,7 @@ PyTypeObject VocFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)VocFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    VocFile_alloc,	    			/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

@@ -20,8 +20,6 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
     Py_buffer pdata;
     PyObject *palObject = NULL;
     Palette palette(0);
-    self->stream = NULL;
-    self->cpsFile = NULL;
     if (!PyArg_ParseTuple(args, "s*|O", &pdata, &palObject))
 	return -1;
 
@@ -45,9 +43,17 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 
 error:
     PyBuffer_Release(&pdata);
-    if(self->stream)
-	delete self->stream;
     return -1;
+}
+
+static PyObject *
+CpsFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_CpsFile *self = (Py_CpsFile *)PyType_GenericAlloc(type, nitems);
+    self->cpsFile = NULL;
+    self->stream = NULL;
+
+    return (PyObject *)self;
 }
 
 static void
@@ -112,7 +118,7 @@ PyTypeObject CpsFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)CpsFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    CpsFile_alloc,    			/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/
