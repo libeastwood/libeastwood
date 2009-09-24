@@ -1,9 +1,9 @@
-#ifndef EASTWOOD_PALETTE_H
-#define EASTWOOD_PALETTE_H
+#ifndef EASTWOOD_PALFILE_H
+#define EASTWOOD_PALFILE_H
 
 #include <istream>
 
-#include "Surface.h"
+#include "eastwood/Palette.h"
 
 namespace eastwood {
 
@@ -13,7 +13,7 @@ class PalFile
 	PalFile(std::istream &stream);
 	virtual ~PalFile();
 
-	Palette *getPalette();
+	Palette getPalette();
 
     private:
 	Palette _palette;
@@ -21,4 +21,4 @@ class PalFile
 };
 
 }
-#endif // EASTWOOD_PALETTE_H
+#endif // EASTWOOD_PALFILE_H

@@ -4,9 +4,8 @@
 #include "eastwood/PalFile.h"
 
 struct Py_PalFile {
-	PyObject_HEAD
-	eastwood::PalFile *palFile;
-	eastwood::Palette *palette;
+    PyObject_HEAD
+    eastwood::PalFile *palFile;
 };
 
 extern PyTypeObject PalFile_Type;

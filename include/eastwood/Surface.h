@@ -5,16 +5,9 @@
 #include <memory>
 
 #include "eastwood/Buffer.h"
+#include "eastwood/Palette.h"
 
 namespace eastwood {
-
-struct Color {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-};
-
-typedef Color Palette[256];
 
 enum Scaler {
     Scale2X = 2 + (2<<8),
@@ -31,9 +24,9 @@ struct Point {
 
 class Surface {
     public:
-	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixelsPtr(), _pixels(NULL), _palette(NULL) {};
-	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette *palette);
-	Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette *palette);
+	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixelsPtr(), _pixels(NULL), _palette(0) {};
+	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
+	Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
 	virtual ~Surface();
 
 	Surface(const Surface &surface) :
@@ -77,7 +70,7 @@ class Surface {
 		 _pitch;
 	BytesPtr _pixelsPtr;
 	uint8_t *_pixels;
-	Palette *_palette;
+	Palette _palette;
 };
 }
 #endif // EASTWOOD_SURFACE_H

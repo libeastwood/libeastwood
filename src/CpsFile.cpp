@@ -12,7 +12,7 @@
 
 namespace eastwood {
 
-CpsFile::CpsFile(const std::istream &stream, Palette *palette) :
+CpsFile::CpsFile(const std::istream &stream, Palette palette) :
     Decode(stream, 320, 200, palette), _format(UNCOMPRESSED), _imageSize(0)
 {
     if((uint16_t)(_stream.getU16LE()+_stream.gcount()) != _stream.size())
@@ -36,7 +36,7 @@ CpsFile::CpsFile(const std::istream &stream, Palette *palette) :
 
     _stream.ignore(2);
 
-    if(_stream.getU16LE()== sizeof(Palette)){
+    if(_stream.getU16LE() == 768){
 	LOG_INFO("CpsFile", "CPS has embedded palette, loading...");
 	PalFile pal(_stream);
 	_palette = pal.getPalette();
@@ -63,7 +63,7 @@ Surface eastwood::CpsFile::getSurface()
     	    throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
 	break;
     }
-    Surface pic(imageOut, _width, _height, 8, _palette);    
+    Surface pic(imageOut, _width, _height, 8, _palette);
 
     return pic;
 }

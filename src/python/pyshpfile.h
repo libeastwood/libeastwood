@@ -11,7 +11,6 @@ struct Py_ShpFile {
     PyObject_HEAD
     std::istream *stream;
     eastwood::ShpFile *shpFile;
-    PyObject *palFile;
     uint16_t size;
 };
 

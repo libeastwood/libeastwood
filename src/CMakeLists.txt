@@ -18,6 +18,7 @@ SET( LIBEASTWOOD_SRCS
   MapFile.cpp
   OStream.cpp
   PakFile.cpp
+  Palette.cpp
   PalFile.cpp
   ShpFile.cpp
   Sound.cpp
@@ -55,6 +56,7 @@ SET( LIBEASTWOOD_HEADERS
   MapFile.h
   OStream.h
   PakFile.h
+  Palette.h
   PalFile.h
   ShpFile.h
   Sound.h
@@ -84,12 +86,14 @@ SET( LIBEASTWOOD_SCALER_HEADERS
 SET( SDL_LIBEASTWOOD_SRCS
     SDL/Mixer/Player.cpp
     SDL/Mixer/Sound.cpp
+    SDL/Palette.cpp
     SDL/Surface.cpp
 )
 
 SET( SDL_LIBEASTWOOD_HEADERS
     eastwood/SDL/Mixer/Player.h
     eastwood/SDL/Mixer/Sound.h
+    eastwood/SDL/Palette.h    
     eastwood/SDL/Surface.h
 )
 
@@ -100,6 +104,7 @@ SET( PYEASTWOOD_SRCS
     python/pymapfile.cpp
     python/pypakfile.cpp
     python/pypalfile.cpp
+    python/pypalette.cpp
     python/pyshpfile.cpp
     python/pysound.cpp
     python/pystringfile.cpp

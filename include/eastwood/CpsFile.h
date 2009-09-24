@@ -2,6 +2,7 @@
 #define EASTWOOD_CPSFILE_H
 
 #include "eastwood/Decode.h"
+#include "eastwood/Palette.h"
 
 namespace eastwood {
 
@@ -14,12 +15,13 @@ enum compressionFormat {
 class CpsFile : public Decode
 {
     public:
-	CpsFile(const std::istream &stream, Palette *palette = NULL);
+	CpsFile(const std::istream &stream, Palette palette = Palette(0));
 	virtual ~CpsFile();
 
 	Surface getSurface();
 
     private:
+	void readHeader();
 	compressionFormat _format;
 	uint16_t _imageSize;
 

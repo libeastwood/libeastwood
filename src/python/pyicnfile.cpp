@@ -7,11 +7,11 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/IcnFile.h"
-#include "eastwood/PalFile.h"
+#include "eastwood/Palette.h"
 
 #include "pyicnfile.h"
 #include "pymapfile.h"
-#include "pypalfile.h"
+#include "pypalette.h"
 #include "pysurface.h"
 
 using namespace eastwood;
@@ -20,8 +20,9 @@ static int
 IcnFile_init(Py_IcnFile *self, PyObject *args)
 {
     Py_buffer pdata;
+    PyObject *palObject = NULL;
     self->stream = NULL;
-    if (!PyArg_ParseTuple(args, "s*OO", &pdata, &self->mapFile, &self->palFile))
+    if (!PyArg_ParseTuple(args, "s*OO", &pdata, &self->mapFile, &palObject))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
@@ -34,16 +35,15 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
 	goto error;
     }
 
-    if(!PyObject_TypeCheck(self->palFile, &PalFile_Type)) {
-	PyErr_SetString(PyExc_TypeError, "Third argument must be a PalFile object");
+    if(!PyObject_TypeCheck(palObject, &Palette_Type)) {
+	PyErr_SetString(PyExc_TypeError, "Third argument must be a Palette object");
 	goto error;
     }
 
-    self->icnFile = new IcnFile(*self->stream, *((Py_MapFile*)self->mapFile)->mapFile, ((Py_PalFile*)self->palFile)->palette);
+    self->icnFile = new IcnFile(*self->stream, *((Py_MapFile*)self->mapFile)->mapFile, *((Py_Palette*)palObject)->palette);
     self->size = self->icnFile->size();
 
     Py_INCREF(self->mapFile);
-    Py_INCREF(self->palFile);
 
     PyBuffer_Release(&pdata);
     return 0;
@@ -60,7 +60,6 @@ IcnFile_dealloc(Py_IcnFile *self)
 {
     delete self->icnFile;
     delete self->stream;
-    Py_XDECREF(self->palFile);
     Py_XDECREF(self->mapFile);
 }
 

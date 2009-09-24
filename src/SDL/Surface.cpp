@@ -1,5 +1,6 @@
 #include "eastwood/StdDef.h"
 #include "eastwood/SDL/Surface.h"
+#include "eastwood/SDL/Palette.h"
 #include "eastwood/Exception.h"
 
 namespace eastwood { namespace SDL {
@@ -15,18 +16,9 @@ Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
     tmp = NULL;
     pixels = _pixels;
 
-#define ncolors sizeof(*_palette)/sizeof(*_palette[0])
-    SDL_Color colors[ncolors];
+    SDL::Palette palette = _palette;
 
-    for (uint16_t i = 0; i < ncolors; i++){
-	colors[i].r = _palette[i]->r;
-	colors[i].g = _palette[i]->g;
-	colors[i].b = _palette[i]->b;
-	colors[i].unused = 0;
-    }
-
-
-    SDL_SetColors(this, colors, 0, ncolors);
+    SDL_SetColors(this, palette.colors, 0, palette.ncolors);
 }
 
 Surface::Surface(const SDL_Surface& surface) :
@@ -39,11 +31,7 @@ Surface::Surface(const SDL_Surface& surface) :
     _pixelsPtr.reset(new Bytes(reinterpret_cast<uint8_t*>(pixels)));
     _pixels = *_pixelsPtr.get();
 
-    for (uint16_t i = 0; i < sizeof(*_palette)/sizeof(*_palette[0]); i++){
-	_palette[i]->r = surface.format->palette->colors[i].r;
-	_palette[i]->g = surface.format->palette->colors[i].g;
-	_palette[i]->b = surface.format->palette->colors[i].b;
-    }
+    _palette = SDL::Palette(*surface.format->palette);
 }
 
 

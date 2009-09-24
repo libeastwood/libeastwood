@@ -38,14 +38,14 @@ struct BMPInfoHeader {
     uint32_t colorsImportant;
 };
 
-Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette *palette) :
+Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
     _pixelsPtr(new Bytes( new uint8_t[(width*(bpp/8)) * _height])),
     _pixels((uint8_t*)*_pixelsPtr.get()), _palette(palette)
 {
 }
 
-Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette *palette) :
+Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
     _pixelsPtr(new Bytes(buffer)), _pixels((uint8_t*)*_pixelsPtr.get()),
     _palette(palette)
@@ -83,11 +83,11 @@ bool Surface::saveBMP(std::ostream &output)
     uint32_t fp_offset;
     uint8_t *bits;
     BMPHeader header = {{'B', 'M'}, 0, 0, 0,0 };
-    BMPInfoHeader info = { sizeof(BMPInfoHeader), _width, _height, 1, _bpp, BMP_RGB, _pitch, 0, 0, sizeof(*_palette)/sizeof((*_palette)[0]), 0};
+    BMPInfoHeader info = { sizeof(BMPInfoHeader), _width, _height, 1, _bpp, BMP_RGB, _pitch, 0, 0, _palette.size(), 0};
     OStream &os(const_cast<OStream&>(reinterpret_cast<const OStream&>(output)));
 
 
-    if (!_palette || _bpp != 8)
+    if (!_palette.size() || _bpp != 8)
 	throw Exception(LOG_ERROR, "Surface", "Format not supported");
 
     /* Write the BMP file header values */
@@ -112,11 +112,11 @@ bool Surface::saveBMP(std::ostream &output)
     os.putU32LE(info.colorsImportant);
 
     /* Write the palette (in BGR color order) */
-    if (_palette ) {
-	for (uint16_t i = 0; i < sizeof(*_palette)/sizeof((*_palette)[0]); i++) {
-	    os.put(_palette[i]->b);
-	    os.put(_palette[i]->g);
-	    os.put(_palette[i]->r);
+    if (_palette.size()) {
+	for (uint16_t i = 0; i < _palette.size(); i++) {
+	    os.put(_palette[i].b);
+	    os.put(_palette[i].g);
+	    os.put(_palette[i].r);
 	    os.put(0);
 	}
     }

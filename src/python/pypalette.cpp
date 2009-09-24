@@ -1,64 +1,47 @@
-// TODO: This is *very* crude for now, need to figure out some neat way for
-// 	 python to deal with C++ streams ...
 #include <istream>
 #include <fstream>
 #include <sstream>
 #include "pyeastwood.h"
+#include <structmember.h>
 
-#include "eastwood/PalFile.h"
 #include "eastwood/StdDef.h"
+#include "eastwood/Palette.h"
 
-#include "pypalfile.h"
 #include "pypalette.h"
 
 using namespace eastwood;
 
-static int
-PalFile_init(Py_PalFile *self, PyObject *args)
+static PyObject *
+Palette_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *kwargs)
 {
-    Py_buffer pdata;
-    if (!PyArg_ParseTuple(args, "s*", &pdata))
-	return -1;
-
-    std::istream stream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
-    if(!stream.good()) {
-	PyErr_SetFromErrno(PyExc_IOError);
-	PyBuffer_Release(&pdata);	
-    	return -1;
+    Py_Palette *self = NULL;
+    self = (Py_Palette *)type->tp_alloc(type, 0);
+    if (self != NULL) {
+	self->palette = reinterpret_cast<Palette*>(args);
+	self->size = self->palette->size();
     }
 
-    self->palFile = new PalFile(stream);
-
-    PyBuffer_Release(&pdata);	
-    return 0;
+    return (PyObject *)self;
 }
 
 static void
-PalFile_dealloc(Py_PalFile *self)
+Palette_dealloc(Py_Palette *self)
 {
-    delete self->palFile;
+    delete self->palette;
 }
 
-static PyObject *
-PalFile_getPalette(Py_PalFile *self)
-{
-    Palette *palette = new Palette(self->palFile->getPalette());
-    PyObject *pypalette = Palette_Type.tp_new(&Palette_Type, reinterpret_cast<PyObject*>(palette), NULL);
-    return pypalette;
-}
-
-
-static PyMethodDef PalFile_methods[] = {
-    {"getPalette", (PyCFunction)PalFile_getPalette, METH_NOARGS, NULL},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+static PyMemberDef Palette_members[] = {
+    {const_cast<char*>("size"), T_USHORT, offsetof(Py_Palette, size), RO, NULL},
+    {NULL, 0, 0, 0, NULL}
 };
-PyTypeObject PalFile_Type = {
+
+PyTypeObject Palette_Type = {
     PyObject_HEAD_INIT(NULL)
     0,						/*ob_size*/
-    "pyeastwood.PalFile",			/*tp_name*/
-    sizeof(Py_PalFile),				/*tp_basicsize*/
+    "pyeastwood.Palette",			/*tp_name*/
+    sizeof(Py_Palette),				/*tp_basicsize*/
     0,						/*tp_itemsize*/
-    (destructor)PalFile_dealloc,		/*tp_dealloc*/
+    (destructor)Palette_dealloc,		/*tp_dealloc*/
     0,						/*tp_print*/
     0,						/*tp_getattr*/
     0,						/*tp_setattr*/
@@ -81,17 +64,17 @@ PyTypeObject PalFile_Type = {
     0,						/*tp_weaklistoffset*/
     0,						/*tp_iter*/
     0,						/*tp_iternext*/
-    PalFile_methods,				/*tp_methods*/
-    0,						/*tp_members*/
+    0,						/*tp_methods*/
+    Palette_members,				/*tp_members*/
     0,						/*tp_getset*/
-    0,                  	    		/*tp_base*/
+    0,                      			/*tp_base*/
     0,                      			/*tp_dict*/
     0,                      			/*tp_descr_get*/
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
-    (initproc)PalFile_init,			/*tp_init*/
+    0,						/*tp_init*/
     PyType_GenericAlloc,    			/*tp_alloc*/
-    PyType_GenericNew,	      			/*tp_new*/
+    Palette_new,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/
     0,						/*tp_bases*/

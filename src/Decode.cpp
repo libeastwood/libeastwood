@@ -24,7 +24,7 @@ enum fmtCmd {
 
 namespace eastwood {
 
-Decode::Decode(const std::istream &stream, uint16_t width, uint16_t height, Palette *palette) :
+Decode::Decode(const std::istream &stream, uint16_t width, uint16_t height, Palette palette) :
     _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),
     _width(width), _height(height), _palette(palette)
 {

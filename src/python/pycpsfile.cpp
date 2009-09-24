@@ -6,10 +6,10 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/CpsFile.h"
-#include "eastwood/PalFile.h"
+#include "eastwood/Palette.h"
 
 #include "pycpsfile.h"
-#include "pypalfile.h"
+#include "pypalette.h"
 #include "pysurface.h"
 
 using namespace eastwood;
@@ -18,9 +18,11 @@ static int
 CpsFile_init(Py_CpsFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    self->palFile = NULL;
+    PyObject *palObject = NULL;
+    Palette palette(0);
     self->stream = NULL;
-    if (!PyArg_ParseTuple(args, "s*|O", &pdata, &self->palFile))
+    self->cpsFile = NULL;
+    if (!PyArg_ParseTuple(args, "s*|O", &pdata, &palObject))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
@@ -28,15 +30,15 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 	PyErr_SetFromErrno(PyExc_IOError);
 	goto error;
     }
-    if(self->palFile) {
-    	if(!PyObject_TypeCheck(self->palFile, &PalFile_Type)) {
-	    PyErr_SetString(PyExc_TypeError, "If given, second argument must be a PalFile object");
+    if(palObject) {
+    	if(!PyObject_TypeCheck(palObject, &Palette_Type)) {
+	    PyErr_SetString(PyExc_TypeError, "If given, second argument must be a Palette object");
 	    goto error;
  	}
-    	Py_INCREF(self->palFile);
+	palette = *((Py_Palette*)palObject)->palette;
     }
 
-    self->cpsFile = new CpsFile(*self->stream, self->palFile ? ((Py_PalFile*)self->palFile)->palette : NULL);
+    self->cpsFile = new CpsFile(*self->stream, palette);
 
     PyBuffer_Release(&pdata);
     return 0;
@@ -51,9 +53,10 @@ error:
 static void
 CpsFile_dealloc(Py_CpsFile *self)
 {
-    delete self->cpsFile;
-    delete self->stream;
-    Py_XDECREF(self->palFile);
+    if(self->cpsFile)
+    	delete self->cpsFile;
+    if(self->stream)
+    	delete self->stream;
 }
 
 static PyObject *

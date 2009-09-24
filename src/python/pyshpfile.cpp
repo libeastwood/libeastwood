@@ -7,10 +7,10 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/ShpFile.h"
-#include "eastwood/PalFile.h"
+#include "eastwood/Palette.h"
 
 #include "pyshpfile.h"
-#include "pypalfile.h"
+#include "pypalette.h"
 #include "pysurface.h"
 
 using namespace eastwood;
@@ -19,8 +19,9 @@ static int
 ShpFile_init(Py_ShpFile *self, PyObject *args)
 {
     Py_buffer pdata;
+    PyObject *palObject = NULL;
     self->stream = NULL;
-    if (!PyArg_ParseTuple(args, "s*O", &pdata, &self->palFile))
+    if (!PyArg_ParseTuple(args, "s*O", &pdata, &palObject))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
@@ -28,13 +29,12 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
 	PyErr_SetFromErrno(PyExc_IOError);
 	goto error;
     }
-    if(!PyObject_TypeCheck(self->palFile, &PalFile_Type)) {
-	PyErr_SetString(PyExc_TypeError, "Second argument must be a PalFile object");
+    if(!PyObject_TypeCheck(palObject, &Palette_Type)) {
+	PyErr_SetString(PyExc_TypeError, "Second argument must be a Palette object");
 	return -1;
     }
 
-    Py_INCREF(self->palFile);
-    self->shpFile = new ShpFile(*self->stream, ((Py_PalFile*)self->palFile)->palette);
+    self->shpFile = new ShpFile(*self->stream, *((Py_Palette*)palObject)->palette);
     self->size = self->shpFile->size();
 
     PyBuffer_Release(&pdata);
@@ -52,7 +52,6 @@ ShpFile_dealloc(Py_ShpFile *self)
 {
     delete self->shpFile;
     delete self->stream;
-    Py_XDECREF(self->palFile);
 }
 
 static PyObject *

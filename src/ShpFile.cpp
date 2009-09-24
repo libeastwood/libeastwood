@@ -16,7 +16,7 @@ static inline TileType getType(const uint32_t x) {
     return (TileType)(x & (TILE_NORMAL-1)<<16);
 }
 
-ShpFile::ShpFile(const std::istream &stream, Palette *palette) :
+ShpFile::ShpFile(const std::istream &stream, Palette palette) :
     Decode(stream, 0, 0, palette), _index(1), _size(0)
 {
     readIndex();
