@@ -56,6 +56,7 @@ MapFile_dealloc(Py_MapFile *self)
 	delete self->stream->rdbuf();
     	delete self->stream;
     }
+    PyObject_Del((PyObject*)self);
 }
 
 static PyMemberDef MapFile_members[] = {

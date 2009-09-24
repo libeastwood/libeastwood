@@ -17,9 +17,8 @@ Sound_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *
 {
     Py_Sound *self = NULL;
     self = (Py_Sound *)type->tp_alloc(type, 0);
-    if (self != NULL) {
+    if (self != NULL)
 	self->sound = reinterpret_cast<Sound*>(args);
-    }
 
     return (PyObject *)self;
 }
@@ -27,7 +26,9 @@ Sound_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *
 static void
 Sound_dealloc(Py_Sound *self)
 {
-    delete self->sound;
+    if(self->sound)
+    	delete self->sound;
+    PyObject_Del((PyObject*)self);
 }
 
 static PyObject *
