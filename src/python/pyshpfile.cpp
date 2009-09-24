@@ -61,6 +61,7 @@ ShpFile_dealloc(Py_ShpFile *self)
     	delete self->shpFile;
     if(self->stream)
     	delete self->stream;
+    PyObject_Del((PyObject*)self);
 }
 
 static PyObject *

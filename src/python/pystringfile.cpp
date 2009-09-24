@@ -40,10 +40,22 @@ error:
     return -1;
 }
 
+static PyObject *
+StringFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_StringFile *self = (Py_StringFile *)PyType_GenericAlloc(type, nitems);
+    self->stringFile = NULL;
+    self->size = 0;
+
+    return (PyObject *)self;
+}
+
 static void
 StringFile_dealloc(Py_StringFile *self)
 {
-    delete self->stringFile;
+    if(self->stringFile)
+    	delete self->stringFile;
+    PyObject_Del((PyObject*)self);
 }
 
 static PyObject *
@@ -121,7 +133,7 @@ PyTypeObject StringFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)StringFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    StringFile_alloc,    			/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

@@ -28,6 +28,7 @@ static void
 Palette_dealloc(Py_Palette *self)
 {
     delete self->palette;
+    PyObject_Del((PyObject*)self);
 }
 
 static PyMemberDef Palette_members[] = {

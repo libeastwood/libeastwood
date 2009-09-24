@@ -17,28 +17,42 @@ PakFile_init(Py_PakFile *self, PyObject *args)
 {
     Py_ssize_t size;
     char *fileName = NULL;
-    self->stream = NULL;
     if (!PyArg_ParseTuple(args, "s#", &fileName, &size))
 	return -1;
 
     self->stream = new std::ifstream(fileName, std::ios::in | std::ios::binary);
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-	delete self->stream;
+	return -1;
     }
 
     self->pakFile = new PakFile(*self->stream);
-    self->mode = MODE_CLOSED;
 
     return 0;
+}
+
+static PyObject *
+PakFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_PakFile *self = (Py_PakFile *)PyType_GenericAlloc(type, nitems);
+    self->pakFile = NULL;
+    self->stream = NULL;
+    self->fileSize = 0;
+    self->mode = MODE_CLOSED;
+
+    return (PyObject *)self;
 }
 
 static void
 PakFile_dealloc(Py_PakFile *self)
 {
-    delete self->pakFile;
-    self->stream->close();
-    delete self->stream;
+    if(self->pakFile)
+    	delete self->pakFile;
+    if(self->stream) {
+	self->stream->close();
+	delete self->stream;
+    }
+    PyObject_Del((PyObject*)self);
 }
 
 static PyObject *
@@ -180,7 +194,7 @@ PyTypeObject PakFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)PakFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    PakFile_alloc,	    			/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

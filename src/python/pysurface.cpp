@@ -29,6 +29,7 @@ static void
 Surface_dealloc(Py_Surface *self)
 {
     delete self->surface;
+    PyObject_Del((PyObject*)self);
 }
 
 static PyObject *

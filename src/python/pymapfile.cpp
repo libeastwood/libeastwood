@@ -36,10 +36,21 @@ MapFile_init(Py_MapFile *self, PyObject *args)
     return 0;
 }
 
+static PyObject *
+MapFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_MapFile *self = (Py_MapFile *)PyType_GenericAlloc(type, nitems);
+    self->mapFile = NULL;
+    self->size = 0;
+
+    return (PyObject *)self;
+}
+
 static void
 MapFile_dealloc(Py_MapFile *self)
 {
-    delete self->mapFile;
+    if(self->mapFile)
+    	delete self->mapFile;
 }
 
 static PyMemberDef MapFile_members[] = {
@@ -85,7 +96,7 @@ PyTypeObject MapFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)MapFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    MapFile_alloc,	    			/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

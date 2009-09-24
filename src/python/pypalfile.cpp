@@ -37,6 +37,7 @@ static void
 PalFile_dealloc(Py_PalFile *self)
 {
     delete self->palFile;
+    PyObject_Del((PyObject*)self);
 }
 
 static PyObject *
