@@ -8,6 +8,7 @@ extern PyTypeObject StringFile_Type;
 
 struct Py_StringFile {
     PyObject_HEAD
+    std::istream *stream;
     eastwood::StringFile *stringFile;
     uint16_t size;
 };

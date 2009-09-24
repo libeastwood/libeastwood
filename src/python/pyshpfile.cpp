@@ -59,8 +59,10 @@ ShpFile_dealloc(Py_ShpFile *self)
 {
     if(self->shpFile)
     	delete self->shpFile;
-    if(self->stream)
+    if(self->stream) {
+	delete self->stream->rdbuf();
     	delete self->stream;
+    }
     PyObject_Del((PyObject*)self);
 }
 

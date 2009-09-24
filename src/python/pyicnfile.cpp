@@ -68,8 +68,10 @@ IcnFile_dealloc(Py_IcnFile *self)
 {
     if(self->icnFile)
 	delete self->icnFile;
-    if(self->stream)
+    if(self->stream) {
+	delete self->stream->rdbuf();
     	delete self->stream;
+    }
     Py_XDECREF(self->mapFile);
     PyObject_Del((PyObject*)self);
 }

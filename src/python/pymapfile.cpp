@@ -22,14 +22,14 @@ MapFile_init(Py_MapFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "s*", &pdata))
 	return -1;
 
-    std::istream stream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
-    if(!stream.good()) {
+    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
+    if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
 	PyBuffer_Release(&pdata);
     	return -1;
     }
 
-    self->mapFile = new MapFile(stream);
+    self->mapFile = new MapFile(*self->stream);
     self->size = self->mapFile->size();
 
     PyBuffer_Release(&pdata);
@@ -40,6 +40,7 @@ static PyObject *
 MapFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_MapFile *self = (Py_MapFile *)PyType_GenericAlloc(type, nitems);
+    self->stream = NULL;
     self->mapFile = NULL;
     self->size = 0;
 
@@ -51,6 +52,10 @@ MapFile_dealloc(Py_MapFile *self)
 {
     if(self->mapFile)
     	delete self->mapFile;
+    if(self->stream) {
+	delete self->stream->rdbuf();
+    	delete self->stream;
+    }
 }
 
 static PyMemberDef MapFile_members[] = {

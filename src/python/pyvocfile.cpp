@@ -46,8 +46,10 @@ VocFile_dealloc(Py_VocFile *self)
 {
     if(self->vocFile)
     	delete self->vocFile;
-    if(self->stream)
+    if(self->stream) {
+	delete self->stream->rdbuf();
     	delete self->stream;
+    }
     PyObject_Del((PyObject*)self);
 }
 

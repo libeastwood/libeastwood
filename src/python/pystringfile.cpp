@@ -23,13 +23,13 @@ StringFile_init(Py_StringFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "s*", &pdata))
 	return -1;
 
-    std::istream stream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
-    if(!stream.good()) {
+    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
+    if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
 	goto error;
     }
 
-    self->stringFile = new StringFile(stream);
+    self->stringFile = new StringFile(*self->stream);
     self->size = self->stringFile->size();
 
     PyBuffer_Release(&pdata);
@@ -44,6 +44,7 @@ static PyObject *
 StringFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_StringFile *self = (Py_StringFile *)PyType_GenericAlloc(type, nitems);
+    self->stream = NULL;
     self->stringFile = NULL;
     self->size = 0;
 
@@ -55,6 +56,10 @@ StringFile_dealloc(Py_StringFile *self)
 {
     if(self->stringFile)
     	delete self->stringFile;
+    if(self->stream) {
+	delete self->stream->rdbuf();
+    	delete self->stream;
+    }
     PyObject_Del((PyObject*)self);
 }
 

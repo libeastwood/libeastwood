@@ -20,23 +20,38 @@ PalFile_init(Py_PalFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "s*", &pdata))
 	return -1;
 
-    std::istream stream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
-    if(!stream.good()) {
+    self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
+    if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
 	PyBuffer_Release(&pdata);	
     	return -1;
     }
 
-    self->palFile = new PalFile(stream);
+    self->palFile = new PalFile(*self->stream);
 
     PyBuffer_Release(&pdata);	
     return 0;
 }
 
+static PyObject *
+PalFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_PalFile *self = (Py_PalFile *)PyType_GenericAlloc(type, nitems);
+    self->palFile = NULL;
+    self->stream = NULL;
+
+    return (PyObject *)self;
+}
+
 static void
 PalFile_dealloc(Py_PalFile *self)
 {
-    delete self->palFile;
+    if(self->palFile)
+    	delete self->palFile;
+    if(self->stream) {
+	delete self->stream->rdbuf();
+    	delete self->stream;
+    }
     PyObject_Del((PyObject*)self);
 }
 
@@ -91,7 +106,7 @@ PyTypeObject PalFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)PalFile_init,			/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    PalFile_alloc,    				/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

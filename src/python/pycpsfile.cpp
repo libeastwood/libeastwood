@@ -61,8 +61,10 @@ CpsFile_dealloc(Py_CpsFile *self)
 {
     if(self->cpsFile)
     	delete self->cpsFile;
-    if(self->stream)
+    if(self->stream) {
+	delete self->stream->rdbuf();
     	delete self->stream;
+    }
     PyObject_Del((PyObject*)self);
 }
 

@@ -5,6 +5,7 @@
 
 struct Py_PalFile {
     PyObject_HEAD
+    std::istream *stream;
     eastwood::PalFile *palFile;
 };
 
