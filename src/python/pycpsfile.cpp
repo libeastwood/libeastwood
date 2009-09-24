@@ -118,7 +118,7 @@ PyTypeObject CpsFile_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     (initproc)CpsFile_init,			/*tp_init*/
-    CpsFile_alloc,    			/*tp_alloc*/
+    CpsFile_alloc,    				/*tp_alloc*/
     PyType_GenericNew,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/
