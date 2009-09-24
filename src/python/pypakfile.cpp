@@ -103,7 +103,6 @@ PakFile_read(Py_PakFile *self, PyObject *args)
 	if(static_cast<std::streamoff>(self->pakFile->tellg())  == self->fileSize-1)
 	    self->mode = MODE_READ_EOF;
 
-	Py_XINCREF(v);
 	return v;
 }
 
