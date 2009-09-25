@@ -29,9 +29,7 @@ class Surface {
 	Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
 	virtual ~Surface();
 
-	Surface(const Surface &surface) :
-	    _bpp(surface._bpp), _width(surface._width), _height(surface._height), _pitch(surface._pitch),
-	    _pixelsPtr(surface._pixelsPtr), _pixels(surface._pixels), _palette(surface._palette)  {}
+	Surface(const Surface &surface, bool copy=false);
 
 	Surface &operator=(const Surface &surface) {
 	    _bpp = surface._bpp;

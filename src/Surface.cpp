@@ -52,6 +52,17 @@ Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, 
 {
 }
 
+Surface::Surface(const Surface &surface, bool copy) :
+    _bpp(surface._bpp), _width(surface._width), _height(surface._height), _pitch(surface._pitch),
+    _pixelsPtr(surface._pixelsPtr), _pixels(surface._pixels), _palette(surface._palette)
+{
+    if(copy) {
+	_pixelsPtr.reset(new Bytes( new uint8_t[(_width*(_bpp/8)) * _height]));
+	memcpy(*_pixelsPtr.get(), surface._pixels, (_width*(_bpp/8)) * _height);
+	_pixels = *_pixelsPtr.get();
+    }
+}
+
 Surface::~Surface() {
 }
 
