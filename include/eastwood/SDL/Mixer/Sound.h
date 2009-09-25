@@ -12,7 +12,6 @@ class Sound : public eastwood::Sound, public Mix_Chunk
     public:
 	Sound();
 	Sound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format);
-	Sound(uint32_t size, uint8_t *buffer);
 	Sound(const eastwood::Sound &sound);
 	virtual ~Sound();
 
