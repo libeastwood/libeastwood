@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(${LIBEASTWOOD_SOURCE_DIR}/include)
 
 SET( LIBEASTWOOD_HEADERS
   eastwood/AdlFile.h
+  eastwood/Buffer.h
   eastwood/CpsFile.h
   eastwood/Decode.h
   eastwood/Dune2File.h
