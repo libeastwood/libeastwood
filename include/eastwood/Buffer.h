@@ -30,17 +30,18 @@ class Buffer
 	} 
 
 	inline virtual ~Buffer() {
-	    switch(_alloc) {
-		case BufMalloc:
-		    free(_buffer);
-		    break;
-		case BufNew:
-		    delete _buffer;
-		    break;
-		case BufNewArray:
-		    delete [] _buffer;
-		    break;
-	    }
+	    if(_buffer)
+    		switch(_alloc) {
+    		    case BufMalloc:
+    			free(_buffer);
+    			break;
+    		    case BufNew:
+    			delete _buffer;
+    			break;
+    		    case BufNewArray:
+    			delete [] _buffer;
+    			break;
+    		}
 	};
 
 	inline virtual operator T*() {
