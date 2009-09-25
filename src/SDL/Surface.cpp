@@ -45,5 +45,11 @@ Surface::~Surface()
     }
 }
 
+bool Surface::setPalette(eastwood::Palette palette, int firstColor, int flags)
+{
+    _palette = palette;
+    return SDL_SetPalette(this, flags, (SDL_Color*)&palette[0], firstColor, palette.size());
+}
+
 }}
 

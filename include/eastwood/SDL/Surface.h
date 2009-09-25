@@ -16,6 +16,9 @@ class Surface : public eastwood::Surface, public SDL_Surface
 	Surface(const SDL_Surface& surface);
 	virtual ~Surface();
 
+    protected:
+	bool setPalette(eastwood::Palette palette, int firstColor = 0, int flags = (SDL_LOGPAL|SDL_PHYSPAL));
+
     private:
 	SDL_Surface *_surface;
 };
