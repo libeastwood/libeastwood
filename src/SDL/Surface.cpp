@@ -24,11 +24,11 @@ Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
 Surface::Surface(const SDL_Surface& surface) :
     _surface(NULL)
 {
-    _bpp = format->BitsPerPixel;
-    _width = w;
-    _height = h;
-    _pitch = pitch;
-    _pixelsPtr.reset(new Bytes(reinterpret_cast<uint8_t*>(pixels)));
+    _bpp = surface.format->BitsPerPixel;
+    _width = surface.w;
+    _height = surface.h;
+    _pitch = surface.pitch;
+    _pixelsPtr.reset(new Bytes(reinterpret_cast<uint8_t*>(surface.pixels)));
     _pixels = *_pixelsPtr.get();
 
     _palette = SDL::Palette(*surface.format->palette);
