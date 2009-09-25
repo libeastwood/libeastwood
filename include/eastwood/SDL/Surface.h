@@ -4,7 +4,7 @@
 #include <SDL/SDL_video.h>
 
 #include "eastwood/Decode.h"
-#include "eastwood/PalFile.h"
+#include "eastwood/SDL/Palette.h"
 
 namespace eastwood { namespace SDL {
 

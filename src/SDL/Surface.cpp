@@ -22,16 +22,15 @@ Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
 }
 
 Surface::Surface(const SDL_Surface& surface) :
-    SDL_Surface(surface), _surface(NULL)
+    eastwood::Surface(surface.w, surface.h, surface.format->BitsPerPixel, SDL::Palette(*surface.format->palette)),
+    SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, surface.w, surface.h, surface.format->BitsPerPixel,
+		    surface.format->Rmask, surface.format->Gmask, surface.format->Bmask, surface.format->Amask))),
+    _surface(NULL)
 {
-    _bpp = format->BitsPerPixel;
-    _width = w;
-    _height = h;
-    _pitch = pitch;
-    _pixelsPtr.reset(new Bytes(reinterpret_cast<uint8_t*>(pixels)));
-    _pixels = *_pixelsPtr.get();
-
-    _palette = SDL::Palette(*surface.format->palette);
+    memcpy(*_pixelsPtr.get(), surface.pixels, (_width*(_bpp/8)) * _height);
+    pixels = *_pixelsPtr.get();
+    tmp = NULL;
+    setPalette(SDL::Palette(*surface.format->palette));
 }
 
 
@@ -48,7 +47,7 @@ Surface::~Surface()
 bool Surface::setPalette(eastwood::Palette palette, int firstColor, int flags)
 {
     _palette = palette;
-    return SDL_SetPalette(this, flags, (SDL_Color*)&palette[0], firstColor, palette.size());
+    return SDL_SetPalette(this, flags, reinterpret_cast<SDL_Color*>(&palette[0]), firstColor, palette.size());
 }
 
 }}
