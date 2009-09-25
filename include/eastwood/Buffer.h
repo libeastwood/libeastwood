@@ -6,23 +6,41 @@
 
 namespace eastwood {
 
+enum BufferAllocator {
+    BufMalloc,
+    BufNew,
+    BufNewArray
+};
+
 template <typename T>
 class Buffer
 {
     public:
-	inline Buffer(T* buffer) : _buffer(buffer) {}
+	inline Buffer(T* buffer, BufferAllocator alloc = BufNewArray) :
+	    _buffer(buffer), _alloc(alloc) {}
 
 	inline Buffer(const Buffer& buffer) {
 	    *this = buffer;
 	}
 
 	inline Buffer &operator=(const Buffer &buffer) {
-	    _buffer = buffer;
+	    _buffer = buffer._buffer;
+	    _alloc = buffer._alloc;
 	    return *this;
 	} 
 
 	inline virtual ~Buffer() {
-	    delete [] _buffer;
+	    switch(_alloc) {
+		case BufMalloc:
+		    free(_buffer);
+		    break;
+		case BufNew:
+		    delete _buffer;
+		    break;
+		case BufNewArray:
+		    delete [] _buffer;
+		    break;
+	    }
 	};
 
 	inline virtual operator T*() {
@@ -31,6 +49,7 @@ class Buffer
 
     private:
 	T* _buffer;
+	BufferAllocator _alloc;
 };
 
 typedef Buffer<uint8_t> Bytes;
