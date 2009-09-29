@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "eastwood/StdDef.h"
+#include "eastwood/Exception.h"
 
 #include "pyeastwood.h"
 #include "pypakfile.h"
@@ -72,7 +73,13 @@ PakFile_open(Py_PakFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "s#", &fileName, &size))
 	return NULL;
 
-    self->pakFile->open(fileName);
+    try {
+    	self->pakFile->open(fileName);
+    } catch(FileException e) {
+	PyErr_Format(PyExc_IOError, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    }
+
     self->fileSize = self->pakFile->size();
     self->mode = MODE_READ;
     Py_RETURN_TRUE;
