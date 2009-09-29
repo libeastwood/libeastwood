@@ -3,6 +3,7 @@
 #include "eastwood/Surface.h"
 
 #include "pycpsfile.h"
+#include "pyemcfile.h"
 #include "pyicnfile.h"
 #include "pymapfile.h"
 #include "pypakfile.h"
@@ -26,7 +27,8 @@ initpyeastwood(void)
 {
     PyObject *module;
 
-    if((PyType_Ready(&CpsFile_Type) < 0) || (PyType_Ready(&IcnFile_Type) < 0)
+    if((PyType_Ready(&CpsFile_Type) < 0) || (PyType_Ready(&EmcFile_Type) < 0)
+	    || (PyType_Ready(&IcnFile_Type) < 0)
 	    || (PyType_Ready(&MapFile_Type) < 0) || (PyType_Ready(&PakFile_Type) < 0)
 	    || (PyType_Ready(&PalFile_Type) < 0) || (PyType_Ready(&ShpFile_Type) < 0)
 	    || (PyType_Ready(&Sound_Type) < 0) || (PyType_Ready(&StringFile_Type) < 0)
@@ -39,6 +41,9 @@ initpyeastwood(void)
 
     Py_INCREF(&CpsFile_Type);
     PyModule_AddObject(module, "CpsFile", (PyObject *)&CpsFile_Type);
+
+    Py_INCREF(&EmcFile_Type);
+    PyModule_AddObject(module, "EmcFile", (PyObject *)&EmcFile_Type);
 
     Py_INCREF(&IcnFile_Type);
     PyModule_AddObject(module, "IcnFile", (PyObject *)&IcnFile_Type);
@@ -100,4 +105,6 @@ initpyeastwood(void)
     PyModule_AddIntConstant(module, "FMT_U16BE", FMT_U16BE);
     PyModule_AddIntConstant(module, "FMT_S16BE", FMT_S16BE);
 
+    PyModule_AddIntConstant(module, "EMC_ASSEMBLE", EMC_ASSEMBLE);
+    PyModule_AddIntConstant(module, "EMC_DISASSEMBLE", EMC_DISASSEMBLE);
 }

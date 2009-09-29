@@ -49,6 +49,7 @@ SET( SDL_LIBEASTWOOD_SRCS
 SET( PYEASTWOOD_SRCS
     python/pycpsfile.cpp
     python/pyeastwood.cpp
+    python/pyemcfile.cpp
     python/pyicnfile.cpp
     python/pymapfile.cpp
     python/pypakfile.cpp
