@@ -65,6 +65,11 @@ class EmcFileBase {
 	    return _lineCount;
 	}
 
+	inline
+	script_t	type() const {
+	    return _scriptType;
+	}
+
 	// Virtual Functions
 	virtual bool	 execute()		= 0;
 
