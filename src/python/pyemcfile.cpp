@@ -27,7 +27,7 @@ EmcFile_init(Py_EmcFile *self, PyObject *args)
 	goto error;
     }
 
-    self->output = new std::ostream(new std::stringbuf(std::string()));
+    self->output = new std::ostream(new std::stringbuf());
     if(!self->output->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
 	goto error;
