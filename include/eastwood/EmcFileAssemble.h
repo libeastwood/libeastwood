@@ -21,7 +21,7 @@
  *  
  */
 
-#include <string>
+#include "eastwood/EmcFileBase.h"
 
 namespace eastwood {
 

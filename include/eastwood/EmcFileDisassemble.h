@@ -21,7 +21,7 @@
  * 
  */
 
-#include <fstream>
+#include "eastwood/EmcFileBase.h"
 
 namespace eastwood {
 
