@@ -47,19 +47,19 @@ SET( SDL_LIBEASTWOOD_SRCS
 )
 
 SET( PYEASTWOOD_SRCS
-    python/pycpsfile.cpp
-    python/pyeastwood.cpp
-    python/pyemcfile.cpp
-    python/pyicnfile.cpp
-    python/pymapfile.cpp
-    python/pypakfile.cpp
-    python/pypalfile.cpp
-    python/pypalette.cpp
-    python/pyshpfile.cpp
-    python/pysound.cpp
-    python/pystringfile.cpp
-    python/pysurface.cpp
-    python/pyvocfile.cpp
+    python/src/pycpsfile.cpp
+    python/src/pyeastwood.cpp
+    python/src/pyemcfile.cpp
+    python/src/pyicnfile.cpp
+    python/src/pymapfile.cpp
+    python/src/pypakfile.cpp
+    python/src/pypalfile.cpp
+    python/src/pypalette.cpp
+    python/src/pyshpfile.cpp
+    python/src/pysound.cpp
+    python/src/pystringfile.cpp
+    python/src/pysurface.cpp
+    python/src/pyvocfile.cpp
 )
 
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
