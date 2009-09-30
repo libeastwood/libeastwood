@@ -11,7 +11,7 @@ struct Py_MapFile {
     PyObject_HEAD
     std::istream *stream;
     eastwood::MapFile *mapFile;
-    uint16_t size;
+    PyObject *tuple;
 };
 
 #endif // EASTWOOD_PYTHON_PYMAPFILE_H

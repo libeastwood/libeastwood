@@ -19,6 +19,7 @@ static int
 MapFile_init(Py_MapFile *self, PyObject *args)
 {
     Py_buffer pdata;
+    uint16_t size;
     if (!PyArg_ParseTuple(args, "s*", &pdata))
 	return -1;
 
@@ -30,7 +31,17 @@ MapFile_init(Py_MapFile *self, PyObject *args)
     }
 
     self->mapFile = new MapFile(*self->stream);
-    self->size = self->mapFile->size();
+    size = self->mapFile->size();
+    self->tuple = PyTuple_New(size);
+    for(uint16_t i = 0; i < size; i++) {
+    	std::vector<uint16_t> &mapRow = (*self->mapFile)[i];
+	PyObject *row = PyTuple_New(mapRow.size());
+	for(uint16_t j = 0; j < mapRow.size(); j++)
+	    if(PyTuple_SetItem(row, j, Py_BuildValue("H", mapRow[j])))
+		return -1;
+	if(PyTuple_SetItem(self->tuple, i, row))
+	    return -1;
+    }
 
     PyBuffer_Release(&pdata);
     return 0;
@@ -42,7 +53,7 @@ MapFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
     Py_MapFile *self = (Py_MapFile *)PyType_GenericAlloc(type, nitems);
     self->stream = NULL;
     self->mapFile = NULL;
-    self->size = 0;
+    self->tuple = NULL;
 
     return (PyObject *)self;
 }
@@ -56,12 +67,26 @@ MapFile_dealloc(Py_MapFile *self)
 	delete self->stream->rdbuf();
     	delete self->stream;
     }
-    PyObject_Del((PyObject*)self);
+    Py_XDECREF(self->tuple);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
-static PyMemberDef MapFile_members[] = {
-    {const_cast<char*>("size"), T_USHORT, offsetof(Py_MapFile, size), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+static PyObject*
+MapFile_subscript(Py_MapFile *self, PyObject *item)
+{
+    return PyTuple_Type.tp_as_mapping->mp_subscript(self->tuple, item);
+}
+
+static Py_ssize_t
+MapFile_length(Py_MapFile *a)
+{
+    return PyTuple_Type.tp_as_mapping->mp_length(a->tuple);
+}
+
+static PyMappingMethods MapFile_as_mapping = {
+	(lenfunc)MapFile_length,
+	(binaryfunc)MapFile_subscript,
+	0
 };
 
 PyTypeObject MapFile_Type = {
@@ -78,7 +103,7 @@ PyTypeObject MapFile_Type = {
     0,						/*tp_repr*/
     0,						/*tp_as_number*/
     0,						/*tp_as_sequence*/
-    0,						/*tp_as_mapping*/
+    &MapFile_as_mapping,			/*tp_as_mapping*/
     0,						/*tp_hash*/
     0,						/*tp_call*/
     0,						/*tp_str*/
@@ -94,7 +119,7 @@ PyTypeObject MapFile_Type = {
     0,						/*tp_iter*/
     0,						/*tp_iternext*/
     0,						/*tp_methods*/
-    MapFile_members,				/*tp_members*/
+    0,						/*tp_members*/
     0,						/*tp_getset*/
     0,                      			/*tp_base*/
     0,                      			/*tp_dict*/
