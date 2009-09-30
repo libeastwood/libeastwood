@@ -26,33 +26,51 @@ from hashlib import md5
 class TestEmcFile(unittest.TestCase):
     
     def setUp(self):
-	self.pak = PakFile('DUNE2/DUNE.PAK')
+        self.pak = PakFile('DUNE2/DUNE.PAK')
+
+    def _test_type(self, filename, typename):
+        self.pak.open(filename)
+
+        disassembled = EmcFile(self.pak.read(), EMC_DISASSEMBLE)
+        assembled = EmcFile(disassembled.get(), EMC_ASSEMBLE)
+
+        self.assertEqual(disassembled.type, typename)
+        self.assertEqual(assembled.type, typename)
+
+    def test_type_BUILD(self):
+        self._test_type("BUILD.EMC", "BUILD")
+
+    def test_type_HOUSE(self):
+        self._test_type("TEAM.EMC", "HOUSE")
+
+    def test_type_UNIT(self):
+        self._test_type("UNIT.EMC", "UNIT")
 
     def _test_assembly(self, filename):
-	self.pak.open(filename)
-	
-	fileOrig = self.pak.read()
-	sizeOrig = len(fileOrig)
-	md5Orig = md5(fileOrig).hexdigest()
-	
-	disassembled = EmcFile(fileOrig, EMC_DISASSEMBLE)
-	assembled = EmcFile(disassembled.get(), EMC_ASSEMBLE)
-	
-	fileResult = assembled.get()
-	sizeResult = len(fileResult)
-	md5Result = md5(fileResult).hexdigest()
-	
-	self.assertEqual(sizeOrig, sizeResult)
-	self.assertEqual(md5Orig, md5Result)
+        self.pak.open(filename)
+
+        fileOrig = self.pak.read()
+        sizeOrig = len(fileOrig)
+        md5Orig = md5(fileOrig).hexdigest()
+        
+        disassembled = EmcFile(fileOrig, EMC_DISASSEMBLE)
+        assembled = EmcFile(disassembled.get(), EMC_ASSEMBLE)
+
+        fileResult = assembled.get()
+        sizeResult = len(fileResult)
+        md5Result = md5(fileResult).hexdigest()
+
+        self.assertEqual(sizeOrig, sizeResult)
+        self.assertEqual(md5Orig, md5Result)
 
     def test_assembly_BUILD(self):
-	self._test_assembly("BUILD.EMC")
+        self._test_assembly("BUILD.EMC")
 
     def test_assembly_HOUSE(self):
-	self._test_assembly("TEAM.EMC")
+        self._test_assembly("TEAM.EMC")
 
     def test_assembly_UNIT(self):
-	self._test_assembly("UNIT.EMC")
+        self._test_assembly("UNIT.EMC")
 
 def test_main():
     from test import test_support
@@ -60,3 +78,5 @@ def test_main():
 
 if __name__ == "__main__":
     test_main()
+
+# vim:ts=4:sw=4:et
