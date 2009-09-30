@@ -250,72 +250,70 @@ void EmcFileBase::opcodesBuildingsSetup() {
 void EmcFileBase::opcodesUnitsSetup() {
 #define OPCODE(x) { #x, &EmcFileBase::o_execute_Unit_Null }
     static const _Opcode scriptOpcodesExecuteUnits[] = {
-	{"GetDetail",	&EmcFileBase::o_execute_Unit_GetDetail},
-	OPCODE(sub_272E7),
-	OPCODE(Text),
-	OPCODE(getObjectDistance?),
-	OPCODE(sub_279AB),
-	OPCODE(sub_27186),
-	OPCODE(sub_27127),
-	OPCODE(sub_27019),
-	OPCODE(Attack),
-	OPCODE(MCVDeploy),
-	OPCODE(SideBarCmd4),
-	OPCODE(Flash),
-	OPCODE(sub_27638),
-	OPCODE(HouseCompare),
-	OPCODE(sub_26A29),
-	OPCODE(Destroy),
-	OPCODE(Delay),
-	OPCODE(sub_12D2EE),
-	OPCODE(sub_26AB4),
-	OPCODE(sub_26745),
-	OPCODE(sub_25F69),
-	OPCODE(Null),
-	OPCODE(sub_2677F),
-	OPCODE(RandomNumber),
-	OPCODE(sub_1D3D4),
-	OPCODE(sub_27356),
-	OPCODE(sub_26689),
-	OPCODE(sub_25F3F),
-	OPCODE(DamageGet),
-	OPCODE(Dock?),
-	OPCODE(EMCDataTest?),
-	OPCODE(CheckHarvestReturn),
-	OPCODE(CreateSoldier),
-	OPCODE(DeliverToBuilding),
-	OPCODE(PlaceInUnit),
-	OPCODE(CarryAllHoldingClear),
-	OPCODE(BuildingFreeFind),
-	OPCODE(PlaySFX),
-	OPCODE(CarryAllHoldingClear),
-	OPCODE(BuildingFreeFind),
-	OPCODE(PlaySFX),
-	OPCODE(DestroyedMessage),
-	OPCODE(MapReveal),
-	OPCODE(MapGetTile),
-	OPCODE(Harvest),
-	OPCODE(Null),
-	OPCODE(GetHoldingType),
-	OPCODE(GetType),
-	OPCODE(IndexGet ),
-	OPCODE(sub_27E8B),
-	OPCODE(GetMapPieceForUnit),
-	OPCODE(sub_28001),
-	OPCODE(TypeCount),
-	OPCODE(sub_28090),
-	OPCODE(Null),
-	OPCODE(Null),
-	OPCODE(GetNearObjectTypeIndex),
-	OPCODE(sub_282BC),
-	OPCODE(GetField64),
-	OPCODE(Null),
-	OPCODE(GetAttackObjectIndexType),
-	OPCODE(ObjectIsValid?),
-	OPCODE(DelayAnd?),
-	OPCODE(sub_27053),
-	OPCODE(ObjectDistanceCalc),
-	OPCODE(Null),
+	{"GetDetail",	&EmcFileBase::o_execute_Unit_GetDetail},	// 0
+	OPCODE(sub_272E7),						// 1
+	OPCODE(Text),							// 2
+	OPCODE(getObjectDistance?),					// 3
+	OPCODE(sub_279AB),						// 4
+	OPCODE(sub_27186),						// 5
+	OPCODE(sub_27127),						// 6
+	OPCODE(sub_27019),						// 7
+	OPCODE(Attack),							// 8
+	OPCODE(MCVDeploy),						// 9
+	OPCODE(SideBarCmd4),						// A
+	OPCODE(Flash),							// B
+	OPCODE(sub_27638),						// C
+	OPCODE(HouseCompare),						// D
+	OPCODE(sub_26A29),						// E
+	OPCODE(Destroy),						// F
+	OPCODE(Delay),							// 10
+	OPCODE(sub_12D2EE),						// 11
+	OPCODE(sub_26AB4),						// 12
+	OPCODE(sub_26745),						// 13
+	OPCODE(sub_25F69),						// 14
+	OPCODE(Null),							// 15
+	OPCODE(sub_2677F),						// 16
+	OPCODE(RandomNumber),						// 17
+	OPCODE(sub_1D3D4),						// 18
+	OPCODE(sub_27356),						// 19
+	OPCODE(sub_26689),						// 1A
+	OPCODE(sub_266B9),						// 1B
+	OPCODE(sub_25F3F),						// 1C
+	OPCODE(DamageGet),						// 1D
+	OPCODE(Dock?),							// 1E
+	OPCODE(EMCDataTest?),						// 1F
+	OPCODE(CheckHarvestReturn),					// 20
+	OPCODE(CreateSoldier),						// 21
+	OPCODE(DeliverToBuilding),					// 22
+	OPCODE(PlaceInUnit),						// 23
+	OPCODE(CarryAllHoldingClear),					// 24
+	OPCODE(BuildingFreeFind),					// 25
+	OPCODE(PlaySFX),						// 26
+	OPCODE(DestroyedMessage),					// 27
+	OPCODE(MapReveal),						// 28
+	OPCODE(MapGetTile),						// 29
+	OPCODE(Harvest),						// 2A
+	OPCODE(Null),							// 2B
+	OPCODE(GetHoldingType),						// 2C
+	OPCODE(GetType),						// 2D
+	OPCODE(IndexGet ),						// 2E
+	OPCODE(sub_27E8B),						// 2F
+	OPCODE(GetMapPieceForUnit),					// 30
+	OPCODE(sub_28001),						// 31
+	OPCODE(TypeCount),						// 32
+	OPCODE(sub_28090),						// 33
+	OPCODE(Null),							// 34
+	OPCODE(Null),							// 35
+	OPCODE(GetNearObjectTypeIndex),					// 36
+	OPCODE(sub_282BC),						// 37
+	OPCODE(GetField64),						// 38
+	OPCODE(Null),							// 39
+	OPCODE(GetAttackObjectIndexType),				// 3A
+	OPCODE(ObjectIsValid?),						// 3B
+	OPCODE(DelayAnd?),						// 3C
+	OPCODE(sub_27053),						// 3D
+	OPCODE(ObjectDistanceCalc),					// 3E
+	OPCODE(Null),							// 3F
     };
 
     _opcodesExecute = scriptOpcodesExecuteUnits;
