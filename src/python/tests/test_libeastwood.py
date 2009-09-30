@@ -72,9 +72,33 @@ class TestEmcFile(unittest.TestCase):
     def test_assembly_UNIT(self):
         self._test_assembly("UNIT.EMC")
 
+class TestMapFile(unittest.TestCase):
+    
+    def setUp(self):
+        self.pak = PakFile('DUNE2/DUNE.PAK')
+        self.pak.open("ICON.MAP")
+        self.map = MapFile(self.pak.read())
+
+    def test_size(self):
+        self.assertEqual(len(self.map), 27)
+
+    def test_total_size(self):
+        totalsize = 0
+        for i in xrange(len(self.map)):
+            totalsize += len(self.map[i])
+        self.assertEqual(totalsize, 716)
+
+    def test_total_value(self):
+        totalsize = 0
+        for i in xrange(len(self.map)):
+            for j in self.map[i]:
+                totalsize += j
+        self.assertEqual(totalsize, 168192)
+
 def test_main():
     from test import test_support
     test_support.run_unittest(TestEmcFile)
+    test_support.run_unittest(TestMapFile)
 
 if __name__ == "__main__":
     test_main()
