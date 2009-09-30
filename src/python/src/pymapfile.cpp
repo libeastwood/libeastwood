@@ -84,9 +84,9 @@ MapFile_length(Py_MapFile *a)
 }
 
 static PyMappingMethods MapFile_as_mapping = {
-	(lenfunc)MapFile_length,
-	(binaryfunc)MapFile_subscript,
-	0
+    (lenfunc)MapFile_length,
+    (binaryfunc)MapFile_subscript,
+    0
 };
 
 PyTypeObject MapFile_Type = {
