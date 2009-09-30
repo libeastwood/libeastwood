@@ -200,6 +200,10 @@ bool EmcFileAssemble::scriptAssemble() {
 		continue;
 	    }
 
+	    // Skip the spaces and check the next character
+	    while((_inputStream.get()) == 0x20);
+
+	    _inputStream.seekg(-1, std::ios::cur);
 	    // Is it end of line? or is it a parameter?
 	    if(_inputStream.peek() != '\n')
 		_inputStream >> _currentLine;
