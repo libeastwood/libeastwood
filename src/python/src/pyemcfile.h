@@ -18,7 +18,6 @@ struct Py_EmcFile {
     std::istream *input;
     std::ostream *output;
     eastwood::EmcFileBase *emcFile;
-    size_t size;
     EmcMode mode;
     PyObject *type;
 };

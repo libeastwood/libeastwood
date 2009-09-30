@@ -51,8 +51,6 @@ EmcFile_init(Py_EmcFile *self, PyObject *args)
 	goto error;
     }
 
-    self->size = reinterpret_cast<OStream&>(*self->output).size();
-
     switch(self->emcFile->type()) {
 	case script_BUILD:
 	    self->type = PyString_FromString("BUILD");
@@ -84,7 +82,6 @@ EmcFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
     self->input = NULL;
     self->output = NULL;
     self->emcFile = NULL;
-    self->size = 0;
     self->mode = EMC_INVALID;
     self->type = NULL;
 
@@ -111,8 +108,8 @@ EmcFile_dealloc(Py_EmcFile *self)
 static PyObject *
 EmcFile_get(Py_EmcFile *self)
 {
-    std::stringbuf *buf = (std::stringbuf*)self->output->rdbuf();
-    return PyString_FromStringAndSize(buf->str().c_str(), self->size);
+    std::string buf = ((std::stringbuf*)self->output->rdbuf())->str();
+    return PyString_FromStringAndSize(buf.c_str(), buf.size());
 }
 
 static PyMethodDef EmcFile_methods[] = {
