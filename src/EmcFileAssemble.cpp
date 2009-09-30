@@ -61,7 +61,7 @@ bool EmcFileAssemble::headerCreate() {
 	    return false;
     }
 
-    // 0x6 is WORDS, not uint8_ts like 0x10 above
+    // 0x6 is WORDS, not bytes like 0x10 above
     buffer += 0x6;
 
     // Write pointer counter
@@ -214,7 +214,7 @@ bool EmcFileAssemble::scriptAssemble() {
 
 	_lineCount++;
 
-	// Write uint8_tcode
+	// Write bytecode
 	*_scriptPtr = _opcode;
 
 	// Execute opcode call
