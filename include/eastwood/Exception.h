@@ -18,9 +18,9 @@ class Exception {
     public:
         Exception(logLevel level, std::string location, std::string message);
         virtual ~Exception(){}
-        inline logLevel getLogLevel() { return _level; }
-        inline std::string getLocation() { return _location; }
-        inline std::string getMessage() { return _message; }
+        virtual inline logLevel getLogLevel() { return _level; }
+        virtual inline std::string getLocation() { return _location; }
+        virtual inline std::string getMessage() { return _message; }
 
     protected:
         logLevel _level;
@@ -31,9 +31,9 @@ class Exception {
 class FileException : public Exception {
     public:
         FileException(logLevel level, std::string location, std::string filename, std::string message);
-        inline std::string getFilename() { return _filename; };
+        virtual inline std::string getFilename() { return _filename; };
 
-        inline std::string getMessage() {
+        virtual inline std::string getMessage() {
             std::stringstream ss;
             ss << _filename << ": " << _message;
             return ss.str();
