@@ -8,31 +8,25 @@ namespace eastwood { namespace SDL {
 static SDL_Surface *tmp = NULL;
 Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
 	uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) :
-    eastwood::Surface(surface),
+    eastwood::Surface(NULL, surface.size().x, surface.size().y, surface.bpp(), surface.palette()),
     SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, surface.size().x, surface.size().y, surface.bpp(), Rmask, Gmask, Bmask, Amask))),
     _surface(tmp)
 {
-    free(pixels);
     tmp = NULL;
-    pixels = _pixels;
+    memcpy(pixels, (uint8_t*)surface, surface.len());
+    _pixels.reset(new Bytes((uint8_t*)pixels, BufMalloc));
 
-    SDL::Palette palette = _palette;
-
-    SDL_SetColors(this, palette.colors, 0, palette.ncolors);
+    setPalette(_palette);
 }
 
 Surface::Surface(const SDL_Surface& surface) :
-    eastwood::Surface(surface.w, surface.h, surface.format->BitsPerPixel, SDL::Palette(*surface.format->palette)),
-    SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, surface.w, surface.h, surface.format->BitsPerPixel,
-		    surface.format->Rmask, surface.format->Gmask, surface.format->Bmask, surface.format->Amask))),
-    _surface(NULL)
+    eastwood::Surface(NULL, surface.w, surface.h, surface.format->BitsPerPixel, SDL::Palette(*surface.format->palette)),
+    SDL_Surface(*(tmp = SDL_ConvertSurface(const_cast<SDL_Surface*>(&surface), surface.format, surface.flags))),
+    _surface(tmp)
 {
-    memcpy(*_pixelsPtr.get(), surface.pixels, (_width*(_bpp/8)) * _height);
-    pixels = *_pixelsPtr.get();
     tmp = NULL;
-    setPalette(SDL::Palette(*surface.format->palette));
+    _pixels.reset(new Bytes((uint8_t*)pixels, BufMalloc));
 }
-
 
 Surface::~Surface()
 {
@@ -40,8 +34,35 @@ Surface::~Surface()
     	// This (which actually is pointing to the same are as _pixels) will be
 	// freed in parent destructor
 	_surface->pixels = NULL;
-	SDL_FreeSurface(_surface);
+	//SDL_FreeSurface(_surface);
+	_surface = NULL;
     }
+}
+
+Surface& Surface::operator=(const eastwood::Surface &surface) 
+{
+    *this = surface;
+
+    _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, _bpp, 0, 0, 0, 0);
+    free(_surface->pixels);
+    _surface->pixels = (uint8_t*)*this;
+    *this = *_surface;
+
+    return *this;
+}
+
+Surface& Surface::operator=(const SDL_Surface *surface) 
+{
+    _surface = const_cast<SDL_Surface*>(surface);
+    *this = *_surface;
+    _bpp = format->BitsPerPixel;
+    _width = w;
+    _height = h;
+    _pitch = pitch;
+    _pixels.reset(new Bytes((uint8_t*)surface->pixels, BufMalloc));
+    _palette = SDL::Palette(*format->palette);
+
+    return *this;
 }
 
 bool Surface::setPalette(eastwood::Palette palette, int firstColor, int flags)

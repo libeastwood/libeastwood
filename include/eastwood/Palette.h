@@ -21,6 +21,8 @@ class Palette {
 
 	size_t size() const { return _palette.size(); }
 
+	bool savePAL(std::ostream &output);
+
     protected:
 	std::vector<Color> _palette;
 };

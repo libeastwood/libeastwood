@@ -96,7 +96,7 @@ Surface IcnFile::getSurface(uint16_t index)
 {
     Surface pic(_width, _height, 8, _palette);
 
-    createImage(index, pic._pixels, pic._pitch);
+    createImage(index, pic, pic._pitch);
 
     LOG_INFO("IcnFile", "File Nr.: %d (Size: %dx%d)", index, _width, _height);
 
@@ -142,7 +142,7 @@ Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
     for(int n = 0; n < tilesN; n++)
 	for(int y = 0; y < tilesY; y++)
 	    for(int x = 0; x < tilesX; x++, idx++)
-		createImage(*idx, pic._pixels + (pic._pitch)*y*_height + (x+n*tilesX) * _width, pic._pitch);
+		createImage(*idx, pic + (pic._pitch)*y*_height + (x+n*tilesX) * _width, pic._pitch);
 
     return pic;
 }

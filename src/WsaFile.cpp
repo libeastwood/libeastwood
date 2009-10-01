@@ -49,7 +49,7 @@ WsaFile::WsaFile(const std::istream &stream, Palette palette,
     _decodedFrames.resize(_width*_height*_numFrames);
 
     if (lastframe.bpp())
-	memcpy(&_decodedFrames.front(), lastframe._pixels, _width*_height);
+	memcpy(&_decodedFrames.front(), (uint8_t*)lastframe, _width*_height);
 
     decodeFrames();
 }

@@ -24,22 +24,16 @@ struct Point {
 
 class Surface {
     public:
-	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixelsPtr(), _pixels(NULL), _palette(0) {};
+	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixels(), _palette(0) {};
 	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
 	Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
 	virtual ~Surface();
 
-	Surface(const Surface &surface, bool copy=false);
+	Surface(const Surface &surface);
+	virtual Surface &operator=(const Surface &surface);
 
-	Surface &operator=(const Surface &surface) {
-	    _bpp = surface._bpp;
-	    _width = surface._width;
-	    _height = surface._height;
-	    _pitch = surface._pitch;
-	    _pixelsPtr = surface._pixelsPtr;
-	    _pixels = surface._pixels;
-	    _palette = surface._palette;
-	    return *this;
+	virtual operator uint8_t*() const {
+	    return *_pixels.get();
 	}
 
 	bool scalePrecondition(Scaler scale);
@@ -51,8 +45,16 @@ class Surface {
 	    return point;
 	}
 
+	inline uint32_t len() const {
+	    return _pitch * _height;
+	}
+
 	inline uint8_t bpp() const {
 	    return _bpp;
+	}
+
+	inline Palette palette() const {
+	    return _palette;
 	}
 
     protected:
@@ -66,8 +68,7 @@ class Surface {
 	uint16_t _width,
 		 _height,
 		 _pitch;
-	BytesPtr _pixelsPtr;
-	uint8_t *_pixels;
+	BytesPtr _pixels;
 	Palette _palette;
 };
 }

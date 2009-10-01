@@ -11,10 +11,15 @@ namespace eastwood { namespace SDL {
 class Surface : public eastwood::Surface, public SDL_Surface
 {
     public:
+	Surface() : eastwood::Surface(), _surface(NULL) {};
 	Surface(const eastwood::Surface& surface, uint32_t flags = SDL_HWSURFACE,
 		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0);
 	Surface(const SDL_Surface& surface);
 	virtual ~Surface();
+
+	virtual Surface &operator=(const eastwood::Surface &surface);
+	virtual Surface &operator=(const SDL_Surface *surface);
+
 
     protected:
 	bool setPalette(eastwood::Palette palette, int firstColor = 0, int flags = (SDL_LOGPAL|SDL_PHYSPAL));

@@ -37,7 +37,7 @@ void Font::render(std::string text, Surface &surface, int offx, int offy, uint8_
     FNTCharacter *ch;
     uint8_t *bitmap;
 
-    uint8_t* pixels = surface._pixels;
+    uint8_t* pixels = surface;
 
     for (unsigned int c=0; c!=text.length(); c++) {
 	ch = &_characters[(int)text[c]];

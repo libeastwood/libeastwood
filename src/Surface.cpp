@@ -40,27 +40,34 @@ struct BMPInfoHeader {
 
 Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
-    _pixelsPtr(new Bytes( new uint8_t[(width*(bpp/8)) * _height])),
-    _pixels((uint8_t*)*_pixelsPtr.get()), _palette(palette)
+    _pixels(new Bytes( new uint8_t[(width*(bpp/8)) * _height])),
+    _palette(palette)
 {
 }
 
 Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
-    _pixelsPtr(new Bytes(buffer)), _pixels((uint8_t*)*_pixelsPtr.get()),
-    _palette(palette)
+    _pixels(new Bytes(buffer)), _palette(palette)
 {
 }
 
-Surface::Surface(const Surface &surface, bool copy) :
+Surface::Surface(const Surface &surface) :
     _bpp(surface._bpp), _width(surface._width), _height(surface._height), _pitch(surface._pitch),
-    _pixelsPtr(surface._pixelsPtr), _pixels(surface._pixels), _palette(surface._palette)
+    _pixels(new Bytes(new uint8_t[surface.len()])), _palette(surface._palette)
 {
-    if(copy) {
-	_pixelsPtr.reset(new Bytes( new uint8_t[(_width*(_bpp/8)) * _height]));
-	memcpy(*_pixelsPtr.get(), surface._pixels, (_width*(_bpp/8)) * _height);
-	_pixels = *_pixelsPtr.get();
-    }
+    memcpy((uint8_t*)*this, (uint8_t*)surface, len());
+}
+
+Surface& Surface::operator=(const Surface &surface) 
+{
+    _bpp = surface._bpp;
+    _width = surface._width;
+    _height = surface._height;
+    _pitch = surface._pitch;
+    _pixels = surface._pixels;
+    _palette = surface._palette;
+
+    return *this;
 }
 
 Surface::~Surface() {
@@ -85,7 +92,7 @@ Surface Surface::getScaled(Scaler scaler)
 	default:
 	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
     }
-    scale(scaler, scaled._pixels, scaled._pitch, _pixels - _pitch, _pitch, _bpp/8, _width, _height);
+    scale(scaler, (uint8_t*)scaled, scaled._pitch, (uint8_t*)*this - _pitch, _pitch, _bpp/8, _width, _height);
     return scaled;
 }
 
@@ -140,7 +147,7 @@ bool Surface::saveBMP(std::ostream &output)
     os.seekp(fp_offset+header.offBits);
 
     /* Write the bitmap image upside down */
-    for(bits = _pixels+((_height-1)*_pitch); bits > _pixels; bits-= _pitch)
+    for(bits = (uint8_t*)*this+((_height-1)*_pitch); bits > (uint8_t*)*this; bits-= _pitch)
 	os.write((char*)bits, _pitch);
 
     /* Write the BMP file size */
