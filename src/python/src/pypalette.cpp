@@ -15,11 +15,31 @@ static PyObject *
 Palette_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *kwargs)
 {
     Py_Palette *self = NULL;
+    uint16_t size;
     self = (Py_Palette *)type->tp_alloc(type, 0);
     if (self != NULL) {
 	self->palette = reinterpret_cast<Palette*>(args);
-	self->size = self->palette->size();
+	size = self->palette->size();
+
+	self->tuple = PyTuple_New(size);
+	for(uint16_t i = 0; i < size; i++) {
+	    Color color = (*self->palette)[i];
+	    PyObject *pyColor = Py_BuildValue("(BBB)", color.r, color.g, color.b);
+	    if(PyTuple_SetItem(self->tuple, i, pyColor))
+		break;
+	}
     }
+
+
+    return (PyObject *)self;
+}
+
+static PyObject *
+Palette_alloc(PyTypeObject *type, Py_ssize_t nitems)
+{
+    Py_Palette *self = (Py_Palette *)PyType_GenericAlloc(type, nitems);
+    self->palette = NULL;
+    self->tuple = NULL;
 
     return (PyObject *)self;
 }
@@ -27,13 +47,28 @@ Palette_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject
 static void
 Palette_dealloc(Py_Palette *self)
 {
-    delete self->palette;
-    PyObject_Del((PyObject*)self);
+    if(self->palette)
+    	delete self->palette;
+    Py_XDECREF(self->tuple);
+    PyObject_Del((PyObject*)self);                                                       
 }
 
-static PyMemberDef Palette_members[] = {
-    {const_cast<char*>("size"), T_USHORT, offsetof(Py_Palette, size), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+static PyObject*
+Palette_subscript(Py_Palette *self, PyObject *item)
+{
+    return PyTuple_Type.tp_as_mapping->mp_subscript(self->tuple, item);
+}
+
+static Py_ssize_t
+Palette_length(Py_Palette *a)
+{
+    return PyTuple_Type.tp_as_mapping->mp_length(a->tuple);
+}
+
+static PyMappingMethods Palette_as_mapping = {
+    (lenfunc)Palette_length,
+    (binaryfunc)Palette_subscript,
+    0
 };
 
 PyTypeObject Palette_Type = {
@@ -50,7 +85,7 @@ PyTypeObject Palette_Type = {
     0,						/*tp_repr*/
     0,						/*tp_as_number*/
     0,						/*tp_as_sequence*/
-    0,						/*tp_as_mapping*/
+    &Palette_as_mapping,			/*tp_as_mapping*/
     0,						/*tp_hash*/
     0,						/*tp_call*/
     0,						/*tp_str*/
@@ -66,7 +101,7 @@ PyTypeObject Palette_Type = {
     0,						/*tp_iter*/
     0,						/*tp_iternext*/
     0,						/*tp_methods*/
-    Palette_members,				/*tp_members*/
+    0,						/*tp_members*/
     0,						/*tp_getset*/
     0,                      			/*tp_base*/
     0,                      			/*tp_dict*/
@@ -74,7 +109,7 @@ PyTypeObject Palette_Type = {
     0,                      			/*tp_descr_set*/
     0,                      			/*tp_dictoffset*/
     0,						/*tp_init*/
-    PyType_GenericAlloc,    			/*tp_alloc*/
+    Palette_alloc,	    			/*tp_alloc*/
     Palette_new,	      			/*tp_new*/
     0,		          			/*tp_free*/
     0,                      			/*tp_is_gc*/

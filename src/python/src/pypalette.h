@@ -6,7 +6,7 @@
 struct Py_Palette {
     PyObject_HEAD
     eastwood::Palette *palette;
-    uint16_t size;
+    PyObject *tuple;
 };
 
 extern PyTypeObject Palette_Type;
