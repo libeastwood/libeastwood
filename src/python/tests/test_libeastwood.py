@@ -106,10 +106,12 @@ class TestPalette(unittest.TestCase):
         self.palette = self.palfile.getPalette()
 
     def test_palette(self):
+        PAL = self.palette.savePAL()
+        self.assertEqual(len(self.file), len(PAL))
+        self.assertEqual(md5(self.file).hexdigest(), md5(PAL).hexdigest())
+        newPalette = PalFile(PAL).getPalette()
         for i in xrange(len(self.palette)):
-            pos = i*3
-            color = self.bytearray[pos:pos+3]
-            self.assertEqual(self.palette[i], (color[0]<<2, color[1]<<2, color[2]<<2))
+            self.assertEqual(self.palette[i], newPalette[i])
 
 def test_main():
     from test import test_support

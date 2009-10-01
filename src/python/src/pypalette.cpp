@@ -1,5 +1,5 @@
 #include <istream>
-#include <fstream>
+#include <ostream>
 #include <sstream>
 #include "pyeastwood.h"
 #include <structmember.h>
@@ -71,6 +71,27 @@ static PyMappingMethods Palette_as_mapping = {
     0
 };
 
+static PyObject *
+Palette_savePAL(Py_Palette *self)
+{
+    std::stringbuf rdbuf;
+    std::ostream output(&rdbuf);
+    if(!output.good()) {
+	PyErr_SetFromErrno(PyExc_IOError);
+	return NULL;
+    }
+
+    self->palette->savePAL(output);
+    std::string buf = rdbuf.str();
+    PyObject *ret = PyString_FromStringAndSize(buf.c_str(), buf.size());
+    return ret;
+}
+
+static PyMethodDef Palette_methods[] = {
+    {"savePAL", (PyCFunction)Palette_savePAL, METH_NOARGS, NULL},
+    {NULL, NULL, 0, NULL}		/* sentinel */
+};
+
 PyTypeObject Palette_Type = {
     PyObject_HEAD_INIT(NULL)
     0,						/*ob_size*/
@@ -100,7 +121,7 @@ PyTypeObject Palette_Type = {
     0,						/*tp_weaklistoffset*/
     0,						/*tp_iter*/
     0,						/*tp_iternext*/
-    0,						/*tp_methods*/
+    Palette_methods,				/*tp_methods*/
     0,						/*tp_members*/
     0,						/*tp_getset*/
     0,                      			/*tp_base*/
