@@ -118,7 +118,7 @@ bool Surface::saveBMP(std::ostream &output)
     os.putU32LE(info.compression);
     os.putU32LE(info.sizeImage);
     os.putU32LE(info.xPelsPerMeter);
-    os.putU32LE(info.xPelsPerMeter);
+    os.putU32LE(info.yPelsPerMeter);
     os.putU32LE(info.colorsUsed);
     os.putU32LE(info.colorsImportant);
 
