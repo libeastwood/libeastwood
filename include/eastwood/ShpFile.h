@@ -61,7 +61,7 @@ class ShpFile : public Decode
 	Surface getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, ...);
 	Surface getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles);
 
-	inline uint16_t size() { return _size; }
+	inline uint16_t size() const { return _size; }
 
     private:
 	uint8_t* getImage(const uint16_t fileIndex, uint8_t &width, uint8_t &height);
