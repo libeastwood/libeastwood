@@ -95,10 +95,27 @@ class TestMapFile(unittest.TestCase):
                 totalsize += j
         self.assertEqual(totalsize, 168192)
 
+class TestPalette(unittest.TestCase):
+    
+    def setUp(self):
+        self.pak = PakFile('DUNE2/DUNE.PAK')
+        self.pak.open("IBM.PAL")
+        self.file = self.pak.read()
+        self.bytearray = bytearray(self.file)
+        self.palfile = PalFile(self.file)
+        self.palette = self.palfile.getPalette()
+
+    def test_palette(self):
+        for i in xrange(len(self.palette)):
+            pos = i*3
+            color = self.bytearray[pos:pos+3]
+            self.assertEqual(self.palette[i], (color[0]<<2, color[1]<<2, color[2]<<2))
+
 def test_main():
     from test import test_support
     test_support.run_unittest(TestEmcFile)
     test_support.run_unittest(TestMapFile)
+    test_support.run_unittest(TestPalette)
 
 if __name__ == "__main__":
     test_main()
