@@ -101,7 +101,7 @@ bool Surface::saveBMP(std::ostream &output)
     uint32_t fp_offset;
     uint8_t *bits;
     BMPHeader header = {{'B', 'M'}, 0, 0, 0,0 };
-    BMPInfoHeader info = { sizeof(BMPInfoHeader), _width, _height, 1, _bpp, BMP_RGB, _pitch, 0, 0, _palette.size(), 0};
+    BMPInfoHeader info = { sizeof(BMPInfoHeader), _width, _height, 1, _bpp, BMP_RGB, _height * _pitch, 0, 0, _palette.size(), 0};
     OStream &os(const_cast<OStream&>(reinterpret_cast<const OStream&>(output)));
 
 
