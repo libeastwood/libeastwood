@@ -231,6 +231,26 @@ class TestPalette(unittest.TestCase):
         for i in xrange(len(self.palette)):
             self.assertEqual(self.palette[i], newPalette[i])
 
+class TestStringFile(unittest.TestCase):
+    
+    def setUp(self):
+        self.pak = PakFile('DUNE2/ENGLISH.PAK')
+
+    def test_uncompressed(self):
+        self.pak.open("CREDITS.ENG")
+        stringfile = StringFile(self.pak.read())
+        self.assertEqual(stringfile.size, 98)
+        self.assertEqual(stringfile.getString(0), "DUNE II")
+        self.assertEqual(stringfile.getString(stringfile.size-3), "DUNE II")
+
+    def test_mission(self):
+        self.pak.open("TEXTA.ENG")
+        stringfile = StringFile(self.pak.read())
+        self.assertEqual(stringfile.size, 39)
+        self.assertEqual(stringfile.getString(1), "win text.")
+        self.assertEqual(stringfile.getString(stringfile.size-1),\
+                "Your defects must have been inherited. Nobody could possible learn the colossal stupidity that you have displayed.")
+
 def test_main():
     from test import test_support
     test_support.run_unittest(TestPakFile)
@@ -238,6 +258,7 @@ def test_main():
     test_support.run_unittest(TestMapFile)
     test_support.run_unittest(TestIcnFile)
     test_support.run_unittest(TestPalette)
+    test_support.run_unittest(TestStringFile)
 
 if __name__ == "__main__":
     test_main()
