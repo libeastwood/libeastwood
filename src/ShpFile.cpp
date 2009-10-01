@@ -42,14 +42,14 @@ void ShpFile::readIndex()
 	if (end != 0) {
 	    /* File has special header with only 2 byte offset */
 
-	    _index[0].startOffset = start;
-	    _index[0].endOffset = end-1;
+	    _index.at(0).startOffset = start;
+	    _index.at(0).endOffset = end-1;
 
 
 	} else {
 	    /* File has normal 4 byte offsets */
-	    _index[0].startOffset = start;
-	    _index[0].endOffset = end - 1 + 2;
+	    _index.at(0).startOffset = start;
+	    _index.at(0).endOffset = end - 1 + 2;
 	}
 
     } else {
@@ -67,20 +67,20 @@ void ShpFile::readIndex()
 
 	// now fill Index with start and end-offsets
 	for(int i = 0; i < _size; i++) {
-	    _index[i].startOffset = _stream.getU32LE() + 2;
+	    _index.at(i).startOffset = _stream.getU32LE() + 2;
 
 	    if(i > 0) {
 		char error[256];
-		_index[i-1].endOffset = _index[i].startOffset - 1;
+		_index.at(i-1).endOffset = _index.at(i).startOffset - 1;
 		sprintf(error, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
 			i, _index[i-1].endOffset, fileSize);
-		if(_index[i-1].endOffset > fileSize)
+		if(_index.at(i-1).endOffset > fileSize)
 		    throw(Exception(LOG_ERROR, "ShpFile", error));
 	    }
 	}
 
 	// Add the endOffset for the last file
-	_index[_size-1].endOffset = _stream.getU16LE() - 1 + 2;
+	_index.at(_size-1).endOffset = _stream.getU16LE() - 1 + 2;
     }
 }
 
@@ -104,7 +104,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	palOffsets,
 	decodeDestination;
 
-    _stream.seekg(_index[fileIndex].startOffset, std::ios::beg);
+    _stream.seekg(_index.at(fileIndex).startOffset, std::ios::beg);
     flags = _stream.getU16LE();
 
     slices = _stream.get();
@@ -188,12 +188,12 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
 	    height;
     uint16_t index = getIndex(tiles[0]);
 
-    _stream.seekg(_index[index].startOffset+3, std::ios::beg);
+    _stream.seekg(_index.at(index).startOffset+3, std::ios::beg);
     width = _stream.getU16LE();
     height = _stream.get();    
 
     for(uint32_t i = 1; i < tilesX*tilesY; i++) {
-	_stream.seekg(_index[getIndex(tiles[i])].startOffset+2, std::ios::beg);
+	_stream.seekg(_index.at(getIndex(tiles[i])).startOffset+2, std::ios::beg);
 	if(_stream.get() != height || _stream.get() != width) {
 	    throw(Exception(LOG_ERROR, "ShpFile", "getSurfaceArray(): Not all pictures have the same size!"));
 	}
