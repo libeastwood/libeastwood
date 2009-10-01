@@ -17,8 +17,8 @@ class Surface : public eastwood::Surface, public SDL_Surface
 	Surface(const SDL_Surface& surface);
 	virtual ~Surface();
 
-	virtual Surface &operator=(const eastwood::Surface &surface);
-	virtual Surface &operator=(const SDL_Surface *surface);
+	Surface &operator=(const eastwood::Surface &surface);
+	Surface &operator=(const SDL_Surface *surface);
 
 
     protected:

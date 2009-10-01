@@ -58,18 +58,6 @@ Surface::Surface(const Surface &surface) :
     memcpy((uint8_t*)*this, (uint8_t*)surface, len());
 }
 
-Surface& Surface::operator=(const Surface &surface) 
-{
-    _bpp = surface._bpp;
-    _width = surface._width;
-    _height = surface._height;
-    _pitch = surface._pitch;
-    _pixels = surface._pixels;
-    _palette = surface._palette;
-
-    return *this;
-}
-
 Surface::~Surface() {
 }
 

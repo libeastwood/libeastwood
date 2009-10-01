@@ -35,18 +35,20 @@ Surface::~Surface()
 	// freed in parent destructor
 	_surface->pixels = NULL;
 	//SDL_FreeSurface(_surface);
-	_surface = NULL;
     }
 }
 
 Surface& Surface::operator=(const eastwood::Surface &surface) 
 {
-    *this = surface;
+    *(eastwood::Surface*)this = surface;
 
     _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, _bpp, 0, 0, 0, 0);
     free(_surface->pixels);
+
     _surface->pixels = (uint8_t*)*this;
-    *this = *_surface;
+
+    *(SDL_Surface*)this = *_surface;
+    setPalette(_palette);
 
     return *this;
 }
