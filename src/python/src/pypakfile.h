@@ -17,7 +17,7 @@ struct Py_PakFile {
     PyObject_HEAD
     std::ifstream *stream;
     eastwood::PakFile *pakFile;
-    uint32_t fileSize;
+    Py_ssize_t fileSize;
     file_mode mode;
 };
 

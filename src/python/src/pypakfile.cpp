@@ -38,7 +38,7 @@ PakFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
     Py_PakFile *self = (Py_PakFile *)PyType_GenericAlloc(type, nitems);
     self->pakFile = NULL;
     self->stream = NULL;
-    self->fileSize = 0;
+    self->fileSize = -1;
     self->mode = MODE_CLOSED;
 
     return (PyObject *)self;
@@ -82,6 +82,15 @@ PakFile_open(Py_PakFile *self, PyObject *args)
 
     self->fileSize = self->pakFile->size();
     self->mode = MODE_READ;
+    Py_RETURN_TRUE;
+}
+
+static PyObject *
+PakFile_close(Py_PakFile *self)
+{
+    self->pakFile->close();
+    self->fileSize = -1;
+    self->mode = MODE_CLOSED;
     Py_RETURN_TRUE;
 }
 
@@ -156,6 +165,7 @@ cleanup:
 static PyMethodDef PakFile_methods[] = {
     {"listfiles", (PyCFunction)PakFile_listfiles, METH_NOARGS, NULL},
     {"open", (PyCFunction)PakFile_open, METH_VARARGS, NULL},
+    {"close", (PyCFunction)PakFile_close, METH_NOARGS, NULL},
     {"read", (PyCFunction)PakFile_read, METH_VARARGS, NULL},
     {"seek", (PyCFunction)PakFile_seek, METH_VARARGS, NULL},
     {NULL, NULL, 0, NULL}		/* sentinel */
