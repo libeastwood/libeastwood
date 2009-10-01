@@ -20,9 +20,43 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 from pyeastwood import *
+from glob import glob
 import unittest
 
 from hashlib import md5
+class TestPakFile(unittest.TestCase):
+    
+    def setUp(self):
+        self.pak = PakFile('DUNE2/MERC.PAK')
+
+    def test_listfiles(self):
+        files = ('MATRE.VOC', 'MHARK.VOC', 'MORDOS.VOC')
+        self.assertEqual(self.pak.listfiles(), files)
+
+    def test_seek(self):
+        for f in glob('DUNE2/*.PAK'):
+            pak = PakFile(f)
+            for pf in pak.listfiles():
+                pak.open(pf)
+                first = pak.read()
+                pak.seek(0)
+                last = pak.read()
+                self.assertEqual(len(first), len(last))
+                self.assertEqual(md5(first).hexdigest(), md5(last).hexdigest())
+                pak.close()
+
+    def test_md5(self):
+        knowngood = {
+                'MATRE.VOC' : (15394, 'fe02273c381ca5582497be0dab89ebd5'),
+                'MHARK.VOC' : (13858, '089d3bc65f10a26b322dd318ad390dd3'),
+                'MORDOS.VOC' : (16290, '59869ea8e94ed46fe4202aaff761ad55')
+                }
+        for f in self.pak.listfiles():
+            self.pak.open(f)
+            fileData = self.pak.read()
+            self.assertEqual(len(fileData), knowngood[f][0])
+            self.assertEqual(md5(fileData).hexdigest(), knowngood[f][1])
+
 class TestEmcFile(unittest.TestCase):
     
     def setUp(self):
@@ -199,6 +233,7 @@ class TestPalette(unittest.TestCase):
 
 def test_main():
     from test import test_support
+    test_support.run_unittest(TestPakFile)
     test_support.run_unittest(TestEmcFile)
     test_support.run_unittest(TestMapFile)
     test_support.run_unittest(TestIcnFile)
