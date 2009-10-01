@@ -40,9 +40,6 @@ void PakFile::open(std::string fileName) {
     _stream.seekg(fileEntry.startOffset, std::ios::beg);
     std::string buffer(fileEntry.endOffset - fileEntry.startOffset + 1, 0);
 
-    if(buffer.size() == 0)
-        throw(NullSizeException(LOG_ERROR, "PakFile", fileName));
-
     _stream.seekg(fileEntry.startOffset, std::ios::beg);
     _stream.read((char*)buffer.data(), buffer.size());
 
