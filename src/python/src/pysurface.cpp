@@ -55,25 +55,26 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
 }
 
 static PyObject *
-Surface_saveBMP(Py_Surface *self, PyObject *args)
+Surface_saveBMP(Py_Surface *self)
 {
-    Py_ssize_t size;
-    char *fileName = NULL;
-    if (!PyArg_ParseTuple(args, "s#", &fileName, &size))
+    std::stringbuf rdbuf;
+    std::ostream output(&rdbuf);
+    if(!output.good()) {
+	PyErr_SetFromErrno(PyExc_IOError);
 	return NULL;
+    }
 
-    std::ofstream out(fileName);
-    self->surface->saveBMP(out);
-    out.close();
- 
-    Py_RETURN_TRUE;
+    self->surface->saveBMP(output);
+    std::string buf = rdbuf.str();
+    PyObject *ret = PyString_FromStringAndSize(buf.c_str(), buf.size());
+    return ret;
 }
 
 
 static PyMethodDef Surface_methods[] = {
     {"getPixels", (PyCFunction)Surface_getPixels, METH_NOARGS, NULL},
     {"getScaled", (PyCFunction)Surface_getScaled, METH_VARARGS, NULL},
-    {"saveBMP", (PyCFunction)Surface_saveBMP, METH_VARARGS, NULL},
+    {"saveBMP", (PyCFunction)Surface_saveBMP, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
