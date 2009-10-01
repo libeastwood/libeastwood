@@ -33,6 +33,12 @@ Surface_dealloc(Py_Surface *self)
 }
 
 static PyObject *
+Surface_getPixels(Py_Surface *self)
+{
+    return PyBuffer_FromMemory((((uint8_t*)(*self->surface))), self->surface->len());
+}
+
+static PyObject *
 Surface_getScaled(Py_Surface *self, PyObject *args)
 {
     Scaler scaler;
@@ -47,7 +53,6 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
 
     return Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(scaled), NULL);
 }
-
 
 static PyObject *
 Surface_saveBMP(Py_Surface *self, PyObject *args)
@@ -66,6 +71,7 @@ Surface_saveBMP(Py_Surface *self, PyObject *args)
 
 
 static PyMethodDef Surface_methods[] = {
+    {"getPixels", (PyCFunction)Surface_getPixels, METH_NOARGS, NULL},
     {"getScaled", (PyCFunction)Surface_getScaled, METH_VARARGS, NULL},
     {"saveBMP", (PyCFunction)Surface_saveBMP, METH_VARARGS, NULL},
     {NULL, NULL, 0, NULL}		/* sentinel */
