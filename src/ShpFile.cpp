@@ -90,14 +90,16 @@ static void apply_pal_offsets(const uint8_t *offsets, uint8_t *data, uint16_t le
 	data[i] = offsets[data[i]];
 }
 
-uint8_t* ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8_t &height)
+Surface ShpFile::getSurface(uint16_t fileIndex)
 {
     uint8_t *imageOut,
 	    slices;
     uint16_t flags,
 	     fileSize,
 	     imageSize,
-	     imageOutSize;
+	     imageOutSize,
+	     width,
+	     height;
     std::vector<uint8_t>
 	palOffsets,
 	decodeDestination;
@@ -159,14 +161,6 @@ uint8_t* ShpFile::getImage(uint16_t fileIndex, uint8_t &width, uint8_t &height)
 	    throw(Exception(LOG_ERROR, "ShpFile", error));
     }
 
-    return imageOut;    
-}
-
-Surface ShpFile::getSurface(uint16_t fileIndex)
-{
-    uint8_t width,
-	    height;
-    uint8_t *imageOut = getImage(fileIndex, width, height);
     return Surface(imageOut, width, height, 8, _palette);
 }
 
