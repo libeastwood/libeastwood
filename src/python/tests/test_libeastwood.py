@@ -95,6 +95,90 @@ class TestMapFile(unittest.TestCase):
                 totalsize += j
         self.assertEqual(totalsize, 168192)
 
+class TestIcnFile(unittest.TestCase):
+    
+    def setUp(self):
+        pak = PakFile('DUNE2/DUNE.PAK')
+        pak.open("IBM.PAL")
+        pal = PalFile(pak.read()).getPalette()
+        pak.open("ICON.MAP")
+        self.map = MapFile(pak.read())
+        pak.open("ICON.ICN")
+        self.icn = IcnFile(pak.read(), self.map, pal)
+
+    def test_size(self):
+        self.assertEqual(self.icn.size, 389)
+
+    def test_tiles_md5(self):
+        md5sums = (
+                '24bf562fef4103f740c42472de1af073',
+                '1fd32705ecbccb85f66885dd40260a3e',
+                '45a9b8159c3e842cd48c8bbc78dc2903',
+                'e56d9a2abb690f734fe7e7c5f16530e8',
+                '1ccd896084894d6098697d8f35d31205',
+                'bd47ff2c3d4b5be36c6e3e65d83a4f08',
+                'af238c100a819d02d843d9277bef6325',
+                'ac99dd6fbf23a97c8c1e12674842e790',
+                '7626f228b242bc27c2f808e578bb75cd',
+                'cad2a3680cf7ab906015987358d829e4',
+                '619138ed6573f13894d6e32a60b6e886',
+                '68168c408b1e542716eb44aa8561af29',
+                '05be3de8775004d2362d2907083fd825',
+                '7648f773fa9d2e3845bba56e14bbb55e',
+                '3378d42b25b1d9e007f621456b8f34ac',
+                '46920d9cde6d8c9e07b716d28e25af36',
+                '838d72c56ea4ed6b0b9a0a263757757e',
+                '5123d09b316fe00f17e16290a53ff69f',
+                '84fa73b8e99fce49a0759b2b5cce64fc',
+                '7a725033ab1a92ae3d089c4efc4ed3c3',
+                '7e4d4ccb46056bea8c4465db419e884d',
+                '270e7185cd1b2a1e3db3f00004cb40cc',
+                '4513370b5d5a86136e4702c2630c0c0d',
+                '2be06d3960c94074b70f776f31ab301b',
+                'eca3164094463e7db4e820ad480891f8',
+                '2af9d386789727bb0f2e6933c4b2d4e5',
+                '4421d8fa47fcd1812b6bef532604d917'
+                )
+
+        for i in xrange(len(self.map)):
+            surface = self.icn.getTiles(i, False)
+            self.assertEqual(md5(surface.getPixels()).hexdigest(), md5sums[i])
+
+    def test_tiles_frameByFrame_md5(self):
+        md5sums = (
+                '24bf562fef4103f740c42472de1af073',
+                'c37958d522c0db8d40097c5e0ac384ea',
+                '3cb149195a412e635c6c71b89c73dcd0',
+                '64cf64b707491d822148a7e5b210783b',
+                '5f4922f04b71a1349a1a656c7a33a05f',
+                'f15c98c6b50645c554e6b4cf04973291',
+                '6a6741826ccfff44163e39866c244cb1',
+                '55ab13f3bf270036859407d1d3ed224a',
+                '7626f228b242bc27c2f808e578bb75cd',
+                'e89e239cd1bae942c57f1b4ec01476a1',
+                '619138ed6573f13894d6e32a60b6e886',
+                '6b82e20160716d8396daaeb885f1d0e0',
+                'f966e1b397bfa01a1d598916a864e399',
+                'cc9e172938c1a16291af16439234bec5',
+                '41ccbb3ce52e7396634f8388c75e36a0',
+                '48e35ea6e41bb6ee50bb3c216181cd09',
+                '3317637de65b2348fd5c6fd21dc46629',
+                '1eb62d289dcab65c811d3734a4459ed6',
+                '7d6a12a196b71f38d796a8240450530a',
+                '1a0b953b6df77a909b8ac795b2d01017',
+                '32e0e3ab9a73819faabbd80244d2fbb8',
+                '35905b91c256292e7efff3527d52b26b',
+                '203c3ce5fa4818666612f82b7a0516b6',
+                '2be06d3960c94074b70f776f31ab301b',
+                'eca3164094463e7db4e820ad480891f8',
+                '8c7338dea7bd1d3f459d30ff695304eb',
+                '66c62f25456d518682ac76a279f36515'
+                )
+        for i in xrange(len(self.map)):
+            surface = self.icn.getTiles(i, True)
+            self.assertEqual(md5(surface.getPixels()).hexdigest(), md5sums[i])
+
+
 class TestPalette(unittest.TestCase):
     
     def setUp(self):
@@ -117,6 +201,7 @@ def test_main():
     from test import test_support
     test_support.run_unittest(TestEmcFile)
     test_support.run_unittest(TestMapFile)
+    test_support.run_unittest(TestIcnFile)
     test_support.run_unittest(TestPalette)
 
 if __name__ == "__main__":
