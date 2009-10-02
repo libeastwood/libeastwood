@@ -57,6 +57,27 @@ class TestPakFile(unittest.TestCase):
             self.assertEqual(len(fileData), knowngood[f][0])
             self.assertEqual(md5(fileData).hexdigest(), knowngood[f][1])
 
+class TestCpsFile(unittest.TestCase):
+    
+    def test_with_palette(self):
+        pak = PakFile('DUNE2/DUNE.PAK')
+        pak.open('IBM.PAL')
+        pal = PalFile(pak.read()).getPalette()
+        pak.open('FAME.CPS')
+        surface = CpsFile(pak.read(), pal).getSurface()
+        data = surface.getPixels()
+        self.assertEqual(len(data), 64000)
+        self.assertEqual(md5(data).hexdigest(), '721387d8b10999d829e85c8ec515ae5c')
+
+    def test_without_palette(self):
+        pak = PakFile('DUNE2/INTRO.PAK')
+        pak.open('VIRGIN.CPS')
+        surface = CpsFile(pak.read()).getSurface()
+        data = surface.getPixels()
+        self.assertEqual(len(data), 64000)
+        self.assertEqual(md5(data).hexdigest(), 'f511b8d1c2ab3da170f483609174b489')
+
+
 class TestEmcFile(unittest.TestCase):
     
     def setUp(self):
@@ -333,8 +354,9 @@ class TestShpFile(unittest.TestCase):
         for i in xrange(self.shp.size):
             surface = self.shp.getSurface(i)
             # We test with saveBMP() to have saveBMP() tested as well 
-            self.assertEqual(len(surface.saveBMP()), knowngood[i][0])
-            self.assertEqual(md5(surface.saveBMP()).hexdigest(), knowngood[i][1])
+            bmp = surface.saveBMP()
+            self.assertEqual(len(bmp), knowngood[i][0])
+            self.assertEqual(md5(bmp).hexdigest(), knowngood[i][1])
 
     def test_array(self):
         surface = self.shp.getSurfaceArray(3, 1, (29 | TILE_NORMAL, 30 | TILE_NORMAL, 31 | TILE_NORMAL))
@@ -366,6 +388,7 @@ class TestStringFile(unittest.TestCase):
 def test_main():
     from test import test_support
     test_support.run_unittest(TestPakFile)
+    test_support.run_unittest(TestCpsFile)
     test_support.run_unittest(TestEmcFile)
     test_support.run_unittest(TestMapFile)
     test_support.run_unittest(TestIcnFile)
