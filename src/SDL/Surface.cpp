@@ -8,12 +8,12 @@ namespace eastwood { namespace SDL {
 static SDL_Surface *tmp = NULL;
 Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
 	uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) :
-    eastwood::Surface(NULL, surface.size().x, surface.size().y, surface.bpp(), surface.palette()),
-    SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, surface.size().x, surface.size().y, surface.bpp(), Rmask, Gmask, Bmask, Amask))),
+    eastwood::Surface(NULL, surface.width(), surface.height(), surface.bpp(), surface.palette()),
+    SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, surface.width(), surface.height(), surface.bpp(), Rmask, Gmask, Bmask, Amask))),
     _surface(tmp)
 {
     tmp = NULL;
-    memcpy(pixels, (uint8_t*)surface, surface.len());
+    memcpy(pixels, (uint8_t*)surface, surface.size());
     _pixels.reset(new Bytes((uint8_t*)pixels, BufMalloc));
 
     setPalette(_palette);

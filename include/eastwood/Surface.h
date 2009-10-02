@@ -17,11 +17,6 @@ enum Scaler {
     Scale4X = 4 + (4<<8)
 };
 
-struct Point {
-    uint16_t x;
-    uint16_t y;
-};
-
 class Surface {
     public:
 	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixels(), _palette(0) {};
@@ -35,14 +30,11 @@ class Surface {
 	    return *_pixels.get();
 	}
 
-	Point size() const throw() {
-	    Point point = { _width, _height };
-	    return point;
-	}
-
-	uint32_t len() const throw() { return _pitch * _height;	}
+	uint16_t width() const throw() { return _width; }
+	uint16_t height() const throw() { return _height; }
 	uint8_t bpp() const throw() { return _bpp; }
 	Palette palette() const throw() { return _palette; }
+	uint32_t size() const throw() { return _pitch * _height; }
 
 	bool scalePrecondition(Scaler scale);
 	Surface getScaled(Scaler scale);

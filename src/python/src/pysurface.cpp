@@ -19,7 +19,8 @@ Surface_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject
     self = (Py_Surface *)type->tp_alloc(type, 0);
     if (self != NULL) {
 	self->surface = reinterpret_cast<Surface*>(args);
-	self->size = Py_BuildValue("(HH)", self->surface->size().x, self->surface->size().y);
+	self->width = self->surface->width();
+	self->height = self->surface->height();
     }
 
     return (PyObject *)self;
@@ -35,7 +36,7 @@ Surface_dealloc(Py_Surface *self)
 static PyObject *
 Surface_getPixels(Py_Surface *self)
 {
-    return PyBuffer_FromMemory((((uint8_t*)(*self->surface))), self->surface->len());
+    return PyBuffer_FromMemory((((uint8_t*)(*self->surface))), self->surface->size());
 }
 
 static PyObject *
@@ -79,7 +80,8 @@ static PyMethodDef Surface_methods[] = {
 };
 
 static PyMemberDef Surface_members[] = {
-    {const_cast<char*>("size"), T_OBJECT, offsetof(Py_Surface, size), RO, NULL},
+    {const_cast<char*>("width"), T_USHORT, offsetof(Py_Surface, width), RO, NULL},
+    {const_cast<char*>("height"), T_USHORT, offsetof(Py_Surface, height), RO, NULL},
     {NULL, 0, 0, 0, NULL}
 };
 

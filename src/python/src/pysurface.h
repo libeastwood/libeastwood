@@ -6,7 +6,8 @@
 struct Py_Surface {
     PyObject_HEAD
     eastwood::Surface *surface;
-    PyObject *size;
+    uint16_t width,
+	     height;
 };
 
 extern PyTypeObject Surface_Type;
