@@ -14,6 +14,7 @@ bool Palette::savePAL(std::ostream &output)
 	output.put(_palette[i].g>>2);
 	output.put(_palette[i].b>>2);
     }
+    return true;
 }
 
 Palette::~Palette()
