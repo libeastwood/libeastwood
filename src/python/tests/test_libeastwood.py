@@ -231,6 +231,118 @@ class TestPalette(unittest.TestCase):
         for i in xrange(len(self.palette)):
             self.assertEqual(self.palette[i], newPalette[i])
 
+class TestShpFile(unittest.TestCase):
+    
+    def setUp(self):
+        pak = PakFile('DUNE2/DUNE.PAK')
+        pak.open("IBM.PAL")
+        self.pal = PalFile(pak.read()).getPalette()
+        pak.open("UNITS1.SHP")
+        self.shp = ShpFile(pak.read(), self.pal)
+
+    def test_surface(self):
+        knowngood = (
+                (1654, 'ca77e72081cd9fd537c99ae1912cb0be'),
+                (1654, 'fa4530a43e65f417d8e967bf0ca27920'),
+                (1334, '31adb2e7eb72dfc4aab6db888299a359'),
+                (1334, '49b571cf3d6587a9309cf21bd6458867'),
+                (1334, 'f377dd13345b1cbebd4e2b441f2a7229'),
+                (1334, '21648cf82da0d3d330bb5756f3da533e'),
+                (1334, '902bdd604d8ec4392560ca8e1b0cfedf'),
+                (1334, 'a30feb3c278927bd5570fe8c9b8261ba'),
+                (1654, 'd4cbf0c3c1d112729652d421987ed7d8'),
+                (1654, '78a2cdc0ec03f1582c2833afecfc6972'),
+                (1654, 'bb6459951e15e89985dfc24cdc7fe698'),
+                (1334, 'b412b66922ce0c7519d69cb1ec29fd03'),
+                (1334, 'ae005979de6a14388a2bb7b89b484635'),
+                (1334, '5daf95b1cb588b320ae09fad271d08aa'),
+                (1334, '5e66af5d9781871eeba57127a90aa552'),
+                (1334, '8cb12fe18336814309ed5a7166d29ca5'),
+                (1334, 'bf834cb44f9dbceeb2d53552e8d7e53a'),
+                (1334, 'ed40fe14fbfc4e2765e23f90915c4a9e'),
+                (1334, '5e670a9430d2bb15bf8a791ab445e178'),
+                (1334, '45a0da1d57dc22493350c9b8a8e91cbc'),
+                (1334, '347296bebd13d32d5151fe9463c4d336'),
+                (1334, '652cc7613d68ee82fd1fb7601e49a935'),
+                (1334, '1b8cad7c7628a3d7cd6b8916619b6cd3'),
+                (1090, 'ce63de1c6345f6e613dae3f4e26d04c6'),
+                (1094, 'c14496d085e4d3a8a5a92ac8dff558f8'),
+                (1142, '9dd72349d1408c81be6c7f1f82934cc7'),
+                (1142, 'e8f350a293786ac3095dcbbc1a18c432'),
+                (1142, '88cfa1a66946bfda25ce5f5654dc54ec'),
+                (1142, '2fd739f391ba818b5318fc82f78ab1a9'),
+                (1462, 'b313b10c60b754056e448cd4be718157'),
+                (1462, '3455f75e65bb8c06ea3dd8831642e162'),
+                (1462, '7fac272626f165c62cc03dfdd0ea70b9'),
+                (1334, 'fe5651302fee1fc61859ee7ed45160c0'),
+                (1334, 'd4510a73612fccc02e38cdd9d1accc81'),
+                (1334, '4aadbd8cc409544d7d9c2cc0c65fc1cf'),
+                (1334, '52aa2bbb5e3672e158bb4bed5b05085e'),
+                (1334, '2c4f3720b15763e94bb796aeed153c15'),
+                (1654, 'c07753a8501d0cd2ddea3f0aaa9d50ee'),
+                (1654, '5fae955edd93bcfa4a0be192dcaf0efb'),
+                (1654, 'd0dd56d225bed0c0ff6b50025960f707'),
+                (1654, '29979c6c2f9e00a736c8548615a09f38'),
+                (1654, '07baa5bc1b21433a6dbe6e40a81a9090'),
+                (1654, '719b19da7ed78e1eecdf8049beb4ee90'),
+                (1654, '12797591bbc387062400d4f6e226f2ee'),
+                (1654, 'b49ab8c2e5063ba72ddf048297e82d9f'),
+                (1654, 'caad58e68b5c8d514c385ebc2d34fdb7'),
+                (1654, '796e490de64a3271615831d5fad36405'),
+                (1654, '1808a8a64e0d3a066533813d5989dec0'),
+                (1654, 'cdc2a6a94bef4cadf9455c7184e4af7e'),
+                (1654, 'b30bcab6b95bd5a32248ab0c2da76df1'),
+                (1654, 'a9426a79508515684038792f26c46f7a'),
+                (1654, 'ed9f7936829cf8162d4bc8f53e2d49fe'),
+                (1654, '1af4bc2dba7490dd636bba8499c26680'),
+                (1654, '63f364cb040ddf38718f525d0b4670ec'),
+                (1654, '0a92ea475baff5fce99eb7cec7046bf3'),
+                (1654, '0615a6f2adf34cafdcd55dfb615d4f62'),
+                (1654, '017f94b2b26f046ac2d1de986a509768'),
+                (1654, '357410d71f0bdb68d28528168494f430'),
+                (1654, '374df99effdd08943c572604f736290b'),
+                (1654, '469abc693b3cbfd820fcd8834fa8ffca'),
+                (1654, '2a299c5f424828725c85109532731d9c'),
+                (1654, '644fb6aa6d7fe25182592f2e985f1111'),
+                (1082, '931256af49ce1402572c4947ed8a2df9'),
+                (1082, '931256af49ce1402572c4947ed8a2df9'),
+                (1082, '931256af49ce1402572c4947ed8a2df9'),
+                (1082, '931256af49ce1402572c4947ed8a2df9'),
+                (1082, '931256af49ce1402572c4947ed8a2df9'),
+                (1654, '929d528b6210c7f0f4a1f4ac2a084e88'),
+                (1654, 'e8c14ffe21e8877cec499faca03f179b'),
+                (1654, 'dfba5c4ce90f8a9a81f4a8b359ad7ec3'),
+                (1654, '9ccb86a2c00e207842a144a26061941b'),
+                (1654, '311aab977c53c33d1f7e0a4b522a794a'),
+                (1334, '9e5b09d70f52ad30dc3a854bba58c85a'),
+                (1334, 'e63be58486a237f5696a2a2ebd1c809c'),
+                (1334, '47d702878319fee28a467b7fab0790fc'),
+                (1334, '14d4c5ab47573ad35be47d7e059b911c'),
+                (1334, 'fa8c7f768764b0320e0488bbb29fd868'),
+                (1334, '56be823d2e4dd7e9e437537d57e45a2a'),
+                (1334, 'e8b50ed900b8c73649548ad4f9fefd21'),
+                (1334, 'b7359a44f2fc0d748290044aaf4587dc'),
+                (1334, 'aa575a9e27c881342797caccff2d07b6'),
+                (1334, '6443fd916929f893846a24f5edd02981'),
+                (1334, 'a52a129dbe25a43858d1f6f999daef4d'),
+                (1334, 'dbdb3b7361f96cc8576b85292c363c7c'),
+                (1334, '373ea9e99fd5011cd4c2c39de80e6444'),
+                (1334, '654bb6f502a66c5bb4ee0e668bdf2f17'),
+                (1334, '561a6b741db474dd1450ba912cde367f')
+                )
+        for i in xrange(self.shp.size):
+            surface = self.shp.getSurface(i)
+            # We test with saveBMP() to have saveBMP() tested as well 
+            self.assertEqual(len(surface.saveBMP()), knowngood[i][0])
+            self.assertEqual(md5(surface.saveBMP()).hexdigest(), knowngood[i][1])
+
+    def test_array(self):
+        surface = self.shp.getSurfaceArray(3, 1, (29 | TILE_NORMAL, 30 | TILE_NORMAL, 31 | TILE_NORMAL))
+        bmp = surface.saveBMP()
+        self.assertEqual(len(bmp), 2230)
+        self.assertEqual(md5(surface.saveBMP()).hexdigest(), '94d854d02b3dfa72c8dcd3d7d5f5f980')
+
+
 class TestStringFile(unittest.TestCase):
     
     def setUp(self):
@@ -258,6 +370,7 @@ def test_main():
     test_support.run_unittest(TestMapFile)
     test_support.run_unittest(TestIcnFile)
     test_support.run_unittest(TestPalette)
+    test_support.run_unittest(TestShpFile)
     test_support.run_unittest(TestStringFile)
 
 if __name__ == "__main__":
