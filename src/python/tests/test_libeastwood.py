@@ -385,6 +385,116 @@ class TestStringFile(unittest.TestCase):
         self.assertEqual(stringfile.getString(stringfile.size-1),\
                 "Your defects must have been inherited. Nobody could possible learn the colossal stupidity that you have displayed.")
 
+class TestVocFile(unittest.TestCase):
+    
+    def setUp(self):
+        self.pak = PakFile('DUNE2/VOC.PAK')
+
+    def test_voc(self):
+        knowngood = {
+                'VSCREAM1.VOC' : (5861, '272b0556fc0b964d5362ddc7b36c2c91'),
+                'VSCREAM2.VOC' : (5081, '542c3d64eb3a1a816c99caf82a350bcb'),
+                'VSCREAM3.VOC' : (5876, '0a88c1d209a93c0201a0e3de5c787446'),
+                'VSCREAM4.VOC' : (4653, '1a3954e042f3b71e90a741146dee49ba'),
+                'VSCREAM5.VOC' : (5613, '16acbd15c69586cde1a6f6de247b9799'),
+                'ZAFFIRM.VOC' : (10521, '8de5cdd6536d87f203415ffeb4dcea1f'),
+                'BUTTON.VOC' : (1133, '6ce440604a1b8cabfba5f97cfe1d4a37'),
+                'CRUMBLE.VOC' : (5421, '22ef34db9ebab94ff9cbce8453d1c82d'),
+                'DROPEQ2P.VOC' : (4963, '828f62c6cdac1bd62ecbcbf212c3b877'),
+                'EXCANNON.VOC' : (3181, 'd7dc5a10e33d6d8457dbc32863e5b5c4'),
+                'EXDUD.VOC' : (3973, '35e0b9320b1bb94587293b3b66972113'),
+                'EXGAS.VOC' : (5037, '0cf69559c1ac6e7107c2cd8bec4c195f'),
+                'EXLARGE.VOC' : (17093, 'c4fdc4d6881fbb43e46d726eb6cfe804'),
+                'EXMED.VOC' : (7213, '879f55c2c3f8f9b4bcd462af4d05de08'),
+                'EXSAND.VOC' : (5681, 'e1cb1fbd665925f20d5996b220a10710'),
+                'EXSMALL.VOC' : (3181, 'd7dc5a10e33d6d8457dbc32863e5b5c4'),
+                'EXTINY.VOC' : (8463, '867d1f291d787854b47d6d6519b9b95b'),
+                'GUN.VOC' : (3321, '7e466f7655603ae19ed0a41dbd5dc87c'),
+                'GUNMULTI.VOC' : (7345, '19a2e257b84c9f51635d7de120afacab'),
+                'MISLTINP.VOC' : (10021, 'b524cbda8285a696b5aecc83ec954c78'),
+                'ZMOVEOUT.VOC' : (10401, 'f2a1c2739624fd4ff662a2f73a62050e'),
+                'ZOVEROUT.VOC' : (15377, 'd5f57024879a9307138f1284e047476a'),
+                'POPPA.VOC' : (15425, '507789cfc05720e97e82859b1c8914d9'),
+                'ZREPORT1.VOC' : (9811, '5e1b72b81e3d78b761507f3e54d31b00'),
+                'ZREPORT2.VOC' : (11260, '6af19f722e740f4d37949e0d7371e9f6'),
+                'ZREPORT3.VOC' : (12143, 'ce7b729ca44a0fe14310639a5bf65336'),
+                'ROCKET.VOC' : (8786, 'ef486074183745fa13d66ca23d4e2677'),
+                'SANDBUG.VOC' : (17446, '41eb275b91be7620edc45f6de0f29811'),
+                'SQUISH2.VOC' : (8258, '063ffe5c1afd15397d7cdf2b74eca2d5'),
+                'STATICP.VOC' : (19695, 'fefdcd82f68a37ea6925b827f1e37faf'),
+                'WORMET3P.VOC' : (10353, 'c7b00abd0af22247b436c65845715223')
+                }
+
+        for f in self.pak.listfiles():
+            self.pak.open(f)
+            voc = VocFile(self.pak.read())
+            sound = voc.getSound()
+            wav = sound.saveWAV()
+            self.assertEqual(len(wav), knowngood[f][0])
+            self.assertEqual(md5(wav).hexdigest(), knowngood[f][1])
+
+class TestSound(unittest.TestCase):
+    
+    def setUp(self):
+        pak = PakFile('DUNE2/INTROVOC.PAK')
+        pak.open("DUNE.VOC")
+        self.sound = VocFile(pak.read()).getSound()
+
+    def test_resampled_interpolator(self):
+        md5sum = (
+                '1218e827984c486f3dbf7b22dfe74f37',
+                '9ac8a1918a99f75fd3c7b8a03eaaf616',
+                '27a2ee5d7e738ab1ea420ec3992a7219',
+                'df7033f4be5eca2a53d29808cd13927a',
+                '08191f84cc8b21a877556a2b71dbb522'
+                )
+        for i in xrange(I_SINC_BEST_QUALITY, I_LINEAR+1):
+            resampled = self.sound.getResampled(2, 44100, FMT_S16LE, i)
+            self.assertEqual(md5(resampled.getBuffer()).hexdigest(), md5sum[i])
+
+    def test_resampled_format(self):
+        knowngood = {
+                FMT_S16BE : (184224, '6a23cfd17e0462dbd87f597efce71118'),
+                FMT_S16LE : (184224, '08191f84cc8b21a877556a2b71dbb522'),
+                FMT_S8 : (92112, '55b0b1e8f02a421ccf1bae0c85f5830d'),
+                FMT_U16BE : (184224, 'b4b1c2ece22f527274b68c0665d54faf'),
+                FMT_U16LE : (184224, 'ba6346590359a3ef1a750b36dc835e86'),
+                FMT_U8 : (92112, 'bcf7e3a28632e6b6b8225650781ce497')
+                }
+
+        for f in knowngood.keys():
+            resampled = self.sound.getResampled(2, 44100, f, I_LINEAR)
+            buffer = resampled.getBuffer()
+            self.assertEqual(len(buffer), knowngood[f][0])
+            self.assertEqual(md5(buffer).hexdigest(), knowngood[f][1])
+
+    def test_resampled_rate(self):
+        knowngood = {
+                11025 : (46060, '93d3122c776254644ff0e22163471436'),
+                22050 : (92112, '77ad224e856884d8b39580b0bce3a230'),
+                44100 : (184224, '08191f84cc8b21a877556a2b71dbb522'),
+                48000 : (200516, '715bf0c71f026c487ed359652d30395c'),
+                96000 : (401028, '210113c876e4ff9d84425bff7c9db280'),
+                }
+
+        for r in knowngood.keys():
+            resampled = self.sound.getResampled(2, r, FMT_S16LE, I_LINEAR)
+            buffer = resampled.getBuffer()
+            self.assertEqual(len(buffer), knowngood[r][0])
+            self.assertEqual(md5(buffer).hexdigest(), knowngood[r][1])
+
+    def test_resampled_channels(self):
+        knowngood = {
+                1 : (92112, 'b18d59a2d448ad6af978eb225fc1ca19'),
+                2 : (184224, '08191f84cc8b21a877556a2b71dbb522')
+                }
+
+        for c in knowngood.keys():
+            resampled = self.sound.getResampled(c, 44100, FMT_S16LE, I_LINEAR)
+            buffer = resampled.getBuffer()
+            self.assertEqual(len(buffer), knowngood[c][0])
+            self.assertEqual(md5(buffer).hexdigest(), knowngood[c][1])
+
 def test_main():
     from test import test_support
     test_support.run_unittest(TestPakFile)
@@ -394,7 +504,9 @@ def test_main():
     test_support.run_unittest(TestIcnFile)
     test_support.run_unittest(TestPalette)
     test_support.run_unittest(TestShpFile)
+    test_support.run_unittest(TestSound)    
     test_support.run_unittest(TestStringFile)
+    test_support.run_unittest(TestVocFile)
 
 if __name__ == "__main__":
     test_main()
