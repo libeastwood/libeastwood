@@ -23,8 +23,6 @@ class CpsFile : public Decode
     private:
 	void readHeader();
 	compressionFormat _format;
-	uint16_t _imageSize;
-
 
 };
 
