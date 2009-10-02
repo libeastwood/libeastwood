@@ -60,7 +60,7 @@ Surface& Surface::operator=(const SDL_Surface *surface)
     _bpp = format->BitsPerPixel;
     _width = w;
     _height = h;
-    _pitch = pitch;
+    _pitch = surface->pitch;
     _pixels.reset(new Bytes((uint8_t*)surface->pixels, BufMalloc));
     _palette = SDL::Palette(*format->palette);
 

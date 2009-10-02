@@ -32,6 +32,7 @@ class Surface {
 
 	uint16_t width() const throw() { return _width; }
 	uint16_t height() const throw() { return _height; }
+	uint16_t pitch() const throw() { return _pitch; }
 	uint8_t bpp() const throw() { return _bpp; }
 	Palette palette() const throw() { return _palette; }
 	uint32_t size() const throw() { return _pitch * _height; }
@@ -41,12 +42,6 @@ class Surface {
 	bool saveBMP(std::ostream &output);
 
     protected:
-	friend class CpsFile;
-	friend class IcnFile;
-	friend class ShpFile;
-	friend class WsaFile;
-	friend class Font;
-
 	uint8_t _bpp;
 	uint16_t _width,
 		 _height,
