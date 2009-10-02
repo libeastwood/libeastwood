@@ -49,24 +49,25 @@ Sound_getResampled(Py_Sound *self, PyObject *args)
 
 
 static PyObject *
-Sound_saveWAV(Py_Sound *self, PyObject *args)
+Sound_saveWAV(Py_Sound *self)
 {
-    Py_ssize_t size;
-    char *fileName = NULL;
-    if (!PyArg_ParseTuple(args, "s#", &fileName, &size))
+    std::stringbuf rdbuf;
+    std::ostream output(&rdbuf);
+    if(!output.good()) {
+	PyErr_SetFromErrno(PyExc_IOError);
 	return NULL;
+    }
 
-    std::ofstream out(fileName);
-    self->sound->saveWAV(out);
-    out.close();
- 
-    Py_RETURN_TRUE;
+    self->sound->saveWAV(output);
+    std::string buf = rdbuf.str();
+    PyObject *ret = PyString_FromStringAndSize(buf.c_str(), buf.size());
+    return ret;
 }
 
 
 static PyMethodDef Sound_methods[] = {
     {"getResampled", (PyCFunction)Sound_getResampled, METH_VARARGS, NULL},
-    {"saveWAV", (PyCFunction)Sound_saveWAV, METH_VARARGS, NULL},
+    {"saveWAV", (PyCFunction)Sound_saveWAV, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
