@@ -34,15 +34,6 @@ class Sound
 	Sound(uint32_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format);
 	virtual ~Sound();
 
-	Sound &operator=(const Sound &sound) {
-	    _size = sound._size;
-	    _buffer = sound._buffer;
-	    _channels = sound._channels;
-	    _frequency = sound._frequency;
-	    _format = sound._format;
-	    return *this;
-	}
-
 	virtual operator uint8_t*() const {
 	    return *_buffer.get();
 	}
