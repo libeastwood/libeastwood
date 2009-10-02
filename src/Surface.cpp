@@ -80,7 +80,7 @@ Surface Surface::getScaled(Scaler scaler)
 	default:
 	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
     }
-    scale(scaler, (uint8_t*)scaled, scaled._pitch, (uint8_t*)*this - _pitch, _pitch, _bpp/8, _width, _height);
+    scale(scaler, (uint8_t*)scaled, scaled._pitch, (uint8_t*)*this, _pitch, _bpp/8, _width, _height);
     return scaled;
 }
 

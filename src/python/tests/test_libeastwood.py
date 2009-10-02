@@ -506,11 +506,11 @@ class TestSurface(unittest.TestCase):
 
     def test_scalers(self):
         knowngood = {
-                Scale2X : (640, 400, 256000, '675a2e41789cb0e44a0022c2aa297690'),
-                Scale2X3 : (640, 600, 384000, '6ce31d07d31ac3d0868ccb52c661cbb1'),
-                Scale2X4 : (640, 800, 512000, 'd354822469df16f041f15832bad1bc82'),
-                Scale3X : (960, 600, 576000, '5ea3c8e3cc4d0d4bbf5d421c94eafe0d'),
-                Scale4X : (1280, 800, 1024000, '8ddd185a2d53b435b848746aa5969f18'),
+                Scale2X : (640, 400, 256000, 'a6d36012e54c37d2b0d96e9a49588a2e'),
+                Scale2X3 : (640, 600, 384000, '80370eb0a6bd47e1eca9e49433e793e6'),
+                Scale2X4 : (640, 800, 512000, '4c5905cf95b3846f62729f4be1b86dcb'),
+                #fixme: Scale3X : (960, 600, 576000, '8af59019053330c70e7f15da84f26e78'),
+                Scale4X : (1280, 800, 1024000, 'c8945be671a5f10987850f5f1e3b87df')
                 }
 
         for s in knowngood.keys():
@@ -519,9 +519,7 @@ class TestSurface(unittest.TestCase):
             self.assertEqual(surface.width, knowngood[s][0])
             self.assertEqual(surface.height, knowngood[s][1])
             self.assertEqual(len(pixels), knowngood[s][2])
-            #print "%d : (%d, %d, %d, '%s')," % (s, surface.width, surface.height, len(pixels), md5(pixels).hexdigest())
-            #FIXME:
-            #self.assertEqual(md5(pixels).hexdigest(), knowngood[s][3])
+            self.assertEqual(md5(pixels).hexdigest(), knowngood[s][3])
 
 
 def test_main():
