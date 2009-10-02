@@ -35,26 +35,18 @@ class Surface {
 	    return *_pixels.get();
 	}
 
-	bool scalePrecondition(Scaler scale);
-	Surface getScaled(Scaler scale);
-	bool saveBMP(std::ostream &output);
-
-	inline Point size() const {
+	Point size() const throw() {
 	    Point point = { _width, _height };
 	    return point;
 	}
 
-	inline uint32_t len() const {
-	    return _pitch * _height;
-	}
+	uint32_t len() const throw() { return _pitch * _height;	}
+	uint8_t bpp() const throw() { return _bpp; }
+	Palette palette() const throw() { return _palette; }
 
-	inline uint8_t bpp() const {
-	    return _bpp;
-	}
-
-	inline Palette palette() const {
-	    return _palette;
-	}
+	bool scalePrecondition(Scaler scale);
+	Surface getScaled(Scaler scale);
+	bool saveBMP(std::ostream &output);
 
     protected:
 	friend class CpsFile;
