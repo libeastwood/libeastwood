@@ -37,11 +37,11 @@ class StringFile
 	    return _strings.at(mission*4+texttype);
 	}
 
-	inline std::string getString(uint16_t i){
+	inline std::string getString(uint16_t i) {
 	    return _strings.at(i);
 	}
 
-	inline uint16_t size() {
+	uint16_t size() const throw() {
 	    return _strings.size();
 	}
 

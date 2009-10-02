@@ -19,7 +19,7 @@ class Palette {
 
 	Color& operator[] (uint16_t i) { return _palette.at(i); }
 
-	size_t size() const { return _palette.size(); }
+	uint16_t size() const throw() { return _palette.size(); }
 
 	bool savePAL(std::ostream &output);
 
