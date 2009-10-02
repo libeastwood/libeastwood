@@ -14,7 +14,7 @@ class PakFile : public IStream
 {
     public:
         PakFile(const std::istream &stream);
-        ~PakFile();
+        virtual ~PakFile();
 
 	void close();
 	void open(std::string fileName);
