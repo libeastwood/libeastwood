@@ -495,6 +495,35 @@ class TestSound(unittest.TestCase):
             self.assertEqual(len(buffer), knowngood[c][0])
             self.assertEqual(md5(buffer).hexdigest(), knowngood[c][1])
 
+class TestSurface(unittest.TestCase):
+    
+    def setUp(self):
+        pak = PakFile('DUNE2/DUNE.PAK')
+        pak.open('BENE.PAL')
+        pal = PalFile(pak.read()).getPalette()
+        pak.open('MENTATM.CPS')
+        self.surface = CpsFile(pak.read(), pal).getSurface()
+
+    def test_scalers(self):
+        knowngood = {
+                Scale2X : (640, 400, 256000, '675a2e41789cb0e44a0022c2aa297690'),
+                Scale2X3 : (640, 600, 384000, '6ce31d07d31ac3d0868ccb52c661cbb1'),
+                Scale2X4 : (640, 800, 512000, 'd354822469df16f041f15832bad1bc82'),
+                Scale3X : (960, 600, 576000, '5ea3c8e3cc4d0d4bbf5d421c94eafe0d'),
+                Scale4X : (1280, 800, 1024000, '8ddd185a2d53b435b848746aa5969f18'),
+                }
+
+        for s in knowngood.keys():
+            surface = self.surface.getScaled(s)
+            pixels = surface.getPixels()
+            self.assertEqual(surface.width, knowngood[s][0])
+            self.assertEqual(surface.height, knowngood[s][1])
+            self.assertEqual(len(pixels), knowngood[s][2])
+            #print "%d : (%d, %d, %d, '%s')," % (s, surface.width, surface.height, len(pixels), md5(pixels).hexdigest())
+            #FIXME:
+            #self.assertEqual(md5(pixels).hexdigest(), knowngood[s][3])
+
+
 def test_main():
     from test import test_support
     test_support.run_unittest(TestPakFile)
@@ -506,6 +535,7 @@ def test_main():
     test_support.run_unittest(TestShpFile)
     test_support.run_unittest(TestSound)    
     test_support.run_unittest(TestStringFile)
+    test_support.run_unittest(TestSurface)
     test_support.run_unittest(TestVocFile)
 
 if __name__ == "__main__":
