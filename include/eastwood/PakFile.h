@@ -1,17 +1,14 @@
 #ifndef	EASTWOOD_PAKFILE_H
 #define	EASTWOOD_PAKFILE_H
 
+#include <map>
 #include <vector>
 
 #include "eastwood/IStream.h"
 
 namespace eastwood {
 
-struct PakFileEntry {
-    uint32_t startOffset;
-    uint32_t endOffset;
-    std::string fileName;
-};
+typedef std::pair<uint32_t, uint32_t> FileEntry;
 
 class PakFile : public IStream
 {
@@ -22,21 +19,22 @@ class PakFile : public IStream
 	void close();
 	void open(std::string fileName);
 
-	inline bool is_open() {
+	bool is_open() const throw() {
             return rdbuf() != NULL;
         }
-        inline std::string getFileName(uint32_t index) {
-            return _fileEntry[index].fileName;
+        std::string getFileName(uint32_t index) const {
+            return _fileNames.at(index);
         };
-        inline uint32_t entries() {
-            return _fileEntry.size();
+        uint32_t entries() const throw() {
+            return _fileEntries.size();
         };
 
     private:
         void readIndex();
 
         IStream &_stream;
-        std::vector<PakFileEntry> _fileEntry;
+        std::map<std::string, FileEntry> _fileEntries;
+        std::vector<std::string> _fileNames;
 };
 
 }
