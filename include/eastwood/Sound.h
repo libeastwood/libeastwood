@@ -43,13 +43,17 @@ class Sound
 	    return *this;
 	}
 
+	uint32_t size() const throw() { return _size; }
+	uint8_t channels() const throw() { return _channels; }
+	uint32_t frequency() const throw() { return _frequency; }
+	AudioFormat format() const throw() { return _format; }
+
 	Sound getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator = I_LINEAR);
 	void saveWAV(std::ostream &output);
 
     protected:
 	template <typename T>
 	void getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t silenceLength);
-
 
     	uint32_t _size;
     	BytesPtr _buffer;
