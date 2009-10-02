@@ -47,11 +47,12 @@ CpsFile::~CpsFile()
 
 Surface eastwood::CpsFile::getSurface()
 {
-    uint8_t *imageOut = new uint8_t[_width*_height];
+    uint16_t imageSize = _width * _height;
+    uint8_t *imageOut = new uint8_t[imageSize];
 
     switch(_format) {
 	case UNCOMPRESSED:
-	    _stream.read(reinterpret_cast<char*>(imageOut), _width*_height);
+	    _stream.read(reinterpret_cast<char*>(imageOut), imageSize);
 	    break;
 	case FORMAT_LBM:
 	    //TODO: implement?
