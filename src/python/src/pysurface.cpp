@@ -83,7 +83,7 @@ static PyMethodDef Surface_methods[] = {
 static PyMemberDef Surface_members[] = {
     {const_cast<char*>("width"), T_USHORT, offsetof(Py_Surface, width), RO, NULL},
     {const_cast<char*>("height"), T_USHORT, offsetof(Py_Surface, height), RO, NULL},
-    {const_cast<char*>("bpp"), T_USHORT, offsetof(Py_Surface, bpp), RO, NULL},
+    {const_cast<char*>("bpp"), T_UBYTE, offsetof(Py_Surface, bpp), RO, NULL},
     {NULL, 0, 0, 0, NULL}
 };
 
