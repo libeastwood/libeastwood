@@ -8,6 +8,7 @@ struct Py_Surface {
     eastwood::Surface *surface;
     uint16_t width,
 	     height;
+    uint8_t bpp;
 };
 
 extern PyTypeObject Surface_Type;

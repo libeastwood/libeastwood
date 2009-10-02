@@ -21,6 +21,7 @@ Surface_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject
 	self->surface = reinterpret_cast<Surface*>(args);
 	self->width = self->surface->width();
 	self->height = self->surface->height();
+	self->bpp = self->surface->bpp();
     }
 
     return (PyObject *)self;
@@ -82,6 +83,7 @@ static PyMethodDef Surface_methods[] = {
 static PyMemberDef Surface_members[] = {
     {const_cast<char*>("width"), T_USHORT, offsetof(Py_Surface, width), RO, NULL},
     {const_cast<char*>("height"), T_USHORT, offsetof(Py_Surface, height), RO, NULL},
+    {const_cast<char*>("bpp"), T_USHORT, offsetof(Py_Surface, bpp), RO, NULL},
     {NULL, 0, 0, 0, NULL}
 };
 
