@@ -43,6 +43,10 @@ class Sound
 	    return *this;
 	}
 
+	virtual operator uint8_t*() const {
+	    return *_buffer.get();
+	}
+
 	uint32_t size() const throw() { return _size; }
 	uint8_t channels() const throw() { return _channels; }
 	uint32_t frequency() const throw() { return _frequency; }
