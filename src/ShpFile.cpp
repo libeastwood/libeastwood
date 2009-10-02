@@ -73,7 +73,7 @@ void ShpFile::readIndex()
 		char error[256];
 		_index.at(i-1).endOffset = _index.at(i).startOffset - 1;
 		sprintf(error, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
-			i, _index[i-1].endOffset, fileSize);
+			i, _index.at(i-1).endOffset, fileSize);
 		if(_index.at(i-1).endOffset > fileSize)
 		    throw(Exception(LOG_ERROR, "ShpFile", error));
 	    }
