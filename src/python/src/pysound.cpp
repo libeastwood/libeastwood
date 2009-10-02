@@ -47,6 +47,11 @@ Sound_getResampled(Py_Sound *self, PyObject *args)
     return Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(resampled), NULL);
 }
 
+static PyObject *
+Sound_getBuffer(Py_Sound *self)
+{
+    return PyBuffer_FromMemory((((uint8_t*)(*self->sound))), self->sound->size());
+}
 
 static PyObject *
 Sound_saveWAV(Py_Sound *self)
@@ -66,6 +71,7 @@ Sound_saveWAV(Py_Sound *self)
 
 
 static PyMethodDef Sound_methods[] = {
+    {"getBuffer", (PyCFunction)Sound_getBuffer, METH_NOARGS, NULL},
     {"getResampled", (PyCFunction)Sound_getResampled, METH_VARARGS, NULL},
     {"saveWAV", (PyCFunction)Sound_saveWAV, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}		/* sentinel */
