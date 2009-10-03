@@ -112,7 +112,7 @@ int32_t PakFile::sizediff()
 }
 
 
-void PakFile::insertPadding(off_t offset, uint32_t n, const char padbyte)
+void PakFile::insertPadding(uint32_t offset, uint32_t n, const char padbyte)
 {
     char buf[BUFSIZ];
     _stream.seekp(0, std::ios::end);
@@ -137,7 +137,7 @@ void PakFile::insertPadding(off_t offset, uint32_t n, const char padbyte)
 
 }
 
-void PakFile::removeBytes(off_t offset, uint32_t n)
+void PakFile::removeBytes(uint32_t offset, uint32_t n)
 {
     char buf[BUFSIZ];
     _stream.seekp(0, std::ios::end);
@@ -211,11 +211,11 @@ void PakFile::writeIndex(uint32_t firstOffset)
     stream.putU32LE(0);
 }
 
-bool truncateFile(const char *fileName, off_t size)
+bool truncateFile(const char *fileName, uint32_t size)
 {
 #ifdef _WIN32 // Not tested...
     HANDLE filehand;
-    off_t filesize;
+    uint32_t filesize;
     uint32_t result;
     WIN32_FILE_ATTRIBUTE_DATA filedata;
 
@@ -254,7 +254,7 @@ bool truncateFile(const char *fileName, off_t size)
     return result;
 #else
     struct stat fileData;
-    off_t fileSize;
+    uint32_t fileSize;
     int fd;
     bool ret = false;
     if (stat(fileName, &fileData)) return ret;

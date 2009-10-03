@@ -39,8 +39,8 @@ class PakFile : public IStream, public OStream
     private:
         void readIndex();
         void writeIndex(uint32_t firstOffset);
-	void insertPadding(off_t offset, uint32_t n, const char padbyte = 0);        
-        void removeBytes(off_t offset, uint32_t n);
+	void insertPadding(uint32_t offset, uint32_t n, const char padbyte = 0);        
+        void removeBytes(uint32_t offset, uint32_t n);
 
         std::ios_base::openmode _mode;
         std::map<std::string, FileEntry>::iterator _currentFile;
@@ -49,7 +49,7 @@ class PakFile : public IStream, public OStream
         std::vector<std::string> _fileNames;
 };
 
-bool truncateFile(const char *fileName, off_t size);
+bool truncateFile(const char *fileName, uint32_t size);
 
 }
 #endif // EASTWOOD_PAKFILE_H
