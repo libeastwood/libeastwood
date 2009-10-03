@@ -18,9 +18,9 @@ class PakFile : public IStream, public OStream
         PakFile(std::iostream &stream);
         virtual ~PakFile();
 
-	off_t close();
+	void close();
 	void open(std::string fileName, std::ios::openmode mode = std::ios_base::in | std::ios_base::binary);
-        off_t erase(std::string fileName);
+        bool erase(std::string fileName);
 
 	bool is_open() const throw() {
             return rdbuf() != NULL;
@@ -31,6 +31,13 @@ class PakFile : public IStream, public OStream
         uint32_t entries() const throw() {
             return _fileEntries.size();
         };
+        // If negative, file needs to be truncated
+        int32_t sizediff() {
+            FileEntry &entry = _fileEntries[_fileNames.back()];
+            std::cout << "hm: " << entry.first + entry.second << "  size: " << reinterpret_cast<IStream*>(&_stream)->size() << std::endl;
+            int32_t diff = (entry.first + entry.second) - reinterpret_cast<IStream*>(&_stream)->size();
+            return diff;
+        }
 
 	std::streamsize size() { return IStream::size(); }
 
@@ -38,9 +45,8 @@ class PakFile : public IStream, public OStream
         void readIndex();
         void writeIndex();
 	void insertPadding(off_t offset, uint32_t n, const char padbyte = 0);        
-        off_t removeBytes(off_t offset, uint32_t n);
+        void removeBytes(off_t offset, uint32_t n);
 
-        bool _newFile;
         std::ios_base::openmode _mode;
         std::map<std::string, FileEntry>::iterator _currentFile;
         std::iostream &_stream;

@@ -16,8 +16,8 @@
 namespace eastwood {
 
 PakFile::PakFile(std::iostream &stream) :
-    _newFile(false), _mode(std::ios::in), _currentFile(), _stream(stream),
-    _fileEntries(), _fileNames()
+    _mode(std::ios::in), _currentFile(), _stream(stream), _fileEntries(),
+    _fileNames()
 {
     readIndex();
 }
@@ -27,15 +27,14 @@ PakFile::~PakFile()
     close();
 }
 
-off_t PakFile::close() {
-    off_t ret = 0;
+void PakFile::close() {
     if(is_open()) {
         if(_mode & std::ios_base::out) {
             char buf[BUFSIZ];
             uint32_t size = reinterpret_cast<OStream*>(this)->size();
             if(size != _currentFile->second.second) {
                 if(size < _currentFile->second.second)
-                    ret = removeBytes(_currentFile->second.first, _currentFile->second.second - size);
+                    removeBytes(_currentFile->second.first, _currentFile->second.second - size);
                 else
                     insertPadding(_currentFile->second.first, size - _currentFile->second.second);
                 _currentFile->second.second = size;
@@ -53,18 +52,15 @@ off_t PakFile::close() {
         delete rdbuf();
         std::ios::init(NULL);
         _mode = std::ios::in;
-        _newFile = false;
     }
-    return ret;
 }
 
-off_t PakFile::erase(std::string fileName)
+bool PakFile::erase(std::string fileName)
 {
-    off_t ret = 0;
     _currentFile = _fileEntries.find(fileName);
     if(_currentFile == _fileEntries.end())
-        return ret;
-    ret = removeBytes(_currentFile->second.first, _currentFile->second.second);
+        return false;
+    removeBytes(_currentFile->second.first, _currentFile->second.second);
     for(std::vector<std::string>::iterator it = _fileNames.begin();
             it != _fileNames.end(); ++it) {
         if(*it == fileName) {
@@ -74,9 +70,10 @@ off_t PakFile::erase(std::string fileName)
     }
     _fileEntries.erase(_currentFile);
     writeIndex();
-    return ret;
 
+    return true;
 }
+
 void PakFile::insertPadding(off_t offset, uint32_t n, const char padbyte)
 {
     char buf[BUFSIZ];
@@ -102,10 +99,9 @@ void PakFile::insertPadding(off_t offset, uint32_t n, const char padbyte)
 
 }
 
-off_t PakFile::removeBytes(off_t offset, uint32_t n)
+void PakFile::removeBytes(off_t offset, uint32_t n)
 {
     char buf[BUFSIZ];
-    off_t ret = 0;
     _stream.seekp(0, std::ios::end);
     std::streampos end = _stream.tellp();
     uint32_t left = (static_cast<uint32_t>(end) - (offset + n));
@@ -120,10 +116,8 @@ off_t PakFile::removeBytes(off_t offset, uint32_t n)
         left -= nb;
         offset += nb;
     }
-    ret = static_cast<off_t>(_stream.tellg());
     while(_stream.tellg() != end)
         _stream.put(0);
-    return ret;
 
 }
 
@@ -147,7 +141,6 @@ void PakFile::open(std::string fileName, std::ios::openmode mode) {
         _fileEntries.insert(make_pair(fileName, FileEntry((uint32_t)_stream.tellg(), 0)));
         _currentFile = _fileEntries.find(fileName);
         std::ios::init(new std::stringbuf(_mode));
-        _newFile = true;
     } else
         throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
 
@@ -175,13 +168,32 @@ void PakFile::readIndex()
 
 void PakFile::writeIndex()
 {
-    int32_t move = _newFile ? _fileNames.back().size()+sizeof(uint32_t)+1 : 0;
     OStream &stream = *reinterpret_cast<OStream*>(&_stream);
 
-    insertPadding(0, move);
+    uint32_t offset = sizeof(uint32_t);
+    for(std::vector<std::string>::const_iterator it = _fileNames.begin();
+            it != _fileNames.end(); ++it) {
+        offset += sizeof(uint32_t) + it->size() + 1;
+    }
+    int32_t move = offset - _fileEntries[_fileNames[0]].first;
+    if(move) {
+        if(move < 0)
+            removeBytes(offset, std::abs(move));
+        else
+            insertPadding(offset, move);
+    }
     _stream.seekp(0, std::ios::beg);
+    uint32_t size = 0;
     for(uint32_t i = 0; i < _fileNames.size(); i++) {
         std::string &fileName = _fileNames[i];
+        FileEntry &entry = _fileEntries[fileName];
+        
+        std::cout << fileName << ": " << entry.first << std::endl;
+        entry.first = (offset += size);
+        size = entry.second;
+
+        std::cout << fileName << ": " << entry.first << std::endl;
+
         stream.putU32LE((_fileEntries[fileName].first += move));
         stream.write(fileName.c_str(), fileName.size());
         stream.put(0);
@@ -193,15 +205,19 @@ bool truncateFile(const char *fileName, off_t size)
 {
 #ifdef _WIN32 // Not tested...
     HANDLE filehand;
+    off_t filesize;
     uint32_t result;
     WIN32_FILE_ATTRIBUTE_DATA filedata;
 
     /* Learn the file's length */
     if (!GetFileAttributesEx( filename, GetFileExInfoStandard, &filedata )) return false;
+    filesize = (filedata.nFileSizeHigh << 32) +filedata.nFileSizeLow;
+
 
     /* Calculate the new length */
-    filedata.nFileSizeHigh = size >> 32;
-    filedata.nFileSizeLow  = size & 0xFFFFFFFFL;
+    filesize -= bytes;
+    filedata.nFileSizeHigh = filesize >> 32;
+    filedata.nFileSizeLow  = filesize & 0xFFFFFFFFL;
 
     /* Modify the file's length */
     filehand = CreateFile(
@@ -228,11 +244,13 @@ bool truncateFile(const char *fileName, off_t size)
     return result;
 #else
     struct stat fileData;
+    off_t fileSize;
     int fd;
     bool ret = false;
     if (stat(fileName, &fileData)) return ret;
+    fileSize = fileData.st_size - size;
     fd = open(fileName, O_RDWR);
-    ret = truncate(fileName, size) == 0;
+    ret = truncate(fileName, fileSize) == 0;
     close(fd);
     return ret;
 #endif

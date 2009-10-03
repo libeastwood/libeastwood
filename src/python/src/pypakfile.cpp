@@ -16,8 +16,10 @@ using namespace eastwood;
 static int
 PakFile_init(Py_PakFile *self, PyObject *args)
 {
-    if (!PyArg_ParseTuple(args, "O", &self->pakFileName))
+    char *fileName;
+    if (!PyArg_ParseTuple(args, "s", &fileName))
 	return -1;
+    self->pakFileName = PyString_FromString(fileName);
 
 #ifdef WITH_THREAD
     self->lock = PyThread_allocate_lock();
@@ -27,7 +29,7 @@ PakFile_init(Py_PakFile *self, PyObject *args)
     }
 #endif
 
-    self->stream = new std::fstream(PyString_AsString(self->pakFileName), std::ios::in | std::ios::out | std::ios::binary);
+    self->stream = new std::fstream(fileName, std::ios::in | std::ios::out | std::ios::binary);
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
 	goto error;
@@ -66,9 +68,7 @@ PakFile_close(Py_PakFile *self)
 {
     ACQUIRE_LOCK(self);
 
-    off_t newSize = self->pakFile->close();
-    if(newSize)
-	truncateFile(PyString_AsString(self->pakFileName), newSize);
+    self->pakFile->close();
     self->fileSize = -1;
     self->mode = std::ios_base::binary;
 
@@ -80,7 +80,11 @@ PakFile_close(Py_PakFile *self)
 static void
 PakFile_dealloc(Py_PakFile *self)
 {
-    PakFile_close(self);
+    int32_t sizediff = self->pakFile->sizediff();
+    if(sizediff < 0)
+	truncateFile(PyString_AsString(self->pakFileName), std::abs(sizediff));
+
+    Py_XDECREF(self->pakFileName);
 #ifdef WITH_THREAD
     if (self->lock)
 	PyThread_free_lock(self->lock);
@@ -152,9 +156,7 @@ PakFile_delete(Py_PakFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "O:delete", &name))
 	return NULL;
 
-    off_t newSize = self->pakFile->erase(PyString_AsString(name));
-    if(newSize)
-	truncateFile(PyString_AsString(self->pakFileName), newSize);
+    self->pakFile->erase(PyString_AsString(name));
 
     Py_RETURN_TRUE;
 }
