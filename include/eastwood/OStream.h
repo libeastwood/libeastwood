@@ -8,6 +8,7 @@ namespace eastwood {
 class OStream : public std::ostream
 {
     public:
+	OStream(){};
 	OStream(const std::ostream &stream);
 	OStream& putU16BE(uint16_t value);
 	OStream& putU16LE(uint16_t value);
