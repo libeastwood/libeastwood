@@ -34,7 +34,6 @@ class PakFile : public IStream, public OStream
         // If negative, file needs to be truncated
         int32_t sizediff() {
             FileEntry &entry = _fileEntries[_fileNames.back()];
-            std::cout << "hm: " << entry.first + entry.second << "  size: " << reinterpret_cast<IStream*>(&_stream)->size() << std::endl;
             int32_t diff = (entry.first + entry.second) - reinterpret_cast<IStream*>(&_stream)->size();
             return diff;
         }

@@ -184,18 +184,15 @@ void PakFile::writeIndex()
     }
     _stream.seekp(0, std::ios::beg);
     uint32_t size = 0;
-    for(uint32_t i = 0; i < _fileNames.size(); i++) {
-        std::string &fileName = _fileNames[i];
-        FileEntry &entry = _fileEntries[fileName];
+    for(std::vector<std::string>::const_iterator it = _fileNames.begin();
+            it != _fileNames.end(); ++it) {
+        FileEntry &entry = _fileEntries[*it];
         
-        std::cout << fileName << ": " << entry.first << std::endl;
         entry.first = (offset += size);
         size = entry.second;
 
-        std::cout << fileName << ": " << entry.first << std::endl;
-
-        stream.putU32LE((_fileEntries[fileName].first += move));
-        stream.write(fileName.c_str(), fileName.size());
+        stream.putU32LE((entry.first += move));
+        stream.write(it->c_str(), it->size());
         stream.put(0);
     }
     stream.putU32LE(0);
