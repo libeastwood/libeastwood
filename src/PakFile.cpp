@@ -99,6 +99,14 @@ bool PakFile::erase(std::string fileName)
     return true;
 }
 
+int32_t PakFile::sizediff()
+{
+    FileEntry &entry = _fileEntries[_fileNames.back()];
+    int32_t diff = (entry.first + entry.second) - reinterpret_cast<IStream*>(&_stream)->size();
+    return diff;
+}
+
+
 void PakFile::insertPadding(off_t offset, uint32_t n, const char padbyte)
 {
     char buf[BUFSIZ];
@@ -191,7 +199,7 @@ void PakFile::writeIndex()
         entry.first = (offset += size);
         size = entry.second;
 
-        stream.putU32LE((entry.first += move));
+        stream.putU32LE(entry.first);
         stream.write(it->c_str(), it->size());
         stream.put(0);
     }
