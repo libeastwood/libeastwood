@@ -39,7 +39,7 @@ void PakFile::close() {
                     insertPadding(_currentFile->second.first, size - _currentFile->second.second);
                 _currentFile->second.second = size;
             }
-            writeIndex();
+            writeIndex(_fileEntries[_fileNames[0]].first);
 
             _stream.seekg(_currentFile->second.first, std::ios::beg);
             while(size) {
@@ -82,6 +82,7 @@ void PakFile::open(std::string fileName, std::ios::openmode mode) {
 
 bool PakFile::erase(std::string fileName)
 {
+    uint32_t startOffset = _fileEntries[_fileNames[0]].first;
     _currentFile = _fileEntries.find(fileName);
     if(_currentFile == _fileEntries.end())
         return false;
@@ -94,16 +95,20 @@ bool PakFile::erase(std::string fileName)
         }
     }
     _fileEntries.erase(_currentFile);
-    writeIndex();
+    writeIndex(startOffset);
 
     return true;
 }
 
 int32_t PakFile::sizediff()
 {
-    FileEntry &entry = _fileEntries[_fileNames.back()];
-    int32_t diff = (entry.first + entry.second) - reinterpret_cast<IStream*>(&_stream)->size();
-    return diff;
+    int32_t actualSize;
+    if(!_fileNames.empty()) {
+        FileEntry &entry = _fileEntries[_fileNames.back()];
+        actualSize = (entry.first + entry.second);
+    } else
+        actualSize = 0;
+    return (actualSize - reinterpret_cast<IStream*>(&_stream)->size());
 }
 
 
@@ -174,7 +179,7 @@ void PakFile::readIndex()
     }
 }
 
-void PakFile::writeIndex()
+void PakFile::writeIndex(uint32_t firstOffset)
 {
     OStream &stream = *reinterpret_cast<OStream*>(&_stream);
 
@@ -183,7 +188,7 @@ void PakFile::writeIndex()
             it != _fileNames.end(); ++it) {
         offset += sizeof(uint32_t) + it->size() + 1;
     }
-    int32_t move = offset - _fileEntries[_fileNames[0]].first;
+    int32_t move = offset - firstOffset;
     if(move) {
         if(move < 0)
             removeBytes(offset, std::abs(move));

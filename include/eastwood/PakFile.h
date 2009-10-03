@@ -38,7 +38,7 @@ class PakFile : public IStream, public OStream
 
     private:
         void readIndex();
-        void writeIndex();
+        void writeIndex(uint32_t firstOffset);
 	void insertPadding(off_t offset, uint32_t n, const char padbyte = 0);        
         void removeBytes(off_t offset, uint32_t n);
 
