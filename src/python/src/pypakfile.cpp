@@ -80,9 +80,11 @@ PakFile_close(Py_PakFile *self)
 static void
 PakFile_dealloc(Py_PakFile *self)
 {
-    int32_t sizediff = self->pakFile->sizediff();
-    if(sizediff < 0)
-	truncateFile(PyString_AsString(self->pakFileName), std::abs(sizediff));
+    if(self->pakFile) {
+    	int32_t sizediff = self->pakFile->sizediff();
+    	if(sizediff < 0)
+    	    truncateFile(PyString_AsString(self->pakFileName), std::abs(sizediff));
+    }
 
     Py_XDECREF(self->pakFileName);
 #ifdef WITH_THREAD
