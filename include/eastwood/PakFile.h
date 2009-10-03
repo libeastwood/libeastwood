@@ -20,6 +20,7 @@ class PakFile : public IStream, public OStream
 
 	off_t close();
 	void open(std::string fileName, std::ios::openmode mode = std::ios_base::in | std::ios_base::binary);
+        off_t erase(std::string fileName);
 
 	bool is_open() const throw() {
             return rdbuf() != NULL;

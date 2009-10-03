@@ -111,6 +111,8 @@ PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
     char mode = 'r';
     static char *kwlist[] = {const_cast<char*>("name"), const_cast<char*>("mode"), NULL};
 
+    PakFile_close(self);
+
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|c:open", kwlist, &name, &mode))
 	return NULL;
 
@@ -142,9 +144,25 @@ PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
+PakFile_delete(Py_PakFile *self, PyObject *args)
+{
+    PyObject *name = NULL;
+    PakFile_close(self);
+
+    if (!PyArg_ParseTuple(args, "O:delete", &name))
+	return NULL;
+
+    off_t newSize = self->pakFile->erase(PyString_AsString(name));
+    if(newSize)
+	truncateFile(PyString_AsString(self->pakFileName), newSize);
+
+    Py_RETURN_TRUE;
+}
+
+static PyObject *
 PakFile_read(Py_PakFile *self, PyObject *args)
 {
-    std::streamoff	offset = static_cast<std::streamoff>(self->pakFile->tellg());
+    std::streamoff offset = static_cast<std::streamoff>(self->pakFile->tellg());
     size_t bytesrequested = -1,
 	   left = self->fileSize - offset;
     PyObject *v = NULL;
@@ -246,6 +264,7 @@ static PyMethodDef PakFile_methods[] = {
     {"listfiles", (PyCFunction)PakFile_listfiles, METH_NOARGS, NULL},
     {"open", (PyCFunction)PakFile_open, METH_VARARGS|METH_KEYWORDS, NULL},
     {"close", (PyCFunction)PakFile_close, METH_NOARGS, NULL},
+    {"delete", (PyCFunction)PakFile_delete, METH_VARARGS, NULL},
     {"read", (PyCFunction)PakFile_read, METH_VARARGS, NULL},
     {"write", (PyCFunction)PakFile_write, METH_VARARGS, NULL},
     {"seek", (PyCFunction)PakFile_seek, METH_VARARGS, NULL},

@@ -58,6 +58,25 @@ off_t PakFile::close() {
     return ret;
 }
 
+off_t PakFile::erase(std::string fileName)
+{
+    off_t ret = 0;
+    _currentFile = _fileEntries.find(fileName);
+    if(_currentFile == _fileEntries.end())
+        return ret;
+    ret = removeBytes(_currentFile->second.first, _currentFile->second.second);
+    for(std::vector<std::string>::iterator it = _fileNames.begin();
+            it != _fileNames.end(); ++it) {
+        if(*it == fileName) {
+            _fileNames.erase(it);
+            break;
+        }
+    }
+    _fileEntries.erase(_currentFile);
+    writeIndex();
+    return ret;
+
+}
 void PakFile::insertPadding(off_t offset, uint32_t n, const char padbyte)
 {
     char buf[BUFSIZ];
@@ -156,7 +175,7 @@ void PakFile::readIndex()
 
 void PakFile::writeIndex()
 {
-    uint32_t move = _newFile ? _fileNames.back().size()+sizeof(uint32_t)+1 : 0;
+    int32_t move = _newFile ? _fileNames.back().size()+sizeof(uint32_t)+1 : 0;
     OStream &stream = *reinterpret_cast<OStream*>(&_stream);
 
     insertPadding(0, move);
