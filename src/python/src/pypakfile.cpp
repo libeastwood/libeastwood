@@ -16,20 +16,35 @@ using namespace eastwood;
 static int
 PakFile_init(Py_PakFile *self, PyObject *args)
 {
-    Py_ssize_t size;
-    char *fileName = NULL;
-    if (!PyArg_ParseTuple(args, "s#", &fileName, &size))
+    if (!PyArg_ParseTuple(args, "O", &self->pakFileName))
 	return -1;
 
-    self->stream = new std::ifstream(fileName, std::ios::in | std::ios::binary);
+#ifdef WITH_THREAD
+    self->lock = PyThread_allocate_lock();
+    if (!self->lock) {
+	PyErr_SetString(PyExc_MemoryError, "unable to allocate lock");
+	goto error;
+    }
+#endif
+
+    self->stream = new std::fstream(PyString_AsString(self->pakFileName), std::ios::in | std::ios::out | std::ios::binary);
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-	return -1;
+	goto error;
     }
 
     self->pakFile = new PakFile(*self->stream);
 
     return 0;
+
+error:
+#ifdef WITH_THREAD
+    if (self->lock) {
+	PyThread_free_lock(self->lock);
+	self->lock = NULL;
+    }
+#endif
+    return -1;
 }
 
 static PyObject *
@@ -39,16 +54,40 @@ PakFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
     self->pakFile = NULL;
     self->stream = NULL;
     self->fileSize = -1;
-    self->mode = MODE_CLOSED;
+    self->pakFileName = NULL;
+    self->mode = std::ios_base::binary;
+    self->lock = NULL;
 
     return (PyObject *)self;
+}
+
+static PyObject *
+PakFile_close(Py_PakFile *self)
+{
+    ACQUIRE_LOCK(self);
+
+    off_t newSize = self->pakFile->close();
+    if(newSize)
+	truncateFile(PyString_AsString(self->pakFileName), newSize);
+    self->fileSize = -1;
+    self->mode = std::ios_base::binary;
+
+    RELEASE_LOCK(self);
+
+    Py_RETURN_TRUE;
 }
 
 static void
 PakFile_dealloc(Py_PakFile *self)
 {
+    PakFile_close(self);
+#ifdef WITH_THREAD
+    if (self->lock)
+	PyThread_free_lock(self->lock);
+#endif
+
     if(self->pakFile)
-    	delete self->pakFile;
+	delete self->pakFile;
     if(self->stream) {
 	self->stream->close();
 	delete self->stream;
@@ -66,60 +105,110 @@ PakFile_listfiles(Py_PakFile *self)
 }
 
 static PyObject *
-PakFile_open(Py_PakFile *self, PyObject *args)
+PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 {
-    Py_ssize_t size;
-    char *fileName = NULL;
-    if (!PyArg_ParseTuple(args, "s#", &fileName, &size))
+    PyObject *name = NULL;
+    char mode = 'r';
+    static char *kwlist[] = {const_cast<char*>("name"), const_cast<char*>("mode"), NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|c:open", kwlist, &name, &mode))
 	return NULL;
 
+    switch (mode) {
+	case 'a':
+	    self->mode |= std::ios_base::out | std::ios_base::ate;
+	    break;
+	case 'r':
+	    self->mode |= std::ios_base::in;
+	    break;
+	case 'w':
+	    self->mode |= std::ios_base::out | std::ios_base::trunc;
+	    break;
+	default:
+	    PyErr_Format(PyExc_ValueError, "invalid mode char %c", mode);
+	    return NULL;
+	    break;
+    }
+
     try {
-    	self->pakFile->open(fileName);
+	self->pakFile->open(PyString_AsString(name), self->mode);
     } catch(FileException e) {
 	PyErr_Format(PyExc_IOError, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
 	return NULL;
     }
 
     self->fileSize = self->pakFile->size();
-    self->mode = MODE_READ;
-    Py_RETURN_TRUE;
-}
-
-static PyObject *
-PakFile_close(Py_PakFile *self)
-{
-    self->pakFile->close();
-    self->fileSize = -1;
-    self->mode = MODE_CLOSED;
     Py_RETURN_TRUE;
 }
 
 static PyObject *
 PakFile_read(Py_PakFile *self, PyObject *args)
 {
-	std::streamoff	offset = static_cast<std::streamoff>(self->pakFile->tellg());
-	size_t bytesrequested = -1,
-	       left = self->fileSize - offset;
-	PyObject *v;
+    std::streamoff	offset = static_cast<std::streamoff>(self->pakFile->tellg());
+    size_t bytesrequested = -1,
+	   left = self->fileSize - offset;
+    PyObject *v = NULL;
 
-	if (!PyArg_ParseTuple(args, "|l:read", &bytesrequested))
-		return NULL;
+    if (!PyArg_ParseTuple(args, "|l:read", &bytesrequested))
+	return NULL;
 
-	if (bytesrequested > left)
-		bytesrequested = left;
-	if (bytesrequested > UINT_MAX) {
-		PyErr_SetString(PyExc_OverflowError,
-	"requested number of bytes is more than a Python string can hold");
-		return NULL;
-	}
-	v = PyString_FromStringAndSize(NULL, bytesrequested);
-	if (v == NULL)
-		return NULL;
-	self->pakFile->read(PyString_AS_STRING(v), bytesrequested);
-	if(static_cast<std::streamoff>(self->pakFile->tellg())  == self->fileSize-1)
-	    self->mode = MODE_READ_EOF;
+    ACQUIRE_LOCK(self);
+    if (bytesrequested > left)
+	bytesrequested = left;
+    if (bytesrequested > UINT_MAX) {
+	PyErr_SetString(PyExc_OverflowError,
+		"requested number of bytes is more than a Python string can hold");
+	goto cleanup;
+    }
+    v = PyString_FromStringAndSize(NULL, bytesrequested);
+    if (v == NULL)
+	goto cleanup;
 
-	return v;
+    Py_BEGIN_ALLOW_THREADS
+    self->pakFile->read(PyString_AS_STRING(v), bytesrequested);
+    Py_END_ALLOW_THREADS
+
+
+cleanup:
+    RELEASE_LOCK(self);
+    return v;
+}
+
+static PyObject *
+PakFile_write(Py_PakFile *self, PyObject *args)
+{
+    PyObject *ret = NULL;
+    Py_buffer pbuf;
+    char *buf;
+    Py_ssize_t len;
+
+    if (!PyArg_ParseTuple(args, "s*:write", &pbuf))
+	return NULL;
+    buf = (char*)pbuf.buf;
+    len = pbuf.len;
+
+    ACQUIRE_LOCK(self);
+    if(!self->pakFile->is_open()) {
+	PyErr_SetString(PyExc_ValueError,
+		"I/O operation on closed file");
+	goto cleanup;
+    } else if(!(self->mode & std::ios_base::out) || self->pakFile->eof() || !self->pakFile->good()) {
+	PyErr_SetString(PyExc_IOError,
+		"file is not ready for writing");
+	goto cleanup;
+    }
+
+    Py_BEGIN_ALLOW_THREADS
+    self->pakFile->write(buf, len);
+    Py_END_ALLOW_THREADS
+
+    Py_INCREF(Py_None);
+    ret = Py_None;
+
+cleanup:
+    PyBuffer_Release(&pbuf);
+    RELEASE_LOCK(self);
+    return ret;
 }
 
 static PyObject *
@@ -133,25 +222,16 @@ PakFile_seek(Py_PakFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "O|i:seek", &offobj, &where))
 	return NULL;
 
-    switch (self->mode) {
-	case MODE_READ:
+    if(self->pakFile->good()) {
 	    self->pakFile->seekg(where, std::ios::beg);
 	    self->pakFile->seekg(PyInt_AsLong(offobj), std::ios::cur);
 	    offset = static_cast<std::streamoff>(self->pakFile->tellg());
-	    if(static_cast<std::streamoff>(self->pakFile->tellg())  == self->fileSize-1)
-		self->mode = MODE_READ_EOF;
-
-	case MODE_READ_EOF:
-	    break;
-
-	case MODE_CLOSED:
+    } else if(!self->pakFile->is_open()) {
 	    PyErr_SetString(PyExc_ValueError,
 		    "I/O operation on closed file");
 	    goto cleanup;
-
-	default:
-	    PyErr_SetString(PyExc_IOError,
-		    "seek works only while reading");
+    } else if(!self->pakFile->eof()) {
+	    PyErr_SetString(PyExc_IOError, "seek works only while reading");
 	    goto cleanup;
     }	
 
@@ -164,11 +244,12 @@ cleanup:
 
 static PyMethodDef PakFile_methods[] = {
     {"listfiles", (PyCFunction)PakFile_listfiles, METH_NOARGS, NULL},
-    {"open", (PyCFunction)PakFile_open, METH_VARARGS, NULL},
+    {"open", (PyCFunction)PakFile_open, METH_VARARGS|METH_KEYWORDS, NULL},
     {"close", (PyCFunction)PakFile_close, METH_NOARGS, NULL},
     {"read", (PyCFunction)PakFile_read, METH_VARARGS, NULL},
+    {"write", (PyCFunction)PakFile_write, METH_VARARGS, NULL},
     {"seek", (PyCFunction)PakFile_seek, METH_VARARGS, NULL},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {0, 0, 0, 0}
 };
 
 

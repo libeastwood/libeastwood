@@ -1,24 +1,23 @@
 #ifndef EASTWOOD_PYTHON_PYPAKFILE_H
 #define EASTWOOD_PYTHON_PYPAKFILE_H
 
-#include <istream>
+#include <fstream>
 
 #include "eastwood/PakFile.h"
+#include "pyeastwood.h"
 
 extern PyTypeObject PakFile_Type;
 
-enum file_mode {
-    MODE_CLOSED		= 0,
-    MODE_READ		= 1,
-    MODE_READ_EOF	= 2
-};
-
 struct Py_PakFile {
     PyObject_HEAD
-    std::ifstream *stream;
+    std::fstream *stream;
     eastwood::PakFile *pakFile;
     Py_ssize_t fileSize;
-    file_mode mode;
+    PyObject *pakFileName;
+    std::ios_base::openmode mode;
+#ifdef WITH_THREAD
+    PyThread_type_lock lock;
+#endif
 };
 
 #endif // EASTWOOD_PYTHON_PYPAKFILE_H
