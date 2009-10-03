@@ -55,6 +55,31 @@ void PakFile::close() {
     }
 }
 
+void PakFile::open(std::string fileName, std::ios::openmode mode) {
+    close();
+
+    _mode |= mode;
+    _currentFile = _fileEntries.find(fileName);
+    if(_currentFile != _fileEntries.end()) {
+        _stream.seekg(_currentFile->second.first, std::ios::beg);
+        if(_mode & std::ios::trunc)
+            std::ios::init(new std::stringbuf(_mode));
+        else {
+            std::string buffer(_currentFile->second.second, 0);
+            _stream.read((char*)buffer.data(), buffer.size());
+            std::ios::init(new std::stringbuf(buffer, _mode));
+        }
+    } else if(_mode & std::ios_base::out) {
+        _fileNames.push_back(fileName);
+        _stream.seekg(0, std::ios::end);
+        _fileEntries.insert(make_pair(fileName, FileEntry((uint32_t)_stream.tellg(), 0)));
+        _currentFile = _fileEntries.find(fileName);
+        std::ios::init(new std::stringbuf(_mode));
+    } else
+        throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
+
+}
+
 bool PakFile::erase(std::string fileName)
 {
     _currentFile = _fileEntries.find(fileName);
@@ -118,31 +143,6 @@ void PakFile::removeBytes(off_t offset, uint32_t n)
     }
     while(_stream.tellg() != end)
         _stream.put(0);
-
-}
-
-void PakFile::open(std::string fileName, std::ios::openmode mode) {
-    close();
-
-    _mode |= mode;
-    _currentFile = _fileEntries.find(fileName);
-    if(_currentFile != _fileEntries.end()) {
-        _stream.seekg(_currentFile->second.first, std::ios::beg);
-        if(_mode & std::ios::trunc)
-            std::ios::init(new std::stringbuf(_mode));
-        else {
-            std::string buffer(_currentFile->second.second, 0);
-            _stream.read((char*)buffer.data(), buffer.size());
-            std::ios::init(new std::stringbuf(buffer, _mode));
-        }
-    } else if(_mode & std::ios_base::out) {
-        _fileNames.push_back(fileName);
-        _stream.seekg(0, std::ios::end);
-        _fileEntries.insert(make_pair(fileName, FileEntry((uint32_t)_stream.tellg(), 0)));
-        _currentFile = _fileEntries.find(fileName);
-        std::ios::init(new std::stringbuf(_mode));
-    } else
-        throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
 
 }
 
