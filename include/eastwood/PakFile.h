@@ -36,8 +36,8 @@ class PakFile : public IStream, public OStream
     private:
         void readIndex();
         void writeIndex();
-	void insertPadding(off_t offset, size_t n, const char padbyte = 0);        
-        off_t removeBytes(off_t offset, size_t n);
+	void insertPadding(off_t offset, uint32_t n, const char padbyte = 0);        
+        off_t removeBytes(off_t offset, uint32_t n);
 
         bool _newFile;
         std::ios_base::openmode _mode;

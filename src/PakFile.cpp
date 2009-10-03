@@ -58,7 +58,7 @@ off_t PakFile::close() {
     return ret;
 }
 
-void PakFile::insertPadding(off_t offset, size_t n, const char padbyte)
+void PakFile::insertPadding(off_t offset, uint32_t n, const char padbyte)
 {
     char buf[BUFSIZ];
     _stream.seekp(0, std::ios::end);
@@ -83,7 +83,7 @@ void PakFile::insertPadding(off_t offset, size_t n, const char padbyte)
 
 }
 
-off_t PakFile::removeBytes(off_t offset, size_t n)
+off_t PakFile::removeBytes(off_t offset, uint32_t n)
 {
     char buf[BUFSIZ];
     off_t ret = 0;
