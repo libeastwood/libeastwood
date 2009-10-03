@@ -21,13 +21,22 @@
 #
 from pyeastwood import *
 from glob import glob
+from shutil import copy
+from os import unlink
+from os.path import getsize
 import unittest
 
 from hashlib import md5
 class TestPakFile(unittest.TestCase):
     
     def setUp(self):
-        self.pak = PakFile('DUNE2/MERC.PAK')
+        self.filename = ('test-MERC.PAK')
+        copy('DUNE2/MERC.PAK', self.filename)
+        self.pak = PakFile(self.filename)
+
+        self.filename2 = ('test-DUNE.PAK')
+        copy('DUNE2/DUNE.PAK', self.filename2)
+        self.pak2 = PakFile(self.filename2)
 
     def test_listfiles(self):
         files = ('MATRE.VOC', 'MHARK.VOC', 'MORDOS.VOC')
@@ -56,6 +65,46 @@ class TestPakFile(unittest.TestCase):
             fileData = self.pak.read()
             self.assertEqual(len(fileData), knowngood[f][0])
             self.assertEqual(md5(fileData).hexdigest(), knowngood[f][1])
+
+    def test_delete(self):
+        knowngood = {}
+        filelist = list(self.pak.listfiles())
+        for f in filelist:
+            self.pak.open(f)
+            data = self.pak.read()
+            knowngood[f] = (len(data), md5(data).hexdigest())
+        
+        for f in self.pak.listfiles():
+            self.assertEqual(filelist, list(self.pak.listfiles()))
+            self.pak.open(f)
+            data = self.pak.read()
+            self.assertEqual(len(data), knowngood[f][0])
+            self.assertEqual(md5(data).hexdigest(), knowngood[f][1])
+            self.pak.delete(f)
+            filelist.remove(f)
+        del self.pak
+        self.assertEqual(getsize(self.filename), 0)
+
+    def test_delete_reverse(self):
+        knowngood = {}
+        filelist = list(self.pak2.listfiles())
+        for f in filelist:
+            self.pak2.open(f)
+            data = self.pak2.read()
+            knowngood[f] = (len(data), md5(data).hexdigest())
+        
+        reverse_filelist = list(self.pak2.listfiles())
+        reverse_filelist.reverse()
+        for f in reverse_filelist:
+            self.assertEqual(filelist, list(self.pak2.listfiles()))
+            self.pak2.open(f)
+            data = self.pak2.read()
+            self.assertEqual(len(data), knowngood[f][0])
+            self.assertEqual(md5(data).hexdigest(), knowngood[f][1])
+            self.pak2.delete(f)
+            filelist.remove(f)
+        del self.pak2
+        self.assertEqual(getsize(self.filename2), 0)
 
 class TestCpsFile(unittest.TestCase):
     
