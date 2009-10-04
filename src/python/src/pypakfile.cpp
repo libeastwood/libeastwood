@@ -55,7 +55,6 @@ PakFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
     Py_PakFile *self = (Py_PakFile *)PyType_GenericAlloc(type, nitems);
     self->pakFile = NULL;
     self->stream = NULL;
-    self->fileSize = -1;
     self->pakFileName = NULL;
     self->mode = std::ios_base::binary;
     self->lock = NULL;
@@ -69,7 +68,6 @@ PakFile_close(Py_PakFile *self)
     ACQUIRE_LOCK(self);
 
     self->pakFile->close();
-    self->fileSize = -1;
     self->mode = std::ios_base::binary;
 
     RELEASE_LOCK(self);
@@ -145,7 +143,6 @@ PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 	return NULL;
     }
 
-    self->fileSize = self->pakFile->size();
     Py_RETURN_TRUE;
 }
 
@@ -168,7 +165,7 @@ PakFile_read(Py_PakFile *self, PyObject *args)
 {
     std::streamoff offset = static_cast<std::streamoff>(self->pakFile->tellg());
     size_t bytesrequested = -1,
-	   left = self->fileSize - offset;
+	   left = self->pakFile->size() - offset;
     PyObject *v = NULL;
 
     if (!PyArg_ParseTuple(args, "|l:read", &bytesrequested))

@@ -12,7 +12,6 @@ struct Py_PakFile {
     PyObject_HEAD
     std::fstream *stream;
     eastwood::PakFile *pakFile;
-    Py_ssize_t fileSize;
     PyObject *pakFileName;
     std::ios_base::openmode mode;
 #ifdef WITH_THREAD
