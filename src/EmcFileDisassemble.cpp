@@ -90,8 +90,8 @@ bool EmcFileDisassemble::headerRead() {
     opcodesSetup();
 
     switch(_scriptType) {
-	case script_HOUSE:
-    	    _outputStream << "[House]" << std::endl;
+	case script_TEAM:
+    	    _outputStream << "[Team]" << std::endl;
 	    break;
 	case script_BUILD:
     	    _outputStream << "[Build]" << std::endl;
@@ -229,10 +229,14 @@ void EmcFileDisassemble::o_SetReturn() {
 
 void EmcFileDisassemble::o_PushOp() {
     uint16_t data = _scriptData;
-    if(_scriptData == 0)
+    if(_scriptData == 0) {
 	data = _scriptDataNext;
-
-    _stackCount--;
+	_stackCount--;
+    }
+    if(_scriptData == 1) {
+	_stackCount--;
+	_stackCount--;
+    }
 
     dataPrint(data);
 }
@@ -390,26 +394,26 @@ void EmcFileDisassemble::o_execute_Unit_GetDetail() {
     {
 	// Unit GetDetail Function DetailNames
 	static const char *nameUnitDetails[] = {
-	    "HitPointRepairCalc?",   
-	    "BuildingTypeIndex",     
-	    "WeaponRange",           
-	    "IndexGet",              
-	    "Field64Get",            
-	    "AttackObjectIndexTypeGet",                   
+	    "HitPointRepairCalc?",
+	    "HoldingTypeIndex",
+	    "WeaponRange",
+	    "IndexGet",
+	    "Anim1NewAngle",
+	    "TargetScriptObject",
 	    "Return",
-	    "TypeIndex",             
-	    "IndexGetAsObject",      
-	    "Field6BGet",                 
-	    "loc_27562",          
+	    "TypeIndex",
+	    "IndexGetAsObject",
+	    "Field6BGet",
+	    "Anim1AngleToMove",
 	    "IsMoving",
 	    "WeaponCoolDownTimer",
-	    "OptsFitW",
-	    "HouseIDGet",            
-	    "loc_275C1",                 
-	    "TurretGet?",     
-	    "loc_2752F",                 
-	    "CanTurretRotates",          
-	    "CheckIfHuman"              
+	    "GetExplosionBits",
+	    "HouseIDGet",
+	    "CheckState200",
+	    "anim2NewAngle",
+	    "anim2AngleToMove",
+	    "CanTurretRotates",
+	    "CheckIfHuman"
 	};
 	_outputStream << "(" << nameUnitDetails[_scriptLastPush] << ")";
     }

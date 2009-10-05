@@ -66,15 +66,15 @@ uint16_t EmcFileBase::scriptOpcodeFind(std::string opcodeStr, const _Opcode *opc
 // Setup the opcode name/function table
 void EmcFileBase::opcodesSetup(std::string currentLine) {
     // Object Names
-    static const char *nameHouses[] = {
-	"Harkonnen",
-	"Atreides",
-	"Ordos",
-	"Fremen",
-	"Sardaukar",
-	"Mercenary"
+    static const char *nameTeams[] = {
+	"Normal",
+	"Staging",
+	"Flee",
+	"Kamikaze",
+	"Guard",
+	"Unknown"
     };
-    static const size_t houseSize = sizeof(nameHouses)/sizeof(*nameHouses);
+    static const size_t houseSize = sizeof(nameTeams)/sizeof(*nameTeams);
 
     static const char *nameStructures[] = {
 	"Concrete",
@@ -182,7 +182,7 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
     _opcodesEvaluate = scriptOpcodesEvaluate;
 #undef OPCODE
 
-    if(currentLine == "[House]")
+    if(currentLine == "[Team]")
 	_pointerCount = houseSize;
     else if(currentLine == "[Build]")
 	_pointerCount = structureSize;
@@ -191,9 +191,9 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 
     switch(_pointerCount) {
 	case houseSize:
-	    _scriptType = script_HOUSE;
-	    _objectNames = nameHouses;
-	    opcodesHousesSetup();
+	    _scriptType = script_TEAM;
+	    _objectNames = nameTeams;
+	    opcodesTeamsSetup();
 	    break;
 	case structureSize:
 	    _scriptType = script_BUILD;
@@ -251,18 +251,18 @@ void EmcFileBase::opcodesUnitsSetup() {
 #define OPCODE(x) { #x, &EmcFileBase::o_execute_Unit_Null }
     static const _Opcode scriptOpcodesExecuteUnits[] = {
 	{"GetDetail",	&EmcFileBase::o_execute_Unit_GetDetail},	// 0
-	OPCODE(sub_272E7),						// 1
+	OPCODE(ActionStart),						// 1
 	OPCODE(Text),							// 2
-	OPCODE(getObjectDistance?),					// 3
+	OPCODE(ObjectDistance),						// 3
 	OPCODE(sub_279AB),						// 4
 	OPCODE(sub_27186),						// 5
-	OPCODE(sub_27127),						// 6
-	OPCODE(sub_27019),						// 7
+	OPCODE(GetAngleBetween),					// 6
+	OPCODE(BaseTurnToAngle),					// 7
 	OPCODE(Attack),							// 8
 	OPCODE(MCVDeploy),						// 9
 	OPCODE(SideBarCmd4),						// A
 	OPCODE(Flash),							// B
-	OPCODE(sub_27638),						// C
+	OPCODE(PathFind),						// C
 	OPCODE(HouseCompare),						// D
 	OPCODE(sub_26A29),						// E
 	OPCODE(Destroy),						// F
@@ -274,19 +274,19 @@ void EmcFileBase::opcodesUnitsSetup() {
 	OPCODE(Null),							// 15
 	OPCODE(sub_2677F),						// 16
 	OPCODE(RandomNumber),						// 17
-	OPCODE(sub_1D3D4),						// 18
-	OPCODE(sub_27356),						// 19
-	OPCODE(sub_26689),						// 1A
-	OPCODE(sub_266B9),						// 1B
+	OPCODE(BuildingIsFree),						// 18
+	OPCODE(SetMoveDestTurnTo),					// 19
+	OPCODE(StopMove),						// 1A
+	OPCODE(SpeedUpdate),						// 1B
 	OPCODE(sub_25F3F),						// 1C
 	OPCODE(DamageGet),						// 1D
 	OPCODE(Dock?),							// 1E
-	OPCODE(EMCDataTest?),						// 1F
+	OPCODE(TestState100),						// 1F
 	OPCODE(CheckHarvestReturn),					// 20
 	OPCODE(CreateSoldier),						// 21
 	OPCODE(DeliverToBuilding),					// 22
 	OPCODE(PlaceInUnit),						// 23
-	OPCODE(CarryAllHoldingClear),					// 24
+	OPCODE(ScriptObjectHoldingSetToReg4),				// 24
 	OPCODE(BuildingFreeFind),					// 25
 	OPCODE(PlaySFX),						// 26
 	OPCODE(DestroyedMessage),					// 27
@@ -294,25 +294,25 @@ void EmcFileBase::opcodesUnitsSetup() {
 	OPCODE(MapGetTile),						// 29
 	OPCODE(Harvest),						// 2A
 	OPCODE(Null),							// 2B
-	OPCODE(GetHoldingType),						// 2C
-	OPCODE(GetType),						// 2D
-	OPCODE(IndexGet ),						// 2E
+	OPCODE(GetHoldingScriptObject),					// 2C
+	OPCODE(ScriptObjectTypeGet),					// 2D
+	OPCODE(ScriptObjectIndexGet),					// 2E
 	OPCODE(sub_27E8B),						// 2F
 	OPCODE(GetMapPieceForUnit),					// 30
-	OPCODE(sub_28001),						// 31
-	OPCODE(TypeCount),						// 32
-	OPCODE(sub_28090),						// 33
+	OPCODE(RandomRotate),						// 31
+	OPCODE(UnitOfTypeCountGet),					// 32
+	OPCODE(BuildingFindMoveTo),					// 33
 	OPCODE(Null),							// 34
 	OPCODE(Null),							// 35
-	OPCODE(GetNearObjectTypeIndex),					// 36
+	OPCODE(FindNearUnitGetScriptObject),				// 36
 	OPCODE(sub_282BC),						// 37
-	OPCODE(GetField64),						// 38
+	OPCODE(GetBaseCurrentAngle),					// 38
 	OPCODE(Null),							// 39
-	OPCODE(GetAttackObjectIndexType),				// 3A
+	OPCODE(SetTargetScriptObject),					// 3A
 	OPCODE(ObjectIsValid?),						// 3B
 	OPCODE(DelayAnd?),						// 3C
-	OPCODE(sub_27053),						// 3D
-	OPCODE(ObjectDistanceCalc),					// 3E
+	OPCODE(TurnToMapDest),						// 3D
+	OPCODE(ScriptObjectDistanceCalc),				// 3E
 	OPCODE(Null),							// 3F
     };
 
@@ -320,28 +320,28 @@ void EmcFileBase::opcodesUnitsSetup() {
 #undef OPCODE
 }
 
-// The 'Houses' Execute functions
-void EmcFileBase::opcodesHousesSetup() {
-#define OPCODE(x) { #x, &EmcFileBase::o_execute_House_Null }
-    static const _Opcode scriptOpcodesExecuteHouses[] = {
+// The 'Team' Execute functions
+void EmcFileBase::opcodesTeamsSetup() {
+#define OPCODE(x) { #x, &EmcFileBase::o_execute_Team_Null }
+    static const _Opcode scriptOpcodesExecuteTeams[] = {
 	OPCODE(Delay),
-	OPCODE(HouseText),
-	OPCODE(HouseLastUnitIndexGet),
-	OPCODE(sub_24E93),
+	OPCODE(Text?),
+	OPCODE(UnitsUsingThisTeam),
+	OPCODE(FindUnitForTeam),
 	OPCODE(sub_2503A),
 	OPCODE(sub_251BA),
 	OPCODE(sub_2533D),
-	OPCODE(sub_253FF),
-	OPCODE(sub_2563B),
-	OPCODE(sub_25697),
-	OPCODE(DelayAnd),
+	OPCODE(ActionStart),
+	OPCODE(AiModeSet),
+	OPCODE(ScriptClearPrepare),
+	OPCODE(DelayRandom),
 	OPCODE(sub_1CFC4),
-	OPCODE(UnitCountGet),
-	OPCODE(WindtrapCountGet),
+	OPCODE(Field6Get),
+	OPCODE(ScriptObjectTargetGet),
 	OPCODE(Null),
     };
 
-    _opcodesExecute = scriptOpcodesExecuteHouses;
+    _opcodesExecute = scriptOpcodesExecuteTeams;
 #undef OPCODE
 }
 

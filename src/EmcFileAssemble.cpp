@@ -54,7 +54,7 @@ bool EmcFileAssemble::headerCreate() {
 	case script_UNIT:
     	    *buffer = 0x6A15;
 	    break;
-	case script_HOUSE:
+	case script_TEAM:
     	    *buffer = 0x5A01;
 	    break;
 	default:

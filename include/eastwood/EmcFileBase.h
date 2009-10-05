@@ -48,7 +48,7 @@ enum script_t {
     script_INVALID = -1,
     script_BUILD = 0,
     script_UNIT,
-    script_HOUSE
+    script_TEAM
 };
 
 static const char emcHeader[] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0x4D,0x43,0x32,0x4F,0x52,0x44,0x52 };
@@ -78,7 +78,7 @@ class EmcFileBase {
 	virtual void	 opcodesSetup(std::string currentLine = "");
 	virtual void	 opcodesBuildingsSetup();
 	virtual void	 opcodesUnitsSetup();
-	virtual void	 opcodesHousesSetup();
+	virtual void	 opcodesTeamsSetup();
 
 	// Opcodes
 	virtual void	 o_Goto()		= 0;					
@@ -129,8 +129,8 @@ class EmcFileBase {
 	virtual void	 o_execute_Unit_Null(){}
 	virtual void	 o_execute_Unit_GetDetail(){}
 
-	// Houses
-	virtual void	 o_execute_House_Null(){}
+	// Teams
+	virtual void	 o_execute_Team_Null(){}
 
 	IStream 	&_inputStream;
 	OStream		&_outputStream;
