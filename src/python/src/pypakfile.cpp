@@ -166,7 +166,7 @@ PakFile_read(Py_PakFile *self, PyObject *args)
 {
     std::streamoff offset = static_cast<std::streamoff>(self->pakFile->tellg());
     size_t bytesrequested = -1,
-	   left = self->pakFile->size() - offset;
+	   left = self->pakFile->sizeg() - offset;
     PyObject *v = NULL;
 
     if (!PyArg_ParseTuple(args, "|l:read", &bytesrequested))

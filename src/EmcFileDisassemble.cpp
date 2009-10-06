@@ -44,7 +44,7 @@ bool EmcFileDisassemble::scriptLoad() {
     size_t scriptSize;
 
     // Read File Size
-    scriptSize = _inputStream.size();
+    scriptSize = _inputStream.sizeg();
     if(scriptSize < sizeof(emcHeader))
 	throw(FileException(LOG_ERROR, "EmcFile", "_inputStream", "File is too small!"));
 

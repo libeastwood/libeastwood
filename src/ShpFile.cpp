@@ -53,7 +53,7 @@ void ShpFile::readIndex()
 	}
 
     } else {
-    	uint32_t fileSize = _stream.size();
+    	uint32_t fileSize = _stream.sizeg();
 
 	/* File contains more than one image */
 

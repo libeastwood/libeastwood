@@ -32,7 +32,7 @@ void PakFile::close() {
         if(_mode & std::ios_base::out) {
             char buf[BUFSIZ];
             memset(buf, 0, BUFSIZ);
-            uint32_t size = reinterpret_cast<OStream*>(this)->size();
+            uint32_t size = reinterpret_cast<OStream*>(this)->sizep();
             seekg(0, std::ios::beg);
             if(size != _currentFile->second.second) {
                 if(size < _currentFile->second.second)
@@ -110,7 +110,7 @@ int32_t PakFile::sizediff()
         actualSize = (entry.first + entry.second);
     } else
         actualSize = 0;
-    return (actualSize - reinterpret_cast<IStream*>(&_stream)->size());
+    return (actualSize - reinterpret_cast<IStream*>(&_stream)->sizeg());
 }
 
 
@@ -174,7 +174,7 @@ void PakFile::readIndex()
 	stream.getline(name, 256, 0);
         LOG_INFO("PakFile", "Found file %s", name);
 
-        size = ((stream.peek() != 0) ? (offset = stream.getU32LE()) : stream.size()) - start;
+        size = ((stream.peek() != 0) ? (offset = stream.getU32LE()) : stream.sizeg()) - start;
 
         _fileEntries.insert(make_pair(name, FileEntry(start, size)));
         _fileNames.push_back(name);

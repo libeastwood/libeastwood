@@ -32,8 +32,6 @@ class PakFile : public IOStream
         // If negative, file needs to be truncated
         int32_t sizediff();
 
-	std::streamsize size() { return IStream::size(); }
-
     private:
         void readIndex();
         void writeIndex(uint32_t firstOffset);

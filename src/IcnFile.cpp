@@ -34,7 +34,7 @@ void IcnFile::readHeader()
     if(strncmp(signature, "FORM", 4))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: Missing signature"));
 
-    if(_stream.getU32BE() != _stream.size() - (uint32_t)_stream.tellg())
+    if(_stream.getU32BE() != _stream.sizeg() - (uint32_t)_stream.tellg())
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: File size doesn't match size specified in header"));
 
     _stream.read(signature, 8);

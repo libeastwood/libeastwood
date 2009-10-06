@@ -2387,7 +2387,7 @@ bool CadlPlayer::load(const std::istream &stream)
     else
     	is.read((char*)_trackEntries, 120);
 
-    soundDataSize = is.size() - (int)is.tellg();
+    soundDataSize = is.sizeg() - (int)is.tellg();
 
     _soundDataPtr = new uint8_t[soundDataSize];
 

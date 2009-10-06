@@ -139,7 +139,7 @@ bool EmcFileAssemble::execute() {
 // -1 Disassembles the script at _scriptStart
 bool EmcFileAssemble::scriptAssemble() {
     int	objectID = 0;
-    std::streamoff lastOffset = _inputStream.size()-1;
+    std::streamoff lastOffset = _inputStream.sizeg()-1;
 
     _lineCount = 0;
 

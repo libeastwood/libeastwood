@@ -92,7 +92,7 @@ IStream& IStream::readU32LE(uint32_t *buf, size_t n)
 }
 #endif
 
-std::streamsize IStream::size()
+std::streamsize IStream::sizeg()
 {
     std::streamsize size;
     std::streampos pos = tellg();

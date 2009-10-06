@@ -10,7 +10,7 @@ MapFile::MapFile(const std::istream &stream) :
     _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),    
     _tileSet(0)
 {
-    size_t mapSize = _stream.size();
+    size_t mapSize = _stream.sizeg();
     uint16_t numTileSets = _stream.getU16LE();
 
     _tileSet.resize(numTileSets);

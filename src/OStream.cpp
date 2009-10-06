@@ -90,7 +90,7 @@ OStream& OStream::writeU32LE(uint32_t *buf, size_t n)
 }
 #endif
 
-std::streamsize OStream::size()
+std::streamsize OStream::sizep()
 {
     std::streamsize size;
     std::streampos pos = tellp();

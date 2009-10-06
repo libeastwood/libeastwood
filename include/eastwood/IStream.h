@@ -21,7 +21,7 @@ class IStream : public std::istream
 	IStream& readU32BE(uint32_t *buf, size_t n);
 	IStream& readU32LE(uint32_t *buf, size_t n);
 
-	std::streamsize size();
+	std::streamsize sizeg();
 
     private:
 	template <typename T> inline

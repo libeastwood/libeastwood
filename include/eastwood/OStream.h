@@ -21,7 +21,7 @@ class OStream : public std::ostream
 	OStream& writeU32BE(uint32_t *buf, size_t n);
 	OStream& writeU32LE(uint32_t *buf, size_t n);
 
-	std::streamsize size();
+	std::streamsize sizep();
 
     private:
 	template <typename T> inline

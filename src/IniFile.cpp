@@ -448,7 +448,7 @@ void IniFile::readFile()
 		completeLine = "";
 		unsigned char tmp;
 		
-		size_t size = _stream.size();
+		size_t size = _stream.sizeg();
 		while((uint32_t)_stream.tellg() < size-1) {
 			tmp = _stream.get();
 			if((uint32_t)_stream.tellg() == size-1) {
