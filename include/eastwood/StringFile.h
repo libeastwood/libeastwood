@@ -23,7 +23,7 @@ enum MissionType {
 class StringFile
 {
     public:
-	StringFile(const std::istream &stream);
+	StringFile(std::istream &stream);
 	virtual ~StringFile();
 
 	/*!

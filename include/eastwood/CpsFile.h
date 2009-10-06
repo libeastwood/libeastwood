@@ -15,7 +15,7 @@ enum compressionFormat {
 class CpsFile : public Decode
 {
     public:
-	CpsFile(const std::istream &stream, Palette palette = Palette(0));
+	CpsFile(std::istream &stream, Palette palette = Palette(0));
 	virtual ~CpsFile();
 
 	Surface getSurface();

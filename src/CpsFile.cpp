@@ -12,7 +12,7 @@
 
 namespace eastwood {
 
-CpsFile::CpsFile(const std::istream &stream, Palette palette) :
+CpsFile::CpsFile(std::istream &stream, Palette palette) :
     Decode(stream, 320, 200, palette), _format(UNCOMPRESSED)
 {
     if((uint16_t)(_stream.getU16LE()+_stream.gcount()) != _stream.sizeg())

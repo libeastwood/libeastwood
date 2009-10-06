@@ -2372,9 +2372,9 @@ void CadlPlayer::play(uint8_t track) {
 // 	playSoundEffect(1);
 // }
 
-bool CadlPlayer::load(const std::istream &stream)
+bool CadlPlayer::load(std::istream &stream)
 {
-    IStream &is(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream)));
+    IStream &is(reinterpret_cast<IStream&>(stream));
     int soundDataSize;
 
     unk2();

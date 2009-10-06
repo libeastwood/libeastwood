@@ -6,7 +6,7 @@
 
 namespace eastwood {
 
-IcnFile::IcnFile(const std::istream &stream, MapFile &map, Palette palette) :
+IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     Decode(stream, 16, 16, palette),
     _map(map), _SSET(NULL), _RPAL(NULL), _RTBL(NULL)
 {

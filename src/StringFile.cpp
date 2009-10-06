@@ -4,8 +4,8 @@
 
 namespace eastwood {
 
-StringFile::StringFile(const std::istream &stream)
-    : _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),
+StringFile::StringFile(std::istream &stream)
+    : _stream(reinterpret_cast<IStream&>(stream)),
     _strings(0), _compressed(true)
 {
     //FIXME: This is a "bit" poor detection...

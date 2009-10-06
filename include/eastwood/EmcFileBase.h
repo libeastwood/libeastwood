@@ -55,7 +55,7 @@ static const char emcHeader[] = { 0x46,0x4F,0x52,0x4D,0x00,0x00,0x00,0x00,0x45,0
 
 class EmcFileBase {
     public:
-	EmcFileBase(const std::istream &input, const std::ostream &output);
+	EmcFileBase(std::istream &input, std::ostream &output);
 	virtual ~EmcFileBase();
 
 	uint16_t	scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes);	// Search the opcode table for 'Opcode' string

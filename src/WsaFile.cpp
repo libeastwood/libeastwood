@@ -10,7 +10,7 @@
 
 namespace eastwood {
 
-WsaFile::WsaFile(const std::istream &stream, Palette palette,
+WsaFile::WsaFile(std::istream &stream, Palette palette,
 	Surface lastframe) :
     Decode(stream, 0, 0, palette), _frameOffsTable(0),
     _decodedFrames(0), _numFrames(0),

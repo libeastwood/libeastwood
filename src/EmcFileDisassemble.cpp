@@ -31,7 +31,7 @@
 
 namespace eastwood {
 
-EmcFileDisassemble::EmcFileDisassemble(const std::istream &input, const std::ostream &output) :
+EmcFileDisassemble::EmcFileDisassemble(std::istream &input, std::ostream &output) :
     EmcFileBase(input, output), _scriptLastPush(0), _opcodeCurrent(0), _stackCount(0),
     _scriptData(0), _scriptDataNext(0), _scriptPtrEnd(NULL)
 {

@@ -90,7 +90,7 @@ private:
 public:
 	typedef IniFile::KeyEntry* KeyListHandle;		///< A handle to a KeyList opened with KeyList_Open().
 
-	IniFile(const std::istream &stream);
+	IniFile(std::istream &stream);
 	~IniFile();
 	
 	std::string getStringValue(std::string section, std::string key, std::string defaultValue = "");

@@ -10,7 +10,7 @@ namespace eastwood {
 class MapFile
 {
     public:
-	MapFile(const std::istream &stream);
+	MapFile(std::istream &stream);
 	virtual ~MapFile();
 
 	std::vector<uint16_t>& operator[] (uint16_t i) { return _tileSet.at(i); }

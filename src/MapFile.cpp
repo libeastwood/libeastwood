@@ -6,9 +6,8 @@
 
 namespace eastwood {
 
-MapFile::MapFile(const std::istream &stream) :
-    _stream(const_cast<IStream&>(reinterpret_cast<const IStream&>(stream))),    
-    _tileSet(0)
+MapFile::MapFile(std::istream &stream) :
+    _stream(reinterpret_cast<IStream&>(stream)), _tileSet(0)
 {
     size_t mapSize = _stream.sizeg();
     uint16_t numTileSets = _stream.getU16LE();

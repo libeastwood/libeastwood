@@ -18,7 +18,7 @@ class CadlPlayer
 	CadlPlayer(Copl *newopl = NULL, bool v2 = false);
 	virtual ~CadlPlayer();
 
-	bool load(const std::istream &stream);
+	bool load(std::istream &stream);
 	bool update();
 	void rewind(int subsong);
 	virtual Copl* get_opl() { return _opl; }
