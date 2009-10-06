@@ -25,8 +25,8 @@ from shutil import copy
 from os import unlink
 from os.path import getsize
 import unittest
-
 from hashlib import md5
+
 class TestPakFile(unittest.TestCase):
     
     def setUp(self):
@@ -34,8 +34,8 @@ class TestPakFile(unittest.TestCase):
         copy('DUNE2/MERC.PAK', self.filename)
         self.pak = PakFile(self.filename)
 
-        self.filename2 = ('test-DUNE.PAK')
-        copy('DUNE2/DUNE.PAK', self.filename2)
+        self.filename2 = ('test-INTROVOC.PAK')
+        copy('DUNE2/INTROVOC.PAK', self.filename2)
         self.pak2 = PakFile(self.filename2)
 
     def test_listfiles(self):
@@ -48,7 +48,7 @@ class TestPakFile(unittest.TestCase):
             for pf in pak.listfiles():
                 pak.open(pf)
                 first = pak.read()
-                pak.seek(0)
+                pak.seekp(0)
                 last = pak.read()
                 self.assertEqual(len(first), len(last))
                 self.assertEqual(md5(first).hexdigest(), md5(last).hexdigest())
@@ -106,6 +106,110 @@ class TestPakFile(unittest.TestCase):
         del self.pak2
         self.assertEqual(getsize(self.filename2), 0)
 
+    def test_write_append(self):
+        knowngood = {}
+        filelist = list(self.pak2.listfiles())
+        for f in filelist:
+            self.pak2.open(f)
+            data = self.pak2.read()
+            knowngood[f] = [len(data), md5(data).hexdigest()]
+        size = getsize(self.filename2)
+
+        buf = "123456789"
+        for i in xrange(0, len(filelist), 2):
+            self.pak2.open(filelist[i], "a+")
+            self.pak2.write(buf)
+            bufmd5 = md5(self.pak2.read()).hexdigest()
+            self.pak2.close()
+            size += len(buf)
+            knowngood[filelist[i]][0] += len(buf)
+            knowngood[filelist[i]][1] = bufmd5
+
+        for f in filelist:
+            self.assertEqual(filelist, list(self.pak2.listfiles()))
+            self.pak2.open(f)
+            data = self.pak2.read()
+            self.assertEqual(len(data), knowngood[f][0])
+            self.assertEqual(md5(data).hexdigest(), knowngood[f][1])
+
+        del self.pak2
+        self.assertEqual(getsize(self.filename2), size)
+
+    def test_write_truncate(self):
+        knowngood = {}
+        filelist = list(self.pak2.listfiles())
+        for f in filelist:
+            self.pak2.open(f)
+            data = self.pak2.read()
+            knowngood[f] = [len(data), md5(data).hexdigest()]
+        size = getsize(self.filename2)
+
+        buf = "123456789"
+        bufmd5 = md5(buf).hexdigest()
+        for i in xrange(0, len(filelist), 2):
+            self.pak2.open(filelist[i], "r")
+            size -= len(self.pak2.read())
+            self.pak2.close()
+            self.pak2.open(filelist[i], "w")
+            self.pak2.write(buf)
+            self.pak2.close()
+            size += len(buf)
+            knowngood[filelist[i]][0] = len(buf)
+            knowngood[filelist[i]][1] = bufmd5
+
+        for f in filelist:
+            self.assertEqual(filelist, list(self.pak2.listfiles()))
+            self.pak2.open(f)
+            data = self.pak2.read()
+            self.assertEqual(len(data), knowngood[f][0])
+            self.assertEqual(md5(data).hexdigest(), knowngood[f][1])
+
+        del self.pak2
+        self.assertEqual(getsize(self.filename2), size)
+
+    def test_create_delete(self):
+        knowngood = {}
+        filelist = list(self.pak.listfiles())
+        filesize = getsize(self.filename)
+        for f in filelist:
+            self.pak.open(f)
+            data = self.pak.read()
+            knowngood[f] = (len(data), md5(data).hexdigest())
+        
+        self.assertEqual(list(self.pak.listfiles()), filelist)
+
+        f = filelist[0]
+        self.pak.open(f)
+        data = self.pak.read()
+        self.assertEqual(len(data), knowngood[f][0])
+        self.assertEqual(md5(data).hexdigest(), knowngood[f][1])
+        # entry in index is filename + 4 (sizeof(uint32_t)) + 1 (0 terminator)
+        filesize -= (len(filelist[0]) + 4 + 1)
+        filesize -= len(data)
+        self.pak.delete(f)
+        filelist.remove(f)
+        
+        buf = "123456789"
+        newname = "TEST.TXT"
+        self.pak.open(newname, "w")
+        self.pak.write(buf)
+        self.pak.close()
+        filesize += len(buf)
+        filelist.append(newname)
+        filesize += len(newname) + 4 + 1
+
+        self.assertEqual(list(self.pak.listfiles()), filelist)
+
+        self.pak.open(newname)
+        data = self.pak.read()
+        self.assertEqual(len(data), len(buf))
+        self.assertEqual(data, buf)
+        self.pak.close()
+
+        del self.pak
+        self.assertEqual(getsize(self.filename), filesize)
+
+
 class TestCpsFile(unittest.TestCase):
     
     def test_with_palette(self):
@@ -144,8 +248,8 @@ class TestEmcFile(unittest.TestCase):
     def test_type_BUILD(self):
         self._test_type("BUILD.EMC", "BUILD")
 
-    def test_type_HOUSE(self):
-        self._test_type("TEAM.EMC", "HOUSE")
+    def test_type_TEAM(self):
+        self._test_type("TEAM.EMC", "TEAM")
 
     def test_type_UNIT(self):
         self._test_type("UNIT.EMC", "UNIT")
@@ -170,7 +274,7 @@ class TestEmcFile(unittest.TestCase):
     def test_assembly_BUILD(self):
         self._test_assembly("BUILD.EMC")
 
-    def test_assembly_HOUSE(self):
+    def test_assembly_TEAM(self):
         self._test_assembly("TEAM.EMC")
 
     def test_assembly_UNIT(self):
