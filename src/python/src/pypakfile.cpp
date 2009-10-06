@@ -407,6 +407,18 @@ static PyMethodDef PakFile_methods[] = {
     {0, 0, 0, 0}
 };
 
+static PyObject *
+PakFile_get_closed(Py_PakFile *self, __attribute__((unused)) void *closure)
+{
+    return PyBool_FromLong(!self->pakFile->is_open());
+}
+
+static PyGetSetDef PakFile_getset[] = {
+    {const_cast<char*>("closed"), (getter)PakFile_get_closed, NULL,
+	const_cast<char*>("True if the file is closed"), NULL},
+    {NULL, NULL, NULL, NULL, NULL}	/* Sentinel */
+};
+
 
 PyTypeObject PakFile_Type = {
     PyObject_HEAD_INIT(NULL)
@@ -439,7 +451,7 @@ PyTypeObject PakFile_Type = {
     0,						/*tp_iternext*/
     PakFile_methods,				/*tp_methods*/
     0,						/*tp_members*/
-    0,						/*tp_getset*/
+    PakFile_getset,				/*tp_getset*/
     0,                      			/*tp_base*/
     0,                      			/*tp_dict*/
     0,                      			/*tp_descr_get*/
