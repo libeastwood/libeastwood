@@ -13,13 +13,28 @@
 
 using namespace eastwood;
 
+PyDoc_STRVAR(PakFile_init__doc__,
+"PakFile(name [, create=False]) -> file object.\n\
+\n\
+Open a PAK archive file. If create is True, it will create a new, empty\n\
+archive.\n\
+");
+
 static int
 PakFile_init(Py_PakFile *self, PyObject *args)
 {
     char *fileName;
-    if (!PyArg_ParseTuple(args, "s", &fileName))
+    PyObject *create = Py_False;
+    std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out | std::ios_base::binary;
+    if (!PyArg_ParseTuple(args, "s|O:PakFile", &fileName, &create))
 	return -1;
+    if(!PyBool_Check(create)) {
+	PyErr_SetString(PyExc_TypeError, "If given, second argument must be True or False");
+	goto error;
+    }
     self->pakFileName = PyString_FromString(fileName);
+    if(create == Py_True)
+	mode |= std::ios_base::trunc;
 
 #ifdef WITH_THREAD
     self->lock = PyThread_allocate_lock();
@@ -29,7 +44,7 @@ PakFile_init(Py_PakFile *self, PyObject *args)
     }
 #endif
 
-    self->stream = new std::fstream(fileName, std::ios::in | std::ios::out | std::ios::binary);
+    self->stream = new std::fstream(fileName, mode);
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
 	goto error;
@@ -442,7 +457,7 @@ PyTypeObject PakFile_Type = {
     PyObject_GenericSetAttr,			/*tp_setattro*/
     0,						/*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	/*tp_flags*/
-    0,						/*tp_doc*/
+    PakFile_init__doc__,			/*tp_doc*/
     0,						/*tp_traverse*/
     0,						/*tp_clear*/
     0,						/*tp_richcompare*/
