@@ -30,11 +30,11 @@ PakFile::~PakFile()
 void PakFile::close() {
     if(is_open()) {
         if(_mode & std::ios_base::out) {
+            uint32_t size = sizep();
             char buf[BUFSIZ];
             memset(buf, 0, BUFSIZ);
-            uint32_t size = sizep();
             seekg(0, std::ios::beg);
-            if(size != _currentFile->second.second) {
+            if(reinterpret_cast<OStream&>(_stream).sizep() && size != _currentFile->second.second) {
                 if(size < _currentFile->second.second)
                     removeBytes(_currentFile->second.first, _currentFile->second.second - size);
                 else
@@ -43,7 +43,7 @@ void PakFile::close() {
             }
             writeIndex(_fileEntries[_fileNames[0]].first);
 
-            _stream.seekg(_currentFile->second.first, std::ios::beg);
+            _stream.seekp(_currentFile->second.first, std::ios::beg);
             while(size) {
                 uint32_t n = (size < BUFSIZ) ? size : BUFSIZ;
                 read(buf, n);
@@ -164,6 +164,8 @@ void PakFile::removeBytes(uint32_t offset, uint32_t n)
 void PakFile::readIndex()
 {
     IStream &stream = reinterpret_cast<IStream&>(_stream);
+    if(!stream.sizeg())
+        return;
     char name[256];
     uint32_t offset = stream.getU32LE();
 
@@ -185,20 +187,22 @@ void PakFile::writeIndex(uint32_t firstOffset)
 {
     OStream &stream = reinterpret_cast<OStream&>(_stream);
 
+    int32_t move;
     uint32_t offset = sizeof(uint32_t);
+    uint32_t size = 0;
     for(std::vector<std::string>::const_iterator it = _fileNames.begin();
             it != _fileNames.end(); ++it) {
         offset += sizeof(uint32_t) + it->size() + 1;
     }
-    int32_t move = offset - firstOffset;
-    if(move) {
+
+    if((move = offset - firstOffset)) {
         if(move < 0)
             removeBytes(offset, std::abs(move));
         else
             insertPadding(offset, move);
     }
+
     _stream.seekp(0, std::ios::beg);
-    uint32_t size = 0;
     for(std::vector<std::string>::const_iterator it = _fileNames.begin();
             it != _fileNames.end(); ++it) {
         FileEntry &entry = _fileEntries[*it];
