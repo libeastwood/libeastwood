@@ -34,14 +34,14 @@ void PakFile::close() {
             char buf[BUFSIZ];
             memset(buf, 0, BUFSIZ);
             seekg(0, std::ios::beg);
-            if(reinterpret_cast<OStream&>(_stream).sizep() && size != _currentFile->second.second) {
+            writeIndex(_fileEntries[_fileNames[0]].first);
+            if(size != _currentFile->second.second) {
                 if(size < _currentFile->second.second)
                     removeBytes(_currentFile->second.first, _currentFile->second.second - size);
                 else
                     insertPadding(_currentFile->second.first, size - _currentFile->second.second);
                 _currentFile->second.second = size;
             }
-            writeIndex(_fileEntries[_fileNames[0]].first);
 
             _stream.seekp(_currentFile->second.first, std::ios::beg);
             while(size) {
@@ -195,7 +195,7 @@ void PakFile::writeIndex(uint32_t firstOffset)
         offset += sizeof(uint32_t) + it->size() + 1;
     }
 
-    if((move = offset - firstOffset)) {
+    if(stream.sizep() && (move = offset - firstOffset)) {
         if(move < 0)
             removeBytes(offset, std::abs(move));
         else
