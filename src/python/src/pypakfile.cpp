@@ -62,6 +62,14 @@ PakFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
     return (PyObject *)self;
 }
 
+PyDoc_STRVAR(PakFile_close__doc__,
+"close() -> None\n\
+\n\
+Close the file. Sets data attribute .closed to true. A closed file\n\
+cannot be used for further I/O operations. close() may be called more\n\
+than once without error.\n\
+");
+
 static PyObject *
 PakFile_close(Py_PakFile *self)
 {
@@ -99,6 +107,12 @@ PakFile_dealloc(Py_PakFile *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(PakFile_listfiles__doc__,
+"listfiles() -> tuple.\n\
+\n\
+Returns the names of the files available in the archive.\n\
+");
+
 static PyObject *
 PakFile_listfiles(Py_PakFile *self)
 {
@@ -107,6 +121,27 @@ PakFile_listfiles(Py_PakFile *self)
 	PyTuple_SetItem(fileList, i, PyString_FromString(self->pakFile->getFileName(i).c_str()));
     return fileList;
 }
+
+PyDoc_STRVAR(PakFile_open__doc__,
+"open(name [, mode='r']) -> bool.\n\
+\n\
+Open a file in the archive. The mode can be the following:\n\
+'r'\tOpen file for reading. The stream is positioned at the beginning of\n\
+\tthe file.\n\
+'r+'\tOpen for reading and writing. The stream is positioned at the\n\
+\tbeginning of the file.\n\
+'w'\tTruncate file to zero length or create file for writing. The stream\n\
+\tis positioned at the beginning of the file.\n\
+'w+'\tOpen for reading and writing. The file is created if it does not\n\
+\texist, otherwise it is truncated. The stream is positioned at the\n\
+\tbeginning of the file.\n\
+'a'\tOpen for appending (writing at end of file). The file is created if it\n\
+\tdoes not exist. The stream is positioned at the end of the file.\n\
+'a+'\tOpen for reading and appending (writing at end of file). The file is\n\
+\tcreated if it does not exist. The initial file position for reading is\n\
+\tat the  beginning of the file, but output is always appended to the end\n\
+\tof the file.\n\
+");
 
 static PyObject *
 PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
@@ -147,6 +182,12 @@ PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
     Py_RETURN_TRUE;
 }
 
+PyDoc_STRVAR(PakFile_delete__doc__,
+"delete(name) -> None.\n\
+\n\
+Deletes file from the archive.\n\
+");
+
 static PyObject *
 PakFile_delete(Py_PakFile *self, PyObject *args)
 {
@@ -158,8 +199,15 @@ PakFile_delete(Py_PakFile *self, PyObject *args)
 
     self->pakFile->erase(PyString_AsString(name));
 
-    Py_RETURN_TRUE;
+    Py_RETURN_NONE;
 }
+
+PyDoc_STRVAR(PakFile_read__doc__,
+"read([size]) -> string\n\
+\n\
+Read at most size uncompressed bytes, returned as a string. If the size\n\
+argument is negative or omitted, read until EOF is reached.\n\
+");
 
 static PyObject *
 PakFile_read(Py_PakFile *self, PyObject *args)
@@ -193,6 +241,14 @@ cleanup:
     RELEASE_LOCK(self);
     return v;
 }
+
+
+PyDoc_STRVAR(PakFile_write__doc__,
+"write(data) -> None\n\
+\n\
+Write the 'data' string to file. Note that due to buffering, close() is\n\
+needed before the file on disk reflects the data written.\n\
+");
 
 static PyObject *
 PakFile_write(Py_PakFile *self, PyObject *args)
@@ -259,11 +315,31 @@ cleanup:
     return ret;
 }
 
+PyDoc_STRVAR(PakFile_seekg__doc__,
+"seekg(offset [, whence]) -> None\n\
+\n\
+Move to new read position. Argument offset is a byte count. Optional\n\
+argument whence defaults to 0 (offset from start of file, offset\n\
+should be >= 0); other values are 1 (move relative to current position,\n\
+positive or negative), and 2 (move relative to end of file, usually\n\
+negative).\n\
+");
+
 static PyObject *
 PakFile_seekg(Py_PakFile *self, PyObject *args)
 {
     return PakFile_seek(self, args, true);
 }
+
+PyDoc_STRVAR(PakFile_seekp__doc__,
+"seekp(offset [, whence]) -> None\n\
+\n\
+Move to new write position. Argument offset is a byte count. Optional\n\
+argument whence defaults to 0 (offset from start of file, offset\n\
+should be >= 0); other values are 1 (move relative to current position,\n\
+positive or negative), and 2 (move relative to end of file, usually\n\
+negative).\n\
+");
 
 static PyObject *
 PakFile_seekp(Py_PakFile *self, PyObject *args)
@@ -318,14 +394,14 @@ PakFile_tellp(Py_PakFile *self, __attribute__((unused)) PyObject *args)
 }
 
 static PyMethodDef PakFile_methods[] = {
-    {"listfiles", (PyCFunction)PakFile_listfiles, METH_NOARGS, NULL},
-    {"open", (PyCFunction)PakFile_open, METH_VARARGS|METH_KEYWORDS, NULL},
-    {"close", (PyCFunction)PakFile_close, METH_NOARGS, NULL},
-    {"delete", (PyCFunction)PakFile_delete, METH_VARARGS, NULL},
-    {"read", (PyCFunction)PakFile_read, METH_VARARGS, NULL},
-    {"write", (PyCFunction)PakFile_write, METH_VARARGS, NULL},
-    {"seekg", (PyCFunction)PakFile_seekg, METH_VARARGS, NULL},
-    {"seekp", (PyCFunction)PakFile_seekp, METH_VARARGS, NULL},
+    {"listfiles", (PyCFunction)PakFile_listfiles, METH_NOARGS, PakFile_listfiles__doc__},
+    {"open", (PyCFunction)PakFile_open, METH_VARARGS|METH_KEYWORDS, PakFile_open__doc__},
+    {"close", (PyCFunction)PakFile_close, METH_NOARGS, PakFile_close__doc__},
+    {"delete", (PyCFunction)PakFile_delete, METH_VARARGS, PakFile_delete__doc__},
+    {"read", (PyCFunction)PakFile_read, METH_VARARGS, PakFile_read__doc__},
+    {"write", (PyCFunction)PakFile_write, METH_VARARGS, PakFile_write__doc__},
+    {"seekg", (PyCFunction)PakFile_seekg, METH_VARARGS, PakFile_seekg__doc__},
+    {"seekp", (PyCFunction)PakFile_seekp, METH_VARARGS, PakFile_seekp__doc__},
     {"tellg", (PyCFunction)PakFile_tellg, METH_NOARGS, PakFile_tellg__doc__},
     {"tellp", (PyCFunction)PakFile_tellp, METH_NOARGS, PakFile_tellp__doc__},
     {0, 0, 0, 0}
