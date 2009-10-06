@@ -209,6 +209,9 @@ class TestPakFile(unittest.TestCase):
         del self.pak
         self.assertEqual(getsize(self.filename), filesize)
 
+    def tearDown(self):
+        unlink("test-MERC.PAK")
+        unlink("test-INTROVOC.PAK")
 
 class TestCpsFile(unittest.TestCase):
     
