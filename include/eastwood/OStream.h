@@ -9,6 +9,7 @@ class OStream : public std::ostream
 {
     public:
 	OStream(){};
+	OStream(std::streambuf *sb) : std::ostream(sb) {}
 	OStream(const std::ostream &stream);
 	OStream& putU16BE(uint16_t value);
 	OStream& putU16LE(uint16_t value);

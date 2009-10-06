@@ -4,15 +4,13 @@
 #include <map>
 #include <vector>
 
-#include <iostream>
-#include "eastwood/IStream.h"
-#include "eastwood/OStream.h"
+#include "eastwood/IOStream.h"
 
 namespace eastwood {
 
 typedef std::pair<uint32_t, uint32_t> FileEntry;
 
-class PakFile : public IStream, public OStream
+class PakFile : public IOStream
 {
     public:
         PakFile(std::iostream &stream);

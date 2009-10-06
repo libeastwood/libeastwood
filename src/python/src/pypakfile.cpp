@@ -112,28 +112,29 @@ static PyObject *
 PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *name = NULL;
-    char mode = 'r';
+    const char *mode = "r";
+    bool error = false;
     static char *kwlist[] = {const_cast<char*>("name"), const_cast<char*>("mode"), NULL};
 
     PakFile_close(self);
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|c:open", kwlist, &name, &mode))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|s:open", kwlist, &name, &mode))
 	return NULL;
 
-    switch (mode) {
-	case 'a':
-	    self->mode |= std::ios_base::out | std::ios_base::ate;
-	    break;
-	case 'r':
-	    self->mode |= std::ios_base::in;
-	    break;
-	case 'w':
-	    self->mode |= std::ios_base::out | std::ios_base::trunc;
-	    break;
-	default:
-	    PyErr_Format(PyExc_ValueError, "invalid mode char %c", mode);
-	    return NULL;
-	    break;
+    if(mode[0] == 'r') {
+	self->mode |= std::ios_base::in; if(mode[1]){if(mode[1] == '+')
+	self->mode |= std::ios_base::out; else error = true;}
+    } else if(mode[0] == 'a') {
+	self->mode |= std::ios_base::in | std::ios_base::out | std::ios_base::ate; if(mode[1]){if(mode[1] == '+')
+	self->mode |= std::ios_base::app; else error = true;}
+    } else if(mode[0] == 'w') {
+	self->mode |= std::ios_base::out | std::ios_base::trunc; if(mode[1]){if(mode[1] == '+')
+	self->mode |= std::ios_base::in; else error = true;}
+    } else error = true;
+
+    if(error) {
+	PyErr_Format(PyExc_ValueError, "invalid mode char %s", mode);
+	return NULL;
     }
 
     try {
@@ -231,7 +232,7 @@ cleanup:
 }
 
 static PyObject *
-PakFile_seek(Py_PakFile *self, PyObject *args)
+PakFile_seek(Py_PakFile *self, PyObject *args, bool in)
 {
     int where = 0;
     PyObject *offobj;
@@ -244,21 +245,76 @@ PakFile_seek(Py_PakFile *self, PyObject *args)
     if(self->pakFile->good()) {
 	    self->pakFile->seekg(where, std::ios::beg);
 	    self->pakFile->seekg(PyInt_AsLong(offobj), std::ios::cur);
-	    offset = static_cast<std::streamoff>(self->pakFile->tellg());
+	    offset = static_cast<std::streamoff>(in ? self->pakFile->tellg() : self->pakFile->tellp());
     } else if(!self->pakFile->is_open()) {
 	    PyErr_SetString(PyExc_ValueError,
 		    "I/O operation on closed file");
 	    goto cleanup;
-    } else if(!self->pakFile->eof()) {
-	    PyErr_SetString(PyExc_IOError, "seek works only while reading");
-	    goto cleanup;
-    }	
+    }
 
     Py_INCREF(Py_None);
     ret = Py_None;
 
 cleanup:
     return ret;
+}
+
+static PyObject *
+PakFile_seekg(Py_PakFile *self, PyObject *args)
+{
+    return PakFile_seek(self, args, true);
+}
+
+static PyObject *
+PakFile_seekp(Py_PakFile *self, PyObject *args)
+{
+    return PakFile_seek(self, args, false);
+}
+
+static PyObject *
+PakFile_tell(Py_PakFile *self, bool in)
+{
+    PyObject *ret = NULL;
+
+    if(!self->pakFile->is_open()) {
+	PyErr_SetString(PyExc_ValueError,
+		"I/O operation on closed file");
+	goto cleanup;
+    } else if(!(self->mode & (in ? std::ios_base::in : std::ios_base::out))) {
+	PyErr_SetString(PyExc_IOError, in ?
+		"file not opened for reading" :
+		"file not opened for writing");
+	goto cleanup;
+    }
+
+    ret = PyInt_FromLong(static_cast<uint32_t>(in ? self->pakFile->tellg() : self->pakFile->tellp()));
+
+cleanup:
+    return ret;
+}
+
+PyDoc_STRVAR(PakFile_tellg__doc__,
+"tellg() -> int\n\
+\n\
+Return the current read position, an integer.\n\
+");
+
+static PyObject *
+PakFile_tellg(Py_PakFile *self, __attribute__((unused)) PyObject *args)
+{
+    return PakFile_tell(self, true);
+}
+
+PyDoc_STRVAR(PakFile_tellp__doc__,
+"tellp() -> int\n\
+\n\
+Return the current write position, an integer.\n\
+");
+
+static PyObject *
+PakFile_tellp(Py_PakFile *self, __attribute__((unused)) PyObject *args)
+{
+    return PakFile_tell(self, false);
 }
 
 static PyMethodDef PakFile_methods[] = {
@@ -268,7 +324,10 @@ static PyMethodDef PakFile_methods[] = {
     {"delete", (PyCFunction)PakFile_delete, METH_VARARGS, NULL},
     {"read", (PyCFunction)PakFile_read, METH_VARARGS, NULL},
     {"write", (PyCFunction)PakFile_write, METH_VARARGS, NULL},
-    {"seek", (PyCFunction)PakFile_seek, METH_VARARGS, NULL},
+    {"seekg", (PyCFunction)PakFile_seekg, METH_VARARGS, NULL},
+    {"seekp", (PyCFunction)PakFile_seekp, METH_VARARGS, NULL},
+    {"tellg", (PyCFunction)PakFile_tellg, METH_NOARGS, PakFile_tellg__doc__},
+    {"tellp", (PyCFunction)PakFile_tellp, METH_NOARGS, PakFile_tellp__doc__},
     {0, 0, 0, 0}
 };
 

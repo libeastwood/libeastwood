@@ -31,7 +31,9 @@ void PakFile::close() {
     if(is_open()) {
         if(_mode & std::ios_base::out) {
             char buf[BUFSIZ];
+            memset(buf, 0, BUFSIZ);
             uint32_t size = reinterpret_cast<OStream*>(this)->size();
+            seekg(0, std::ios::beg);
             if(size != _currentFile->second.second) {
                 if(size < _currentFile->second.second)
                     removeBytes(_currentFile->second.first, _currentFile->second.second - size);
