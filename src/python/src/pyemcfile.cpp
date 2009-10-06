@@ -58,8 +58,8 @@ EmcFile_init(Py_EmcFile *self, PyObject *args)
 	case script_UNIT:
 	    self->type = PyString_FromString("UNIT");
 	    break;
-	case script_HOUSE:
-	    self->type = PyString_FromString("HOUSE");
+	case script_TEAM:
+	    self->type = PyString_FromString("TEAM");
 	    break;
 	default:
 	    PyErr_Format(PyExc_TypeError, "invalid type: %d!", self->emcFile->type());
