@@ -80,7 +80,7 @@ PakFile_close(Py_PakFile *self)
 
     RELEASE_LOCK(self);
 
-    Py_RETURN_TRUE;
+    Py_RETURN_NONE;
 }
 
 static void
