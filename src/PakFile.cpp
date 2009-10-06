@@ -110,7 +110,7 @@ int32_t PakFile::sizediff()
         actualSize = (entry.first + entry.second);
     } else
         actualSize = 0;
-    return (actualSize - reinterpret_cast<IStream*>(&_stream)->sizeg());
+    return (actualSize - reinterpret_cast<IStream&>(_stream).sizeg());
 }
 
 
@@ -163,7 +163,7 @@ void PakFile::removeBytes(uint32_t offset, uint32_t n)
 
 void PakFile::readIndex()
 {
-    IStream &stream = *reinterpret_cast<IStream*>(&_stream);
+    IStream &stream = reinterpret_cast<IStream&>(_stream);
     char name[256];
     uint32_t offset = stream.getU32LE();
 
@@ -183,7 +183,7 @@ void PakFile::readIndex()
 
 void PakFile::writeIndex(uint32_t firstOffset)
 {
-    OStream &stream = *reinterpret_cast<OStream*>(&_stream);
+    OStream &stream = reinterpret_cast<OStream&>(_stream);
 
     uint32_t offset = sizeof(uint32_t);
     for(std::vector<std::string>::const_iterator it = _fileNames.begin();
