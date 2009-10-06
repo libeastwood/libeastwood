@@ -32,7 +32,7 @@ void PakFile::close() {
         if(_mode & std::ios_base::out) {
             char buf[BUFSIZ];
             memset(buf, 0, BUFSIZ);
-            uint32_t size = reinterpret_cast<OStream*>(this)->sizep();
+            uint32_t size = sizep();
             seekg(0, std::ios::beg);
             if(size != _currentFile->second.second) {
                 if(size < _currentFile->second.second)
