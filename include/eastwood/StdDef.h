@@ -45,4 +45,11 @@ static inline int delayMillis(uint32_t msec)
     return usleep(msec * 1000);
 }
 
+static inline void stringToUpper(std::string &str)
+{
+    for(std::string::iterator it = str.begin();
+            it != str.end(); ++it)
+        *it = toupper(*it);
+}
+
 #endif // EASTWOOD_STDDEF_H

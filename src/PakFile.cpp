@@ -60,6 +60,8 @@ void PakFile::close() {
 void PakFile::open(std::string fileName, std::ios::openmode mode) {
     close();
 
+    stringToUpper(fileName);
+
     _mode |= mode;
     _currentFile = _fileEntries.find(fileName);
     if(_currentFile != _fileEntries.end()) {
@@ -85,6 +87,9 @@ void PakFile::open(std::string fileName, std::ios::openmode mode) {
 bool PakFile::erase(std::string fileName)
 {
     uint32_t startOffset = _fileEntries[_fileNames[0]].first;
+
+    stringToUpper(fileName);
+
     _currentFile = _fileEntries.find(fileName);
     if(_currentFile == _fileEntries.end())
         return false;
