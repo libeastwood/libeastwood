@@ -1,9 +1,3 @@
-#include "eastwood/StdDef.h"
-
-#include "eastwood/Exception.h"
-#include "eastwood/Log.h"
-#include "eastwood/PakFile.h"
-
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -12,6 +6,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #endif
+
+#include "eastwood/StdDef.h"
+
+#include "eastwood/Exception.h"
+#include "eastwood/Log.h"
+#include "eastwood/PakFile.h"
 
 namespace eastwood {
 
