@@ -60,6 +60,11 @@ void PakFile::close() {
 void PakFile::open(std::string fileName, std::ios::openmode mode) {
     close();
 
+    size_t delim = fileName.find_first_of(".");
+    if((fileName.size() > 8 && delim > 8) ||
+            (++delim && fileName.substr(delim).size() > 3))
+        throw(FileException(LOG_ERROR, "PakFile", fileName, "Filename must be DOS-style (8.3 format)"));
+
     stringToUpper(fileName);
 
     _mode |= mode;
