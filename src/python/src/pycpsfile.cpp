@@ -68,6 +68,12 @@ CpsFile_dealloc(Py_CpsFile *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(CpsFile_getSurface__doc__,
+"getSurface() -> Surface object\n\
+\n\
+Returns a Surface object.\n\
+");
+
 static PyObject *
 CpsFile_getSurface(Py_CpsFile *self)
 {
@@ -78,7 +84,7 @@ CpsFile_getSurface(Py_CpsFile *self)
 
 
 static PyMethodDef CpsFile_methods[] = {
-    {"getSurface", (PyCFunction)CpsFile_getSurface, METH_NOARGS, NULL},
+    {"getSurface", (PyCFunction)CpsFile_getSurface, METH_NOARGS, CpsFile_getSurface__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 

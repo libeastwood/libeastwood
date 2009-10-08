@@ -66,6 +66,12 @@ ShpFile_dealloc(Py_ShpFile *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(ShpFile_getSurface__doc__,
+"getSurface(index) -> Surface object\n\
+\n\
+Returns a Surface object from index.\n\
+");
+
 static PyObject *
 ShpFile_getSurface(Py_ShpFile *self, PyObject *args)
 {
@@ -77,6 +83,12 @@ ShpFile_getSurface(Py_ShpFile *self, PyObject *args)
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
+
+PyDoc_STRVAR(ShpFile_getSurfaceArray__doc__,
+"getSurface(w,h, tiles) -> Surface object\n\
+\n\
+Returns a Surface of w*h surfaces from the indexes in the tiles tuple.\n\
+");
 
 static PyObject *
 ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
@@ -104,8 +116,8 @@ ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
 }
 
 static PyMethodDef ShpFile_methods[] = {
-    {"getSurface", (PyCFunction)ShpFile_getSurface, METH_VARARGS, NULL},
-    {"getSurfaceArray", (PyCFunction)ShpFile_getSurfaceArray, METH_VARARGS, NULL},
+    {"getSurface", (PyCFunction)ShpFile_getSurface, METH_VARARGS, ShpFile_getSurface__doc__},
+    {"getSurfaceArray", (PyCFunction)ShpFile_getSurfaceArray, METH_VARARGS, ShpFile_getSurfaceArray__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 

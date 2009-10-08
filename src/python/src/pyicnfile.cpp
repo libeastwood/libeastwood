@@ -76,6 +76,12 @@ IcnFile_dealloc(Py_IcnFile *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(IcnFile_getSurface__doc__,
+"getSurface(index) -> Surface object\n\
+\n\
+Returns a Surface object from index.\n\
+");
+
 static PyObject *
 IcnFile_getSurface(Py_IcnFile *self, PyObject *args)
 {
@@ -88,6 +94,13 @@ IcnFile_getSurface(Py_IcnFile *self, PyObject *args)
     return pysurface;
 }
 
+PyDoc_STRVAR(IcnFile_getTiles__doc__,
+"getTiles(mapindex [, frameByFrame=False]) -> Surface object\n\
+\n\
+Returns a tiled Surface object from map index n.\n\
+If frameByFrame is True, all different frames made out of the tiles will be made.\n\
+");
+
 static PyObject *
 IcnFile_getTiles(Py_IcnFile *self, PyObject *args)
 {
@@ -95,7 +108,7 @@ IcnFile_getTiles(Py_IcnFile *self, PyObject *args)
     uint16_t index = 0;
     PyObject *pysurface = NULL;
     Surface *tiles = NULL;
-    if (!PyArg_ParseTuple(args, "HB", &index, &frameByFrame))
+    if (!PyArg_ParseTuple(args, "H|B", &index, &frameByFrame))
 	return NULL;
 
     tiles = new Surface(self->icnFile->getTiles(index, frameByFrame));
@@ -104,8 +117,8 @@ IcnFile_getTiles(Py_IcnFile *self, PyObject *args)
 }
 
 static PyMethodDef IcnFile_methods[] = {
-    {"getSurface", (PyCFunction)IcnFile_getSurface, METH_VARARGS, NULL},
-    {"getTiles", (PyCFunction)IcnFile_getTiles, METH_VARARGS, NULL},
+    {"getSurface", (PyCFunction)IcnFile_getSurface, METH_VARARGS, IcnFile_getSurface__doc__},
+    {"getTiles", (PyCFunction)IcnFile_getTiles, METH_VARARGS, IcnFile_getTiles__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
