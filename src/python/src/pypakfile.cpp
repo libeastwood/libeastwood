@@ -14,20 +14,23 @@
 using namespace eastwood;
 
 PyDoc_STRVAR(PakFile_init__doc__,
-"PakFile(name [, create=False]) -> file object.\n\
+"PakFile(filename=name [, create=False]) -> file object.\n\
 \n\
 Open a PAK archive file. If create is True, it will create a new, empty\n\
 archive.\n\
 ");
 
 static int
-PakFile_init(Py_PakFile *self, PyObject *args)
+PakFile_init(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 {
     char *fileName;
     PyObject *create = Py_False;
     std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out | std::ios_base::binary;
-    if (!PyArg_ParseTuple(args, "s|O:PakFile", &fileName, &create))
+    static  char *kwlist[] = {const_cast<char*>("filename"), const_cast<char*>("create"), NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|O:PakFile", kwlist, &fileName, &create))
 	return -1;
+
     if(!PyBool_Check(create)) {
 	PyErr_SetString(PyExc_TypeError, "If given, second argument must be True or False");
 	goto error;
