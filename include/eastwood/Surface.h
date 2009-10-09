@@ -29,6 +29,9 @@ class Surface {
 	virtual operator uint8_t*() const {
 	    return *_pixels.get();
 	}
+	virtual operator void*() const {
+            return *_pixels.get();
+        }
 
 	uint16_t width() const throw() { return _width; }
 	uint16_t height() const throw() { return _height; }
