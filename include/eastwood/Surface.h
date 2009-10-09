@@ -33,6 +33,10 @@ class Surface {
             return *_pixels.get();
         }
 
+	virtual operator bool() const {
+	    return _bpp != 0;
+	}
+
 	uint16_t width() const throw() { return _width; }
 	uint16_t height() const throw() { return _height; }
 	uint16_t pitch() const throw() { return _pitch; }

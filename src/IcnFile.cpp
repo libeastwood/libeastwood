@@ -142,7 +142,7 @@ Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
     for(int n = 0; n < tilesN; n++)
 	for(int y = 0; y < tilesY; y++)
 	    for(int x = 0; x < tilesX; x++, idx++)
-		createImage(*idx, pic + (pic.pitch())*y*_height + (x+n*tilesX) * _width, pic.pitch());
+		createImage(*idx, (uint8_t*)pic + (pic.pitch())*y*_height + (x+n*tilesX) * _width, pic.pitch());
 
     return pic;
 }
