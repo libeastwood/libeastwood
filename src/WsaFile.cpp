@@ -58,7 +58,7 @@ WsaFile::~WsaFile()
 {
 }
 
-Surface WsaFile::getSurface(uint32_t frameNumber)
+Surface WsaFile::getSurface(uint16_t frameNumber)
 {
 /*    if(frameNumber >= _numFrames) {
 	return NULL;
