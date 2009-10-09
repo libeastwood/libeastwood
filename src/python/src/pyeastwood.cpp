@@ -13,6 +13,7 @@
 #include "pystringfile.h"
 #include "pysurface.h"
 #include "pyvocfile.h"
+#include "pywsafile.h"
 
 using namespace eastwood;
 
@@ -32,7 +33,9 @@ initpyeastwood(void)
 	    || (PyType_Ready(&MapFile_Type) < 0) || (PyType_Ready(&PakFile_Type) < 0)
 	    || (PyType_Ready(&PalFile_Type) < 0) || (PyType_Ready(&ShpFile_Type) < 0)
 	    || (PyType_Ready(&Sound_Type) < 0) || (PyType_Ready(&StringFile_Type) < 0)
-	    || (PyType_Ready(&Surface_Type) < 0) || (PyType_Ready(&VocFile_Type) < 0))
+	    || (PyType_Ready(&Surface_Type) < 0) || (PyType_Ready(&VocFile_Type) < 0)
+	    || (PyType_Ready(&WsaFile_Type) < 0))
+
 	return;    
 
     module = Py_InitModule("pyeastwood", NULL);
@@ -72,6 +75,8 @@ initpyeastwood(void)
     Py_INCREF(&VocFile_Type);
     PyModule_AddObject(module, "VocFile", (PyObject *)&VocFile_Type);
 
+    Py_INCREF(&WsaFile_Type);
+    PyModule_AddObject(module, "WsaFile", (PyObject *)&WsaFile_Type);
 
     PyModule_AddObject(module, "__author__", PyString_FromString(__author__));
 

@@ -60,6 +60,7 @@ SET( PYEASTWOOD_SRCS
     python/src/pystringfile.cpp
     python/src/pysurface.cpp
     python/src/pyvocfile.cpp
+    python/src/pywsafile.cpp
 )
 
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
