@@ -7,10 +7,8 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/MapFile.h"
-#include "eastwood/PalFile.h"
 
 #include "pymapfile.h"
-#include "pypalfile.h"
 #include "pysurface.h"
 
 using namespace eastwood;

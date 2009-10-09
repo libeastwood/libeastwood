@@ -6,7 +6,6 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/Sound.h"
-#include "eastwood/PalFile.h"
 
 #include "pysound.h"
 
