@@ -16,7 +16,7 @@ public:
 
 	Surface getSurface(uint32_t frameNumber);
 
-	uint32_t getNumFrames() const throw() { return _numFrames; };
+	uint16_t size() const throw() { return _numFrames; };
 	uint32_t getFramesPer1024ms() const throw() { return _framesPer1024ms; };
 
 private:
