@@ -64,9 +64,11 @@ Surface WsaFile::getSurface(uint16_t frameNumber)
 	return NULL;
     }*/
 
+    //TODO: Just creating all surfaces in a vector at first might be better..
     uint8_t *frame = &_decodedFrames.front() + (frameNumber * _width * _height);
-
-    return Surface(frame, _width, _height, 8, _palette);
+    Surface surface(_width, _height, 8, _palette);
+    memcpy((uint8_t*)surface, frame, _width*_height);    
+    return surface;
 }
 
 void WsaFile::decodeFrames()
