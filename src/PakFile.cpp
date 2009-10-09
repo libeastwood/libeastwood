@@ -57,8 +57,12 @@ void PakFile::close() {
     }
 }
 
+// This function will check if the string is a valid 8.3 filename
+// See http://en.wikipedia.org/wiki/8.3_filename
 static inline bool validateFileName(std::string &fileName)
 {
+    char legalNonAlphaNum[] = { '!', '#', '$', '%', '&', '\'', '(', ')', '-',
+       '@', '^', '_', '`', '{', '}', '~', ' ' };
     bool delimFound = false;
     size_t delim = fileName.find_first_of(".");
     if((fileName.size() > 8 && delim > 8) ||
@@ -70,8 +74,14 @@ static inline bool validateFileName(std::string &fileName)
             if(delimFound)
                 return false;
             delimFound = true;
-        } else if(!isalnum(*it))
-            return false;
+        } else if(!isalnum(*it)) {
+            bool legalChar = false;
+            for(uint8_t i = 0; i < sizeof(legalNonAlphaNum) && !legalChar; i++)
+                if(legalNonAlphaNum[i] == *it)
+                    legalChar = true;
+            if(!legalChar)
+                return false;
+        }
     }
     return true;
 }
