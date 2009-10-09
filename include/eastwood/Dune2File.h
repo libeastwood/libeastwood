@@ -29,6 +29,7 @@ int	D2ExeStructureEntries = 19,
 	D2ExeFileEntries = 671,
 	D2ExeActionEntries = 14;
 
+#include "eastwood/pragma-start.h"
 struct	D2ExeStructureData {
     uint16_t	idShort;
     uint32_t	name;
@@ -81,8 +82,10 @@ struct	D2ExeStructureData {
     uint16_t	techUpgrade1;
     uint16_t	techUpgrade2;
     uint16_t	techUpgrade3;
-} __attribute__ ((packed));
+} GNUC_ATTRIBUTE((packed));
+#include "eastwood/pragma-end.h"
 
+#include "eastwood/pragma-start.h"
 struct	D2ExeUnitData {
    uint16_t	idShort;        
    uint32_t	name;
@@ -129,8 +132,10 @@ struct	D2ExeUnitData {
    uint16_t	field_54;  
    uint16_t	weaponType;
    uint16_t	weaponSound;
-} __attribute__ ((packed));
+} GNUC_ATTRIBUTE((packed));
+#include "eastwood/pragma-end.h"
 
+#include "eastwood/pragma-start.h"
 struct	D2ExeHouseData {
    uint32_t	name;
    uint16_t	weakness;
@@ -145,9 +150,11 @@ struct	D2ExeHouseData {
    uint16_t	missionLoseMusic;
    uint16_t	missionBriefMusic;
    uint32_t	houseVoice;
-} __attribute__ ((packed));
+} GNUC_ATTRIBUTE((packed));
+#include "eastwood/pragma-end.h"
 
 // Stored internal File table
+#include "eastwood/pragma-start.h"
 struct	D2ExeFileData {
    uint32_t	name;
    uint16_t	field_4;
@@ -159,9 +166,11 @@ struct	D2ExeFileData {
    uint8_t	parentIndex;
    uint8_t	field_11;
    uint8_t	fileType;
-} __attribute__ ((packed));
+} GNUC_ATTRIBUTE((packed));
+#include "eastwood/pragma-end.h"
 
 // Unit 'Action' commands
+#include "eastwood/pragma-start.h"
 struct	D2ExeActionData {
    uint8_t	field_0;
    uint8_t	field_1;
@@ -172,7 +181,8 @@ struct	D2ExeActionData {
    uint8_t	field_9;
    uint8_t	field_A;
    uint8_t	field_B;
-} __attribute__ ((packed));
+} GNUC_ATTRIBUTE((packed));
+#include "eastwood/pragma-end.h"
 
 class Dune2File
 {

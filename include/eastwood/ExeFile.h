@@ -7,6 +7,7 @@
 
 namespace eastwood {
 
+#include "eastwood/pragma-start.h"
 struct ExeHeader {
         uint16_t signature;	// EXE_Header Signature MZ or ZM
         uint16_t extraBytes;	// Bytes on the last page
@@ -22,7 +23,8 @@ struct ExeHeader {
         uint16_t initCS;
         uint16_t relocTable;
         uint16_t overlay;
-} __attribute__ ((packed));
+} GNUC_ATTRIBUTE((packed));
+#include "eastwood/pragma-end.h"
 
 class ExeFile : public IStream
 {

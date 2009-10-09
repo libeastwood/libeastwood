@@ -27,6 +27,8 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/Surface.h
   eastwood/VocFile.h
   eastwood/WsaFile.h
+  eastwood/pragma-start.h
+  eastwood/pragma-end.h
 )
 
 SET( LIBEASTWOOD_ADLIB_HEADERS
