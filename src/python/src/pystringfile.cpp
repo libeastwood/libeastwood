@@ -2,6 +2,8 @@
 // 	 python to deal with C++ streams ...
 #include <istream>
 #include <sstream>
+#include <stdexcept>
+
 #include "eastwood/StdDef.h"
 
 #include "pyeastwood.h"
@@ -78,6 +80,8 @@ StringFile_getMissionString(Py_StringFile *self, PyObject *args)
 {
     uint16_t mission = 0;
     MissionType missionType = MISSION_INVALID;
+    std::string str;
+
     if(!PyArg_ParseTuple(args, "HH", &mission, &missionType))
 	return NULL;
 
@@ -86,7 +90,14 @@ StringFile_getMissionString(Py_StringFile *self, PyObject *args)
 	return NULL;
     }
 
-    return Py_BuildValue("s", self->stringFile->getString(mission, missionType).c_str());
+    try {
+	str = self->stringFile->getString(mission, missionType);
+    } catch(std::out_of_range e) {
+	PyErr_SetString(PyExc_IndexError, "StringFile index out of range");
+	return NULL;
+    }
+
+    return Py_BuildValue("s", str.c_str());
 }
 
 PyDoc_STRVAR(StringFile_getString__doc__,
@@ -99,10 +110,19 @@ static PyObject *
 StringFile_getString(Py_StringFile *self, PyObject *args)
 {
     uint16_t index = 0;
+    std::string str;
+
     if(!PyArg_ParseTuple(args, "H", &index))
 	return NULL;
 
-    return Py_BuildValue("s", self->stringFile->getString(index).c_str());
+    try {
+	str = self->stringFile->getString(index);
+    } catch(std::out_of_range e) {
+	PyErr_SetString(PyExc_IndexError, "StringFile index out of range");
+	return NULL;
+    }
+
+    return Py_BuildValue("s", str.c_str());
 }
 
 static PyMethodDef StringFile_methods[] = {
