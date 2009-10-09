@@ -44,10 +44,7 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
 
     LOG_INFO("WsaFile", "_framesPer1024ms = %d", _framesPer1024ms);
 
-    if (firstFrame)
-	_decodedFrames.front() = firstFrame;
-    else
-	_decodedFrames.front() = Surface(_width, _height, 8, _palette);
+    _decodedFrames.front() = firstFrame ? firstFrame : Surface(_width, _height, 8, _palette);
 
     decodeFrames();
 }
