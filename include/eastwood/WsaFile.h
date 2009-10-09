@@ -14,7 +14,7 @@ public:
 
 	virtual ~WsaFile();
 
-	Surface getSurface(uint32_t frameNumber);
+	Surface getSurface(uint16_t frameNumber);
 
 	uint16_t size() const throw() { return _numFrames; };
 	uint32_t getFramesPer1024ms() const throw() { return _framesPer1024ms; };
