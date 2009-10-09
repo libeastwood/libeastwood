@@ -57,12 +57,30 @@ void PakFile::close() {
     }
 }
 
-void PakFile::open(std::string fileName, std::ios::openmode mode) {
-    close();
-
+static inline bool validateFileName(std::string &fileName)
+{
+    bool delimFound = false;
     size_t delim = fileName.find_first_of(".");
     if((fileName.size() > 8 && delim > 8) ||
             (++delim && fileName.substr(delim).size() > 3))
+        return false;
+    for(std::string::iterator it = fileName.begin();
+            it != fileName.end(); ++it) {
+        if(*it == '.') {
+            if(delimFound)
+                return false;
+            delimFound = true;
+        } else if(!isalnum(*it))
+            return false;
+    }
+    return true;
+}
+
+void PakFile::open(std::string fileName, std::ios::openmode mode)
+{
+    close();
+
+    if(!validateFileName(fileName))
         throw(FileException(LOG_ERROR, "PakFile", fileName, "Filename must be DOS-style (8.3 format)"));
 
     stringToUpper(fileName);
