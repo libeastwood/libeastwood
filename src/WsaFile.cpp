@@ -1,4 +1,5 @@
 #include <vector>
+#include <stdexcept>
 
 #include "eastwood/StdDef.h"
 
@@ -60,9 +61,8 @@ WsaFile::~WsaFile()
 
 Surface WsaFile::getSurface(uint16_t frameNumber)
 {
-/*    if(frameNumber >= _numFrames) {
-	return NULL;
-    }*/
+    if(frameNumber >= _numFrames)
+	throw(std::out_of_range("WsaFile::getSurface()"));
 
     //TODO: Just creating all surfaces in a vector at first might be better..
     uint8_t *frame = &_decodedFrames.front() + (frameNumber * _width * _height);
