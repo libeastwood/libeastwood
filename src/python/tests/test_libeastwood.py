@@ -209,6 +209,15 @@ class TestPakFile(unittest.TestCase):
         del self.pak
         self.assertEqual(getsize(self.filename), filesize)
 
+    def test_create_new(self): #FIXME:
+        pak = PakFile("test-TEST.PAK", True)
+        pak.open("SOMEFILE.TXT", "w")
+        pak.write("123456789")
+        pak.close()
+        pak.open("FILETWO.TXT", "w")
+        pak.write("abcdefghijklmnopqrstuvwxyz")
+        pak.close()
+
     def tearDown(self):
         unlink("test-MERC.PAK")
         unlink("test-INTROVOC.PAK")
