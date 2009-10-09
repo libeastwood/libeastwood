@@ -56,7 +56,7 @@ Surface::Surface(const Surface &surface) :
     _pixels(new Bytes(new uint8_t[surface.size()])), _palette(surface._palette)
 {
     if(*this)
-    	memcpy((uint8_t*)*this, (uint8_t*)surface, size());
+    	memcpy(*this, surface, size());
 }
 
 Surface::~Surface() {
