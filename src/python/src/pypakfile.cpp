@@ -161,14 +161,14 @@ Open a file in the archive. The mode can be the following:\n\
 static PyObject *
 PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 {
-    PyObject *name = NULL;
+    const char *name = NULL;
     const char *mode = "r";
     bool error = false;
     static char *kwlist[] = {const_cast<char*>("name"), const_cast<char*>("mode"), NULL};
 
     PakFile_close(self);
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|s:open", kwlist, &name, &mode))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|s:open", kwlist, &name, &mode))
 	return NULL;
 
     if(mode[0] == 'r') {
@@ -188,7 +188,7 @@ PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
     }
 
     try {
-	self->pakFile->open(PyString_AsString(name), self->mode);
+	self->pakFile->open(name, self->mode);
     } catch(FileException e) {
 	PyErr_Format(PyExc_IOError, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
 	return NULL;
@@ -206,13 +206,13 @@ Deletes file from the archive.\n\
 static PyObject *
 PakFile_delete(Py_PakFile *self, PyObject *args)
 {
-    PyObject *name = NULL;
+    const char *name = NULL;
     PakFile_close(self);
 
-    if (!PyArg_ParseTuple(args, "O:delete", &name))
+    if (!PyArg_ParseTuple(args, "s:delete", &name))
 	return NULL;
 
-    self->pakFile->erase(PyString_AsString(name));
+    self->pakFile->erase(name);
 
     Py_RETURN_NONE;
 }
