@@ -3,6 +3,7 @@
 #include <istream>
 #include <sstream>
 #include <iostream>
+#include <stdexcept>
 #include "pyeastwood.h"
 #include <structmember.h>
 
@@ -95,10 +96,16 @@ static PyObject *
 WsaFile_getSurface(Py_WsaFile *self, PyObject *args)
 {
     uint16_t index;
+    Surface *surface = NULL;
     if (!PyArg_ParseTuple(args, "H", &index))
 	return NULL;
 
-    Surface *surface = new Surface(self->wsaFile->getSurface(index));
+    try {
+    	surface = new Surface(self->wsaFile->getSurface(index));
+    } catch(std::out_of_range e) {
+	PyErr_SetString(PyExc_IndexError, "WsaFile index out of range");
+	return NULL;
+    }
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
