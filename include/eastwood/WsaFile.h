@@ -10,7 +10,7 @@ class WsaFile : public Decode
 {
 public:
 	WsaFile(std::istream &stream, Palette palette,
-                Surface lastframe = Surface());
+                Surface firstFrame = Surface());
 
 	virtual ~WsaFile();
 
