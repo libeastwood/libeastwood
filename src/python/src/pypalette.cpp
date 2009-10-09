@@ -71,6 +71,12 @@ static PyMappingMethods Palette_as_mapping = {
     0
 };
 
+PyDoc_STRVAR(Palette_savePAL__doc__,
+"savePAL() -> string\n\
+\n\
+Returns palette as a PAL file in the form of a string.\n\
+");
+
 static PyObject *
 Palette_savePAL(Py_Palette *self)
 {
@@ -88,7 +94,7 @@ Palette_savePAL(Py_Palette *self)
 }
 
 static PyMethodDef Palette_methods[] = {
-    {"savePAL", (PyCFunction)Palette_savePAL, METH_NOARGS, NULL},
+    {"savePAL", (PyCFunction)Palette_savePAL, METH_NOARGS, Palette_savePAL__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 

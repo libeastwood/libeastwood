@@ -15,6 +15,12 @@
 
 using namespace eastwood;
 
+PyDoc_STRVAR(MapFile_init__doc__,
+"MapFile(data) -> MapFile object\n\
+\n\
+Creates a MapFile from data.\n\
+");
+
 static int
 MapFile_init(Py_MapFile *self, PyObject *args)
 {
@@ -111,7 +117,7 @@ PyTypeObject MapFile_Type = {
     PyObject_GenericSetAttr,			/*tp_setattro*/
     0,						/*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	/*tp_flags*/
-    0,						/*tp_doc*/
+    MapFile_init__doc__,			/*tp_doc*/
     0,						/*tp_traverse*/
     0,						/*tp_clear*/
     0,						/*tp_richcompare*/

@@ -8,13 +8,16 @@
 #include <structmember.h>
 
 #include "eastwood/StringFile.h"
-#include "eastwood/PalFile.h"
 
 #include "pystringfile.h"
-#include "pypalfile.h"
-#include "pysurface.h"
 
 using namespace eastwood;
+
+PyDoc_STRVAR(StringFile_init__doc__,
+"StringFile(data) -> StringFile object\n\
+\n\
+Creates a StringFile from data.\n\
+");
 
 static int
 StringFile_init(Py_StringFile *self, PyObject *args)
@@ -63,6 +66,13 @@ StringFile_dealloc(Py_StringFile *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(StringFile_getMissionString__doc__,
+"getString(n, m) -> string\n\
+\n\
+Get string n of missiontype m.\n\
+For valid missiontypes, use MISSION_* constants.\n\
+");
+
 static PyObject *
 StringFile_getMissionString(Py_StringFile *self, PyObject *args)
 {
@@ -72,12 +82,18 @@ StringFile_getMissionString(Py_StringFile *self, PyObject *args)
 	return NULL;
 
     if(missionType >= MISSION_INVALID) {
-	PyErr_SetString(PyExc_TypeError, "If given, second argument must be a PalFile object");
+	PyErr_SetString(PyExc_TypeError, "If given, second argument must be a valid mission type");
 	return NULL;
     }
 
     return Py_BuildValue("s", self->stringFile->getString(mission, missionType).c_str());
 }
+
+PyDoc_STRVAR(StringFile_getString__doc__,
+"getString(n) -> string\n\
+\n\
+Get string n.\n\
+");
 
 static PyObject *
 StringFile_getString(Py_StringFile *self, PyObject *args)
@@ -90,8 +106,8 @@ StringFile_getString(Py_StringFile *self, PyObject *args)
 }
 
 static PyMethodDef StringFile_methods[] = {
-    {"getMissionString", (PyCFunction)StringFile_getMissionString, METH_VARARGS, NULL},
-    {"getString", (PyCFunction)StringFile_getString, METH_VARARGS, NULL},
+    {"getMissionString", (PyCFunction)StringFile_getMissionString, METH_VARARGS, StringFile_getMissionString__doc__},
+    {"getString", (PyCFunction)StringFile_getString, METH_VARARGS, StringFile_getString__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
@@ -122,7 +138,7 @@ PyTypeObject StringFile_Type = {
     PyObject_GenericSetAttr,			/*tp_setattro*/
     0,						/*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	/*tp_flags*/
-    0,						/*tp_doc*/
+    StringFile_init__doc__,			/*tp_doc*/
     0,						/*tp_traverse*/
     0,						/*tp_clear*/
     0,						/*tp_richcompare*/

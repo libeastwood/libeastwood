@@ -6,7 +6,6 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/Surface.h"
-#include "eastwood/PalFile.h"
 
 #include "pysurface.h"
 
@@ -34,11 +33,24 @@ Surface_dealloc(Py_Surface *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(Surface_getPixels__doc__,
+"getPixels() -> buffer\n\
+\n\
+Returns the pixel buffer from memory (mainly for debugging).\n\
+");
+
 static PyObject *
 Surface_getPixels(Py_Surface *self)
 {
     return PyBuffer_FromMemory((((uint8_t*)(*self->surface))), self->surface->size());
 }
+
+PyDoc_STRVAR(Surface_getScaled__doc__,
+"getScaled(scaler) -> Surface object\n\
+\n\
+Returns a scaled Surface object using scaler.\n\
+Available scalers to use are Scale* constants.\n\
+");
 
 static PyObject *
 Surface_getScaled(Py_Surface *self, PyObject *args)
@@ -56,6 +68,12 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
     return Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(scaled), NULL);
 }
 
+PyDoc_STRVAR(Surface_saveBMP__doc__,
+"saveBMP() -> string\n\
+\n\
+Returns surface as a BMP file in the form of a string.\n\
+");
+
 static PyObject *
 Surface_saveBMP(Py_Surface *self)
 {
@@ -72,11 +90,10 @@ Surface_saveBMP(Py_Surface *self)
     return ret;
 }
 
-
 static PyMethodDef Surface_methods[] = {
-    {"getPixels", (PyCFunction)Surface_getPixels, METH_NOARGS, NULL},
-    {"getScaled", (PyCFunction)Surface_getScaled, METH_VARARGS, NULL},
-    {"saveBMP", (PyCFunction)Surface_saveBMP, METH_NOARGS, NULL},
+    {"getPixels", (PyCFunction)Surface_getPixels, METH_NOARGS, Surface_getPixels__doc__},
+    {"getScaled", (PyCFunction)Surface_getScaled, METH_VARARGS, Surface_getScaled__doc__},
+    {"saveBMP", (PyCFunction)Surface_saveBMP, METH_NOARGS, Surface_saveBMP__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 

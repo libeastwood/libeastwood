@@ -31,6 +31,25 @@ Sound_dealloc(Py_Sound *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(Sound_getBuffer__doc__,
+"getBuffer() -> buffer\n\
+\n\
+Returns the sound buffer from memory (mainly for debugging).\n\
+");
+
+static PyObject *
+Sound_getBuffer(Py_Sound *self)
+{
+    return PyBuffer_FromMemory((((uint8_t*)(*self->sound))), self->sound->size());
+}
+
+PyDoc_STRVAR(Sound_getResampled__doc__,
+"getResampled(channels, frequency, format, interpolator) -> Sound object\n\
+\n\
+Returns a resampled Sound object using format & interpolator.\n\
+Available formats and interpolators are FMT_* & I_* constants.\n\
+");
+
 static PyObject *
 Sound_getResampled(Py_Sound *self, PyObject *args)
 {
@@ -47,11 +66,11 @@ Sound_getResampled(Py_Sound *self, PyObject *args)
     return Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(resampled), NULL);
 }
 
-static PyObject *
-Sound_getBuffer(Py_Sound *self)
-{
-    return PyBuffer_FromMemory((((uint8_t*)(*self->sound))), self->sound->size());
-}
+PyDoc_STRVAR(Sound_saveWAV__doc__,
+"saveWAV() -> string\n\
+\n\
+Returns sound as a WAV file in the form of a string.\n\
+");
 
 static PyObject *
 Sound_saveWAV(Py_Sound *self)
@@ -69,11 +88,10 @@ Sound_saveWAV(Py_Sound *self)
     return ret;
 }
 
-
 static PyMethodDef Sound_methods[] = {
-    {"getBuffer", (PyCFunction)Sound_getBuffer, METH_NOARGS, NULL},
-    {"getResampled", (PyCFunction)Sound_getResampled, METH_VARARGS, NULL},
-    {"saveWAV", (PyCFunction)Sound_saveWAV, METH_NOARGS, NULL},
+    {"getBuffer", (PyCFunction)Sound_getBuffer, METH_NOARGS, Sound_getBuffer__doc__},
+    {"getResampled", (PyCFunction)Sound_getResampled, METH_VARARGS, Sound_getResampled__doc__},
+    {"saveWAV", (PyCFunction)Sound_saveWAV, METH_NOARGS, Sound_saveWAV__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 

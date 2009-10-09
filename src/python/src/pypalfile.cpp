@@ -13,6 +13,12 @@
 
 using namespace eastwood;
 
+PyDoc_STRVAR(PalFile_init__doc__,
+"PalFile(data) -> PalFile object\n\
+\n\
+Creates a PalpFile from data.\n\
+");
+
 static int
 PalFile_init(Py_PalFile *self, PyObject *args)
 {
@@ -55,6 +61,12 @@ PalFile_dealloc(Py_PalFile *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(PalFile_getPalette__doc__,
+"getPalette() -> Palette object\n\
+\n\
+Returns a Palette object.\n\
+");
+
 static PyObject *
 PalFile_getPalette(Py_PalFile *self)
 {
@@ -63,9 +75,8 @@ PalFile_getPalette(Py_PalFile *self)
     return pypalette;
 }
 
-
 static PyMethodDef PalFile_methods[] = {
-    {"getPalette", (PyCFunction)PalFile_getPalette, METH_NOARGS, NULL},
+    {"getPalette", (PyCFunction)PalFile_getPalette, METH_NOARGS, PalFile_getPalette__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 PyTypeObject PalFile_Type = {
@@ -90,7 +101,7 @@ PyTypeObject PalFile_Type = {
     PyObject_GenericSetAttr,			/*tp_setattro*/
     0,						/*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	/*tp_flags*/
-    0,						/*tp_doc*/
+    PalFile_init__doc__,			/*tp_doc*/
     0,						/*tp_traverse*/
     0,						/*tp_clear*/
     0,						/*tp_richcompare*/

@@ -14,6 +14,13 @@
 
 using namespace eastwood;
 
+PyDoc_STRVAR(CpsFile_init__doc__,
+"CpsFile(data [, palette]) -> CpsFile object\n\
+\n\
+Creates a CpsFile from data using palette specified.\n\
+If no palette specified, try using embedded palette if present.\n\
+");
+
 static int
 CpsFile_init(Py_CpsFile *self, PyObject *args)
 {
@@ -82,7 +89,6 @@ CpsFile_getSurface(Py_CpsFile *self)
     return pysurface;
 }
 
-
 static PyMethodDef CpsFile_methods[] = {
     {"getSurface", (PyCFunction)CpsFile_getSurface, METH_NOARGS, CpsFile_getSurface__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
@@ -111,7 +117,7 @@ PyTypeObject CpsFile_Type = {
     PyObject_GenericSetAttr,			/*tp_setattro*/
     0,						/*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	/*tp_flags*/
-    0,						/*tp_doc*/
+    CpsFile_init__doc__,			/*tp_doc*/
     0,						/*tp_traverse*/
     0,						/*tp_clear*/
     0,						/*tp_richcompare*/

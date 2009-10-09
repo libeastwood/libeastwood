@@ -11,6 +11,12 @@
 
 using namespace eastwood;
 
+PyDoc_STRVAR(VocFile_init__doc__,
+"VocFile(data) -> VocFile object\n\
+\n\
+Creates a VocFile from data.\n\
+");
+
 static int
 VocFile_init(Py_VocFile *self, PyObject *args)
 {
@@ -53,6 +59,12 @@ VocFile_dealloc(Py_VocFile *self)
     PyObject_Del((PyObject*)self);
 }
 
+PyDoc_STRVAR(VocFile_getSound__doc__,
+"getSound() -> Sound object\n\
+\n\
+Returns a Sound object.\n\
+");
+
 static PyObject *
 VocFile_getSound(Py_VocFile *self)
 {
@@ -61,9 +73,8 @@ VocFile_getSound(Py_VocFile *self)
     return pysound;
 }
 
-
 static PyMethodDef VocFile_methods[] = {
-    {"getSound", (PyCFunction)VocFile_getSound, METH_NOARGS, NULL},
+    {"getSound", (PyCFunction)VocFile_getSound, METH_NOARGS, VocFile_getSound__doc__},
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
@@ -90,7 +101,7 @@ PyTypeObject VocFile_Type = {
     PyObject_GenericSetAttr,			/*tp_setattro*/
     0,						/*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	/*tp_flags*/
-    0,						/*tp_doc*/
+    VocFile_init__doc__,			/*tp_doc*/
     0,						/*tp_traverse*/
     0,						/*tp_clear*/
     0,						/*tp_richcompare*/

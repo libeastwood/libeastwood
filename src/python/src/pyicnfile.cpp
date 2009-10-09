@@ -16,6 +16,12 @@
 
 using namespace eastwood;
 
+PyDoc_STRVAR(IcnFile_init__doc__,
+"IcnFile(data, map, palette) -> IcnFile object\n\
+\n\
+Creates a IcnFile from data using map & palette specified.\n\
+");
+
 static int
 IcnFile_init(Py_IcnFile *self, PyObject *args)
 {
@@ -149,7 +155,7 @@ PyTypeObject IcnFile_Type = {
     PyObject_GenericSetAttr,			/*tp_setattro*/
     0,						/*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	/*tp_flags*/
-    0,						/*tp_doc*/
+    IcnFile_init__doc__,			/*tp_doc*/
     0,						/*tp_traverse*/
     0,						/*tp_clear*/
     0,						/*tp_richcompare*/
