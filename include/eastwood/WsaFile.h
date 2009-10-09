@@ -14,17 +14,16 @@ public:
 
 	virtual ~WsaFile();
 
-	Surface getSurface(uint16_t frameNumber);
+	Surface getSurface(uint16_t frameNumber) const { return _decodedFrames.at(frameNumber); }
 
-	uint16_t size() const throw() { return _numFrames; };
+	uint16_t size() const throw() { return _decodedFrames.size(); };
 	uint32_t getFramesPer1024ms() const throw() { return _framesPer1024ms; };
 
 private:
 	void decodeFrames();
 	std::vector<uint32_t> _frameOffsTable;
-	std::vector<uint8_t> _decodedFrames;
+	std::vector<Surface> _decodedFrames;
 
-	uint16_t _numFrames;
 	uint32_t _deltaBufferSize,
 		 _framesPer1024ms;
 };

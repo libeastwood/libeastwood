@@ -14,15 +14,12 @@ namespace eastwood {
 WsaFile::WsaFile(std::istream &stream, Palette palette,
 	Surface firstFrame) :
     Decode(stream, 0, 0, palette), _frameOffsTable(0),
-    _decodedFrames(0), _numFrames(0),
-    _deltaBufferSize(0), _framesPer1024ms(0)
-
-
+    _decodedFrames(0), _deltaBufferSize(0), _framesPer1024ms(0)
 {
     LOG_INFO("WsaFile", "Loading wsa with size %d...", bufSize);
 
-    _numFrames = _stream.getU16LE();
-    LOG_INFO("WsaFile", "numframes = %d", _numFrames);
+    _decodedFrames.resize(_stream.getU16LE());
+    LOG_INFO("WsaFile", "numframes = %d", _decodedFrames.size());
 
     _width = _stream.getU16LE();
     _height = _stream.getU16LE();
@@ -33,10 +30,10 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     uint32_t frameDataOffs = _stream.getU32LE();
     if (frameDataOffs == 0) {
 	frameDataOffs = _stream.getU32LE();
-	_numFrames--;
+	_decodedFrames.pop_back();
     }
 
-    _frameOffsTable.resize(_numFrames+2);
+    _frameOffsTable.resize(_decodedFrames.size()+2);
     for (uint32_t i = 1; i < _frameOffsTable.size(); ++i) {
 	_frameOffsTable[i] = _stream.getU32LE();
 	if (_frameOffsTable[i])
@@ -47,10 +44,10 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
 
     LOG_INFO("WsaFile", "_framesPer1024ms = %d", _framesPer1024ms);
 
-    _decodedFrames.resize(_width*_height*_numFrames);
-
     if (firstFrame)
-	memcpy(&_decodedFrames.front(), (uint8_t*)firstFrame, _width*_height);
+	_decodedFrames.front() = firstFrame;
+    else
+	_decodedFrames.front() = Surface(_width, _height, 8, _palette);
 
     decodeFrames();
 }
@@ -59,28 +56,18 @@ WsaFile::~WsaFile()
 {
 }
 
-Surface WsaFile::getSurface(uint16_t frameNumber)
-{
-    if(frameNumber >= _numFrames)
-	throw(std::out_of_range("WsaFile::getSurface()"));
-
-    //TODO: Just creating all surfaces in a vector at first might be better..
-    uint8_t *frame = &_decodedFrames.front() + (frameNumber * _width * _height);
-    Surface surface(_width, _height, 8, _palette);
-    memcpy((uint8_t*)surface, frame, _width*_height);    
-    return surface;
-}
-
 void WsaFile::decodeFrames()
 {
-    std::vector<uint8_t> dec80(_width*_height*2);
+    std::vector<uint8_t> dec80(_decodedFrames.front().size());
+    Surface *pic = NULL;
 
-    for(uint16_t i = 0; i<_numFrames;i++) {
+    for(std::vector<Surface>::iterator it = _decodedFrames.begin();
+	    it != _decodedFrames.end(); pic = &(*it), ++it) {
+	if(pic)
+	    *it = Surface(*pic);
 	decode80(&dec80.front(), 0);
-	decode40(&dec80.front(), &_decodedFrames.front() + i * _width * _height);
+	decode40(&dec80.front(), *it);
 
-	if (i < _numFrames - 1)
-	    memcpy(&_decodedFrames.front() + (i+1) * _width * _height, &_decodedFrames.front() + i * _width * _height,_width * _height);
     }
 }
 
