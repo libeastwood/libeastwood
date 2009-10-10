@@ -110,6 +110,4 @@ initpyeastwood(void)
     PyModule_AddIntConstant(module, "FMT_U16BE", FMT_U16BE);
     PyModule_AddIntConstant(module, "FMT_S16BE", FMT_S16BE);
 
-    PyModule_AddIntConstant(module, "EMC_ASSEMBLE", EMC_ASSEMBLE);
-    PyModule_AddIntConstant(module, "EMC_DISASSEMBLE", EMC_DISASSEMBLE);
 }

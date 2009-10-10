@@ -7,18 +7,12 @@
 
 extern PyTypeObject EmcFile_Type;
 
-enum EmcMode {
-    EMC_ASSEMBLE,
-    EMC_DISASSEMBLE,
-    EMC_INVALID    
-};
-
 struct Py_EmcFile {
     PyObject_HEAD
     std::istream *input;
     std::ostream *output;
     eastwood::EmcFileBase *emcFile;
-    EmcMode mode;
+    char mode;
     PyObject *type;
 };
 

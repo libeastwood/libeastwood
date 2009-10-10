@@ -151,9 +151,9 @@ def main():
         f = openFile(options.emcfile)
         emc = None
         if options.assemble:
-            emc = EmcFile(f.read(), EMC_ASSEMBLE)
+            emc = EmcFile(f.read(), 'a')
         elif options.disassemble:
-            emc = EmcFile(f.read(), EMC_DISASSEMBLE)
+            emc = EmcFile(f.read(), 'd')
         f.close()
         out = open(options.output, "w")
         out.write(emc.get())

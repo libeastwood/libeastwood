@@ -18,7 +18,7 @@ static int
 EmcFile_init(Py_EmcFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    if (!PyArg_ParseTuple(args, "s*b", &pdata, &self->mode))
+    if (!PyArg_ParseTuple(args, "s*c", &pdata, &self->mode))
 	return -1;
 
     self->input = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
@@ -34,14 +34,14 @@ EmcFile_init(Py_EmcFile *self, PyObject *args)
     }
 
     switch(self->mode) {
-	case EMC_ASSEMBLE:
+	case 'a':
     	    self->emcFile = new EmcFileAssemble(*self->input, *self->output);
 	    break;
-	case EMC_DISASSEMBLE:
+	case 'd':
     	    self->emcFile = new EmcFileDisassemble(*self->input, *self->output);
 	    break;
 	default:
-	    PyErr_Format(PyExc_ValueError, "invalid mode: %d!", self->mode);
+	    PyErr_Format(PyExc_ValueError, "invalid mode: %c!", self->mode);
 	    goto error;
 	    break;
     }
@@ -82,7 +82,7 @@ EmcFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
     self->input = NULL;
     self->output = NULL;
     self->emcFile = NULL;
-    self->mode = EMC_INVALID;
+    self->mode = 0;
     self->type = NULL;
 
     return (PyObject *)self;
@@ -118,7 +118,7 @@ static PyMethodDef EmcFile_methods[] = {
 };
 
 static PyMemberDef EmcFile_members[] = {
-    {const_cast<char*>("mode"), T_BYTE, offsetof(Py_EmcFile, mode), RO, NULL},
+    {const_cast<char*>("mode"), T_CHAR, offsetof(Py_EmcFile, mode), RO, NULL},
     {const_cast<char*>("type"), T_OBJECT, offsetof(Py_EmcFile, type), RO, NULL},
     {NULL, 0, 0, 0, NULL}
 };
