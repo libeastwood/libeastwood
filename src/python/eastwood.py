@@ -22,8 +22,10 @@ class SubOptionParser(OptionParser):
         self.add_option("-o", "--output", dest="output", help="save to OUTPUT")
 
     def parse_args(self, args):
-        if args[1] == '-h' or args[1] == '--help':
+        if len(args) == 1 or args[1] == '-h' or args[1] == '--help':
             args.pop(0)
+        if len(args) == 0:
+            args.append("--help")
         return OptionParser.parse_args(self, args)
 
     def process(self):
