@@ -167,6 +167,23 @@ class PakOptionParser(SubOptionParser):
             for f in pak.listfiles():
                 print f
 
+class MapOptionParser(SubOptionParser):
+    def __init__(self, *args, **kwargs):
+        SubOptionParser.__init__(self, *args, **kwargs)
+        self.add_option("--map", help="MAP", dest="mapfile")
+        self.add_option("-n", action="store_true", default=False,
+                dest="size", help="get number of tile maps")
+
+
+    def process(self):
+        SubOptionParser.process(self)
+        
+        f = openFile(self.options.mapfile)
+        map = MapFile(f.read())
+
+        if self.options.size:
+            print len(map)
+
 class CpsOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
@@ -195,7 +212,8 @@ class IcnOptionParser(SurfaceOptionParser):
                 dest="tiles")
         self.add_option("-f", "--framebyframe", action="store_true", default=False,
                 help="Create all frames to use for animation", dest="framebyframe")
-
+        self.add_option("-n", action="store_true", default=False,
+                dest="size", help="get number of pictures")
 
     def process(self):
         SurfaceOptionParser.process(self)
@@ -207,14 +225,16 @@ class IcnOptionParser(SurfaceOptionParser):
         else:
             self.error("Tile map (--map) is required")
 
-        if not (self.options.index or self.options.tiles):
-            self.error("An index or size & tiles list is required")
+        if not (self.options.index or self.options.tiles or self.options.size):
+            self.error("An index, size & tiles list or -n argument is required")
 
         f = openFile(self.options.icnfile)
         icn = IcnFile(f.read(), self.map, self.palette)
         f.close()
 
-        if self.options.index:
+        if self.options.size:
+            print icn.size
+        elif self.options.index:
             self.surface = icn.getSurface(self.options.index)
         elif self.options.tiles:
             self.surface = icn.getTiles(self.options.tiles, self.options.framebyframe)
@@ -225,24 +245,28 @@ class ShpOptionParser(SurfaceOptionParser):
         self.add_option("--shp", help="SHP", dest="shpfile")
         self.add_option("-i", "--index", type="int", dest="index",
                 help="get surface at INDEX")
-        self.add_option("--size", help="Size in format pictures WxH", dest="size")
+        self.add_option("--size", help="Size in format pictures WxH", dest="shpsize")
         self.add_option("--tiles", help="What tiles to use, a list of indexes in the form n,n,...,n",
                 dest="tiles")
+        self.add_option("-n", action="store_true", default=False,
+                dest="size", help="get number of pictures")
 
     def process(self):
         SurfaceOptionParser.process(self)
 
-        if not (self.options.index or (self.options.size and self.options.tiles)):
-            self.error("An index or size & tiles list is required")
+        if not (self.options.index or (self.options.shpsize and self.options.tiles) or self.options.size):
+            self.error("An index, size & tiles list or -n argument is required")
 
         f = openFile(self.options.shpfile)
         shp = ShpFile(f.read(), self.palette)
         f.close()
 
-        if self.options.index:
+        if self.options.size:
+            print shp.size
+        elif self.options.index:
             self.surface = shp.getSurface(self.options.index)
-        elif self.options.size and self.options.tiles:
-            w, h = self.options.size.split("x")
+        elif self.options.shpsize and self.options.tiles:
+            w, h = self.options.shpsize.split("x")
             tiles = self.options.tiles.split(",")
             for i in xrange(len(tiles)):
                 tiles[i] = int(tiles[i])
@@ -259,13 +283,13 @@ class WsaOptionParser(SurfaceOptionParser):
         self.add_option("-c", "--continue", dest="cont", action="append",
                 help="Continue animation starting from last frame of previous animation")
         self.add_option("-n", action="store_true", default=False,
-                dest="size", help="get number of strings")
+                dest="size", help="get number of frames")
 
     def process(self):
         SurfaceOptionParser.process(self)
 
         if not (self.options.index or self.options.all or self.options.size):
-            self.error("An index or --all argument is required")
+            self.error("An index, --all or -n argument is required")
 
         f = openFile(self.options.wsafile)
         wsa = WsaFile(f.read(), self.palette)
@@ -399,6 +423,8 @@ def main():
             help="Options for PAK files")
     parser.add_option("--cps", dest="cps", action="store_true", default=False,
             help="Options for CPS files")
+    parser.add_option("--map", dest="map", action="store_true", default=False,
+            help="Options for MAP files")
     parser.add_option("--icn", dest="icn", action="store_true", default=False,
             help="Options for ICN files")
     parser.add_option("--shp", dest="shp", action="store_true", default=False,
@@ -423,6 +449,8 @@ def main():
         subParser = PakOptionParser()
     elif options.cps:
         subParser = CpsOptionParser()
+    elif options.map:
+        subParser = MapOptionParser()        
     elif options.icn:
         subParser = IcnOptionParser()
     elif options.shp:
