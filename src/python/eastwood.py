@@ -170,6 +170,7 @@ class PakOptionParser(SubOptionParser):
 class MapOptionParser(SubOptionParser):
     def __init__(self, *args, **kwargs):
         SubOptionParser.__init__(self, *args, **kwargs)
+        self.remove_option("-o")
         self.add_option("--map", help="MAP", dest="mapfile")
         self.add_option("-n", action="store_true", default=False,
                 dest="size", help="get number of tile maps")
