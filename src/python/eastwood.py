@@ -189,7 +189,7 @@ class IcnOptionParser(SurfaceOptionParser):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
         self.add_option("--icn", help="ICN", dest="icnfile")
         self.add_option("-m", "--map", help="Tile map", dest="mapfile")
-        self.add_option("-i", "--index", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index",
                 help="get surface at INDEX")
         self.add_option("-t", "--tiles", help="Get tiled surface from map index TILES",
                 dest="tiles")
@@ -215,15 +215,15 @@ class IcnOptionParser(SurfaceOptionParser):
         f.close()
 
         if self.options.index:
-            self.surface = icn.getSurface(int(self.options.index))
+            self.surface = icn.getSurface(self.options.index)
         elif self.options.tiles:
-            self.surface = icn.getTiles(int(self.options.tiles), self.options.framebyframe)
+            self.surface = icn.getTiles(self.options.tiles, self.options.framebyframe)
 
 class ShpOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
         self.add_option("--shp", help="SHP", dest="shpfile")
-        self.add_option("-i", "--index", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index",
                 help="get surface at INDEX")
         self.add_option("--size", help="Size in format pictures WxH", dest="size")
         self.add_option("--tiles", help="What tiles to use, a list of indexes in the form n,n,...,n",
@@ -252,7 +252,7 @@ class WsaOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
         self.add_option("-W", "--wsa", help="WSA", dest="wsafile")
-        self.add_option("-i", "--index", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index",
                 help="get surface at INDEX")
         self.add_option("--all", help="Save all frames to several files in format ALL-n.bmp", dest="all")    
 
@@ -302,7 +302,7 @@ class StringOptionParser(SubOptionParser):
     def __init__(self, *args, **kwargs):
         SubOptionParser.__init__(self, *args, **kwargs)
         self.add_option("--string", help="String", dest="stringfile")
-        self.add_option("-i", "--index", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index",
                 help="get string at INDEX")
         self.add_option("-t", "--type", dest="type",
                 help="get mission string of specific type, either 'advice', 'description', 'lose' or 'win'")
@@ -319,7 +319,7 @@ class StringOptionParser(SubOptionParser):
         if self.options.size:
             print str.size
         elif self.options.index:
-            index = int(self.options.index)
+            index = self.options.index
             if self.options.type:
                 type = None
                 if self.options.type == 'advice':
