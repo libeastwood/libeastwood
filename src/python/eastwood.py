@@ -131,6 +131,41 @@ class CpsOptionParser(SurfaceOptionParser):
 
         self.surface = cps.getSurface()
 
+class IcnOptionParser(SurfaceOptionParser):
+    def __init__(self, *args, **kwargs):
+        SurfaceOptionParser.__init__(self, *args, **kwargs)
+        self.add_option("--icn", help="ICN", dest="icnfile")
+        self.add_option("-m", "--map", help="Tile map", dest="mapfile")
+        self.add_option("-i", "--index", dest="index",
+                help="get surface at INDEX")
+        self.add_option("-t", "--tiles", help="Get tiled surface from map index TILES",
+                dest="tiles")
+        self.add_option("-f", "--framebyframe", action="store_true", default=False,
+                help="Create all frames to use for animation", dest="framebyframe")
+
+
+    def process(self):
+        SurfaceOptionParser.process(self)
+
+        if self.options.mapfile:
+            f = openFile(self.options.mapfile)
+            self.map = MapFile(f.read())
+            f.close()
+        else:
+            self.error("Tile map (--map) is required")
+
+        if not (self.options.index or self.options.tiles):
+            self.error("An index or size & tiles list is required")
+
+        f = openFile(self.options.icnfile)
+        icn = IcnFile(f.read(), self.map, self.palette)
+        f.close()
+
+        if self.options.index:
+            self.surface = icn.getSurface(int(self.options.index))
+        elif self.options.tiles:
+            self.surface = icn.getTiles(int(self.options.tiles), self.options.framebyframe)
+
 class ShpOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
@@ -144,8 +179,8 @@ class ShpOptionParser(SurfaceOptionParser):
     def process(self):
         SurfaceOptionParser.process(self)
 
-        if not self.options.index or (self.options.size and self.options.tiles):
-            parser.error("An index or size & tiles list is required")
+        if not (self.options.index or (self.options.size and self.options.tiles)):
+            self.error("An index or size & tiles list is required")
 
         f = openFile(self.options.shpfile)
         shp = ShpFile(f.read(), self.palette)
@@ -221,6 +256,8 @@ def main():
             help="Options for PAK files")
     parser.add_option("--cps", dest="cps", action="store_true", default=False,
             help="Options for CPS files")
+    parser.add_option("--icn", dest="icn", action="store_true", default=False,
+            help="Options for ICN files")
     parser.add_option("--shp", dest="shp", action="store_true", default=False,
             help="Options for SHP files")
     parser.add_option("--wsa", dest="wsa", action="store_true", default=False,
@@ -240,6 +277,8 @@ def main():
         subParser = PakOptionParser()
     elif options.cps:
         subParser = CpsOptionParser()
+    elif options.icn:
+        subParser = IcnOptionParser()
     elif options.shp:
         subParser = ShpOptionParser()
     elif options.wsa:
