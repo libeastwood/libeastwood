@@ -39,7 +39,7 @@ class SurfaceOptionParser(SubOptionParser):
         SubOptionParser.__init__(self, *args, **kwargs)
         self.add_option("-p", "--pal", help="PAL", dest="palfile")
         self.add_option("--scale", dest="scale", help="Scale graphics using " \
-                "either 2x, 2x3, 2x4, 3x or 4x")
+                "either '2x', '2x3', '2x4', '3x' or '4x'")
         self.palette = None
         self.surface = None
 
@@ -245,6 +245,44 @@ class EmcOptionParser(SubOptionParser):
         out.write(emc.get())
         out.close()
 
+class StringOptionParser(SubOptionParser):
+    def __init__(self, *args, **kwargs):
+        SubOptionParser.__init__(self, *args, **kwargs)
+        self.add_option("--string", help="String", dest="stringfile")
+        self.add_option("-i", "--index", dest="index",
+                help="get string at INDEX")
+        self.add_option("-t", "--type", dest="type",
+                help="get mission string of specific type, either 'advice', 'description', 'lose' or 'win'")
+        self.add_option("-n", action="store_true", default=False,
+                dest="size", help="get number of strings")
+
+    def process(self):
+        SubOptionParser.process(self)
+
+        f = openFile(self.options.stringfile)
+        str = StringFile(f.read())
+        f.close()
+
+        if self.options.size:
+            print str.size
+        elif self.options.index:
+            index = int(self.options.index)
+            if self.options.type:
+                type = None
+                if self.options.type == 'advice':
+                    type = MISSION_ADVICE
+                elif self.options.type == 'description':
+                    type = MISSION_DESCRIPTION
+                elif self.options.type == 'lose':
+                    type = MISSION_LOSE
+                elif self.options.type == 'win':
+                    type = MISSION_WIN
+                else:
+                    self.error("Invalid mission type: %s" % self.options.type)
+                print str.getMissionString(index, type)
+            else:
+                print str.getString(index)
+
 def main():
     usage = "usage: %prog [options] arg"
     palette = None
@@ -264,6 +302,9 @@ def main():
             help="Options for WSA files")
     parser.add_option("--emc", dest="emc", action="store_true", default=False,
             help="Options for EMC files")
+    parser.add_option("--string", dest="string", action="store_true", default=False,
+            help="Options for string files")
+
 
 
     if len(sys.argv) == 1:
@@ -285,6 +326,9 @@ def main():
         subParser = WsaOptionParser()
     elif options.emc:
         subParser = EmcOptionParser()
+    elif options.string:
+        subParser = StringOptionParser()
+
     else:
         error("Invalid option: %s" % locargs[0])
 
