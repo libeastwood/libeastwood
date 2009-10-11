@@ -34,6 +34,59 @@ class SubOptionParser(OptionParser):
     def postProcess(self):
         pass
 
+class SoundOptionParser(SubOptionParser):
+    def __init__(self, *args, **kwargs):
+        SubOptionParser.__init__(self, *args, **kwargs)
+        resample = OptionGroup(self, "Resampling options")
+        resample.add_option("--resample", dest="resample", help="Resample sound " \
+                "using either 'linear', 'zero_order_hold', 'sinc_fastest', 'sinc_medium_quality', or 'sinc_best_quality'")
+        resample.add_option("-f", "--frequency", type="int", dest="frequency", help="Resample to FREQUENCY hz");
+        resample.add_option("-c", "--channels", type="int", dest="channels", help="Resample to CHANNELS channels")
+        resample.add_option("-F", "--format", dest="format", help="Resample to FORMAT format, " \
+                "either u8, s16be or s16le")
+        self.add_option_group(resample)
+        self.sound = None
+
+    def postProcess(self):
+        SubOptionParser.postProcess(self)
+        if self.sound and self.options.output:
+            if self.options.resample:
+                if self.options.channels:
+                    channels = self.options.channels
+                else:
+                    channels = self.sound.channels
+                if self.options.frequency:
+                    frequency = self.options.frequency
+                else:
+                    frequency = self.sound.frequency
+                format = self.sound.format
+                if self.options.format:
+                   if self.options.format == "u8":
+                       format = FMT_U8
+                   elif self.options.format == "s16be":
+                       format = FMT_S16BE
+                   elif self.options.format == "s16le":
+                       format = FMT_S16LE
+                   else:
+                       self.error("Unsupported format: %s" % self.options.format)
+                interpolator = None
+                if self.options.resample == "linear":
+                    interpolator = I_LINEAR
+                elif self.options.resample == "zero_order_hold":
+                    interpolator = I_ZERO_ORDER_HOLD
+                elif self.options.resample == "sinc_fastest":
+                    interpolator = I_SINC_FASTEST
+                elif self.options.resample == "sinc_medium_quality":
+                    interpolator = I_SINC_MEDIUM_QUALITY
+                elif self.options.resample == "sinc_best_quality":
+                    interpolator = I_SINC_BEST_QUALITY
+                else:
+                    parser.error("Invalid resampler: %s" % self.options.resample)
+                self.sound = self.sound.getResampled(channels, frequency, format, interpolator)
+            out = open(self.options.output, "w")
+            out.write(self.sound.saveWAV())
+            out.close()
+
 class SurfaceOptionParser(SubOptionParser):
     def __init__(self, *args, **kwargs):
         SubOptionParser.__init__(self, *args, **kwargs)
@@ -283,6 +336,20 @@ class StringOptionParser(SubOptionParser):
             else:
                 print str.getString(index)
 
+class VocOptionParser(SoundOptionParser):
+    def __init__(self, *args, **kwargs):
+        SoundOptionParser.__init__(self, *args, **kwargs)
+        self.add_option("--voc", help="VOC", dest="vocfile")
+
+    def process(self):
+        SoundOptionParser.process(self)
+
+        f = openFile(self.options.vocfile)
+        voc = VocFile(f.read())
+        f.close()
+
+        self.sound = voc.getSound()
+
 def main():
     usage = "usage: %prog [options] arg"
     palette = None
@@ -304,8 +371,8 @@ def main():
             help="Options for EMC files")
     parser.add_option("--string", dest="string", action="store_true", default=False,
             help="Options for string files")
-
-
+    parser.add_option("--voc", dest="voc", action="store_true", default=False,
+            help="Options for VOC files")
 
     if len(sys.argv) == 1:
         locargs = ["--help"]
@@ -328,7 +395,8 @@ def main():
         subParser = EmcOptionParser()
     elif options.string:
         subParser = StringOptionParser()
-
+    elif options.voc:
+        subParser = VocOptionParser()
     else:
         error("Invalid option: %s" % locargs[0])
 
