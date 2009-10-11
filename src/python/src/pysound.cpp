@@ -16,8 +16,12 @@ Sound_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *
 {
     Py_Sound *self = NULL;
     self = (Py_Sound *)type->tp_alloc(type, 0);
-    if (self != NULL)
+    if (self != NULL) {
 	self->sound = reinterpret_cast<Sound*>(args);
+	self->channels = self->sound->channels();
+	self->frequency = self->sound->frequency();
+	self->format = self->sound->format();
+    }
 
     return (PyObject *)self;
 }
@@ -94,6 +98,13 @@ static PyMethodDef Sound_methods[] = {
     {NULL, NULL, 0, NULL}		/* sentinel */
 };
 
+static PyMemberDef Sound_members[] = {
+    {const_cast<char*>("channels"), T_UBYTE, offsetof(Py_Sound, channels), RO, NULL},
+    {const_cast<char*>("frequency"), T_UINT, offsetof(Py_Sound, frequency), RO, NULL},
+    {const_cast<char*>("format"), T_INT, offsetof(Py_Sound, format), RO, NULL},
+    {NULL, 0, 0, 0, NULL}
+};
+
 PyTypeObject Sound_Type = {
     PyObject_HEAD_INIT(NULL)
     0,						/*ob_size*/
@@ -124,7 +135,7 @@ PyTypeObject Sound_Type = {
     0,						/*tp_iter*/
     0,						/*tp_iternext*/
     Sound_methods,				/*tp_methods*/
-    0,						/*tp_members*/
+    Sound_members,				/*tp_members*/
     0,						/*tp_getset*/
     0,                      			/*tp_base*/
     0,                      			/*tp_dict*/

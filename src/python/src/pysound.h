@@ -6,6 +6,9 @@
 struct Py_Sound {
     PyObject_HEAD
     eastwood::Sound *sound;
+    uint8_t channels;
+    uint32_t frequency;
+    eastwood::AudioFormat format;
 };
 
 extern PyTypeObject Sound_Type;
