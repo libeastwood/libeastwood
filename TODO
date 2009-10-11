@@ -1,6 +1,5 @@
 Requirements for next milestone:
 * Refactorize code (especially favor C++ STL over C etc.)
-* Implement python bindings
 * Update and document the API properly
 * Sanitize constructors, destructors and overload various recommended operators etc.
 
