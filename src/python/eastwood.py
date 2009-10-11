@@ -254,24 +254,62 @@ class WsaOptionParser(SurfaceOptionParser):
         self.add_option("-W", "--wsa", help="WSA", dest="wsafile")
         self.add_option("-i", "--index", type="int", dest="index",
                 help="get surface at INDEX")
-        self.add_option("--all", help="Save all frames to several files in format ALL-n.bmp", dest="all")    
+        self.add_option("--all", dest="all",
+                help="Save all frames to several files in format ALL-n.bmp")
+        self.add_option("-c", "--continue", dest="cont", action="append",
+                help="Continue animation starting from last frame of previous animation")
+        self.add_option("-n", action="store_true", default=False,
+                dest="size", help="get number of strings")
 
     def process(self):
         SurfaceOptionParser.process(self)
 
-        if not self.options.index or self.options.all:
-            parser.error("An index or --all argument is required")
+        if not (self.options.index or self.options.all or self.options.size):
+            self.error("An index or --all argument is required")
 
-        f = openFile(self.options.shpfile)
+        f = openFile(self.options.wsafile)
         wsa = WsaFile(f.read(), self.palette)
         f.close()
 
-        if self.options.index:
-            self.surface = wsa.getSurface(self.options.index)
+        surfaces = []
+        size = wsa.size
+        for i in xrange(wsa.size):
+            surfaces.append(wsa.getSurface(i))
+
+        if self.options.cont:
+            for cont in self.options.cont:
+                f = openFile(cont)
+                wsa = WsaFile(f.read(), self.palette, surfaces[len(surfaces)-1])
+                f.close()
+                size += wsa.size
+                for i in xrange(wsa.size):
+                    surfaces.append(wsa.getSurface(i))
+
+        if self.options.size:
+            print size
+        elif self.options.index:
+            self.surface = surfaces[self.options.index]
         elif self.options.all:
-            for i in xrange(wsa.size):
-                f = os.open("%-%.2d.bmp", "w")
-                f.write(wsa.getSurface(i).saveBMP())
+            scaler = None
+            if self.options.scale:
+                if self.options.scale == "2x":
+                    scaler = Scale2X
+                elif self.options.scale == "2x3":
+                    scaler = Scale2X3
+                elif self.options.scale == "2x4":
+                    scaler = Scale2X4
+                elif self.options.scale == "3x":
+                    scaler = Scale3X
+                elif self.options.scale == "4x":
+                    scaler = Scale4X
+                else:
+                    self.error("Invalid scaler: %s" % self.options.scale)
+            for i in xrange(len(surfaces)):
+                f = open("%s-%.2d.bmp" % (self.options.all, i), "w")
+                surface = surfaces[i]
+                if scaler:
+                    surface = surface.getScaled(scaler)
+                f.write(surface.saveBMP())
                 f.close()
 
 class EmcOptionParser(SubOptionParser):
