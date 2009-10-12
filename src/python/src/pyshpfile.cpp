@@ -6,6 +6,7 @@
 #include <structmember.h>
 
 #include "eastwood/StdDef.h"
+#include "eastwood/Exception.h"
 #include "eastwood/ShpFile.h"
 #include "eastwood/Palette.h"
 
@@ -39,7 +40,12 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
 	return -1;
     }
 
-    self->shpFile = new ShpFile(*self->stream, *((Py_Palette*)palObject)->palette);
+    try {
+    	self->shpFile = new ShpFile(*self->stream, *((Py_Palette*)palObject)->palette);
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	goto error;
+    }
     self->size = self->shpFile->size();
 
     PyBuffer_Release(&pdata);
