@@ -5,6 +5,7 @@
 #include <structmember.h>
 
 #include "eastwood/StdDef.h"
+#include "eastwood/Exception.h"
 #include "eastwood/Surface.h"
 
 #include "pysurface.h"
@@ -63,7 +64,12 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
     //TODO: throw exception
     if(!self->surface->scalePrecondition(scaler))
 	return NULL;
-    scaled = new Surface(self->surface->getScaled(scaler));
+    try {
+    	scaled = new Surface(self->surface->getScaled(scaler));
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    }
 
     return Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(scaled), NULL);
 }
@@ -84,7 +90,13 @@ Surface_saveBMP(Py_Surface *self)
 	return NULL;
     }
 
-    self->surface->saveBMP(output);
+    try {
+    	self->surface->saveBMP(output);
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    }
+
     std::string buf = rdbuf.str();
     PyObject *ret = PyString_FromStringAndSize(buf.c_str(), buf.size());
     return ret;

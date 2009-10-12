@@ -6,6 +6,7 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/CpsFile.h"
+#include "eastwood/Exception.h"
 #include "eastwood/Palette.h"
 
 #include "pycpsfile.h"
@@ -43,7 +44,12 @@ CpsFile_init(Py_CpsFile *self, PyObject *args)
 	palette = *((Py_Palette*)palObject)->palette;
     }
 
-    self->cpsFile = new CpsFile(*self->stream, palette);
+    try {
+    	self->cpsFile = new CpsFile(*self->stream, palette);
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	goto error;
+    }
 
     PyBuffer_Release(&pdata);
     return 0;
@@ -84,7 +90,13 @@ Returns a Surface object.\n\
 static PyObject *
 CpsFile_getSurface(Py_CpsFile *self)
 {
-    Surface *surface = new Surface(self->cpsFile->getSurface());
+    Surface *surface;
+    try {
+       surface = new Surface(self->cpsFile->getSurface());
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    }
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
