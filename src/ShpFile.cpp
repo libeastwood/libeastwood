@@ -28,6 +28,9 @@ ShpFile::~ShpFile()
 
 void ShpFile::readIndex()
 {
+    uint32_t fileSize = _stream.sizeg();
+    uint16_t offset = 0;
+
     // First get number of files in shp-file
     _size = _stream.getU16LE();
 
@@ -35,17 +38,12 @@ void ShpFile::readIndex()
 	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this SHP-File!"));
     }
 
-    uint32_t fileSize = _stream.sizeg();
-
-    /* File contains more than one image */
 
     if( fileSize < (uint32_t) ((_size * 4) + 2 + 2)) {
 	char error[256];
 	sprintf(error, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize);
 	throw(Exception(LOG_ERROR, "ShpFile", error));
     }
-
-    uint16_t offset = 0;
 
     _index.at(0).startOffset = _stream.getU16LE();
     _index.at(0).endOffset = _stream.getU16LE();
