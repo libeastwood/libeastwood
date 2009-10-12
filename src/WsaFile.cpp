@@ -1,5 +1,6 @@
 #include <vector>
 #include <stdexcept>
+#include <iostream>
 
 #include "eastwood/StdDef.h"
 
@@ -16,7 +17,7 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     Decode(stream, 0, 0, palette), _frameOffsTable(0),
     _decodedFrames(0), _deltaBufferSize(0), _framesPer1024ms(0)
 {
-    LOG_INFO("WsaFile", "Loading wsa with size %d...", bufSize);
+    uint32_t frameDataOffs;
 
     _decodedFrames.resize(_stream.getU16LE());
     LOG_INFO("WsaFile", "numframes = %d", _decodedFrames.size());
@@ -25,9 +26,18 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     _height = _stream.getU16LE();
     LOG_INFO("WsaFile", "size %d x %d", _width, _height);
 
-    _deltaBufferSize = _stream.getU32LE();
+    _deltaBufferSize = _stream.getU16LE();
+    // "Regular" WSA files shipped with the Dune 2 demo version does not have
+    // 2 bytes padding here...
+    if(_stream.getU16LE())
+	_stream.seekg(-2, std::ios::cur);
 
-    uint32_t frameDataOffs = _stream.getU32LE();
+    frameDataOffs = _stream.getU16LE();
+    // "Continue" WSA files shipped with the Dune 2 demo version does not have
+    // 2 bytes padding here...
+    if(_stream.getU16LE())
+	_stream.seekg(-2, std::ios::cur);
+
     if (frameDataOffs == 0) {
 	frameDataOffs = _stream.getU32LE();
 	_decodedFrames.pop_back();
