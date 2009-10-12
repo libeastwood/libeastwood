@@ -251,8 +251,8 @@ class TestEmcFile(unittest.TestCase):
     def _test_type(self, filename, typename):
         self.pak.open(filename)
 
-        disassembled = EmcFile(self.pak.read(), EMC_DISASSEMBLE)
-        assembled = EmcFile(disassembled.get(), EMC_ASSEMBLE)
+        disassembled = EmcFile(self.pak.read(), 'd')
+        assembled = EmcFile(disassembled.get(), 'a')
 
         self.assertEqual(disassembled.type, typename)
         self.assertEqual(assembled.type, typename)
@@ -273,8 +273,8 @@ class TestEmcFile(unittest.TestCase):
         sizeOrig = len(fileOrig)
         md5Orig = md5(fileOrig).hexdigest()
         
-        disassembled = EmcFile(fileOrig, EMC_DISASSEMBLE)
-        assembled = EmcFile(disassembled.get(), EMC_ASSEMBLE)
+        disassembled = EmcFile(fileOrig, 'd')
+        assembled = EmcFile(disassembled.get(), 'a')
 
         fileResult = assembled.get()
         sizeResult = len(fileResult)
@@ -686,6 +686,108 @@ class TestSurface(unittest.TestCase):
             self.assertEqual(len(pixels), knowngood[s][2])
             self.assertEqual(md5(pixels).hexdigest(), knowngood[s][3])
 
+class TestWsaFile(unittest.TestCase):
+    
+    def setUp(self):
+        pak = PakFile('DUNE2/DUNE.PAK')
+        pak.open("IBM.PAL")
+        self.pal = PalFile(pak.read()).getPalette()
+        self.pak = PakFile('DUNE2/INTRO.PAK')
+        self.pak.open("INTRO8A.WSA")
+        self.wsa = WsaFile(self.pak.read(), self.pal)
+        self.pak.close()
+
+    def test_regular(self):
+        knowngood = (
+                '9148651e7f2e8b794ab796a053c6cf88',
+                'd54c1a08f0e009b280102c9ed36bfe98',
+                '9ba1ff38a3c61bbf75992aa501fe340e',
+                'd65eaa080de4bc876f894d075b0c387d',
+                'd032da79612bcf24624cb43527fcfbdc',
+                '6c88e31eada690c894cf591a1a7622b7',
+                'bb07b793fc540aa88f999c3458807bd9',
+                'dfc9ed7aec16102ffd310b0fe2ab4c36',
+                'a7a96ea4fbdbc56efb316305c43d3aed',
+                '5c71c825b0b63959704bbee655e0207b',
+                '9cf259ada755e3a895f0921f62bf0104',
+                '91207d05f95a83e8d51013073b6f9741',
+                '26eef82435b6d153fbbc3178c854ac97',
+                '52f2c5d80aaf14274bb6de8519b5c6f0',
+                'e428f385d3569494050b214fe71f861a',
+                'efa7cc26e0fbb49f2961a880ce7efe63'
+                )
+
+        for i in xrange(self.wsa.size):
+            surface = self.wsa.getSurface(i)
+            self.assertEqual(knowngood[i], md5(surface.getPixels()).hexdigest())
+
+    def test_continuation(self):
+        knowngood = (
+                'efa7cc26e0fbb49f2961a880ce7efe63',
+                '94409132c59b6de44f481472b69905e1',
+                '04e59ba5a71e84463b02bff1223780ac',
+                '3d56cff2383305dfc71ee64895c467f7',
+                'b16318250d082bb6ecc495cb2e7dd27b',
+                '7343fb4b9c4f95c0ab3d6b4139e37ce5',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '9f4aacff8879eb4896eedab5a4bfe7bd',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '9f4aacff8879eb4896eedab5a4bfe7bd',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                'b0c90452f5e09bbd7073d1c4d52a18b3',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '98ed228bca34c12324ad1906e9bf9cce',
+                'ee902ee7e9936208fea91b673d1264d3',
+                '69e1d88083b5a669e2859dccad1060b2',
+                '8887132f083c424b8d8bcf1096b4b961',
+                'decaf4a3d73ff970fc8dfb69cb13a1fb'
+                )
+
+        firstFrame = self.wsa.getSurface(self.wsa.size-1)
+        self.pak.open("INTRO8B.WSA")
+        wsa = WsaFile(self.pak.read(), self.pal, firstFrame)
+
+        for i in xrange(wsa.size):
+            surface = wsa.getSurface(i)
+            self.assertEqual(knowngood[i], md5(surface.getPixels()).hexdigest())
+
+        knowngood = (
+                '8887132f083c424b8d8bcf1096b4b961',
+                '756c1e380466a477f6d00c12b0af0319',
+                '9f4aacff8879eb4896eedab5a4bfe7bd',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '759bbe71c0de82b1c420119ac44a51c0',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '9f4aacff8879eb4896eedab5a4bfe7bd',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '9f4aacff8879eb4896eedab5a4bfe7bd',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '9f4aacff8879eb4896eedab5a4bfe7bd',
+                '8be159aa073d908cc6bddf0d4d8a63d2',
+                '9149e977c8261b698f455fc22b87c282',
+                '4fd6e1e8a40c73fba602d7c47d74dbab',
+                '8887132f083c424b8d8bcf1096b4b961',
+                'decaf4a3d73ff970fc8dfb69cb13a1fb',
+                'decaf4a3d73ff970fc8dfb69cb13a1fb',
+                '360618cdf6dcf3644f015dd566f92778',
+                '0d9d5f977830d94a4c5916a5f33448d8',
+                'eefb81863e8cc8d52a0569c923083f27',
+                '5cf83dd9774e99ba314b83500d82d6c6',
+                '438ae44276dc340e746a449d6942e672',
+                '2c1ea49a32108c645c2909b8d8509114',
+                '33a5ffc431b49e412f7c3f5a94ad451e',
+                '411051ebc57d5e68c6fcf9a8d3f6c05d',
+                '6e74c63ce0963d57205c487b3acd1675',
+                'a7ad32ea739d0b399aaa7eeab80532be',
+                'de72c93b133e67775c1b756d55a0aa4e'
+                )
+        firstFrame = wsa.getSurface(wsa.size-1)
+        self.pak.open("INTRO8C.WSA")
+        wsa = WsaFile(self.pak.read(), self.pal, firstFrame)
+
+        for i in xrange(wsa.size):
+            surface = wsa.getSurface(i)
+            self.assertEqual(knowngood[i], md5(surface.getPixels()).hexdigest())
 
 def test_main():
     from test import test_support
@@ -700,6 +802,7 @@ def test_main():
     test_support.run_unittest(TestStringFile)
     test_support.run_unittest(TestSurface)
     test_support.run_unittest(TestVocFile)
+    test_support.run_unittest(TestWsaFile)
 
 if __name__ == "__main__":
     test_main()
