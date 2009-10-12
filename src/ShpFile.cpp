@@ -32,55 +32,46 @@ void ShpFile::readIndex()
     _size = _stream.getU16LE();
 
     if(_size == 0) {
-	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this shp-File!"));
+	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this SHP-File!"));
     }
 
-    if(_size == 1) {
-	uint16_t start = _stream.getU16LE(),
-		 end = _stream.getU16LE();
-	/* files with only one image might be different */
-	if (end != 0) {
-	    /* File has special header with only 2 byte offset */
+    uint32_t fileSize = _stream.sizeg();
 
-	    _index.at(0).startOffset = start;
-	    _index.at(0).endOffset = end-1;
+    /* File contains more than one image */
 
+    if( fileSize < (uint32_t) ((_size * 4) + 2 + 2)) {
+	char error[256];
+	sprintf(error, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize);
+	throw(Exception(LOG_ERROR, "ShpFile", error));
+    }
 
-	} else {
-	    /* File has normal 4 byte offsets */
-	    _index.at(0).startOffset = start;
-	    _index.at(0).endOffset = end - 1 + 2;
-	}
+    uint16_t offset = 0;
 
-    } else {
-    	uint32_t fileSize = _stream.sizeg();
+    _index.at(0).startOffset = _stream.getU16LE();
+    _index.at(0).endOffset = _stream.getU16LE();
 
-	/* File contains more than one image */
+    if (_index.at(0).endOffset == 0) {
+	_index.at(0).startOffset += offset = 2;
+	_index.at(0).endOffset = _stream.getU16LE() + offset;
+    }
+    _index.at(0).endOffset -= 1;
 
-	if( fileSize < (uint32_t) ((_size * 4) + 2 + 2)) {
-	    char error[256];
-	    sprintf(error, "Shp-File-Header is not complete! Header should be %d bytes big, but Shp-File is only %d bytes long.",(_size * 4) + 2 + 2, fileSize);
-	    throw(Exception(LOG_ERROR, "ShpFile", error));
-	}
-
+    if(_size > 1) {
 	_index.resize(_size);
 
 	// now fill Index with start and end-offsets
-	for(int i = 0; i < _size; i++) {
-	    _index.at(i).startOffset = _stream.getU32LE() + 2;
+	for(uint16_t i = 1; i < _size; i++) {
+	    _index.at(i).startOffset = _index.at(i-1).endOffset + 1;
+	    _stream.ignore(offset);
+	    _index.at(i).endOffset = _stream.getU16LE() - 1 + offset;
 
-	    if(i > 0) {
+	    if(_index.at(i).endOffset > fileSize) {
 		char error[256];
-		_index.at(i-1).endOffset = _index.at(i).startOffset - 1;
 		sprintf(error, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
-			i, _index.at(i-1).endOffset, fileSize);
-		if(_index.at(i-1).endOffset > fileSize)
-		    throw(Exception(LOG_ERROR, "ShpFile", error));
+			i, _index.at(i).endOffset, fileSize);
+		throw(Exception(LOG_ERROR, "ShpFile", error));
 	    }
 	}
-
-	// Add the endOffset for the last file
-	_index.at(_size-1).endOffset = _stream.getU16LE() - 1 + 2;
     }
 }
 
