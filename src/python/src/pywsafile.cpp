@@ -41,12 +41,12 @@ WsaFile_init(Py_WsaFile *self, PyObject *args)
     }
     if(!PyObject_TypeCheck(palObject, &Palette_Type)) {
 	PyErr_SetString(PyExc_TypeError, "Second argument must be a Palette object");
-	return -1;
+	goto error;
     }
     if(frameObject) {
 	if(!PyObject_TypeCheck(frameObject, &Surface_Type)) {
     	    PyErr_SetString(PyExc_TypeError, "If given, third argument must be a Surface object");
-    	    return -1;
+    	    goto error;
 	}
 	firstFrame = *((Py_Surface*)frameObject)->surface;
     }	
@@ -55,7 +55,7 @@ WsaFile_init(Py_WsaFile *self, PyObject *args)
     	self->wsaFile = new WsaFile(*self->stream, *((Py_Palette*)palObject)->palette, firstFrame);
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return -1;
+	goto error;
     }
 
     self->size = self->wsaFile->size();
