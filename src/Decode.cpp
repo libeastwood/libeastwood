@@ -66,6 +66,9 @@ int Decode::decode80(uint8_t *image_out, uint32_t checksum)
 	    // 0cccpppp p (1) 
 	    count = ((command & 0x70) >> 4) + 3;
 	    pos = (command  & 0xf) << 8 | _stream.get();
+	    //FIXME: This happens at least with WSA animations from Dune 2 demo...
+	    if(writep - pos < image_out)
+		throw(Exception(LOG_ERROR, "Decode", "Decode80 position is outside memory area (format probably not supported yet)"));
 	    //printf("Cmd 1(0x%x), count: %d, pos: %d\n", command, count, pos);
 	    my_memcpy(writep, writep - pos, count);
 	    writep += count;
