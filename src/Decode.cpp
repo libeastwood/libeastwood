@@ -1,5 +1,3 @@
-#include <SDL/SDL_video.h>
-
 #include "eastwood/StdDef.h"
 
 #include "eastwood/Decode.h"
