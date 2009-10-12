@@ -46,20 +46,7 @@ bool EmcFileAssemble::headerCreate() {
 
     buffer += 0x3;
 
-    // Not sure what these values' means yet, so i copied them from each different script
-    switch(_scriptType) {
-	case script_BUILD:
-    	    *buffer = 0x2E04;
-	    break;
-	case script_UNIT:
-    	    *buffer = 0x6A15;
-	    break;
-	case script_TEAM:
-    	    *buffer = 0x5A01;
-	    break;
-	default:
-	    return false;
-    }
+    *buffer = htobe16(_scriptSize + (_pointerCount*2) + 0x1C);
 
     // 0x6 is WORDS, not bytes like 0x10 above
     buffer += 0x6;
