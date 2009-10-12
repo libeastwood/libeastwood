@@ -88,10 +88,17 @@ static PyObject *
 ShpFile_getSurface(Py_ShpFile *self, PyObject *args)
 {
     uint16_t index;
+    Surface *surface;
     if (!PyArg_ParseTuple(args, "H", &index))
 	return NULL;
 
-    Surface *surface = new Surface(self->shpFile->getSurface(index));
+    try {
+    	surface = new Surface(self->shpFile->getSurface(index));
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    }
+
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
@@ -108,6 +115,7 @@ ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
     PyObject *array = NULL;
     uint8_t x = 0,
 	    y = 0;
+    Surface *surface;
     if (!PyArg_ParseTuple(args, "BBO", &x, &y, &array))
 	return NULL;
     if(!PyTuple_Check(array)) {
@@ -122,7 +130,13 @@ ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
 	tiles[i] = PyInt_AsLong(item);
     }
 
-    Surface *surface = new Surface(self->shpFile->getSurfaceArray(x,y, &tiles.front()));
+    try {
+    	surface = new Surface(self->shpFile->getSurfaceArray(x,y, &tiles.front()));
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    }
+
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
