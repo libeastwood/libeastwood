@@ -9,6 +9,7 @@
 
 #include "eastwood/StdDef.h"
 #include "eastwood/WsaFile.h"
+#include "eastwood/Exception.h"
 #include "eastwood/Palette.h"
 
 #include "pywsafile.h"
@@ -50,7 +51,13 @@ WsaFile_init(Py_WsaFile *self, PyObject *args)
 	firstFrame = *((Py_Surface*)frameObject)->surface;
     }	
 
-    self->wsaFile = new WsaFile(*self->stream, *((Py_Palette*)palObject)->palette, firstFrame);
+    try {
+    	self->wsaFile = new WsaFile(*self->stream, *((Py_Palette*)palObject)->palette, firstFrame);
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return -1;
+    }
+
     self->size = self->wsaFile->size();
     self->fpms = self->wsaFile->getFramesPer1024ms();
 
