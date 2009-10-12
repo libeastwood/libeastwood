@@ -207,10 +207,10 @@ class IcnOptionParser(SurfaceOptionParser):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
         self.add_option("--icn", help="ICN", dest="icnfile")
         self.add_option("-m", "--map", help="Tile map", dest="mapfile")
-        self.add_option("-i", "--index", type="int", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index", default=None,
                 help="get surface at INDEX")
-        self.add_option("-t", "--tiles", help="Get tiled surface from map index TILES",
-                dest="tiles")
+        self.add_option("-t", "--tiles", type="int", dest="tiles", default=None,
+                help="Get tiled surface from map index TILES")
         self.add_option("-f", "--framebyframe", action="store_true", default=False,
                 help="Create all frames to use for animation", dest="framebyframe")
         self.add_option("-n", action="store_true", default=False,
@@ -226,7 +226,7 @@ class IcnOptionParser(SurfaceOptionParser):
         else:
             self.error("Tile map (--map) is required")
 
-        if not (self.options.index or self.options.tiles or self.options.size):
+        if not (self.options.index != None or self.options.tiles != None or self.options.size):
             self.error("An index, size & tiles list or -n argument is required")
 
         f = openFile(self.options.icnfile)
@@ -235,27 +235,27 @@ class IcnOptionParser(SurfaceOptionParser):
 
         if self.options.size:
             print icn.size
-        elif self.options.index:
+        elif self.options.index != None:
             self.surface = icn.getSurface(self.options.index)
-        elif self.options.tiles:
+        elif self.options.tiles != None:
             self.surface = icn.getTiles(self.options.tiles, self.options.framebyframe)
 
 class ShpOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
         self.add_option("--shp", help="SHP", dest="shpfile")
-        self.add_option("-i", "--index", type="int", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index", default=None,
                 help="get surface at INDEX")
         self.add_option("--size", help="Size in format pictures WxH", dest="shpsize")
-        self.add_option("--tiles", help="What tiles to use, a list of indexes in the form n,n,...,n",
-                dest="tiles")
+        self.add_option("--tiles", type="int", dest="tiles", default=None,
+                help="What tiles to use, a list of indexes in the form n,n,...,n")
         self.add_option("-n", action="store_true", default=False,
                 dest="size", help="get number of pictures")
 
     def process(self):
         SurfaceOptionParser.process(self)
 
-        if not (self.options.index or (self.options.shpsize and self.options.tiles) or self.options.size):
+        if not (self.options.index != None or (self.options.shpsize and self.options.tiles != None) or self.options.size):
             self.error("An index, size & tiles list or -n argument is required")
 
         f = openFile(self.options.shpfile)
@@ -264,9 +264,9 @@ class ShpOptionParser(SurfaceOptionParser):
 
         if self.options.size:
             print shp.size
-        elif self.options.index:
+        elif self.options.index != None:
             self.surface = shp.getSurface(self.options.index)
-        elif self.options.shpsize and self.options.tiles:
+        elif self.options.shpsize and self.options.tiles != None:
             w, h = self.options.shpsize.split("x")
             tiles = self.options.tiles.split(",")
             for i in xrange(len(tiles)):
@@ -277,7 +277,7 @@ class WsaOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
         self.add_option("-W", "--wsa", help="WSA", dest="wsafile")
-        self.add_option("-i", "--index", type="int", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index", default=None,
                 help="get surface at INDEX")
         self.add_option("--all", dest="all",
                 help="Save all frames to several files in format ALL-n.bmp")
@@ -289,7 +289,7 @@ class WsaOptionParser(SurfaceOptionParser):
     def process(self):
         SurfaceOptionParser.process(self)
 
-        if not (self.options.index or self.options.all or self.options.size):
+        if not (self.options.index != None or self.options.all or self.options.size):
             self.error("An index, --all or -n argument is required")
 
         f = openFile(self.options.wsafile)
@@ -312,7 +312,7 @@ class WsaOptionParser(SurfaceOptionParser):
 
         if self.options.size:
             print size
-        elif self.options.index:
+        elif self.options.index != None:
             self.surface = surfaces[self.options.index]
         elif self.options.all:
             scaler = None
@@ -365,7 +365,7 @@ class StringOptionParser(SubOptionParser):
     def __init__(self, *args, **kwargs):
         SubOptionParser.__init__(self, *args, **kwargs)
         self.add_option("--string", help="String", dest="stringfile")
-        self.add_option("-i", "--index", type="int", dest="index",
+        self.add_option("-i", "--index", type="int", dest="index", default=None,
                 help="get string at INDEX")
         self.add_option("-t", "--type", dest="type",
                 help="get mission string of specific type, either 'advice', 'description', 'lose' or 'win'")
@@ -381,8 +381,7 @@ class StringOptionParser(SubOptionParser):
 
         if self.options.size:
             print str.size
-        elif self.options.index:
-            index = self.options.index
+        elif self.options.index != None:
             if self.options.type:
                 type = None
                 if self.options.type == 'advice':
@@ -395,9 +394,9 @@ class StringOptionParser(SubOptionParser):
                     type = MISSION_WIN
                 else:
                     self.error("Invalid mission type: %s" % self.options.type)
-                print str.getMissionString(index, type)
+                print str.getMissionString(self.options.index, type)
             else:
-                print str.getString(index)
+                print str.getString(self.options.index)
 
 class VocOptionParser(SoundOptionParser):
     def __init__(self, *args, **kwargs):
