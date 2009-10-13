@@ -43,6 +43,8 @@ CpsFile::CpsFile(std::istream &stream, Palette palette) :
     	    _palette = pal.getPalette();
 	}
     }
+    else if(!_palette)
+	throw(Exception(LOG_ERROR, "CpsFile", "No palette provided as argument or embedded in CPS"));
 }
 
 CpsFile::~CpsFile()
