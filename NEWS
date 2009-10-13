@@ -1,0 +1,13 @@
+Version 0.3 - 13 October 2009, by Per Øyvind Karlsen
+
+* api and code in general cleaned up a *LOT*
+* python bindings and command line tool added
+* library is no longer dependent on SDL, SDL support is splitted into a separate libSDL_eastwood library
+* support for scale2x, scale2x3, scale2x4, scale3x & scale4x pixel art scalers added
+* parsing of DOS MZ format + reading of DUNE2.EXE data structures added
+* several other OPL emulators added
+* support for writing to and creating PAK archives added
+* support for writing to PAL format added
+* writing to WAV & BMP format added
+* support for several resamplers added
+* support for assembling and disassembling of EMC format added
