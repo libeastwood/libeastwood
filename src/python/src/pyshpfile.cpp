@@ -37,7 +37,7 @@ ShpFile_init(Py_ShpFile *self, PyObject *args)
     }
     if(!PyObject_TypeCheck(palObject, &Palette_Type)) {
 	PyErr_SetString(PyExc_TypeError, "Second argument must be a Palette object");
-	return -1;
+	goto error;
     }
 
     try {
