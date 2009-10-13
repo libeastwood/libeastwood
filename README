@@ -1,0 +1,50 @@
+This library is developed mainly with support for Dune 2 data to use by the
+Doon Lunacy (http://launchpad.net/doonlunacy) project in mind.
+The library is none the less written in a generic manner to make it flexible
+and useful enough for others as well, providing SDL classes, python bindings
+& a command line tool based on the bindings to handle these data formats.
+
+The library currently supports the following:
+* Archiving:
+** reading and writing of PAK format
+* Graphics:
+** reading of ICN + MAP format
+** reading of CPS format 
+** reading of SHP format (for both formats used by Dune 2 demo & other versions)
+** reading of WSA format (for both formats used by Dune 2 demo & other versions
+   and also (untested) WSA 2 format used by later Westwood games)
+** reading of PAL palette format
+** writing to BMP format
+** pixel art scaling using scale2x, scale2x3, scale2x4, scale3x & scale4x algorithms
+* Audio:
+** reading of VOC format
+** reading of ADL format (XMI, C55 & PCS in the works...)
+** several different OPL emulators, hardware OPL & disk writer plugin for midi playback
+** writing to WAV format
+** sample rate conversion using Secret Rabbit Code (aka libsamplerate)
+* Other:
+** reading of text string format used by Dune 2 (ie. CREDITS.ENG, TEXT.ENG etc.)
+** assembly & disassembly of EMC "script" format
+** reading of FNT format for font rendering
+** reading of DOS MZ format & various data structures used in DUNE2.EXE
+** reading and writing of Dune 2 INI format
+
+Full support for encoding to most of these formats is either planned or already
+in progress. Some of the formats also still lacks classes in the python
+bindings implementing the C++ library, but most will eventually be provided
+in the bindings where feasible...
+
+Support for data formats used by other Westwood games such as ie. C&C is
+planned, while support for other non-Westwood formats is fully possible
+if code and/or resources for implementing is provided.
+If you'd like to help out working on this or any other details you'd have
+interest in, I encourage you in creating your own branches @
+http://launchpad.net/libeastwood and proposing your code for merging,
+this is the definitely best way of contributing to and participating in this
+project, but patches on their own are always cheerfully accepted as well! :)
+
+Greetings and great thanks to everyone at the Dune Editings forums @
+http://forum.dune2k.com for providing great information and constantly helping
+out reverse engineer these! :o)
+
+Copyright (c) 2009 Per Øyvind Karlsen <peroyvind@mandriva.org>
