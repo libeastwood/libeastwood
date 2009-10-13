@@ -190,11 +190,11 @@ class Dune2File
 	Dune2File(ExeFile &stream);
 
 	D2ExeVersion getVersion() { return _version; }
-	D2ExeStructureData getStructureData(int index) { return _structureData[index]; }
-	D2ExeUnitData getUnitData(int index) { return _unitData[index]; }
-	D2ExeHouseData getHouseData(int index) { return _houseData[index]; }
-	D2ExeFileData getFileData(int index) { return _fileData[index]; }
-	D2ExeActionData getActionData(int index) { return _actionData[index]; }
+	D2ExeStructureData getStructureData(int index) { return _structureData.at(index); }
+	D2ExeUnitData getUnitData(int index) { return _unitData.at(index); }
+	D2ExeHouseData getHouseData(int index) { return _houseData.at(index); }
+	D2ExeFileData getFileData(int index) { return _fileData.at(index); }
+	D2ExeActionData getActionData(int index) { return _actionData.at(index); }
 
 	std::string stringGet(uint32_t p);
 
