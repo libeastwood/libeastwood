@@ -2,6 +2,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pyeastwood.so ${CMAKE_CURR
     POST_BUILD
     COMMAND ${PYTHON_EXECUTABLE}
     ARGS -c "import sys,os; os.environ['LDFLAGS']='-L${CMAKE_CACHEFILE_DIR}/src'; sys.argv.append('build'); sys.argv.append('-t'), sys.argv.append('${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/pyeastwood.dir'); sys.argv.append('--build-lib'); sys.argv.append('${CMAKE_CURRENT_BINARY_DIR}/lib'); from setup import *"
+    COMMAND touch ${LIBEASTWOOD_SOURCE_DIR}/python/CMakeLists.txt
     WORKING_DIRECTORY ${LIBEASTWOOD_SOURCE_DIR}/python
     DEPENDS eastwood
     VERBATIM
