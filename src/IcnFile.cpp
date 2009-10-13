@@ -80,8 +80,8 @@ void IcnFile::readHeader()
 
 void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 {
-    uint8_t *paletteStart = &(*_RPAL)[(*_RTBL)[index] << 4],
-	    *fileStart = &(*_SSET)[(index * ((_width * _height)>>1))];
+    uint8_t *paletteStart = &(*_RPAL).at((*_RTBL).at(index) << 4),
+	    *fileStart = &(*_SSET).at((index * ((_width * _height)>>1)));
 
     for(int y = 0; y < _height;y++, dest += pitch)
 	for(int x = 0; x < _width; x++) {
