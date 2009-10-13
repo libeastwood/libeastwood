@@ -22,11 +22,15 @@ enum	D2ExeVersion {
     D2_VERSIONS
 };
 
+struct Address {
+    uint16_t segment;
+    uint16_t offset;
+};
+
 static const
 int	D2ExeStructureEntries = 19,
 	D2ExeUnitEntries = 27,
 	D2ExeHouseEntries = 6,
-	D2ExeFileEntries = 671,
 	D2ExeActionEntries = 14;
 
 #include "eastwood/pragma-start.h"
@@ -200,8 +204,9 @@ class Dune2File
 
     private:
 	void detectDune2Version();
+	template <typename T>
+	void readData(std::vector<T> &data, const Address *offsets);
 	void readDataStructures();
-
 
 	ExeFile &_stream;
 	D2ExeVersion _version;

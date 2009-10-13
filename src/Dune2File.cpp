@@ -1,14 +1,8 @@
 #include "eastwood/StdDef.h"
-#include <iostream>
 
 #include "eastwood/Dune2File.h"
 
 namespace eastwood {
-
-struct Address {
-    uint16_t segment;
-    uint16_t offset;
-};
 
 static const Address
     D2ExeVersionOffset[D2_VERSIONS] = { {0x325f, 0xe}, {0x333a, 0x2}, {0x32fb, 0x2}, {0x3353, 0x2}, {0x334d, 0x2} },
@@ -24,7 +18,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _unitData(D2ExeUnitEntries),
     _houseData(D2ExeHouseEntries),
     _actionData(D2ExeActionEntries),
-    _fileData(D2ExeFileEntries)
+    _fileData(0)
 {
     detectDune2Version();
     readDataStructures();
@@ -44,6 +38,24 @@ void Dune2File::detectDune2Version()
     }
 }
 
+template <typename T>
+void Dune2File::readData(std::vector<T> &data, const Address *offsets)
+{
+    T empty;
+    memset(&empty, 0, sizeof(T));
+
+    _stream.seekSegOff(offsets[_version].segment, offsets[_version].offset);
+
+    while(_stream.good()) {
+	data.resize(data.size()+1);
+	_stream.read((char*)&data.back(), sizeof(T));
+	if(memcmp(&data.back(), &empty, sizeof(T)) == 0) {
+	    data.pop_back();
+	    break;
+	}
+    }
+}
+
 void Dune2File::readDataStructures()
 {
     _stream.seekSegOff(D2ExeStructureOffset[_version].segment, D2ExeStructureOffset[_version].offset);
@@ -56,8 +68,7 @@ void Dune2File::readDataStructures()
     _stream.seekSegOff(D2ExeHouseOffset[_version].segment, D2ExeHouseOffset[_version].offset);
     _stream.read((char*)&_houseData.front(), _houseData.size() * sizeof(_houseData[0]));
 
-    _stream.seekSegOff(D2ExeFileOffset[_version].segment, D2ExeFileOffset[_version].offset);
-    _stream.read((char*)&_fileData.front(), _fileData.size() * sizeof(_fileData[0]));
+    readData<D2ExeFileData>(_fileData, D2ExeFileOffset);
 
     _stream.seekSegOff(D2ExeActionOffset[_version].segment, D2ExeActionOffset[_version].offset);
     _stream.read((char*)&_actionData.front(), _actionData.size()  * sizeof(_actionData[0]));
