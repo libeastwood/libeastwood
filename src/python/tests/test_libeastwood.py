@@ -228,11 +228,11 @@ class TestCpsFile(unittest.TestCase):
         pak = PakFile('DUNE2/DUNE.PAK')
         pak.open('IBM.PAL')
         pal = PalFile(pak.read()).getPalette()
-        pak.open('FAME.CPS')
+        pak.open('SCREEN.CPS')
         surface = CpsFile(pak.read(), pal).getSurface()
         data = surface.getPixels()
         self.assertEqual(len(data), 64000)
-        self.assertEqual(md5(data).hexdigest(), '721387d8b10999d829e85c8ec515ae5c')
+        self.assertEqual(md5(data).hexdigest(), '72934c9772cfe17b76dd4df8a829cfc1')
 
     def test_without_palette(self):
         pak = PakFile('DUNE2/INTRO.PAK')
