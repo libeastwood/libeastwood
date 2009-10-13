@@ -20,11 +20,11 @@ static const Address
 
 Dune2File::Dune2File(ExeFile &stream) :
     _stream(stream), _version(D2_VERSIONS),
-    _structureData(std::vector<D2ExeStructureData>(D2ExeStructureEntries)),
-    _unitData(std::vector<D2ExeUnitData>(D2ExeUnitEntries)),
-    _houseData(std::vector<D2ExeHouseData>(D2ExeHouseEntries)),
-    _actionData(std::vector<D2ExeActionData>(D2ExeActionEntries)),
-    _fileData(std::vector<D2ExeFileData>(D2ExeFileEntries))
+    _structureData(D2ExeStructureEntries),
+    _unitData(D2ExeUnitEntries),
+    _houseData(D2ExeHouseEntries),
+    _actionData(D2ExeActionEntries),
+    _fileData(D2ExeFileEntries)
 {
     detectDune2Version();
     readDataStructures();
