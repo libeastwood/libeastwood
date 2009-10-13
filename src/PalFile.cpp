@@ -1,5 +1,4 @@
 #include <istream>
-#include <SDL_video.h>
 
 #include "eastwood/StdDef.h"
 #include "eastwood/Log.h"

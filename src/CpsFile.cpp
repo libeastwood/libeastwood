@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <SDL.h>
 
 #include "eastwood/StdDef.h"
 
