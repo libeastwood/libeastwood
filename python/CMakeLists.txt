@@ -16,4 +16,5 @@ execute_process(
     WORKING_DIRECTORY ${LIBEASTWOOD_SOURCE_DIR}/python
     )"
     )
+INSTALL(FILES eastwood DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
 

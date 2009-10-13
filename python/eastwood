@@ -1,0 +1,5 @@
+#!/bin/env python
+
+from eastwood import *
+
+main()
