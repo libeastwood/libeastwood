@@ -19,7 +19,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-import sys
+import sys, os
 from setuptools import setup, Extension
 
 descr = "Python bindings for libeastwood"
@@ -30,21 +30,23 @@ version_define = [('VERSION', '"%s"' % version)]
 
 modules = ['eastwood']
 c_files = [
-        'src/pycpsfile.cpp',
-        'src/pyeastwood.cpp',
-        'src/pyemcfile.cpp',
-        'src/pyicnfile.cpp',
-        'src/pymapfile.cpp',
-        'src/pypakfile.cpp',
-        'src/pypalfile.cpp',
-        'src/pypalette.cpp',
-        'src/pyshpfile.cpp',
-        'src/pysound.cpp',
-        'src/pystringfile.cpp',
-        'src/pysurface.cpp',
-        'src/pyvocfile.cpp',
-        'src/pywsafile.cpp'
+        'pycpsfile.cpp',
+        'pyeastwood.cpp',
+        'pyemcfile.cpp',
+        'pyicnfile.cpp',
+        'pymapfile.cpp',
+        'pypakfile.cpp',
+        'pypalfile.cpp',
+        'pypalette.cpp',
+        'pyshpfile.cpp',
+        'pysound.cpp',
+        'pystringfile.cpp',
+        'pysurface.cpp',
+        'pyvocfile.cpp',
+        'pywsafile.cpp'
         ]
+for i in xrange(len(c_files)):
+    c_files[i] = os.path.join("src", c_files[i])
 
 compile_args = ['-fno-strict-aliasing']
 warnflags = ['-Wall', '-Wextra', '-pedantic', '-Weffc++', '-Wno-long-long']

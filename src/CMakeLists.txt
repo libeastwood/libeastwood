@@ -46,23 +46,6 @@ SET( SDL_LIBEASTWOOD_SRCS
     SDL/Surface.cpp
 )
 
-SET( PYEASTWOOD_SRCS
-    python/src/pycpsfile.cpp
-    python/src/pyeastwood.cpp
-    python/src/pyemcfile.cpp
-    python/src/pyicnfile.cpp
-    python/src/pymapfile.cpp
-    python/src/pypakfile.cpp
-    python/src/pypalfile.cpp
-    python/src/pypalette.cpp
-    python/src/pyshpfile.cpp
-    python/src/pysound.cpp
-    python/src/pystringfile.cpp
-    python/src/pysurface.cpp
-    python/src/pyvocfile.cpp
-    python/src/pywsafile.cpp
-)
-
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
 TARGET_LINK_LIBRARIES( eastwood ${LIBSAMPLERATE_LIBRARIES} )
 SET_TARGET_PROPERTIES( eastwood PROPERTIES SOVERSION "${LIBEASTWOOD_SOVERSION_INFO}" )
@@ -79,10 +62,23 @@ INSTALL(TARGETS SDL_eastwood LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 ENDIF(LIBEASTWOOD_BUILD_SDL)
 
 IF(LIBEASTWOOD_BUILD_PYTHON)
-  GET_FILENAME_COMPONENT(PYTHON_LIB_INSTALL "${PYTHON_LIBRARY}" PATH)
-  INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_PATH} )
-  PYTHON_ADD_MODULE( pyeastwood ${PYEASTWOOD_SRCS})
-  TARGET_LINK_LIBRARIES( pyeastwood eastwood )
-  SET_TARGET_PROPERTIES(pyeastwood PROPERTIES PREFIX "")
+  ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pyeastwood.so ${CMAKE_CURRENT_BINARY_DIR}/eastwood.py
+      POST_BUILD
+      COMMAND ${PYTHON_EXECUTABLE}
+      ARGS -c "import sys,os; os.environ['LDFLAGS']='-L${CMAKE_CURRENT_BINARY_DIR}'; sys.argv.append('build'); sys.argv.append('-t'), sys.argv.append('${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/pyeastwood.dir'); sys.argv.append('--build-lib'); sys.argv.append('${CMAKE_CURRENT_BINARY_DIR}'); from setup import *"
+      WORKING_DIRECTORY ${LIBEASTWOOD_SOURCE_DIR}/src/python
+      DEPENDS eastwood
+      VERBATIM
+      )
+  ADD_CUSTOM_TARGET(pyeastwood ALL
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/pyeastwood.so)
+
+  INSTALL(CODE "
+  execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c \"import sys,os; os.environ['LDFLAGS']='-L${CMAKE_CURRENT_BINARY_DIR}'; sys.argv.append('build'); sys.argv.append('-t'), sys.argv.append('${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/pyeastwood.dir'); sys.argv.append('--build-lib'); sys.argv.append('${CMAKE_CURRENT_BINARY_DIR}'); sys.argv.append('install'); sys.argv.append('--root'); sys.argv.append('${CMAKE_CACHEFILE_DIR}/$ENV{DESTDIR}'); os.environ['PWD'] = '/home/peroyvind/Dokumenter/doonlunacy/libeastwood/build'; from setup import *\"
+      WORKING_DIRECTORY ${LIBEASTWOOD_SOURCE_DIR}/src/python
+      )"
+      )
+
 ENDIF(LIBEASTWOOD_BUILD_PYTHON)
 
