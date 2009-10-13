@@ -78,11 +78,11 @@ void Dune2File::readDataStructures()
 
 std::string Dune2File::stringGet(uint32_t p)
 {
-    std::string str(64,0);
+    char buf[64];
     _stream.seekSegOff(p);
 
-    _stream.getline((char*)str.data(), str.size(), 0);
-    return str;
+    _stream.getline(buf, 64, 0);
+    return std::string(buf);
 }
 
 }
