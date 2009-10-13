@@ -99,12 +99,13 @@ class SurfaceOptionParser(SubOptionParser):
     def process(self):
         SubOptionParser.process(self)
 
-        if self.options.palfile:
-            f = openFile(self.options.palfile)
-            self.palette = PalFile(f.read()).getPalette()
-            f.close()
-        else:
-            self.error("A palette is required")
+        if self.palette == None:
+            if self.options.palfile:
+                f = openFile(self.options.palfile)
+                self.palette = PalFile(f.read()).getPalette()
+                f.close()
+            else:
+                self.error("A palette is required")
 
     def postProcess(self):
         SubOptionParser.postProcess(self)
@@ -189,6 +190,7 @@ class CpsOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
         SurfaceOptionParser.__init__(self, *args, **kwargs)
         self.add_option("--cps", help="CPS", dest="cpsfile")
+        self.palette = False
 
     def process(self):
         SurfaceOptionParser.process(self)
