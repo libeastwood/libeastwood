@@ -5,6 +5,7 @@
 #include "pyeastwood.h"
 
 #include "eastwood/StdDef.h"
+#include "eastwood/Exception.h"
 
 #include "pysound.h"
 #include "pyvocfile.h"
@@ -27,14 +28,22 @@ VocFile_init(Py_VocFile *self, PyObject *args)
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
     if(!self->stream->good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-    	PyBuffer_Release(&pdata);
-    	return -1;
+	goto error;
     }
 
-    self->vocFile = new VocFile(*self->stream);
+    try {
+	self->vocFile = new VocFile(*self->stream);
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	goto error;
+    }
 
     PyBuffer_Release(&pdata);
     return 0;
+
+error:
+    PyBuffer_Release(&pdata);
+    return -1;
 }
 
 static PyObject *

@@ -7,6 +7,7 @@
 #include "pyeastwood.h"
 #include <structmember.h>
 
+#include "eastwood/Exception.h"
 #include "eastwood/EmcFileAssemble.h"
 #include "eastwood/EmcFileDisassemble.h"
 
@@ -33,21 +34,26 @@ EmcFile_init(Py_EmcFile *self, PyObject *args)
 	goto error;
     }
 
-    switch(self->mode) {
-	case 'a':
-    	    self->emcFile = new EmcFileAssemble(*self->input, *self->output);
-	    break;
-	case 'd':
-    	    self->emcFile = new EmcFileDisassemble(*self->input, *self->output);
-	    break;
-	default:
-	    PyErr_Format(PyExc_ValueError, "invalid mode: %c!", self->mode);
-	    goto error;
-	    break;
-    }
+    try {
+	switch(self->mode) {
+	    case 'a':
+		self->emcFile = new EmcFileAssemble(*self->input, *self->output);
+		break;
+	    case 'd':
+		self->emcFile = new EmcFileDisassemble(*self->input, *self->output);
+		break;
+	    default:
+		PyErr_Format(PyExc_ValueError, "invalid mode: %c!", self->mode);
+		goto error;
+		break;
+	}
 
-    if(!self->emcFile->execute()) {
-	PyErr_Format(PyExc_ValueError, "Failed at line: %lu!", self->emcFile->labelCountGet());
+	if(!self->emcFile->execute()) {
+	    PyErr_Format(PyExc_ValueError, "Failed at line: %lu!", self->emcFile->labelCountGet());
+	    goto error;
+	}
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
 	goto error;
     }
 

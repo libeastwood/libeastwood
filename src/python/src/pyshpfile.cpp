@@ -2,6 +2,7 @@
 // 	 python to deal with C++ streams ...
 #include <istream>
 #include <sstream>
+#include <stdexcept>
 #include "pyeastwood.h"
 #include <structmember.h>
 
@@ -97,6 +98,9 @@ ShpFile_getSurface(Py_ShpFile *self, PyObject *args)
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
 	return NULL;
+    } catch(std::out_of_range e) {
+	PyErr_SetString(PyExc_IndexError, "ShpFile index out of range");
+	return NULL;
     }
 
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
@@ -134,6 +138,9 @@ ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
     	surface = new Surface(self->shpFile->getSurfaceArray(x,y, &tiles.front()));
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    } catch(std::out_of_range e) {
+	PyErr_SetString(PyExc_IndexError, "ShpFile index out of range");
 	return NULL;
     }
 

@@ -5,6 +5,7 @@
 #include <structmember.h>
 
 #include "eastwood/StdDef.h"
+#include "eastwood/Exception.h"
 #include "eastwood/Sound.h"
 
 #include "pysound.h"
@@ -64,7 +65,12 @@ Sound_getResampled(Py_Sound *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "BIHI", &channels, &frequency, &audioFormat, &interpolator))
 	return NULL;
 
-    resampled = new Sound(self->sound->getResampled(channels, frequency, audioFormat, interpolator));
+    try {
+	resampled = new Sound(self->sound->getResampled(channels, frequency, audioFormat, interpolator));
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    }
 
     return Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(resampled), NULL);
 }

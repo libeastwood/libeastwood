@@ -2,11 +2,13 @@
 // 	 python to deal with C++ streams ...
 #include <istream>
 #include <sstream>
+#include <stdexcept>
 #include "pyeastwood.h"
 #include <structmember.h>
 
 #include "eastwood/StdDef.h"
 #include "eastwood/IcnFile.h"
+#include "eastwood/Exception.h"
 #include "eastwood/Palette.h"
 
 #include "pyicnfile.h"
@@ -45,7 +47,13 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
 	goto error;
     }
 
-    self->icnFile = new IcnFile(*self->stream, *((Py_MapFile*)self->mapFile)->mapFile, *((Py_Palette*)palObject)->palette);
+    try {
+    	self->icnFile = new IcnFile(*self->stream, *((Py_MapFile*)self->mapFile)->mapFile, *((Py_Palette*)palObject)->palette);
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	goto error;
+    }
+
     self->size = self->icnFile->size();
 
     Py_INCREF(self->mapFile);
@@ -92,10 +100,21 @@ static PyObject *
 IcnFile_getSurface(Py_IcnFile *self, PyObject *args)
 {
     uint16_t index;
+    Surface *surface;
     if (!PyArg_ParseTuple(args, "H", &index))
 	return NULL;
 
-    Surface *surface = new Surface(self->icnFile->getSurface(index));
+    try {
+	surface = new Surface(self->icnFile->getSurface(index));
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    } catch(std::out_of_range e) {
+	PyErr_SetString(PyExc_IndexError, "IcnFile index out of range");
+	return NULL;
+    }
+
+
     PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
     return pysurface;
 }
@@ -117,7 +136,16 @@ IcnFile_getTiles(Py_IcnFile *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "H|B", &index, &frameByFrame))
 	return NULL;
 
-    tiles = new Surface(self->icnFile->getTiles(index, frameByFrame));
+    try {
+	tiles = new Surface(self->icnFile->getTiles(index, frameByFrame));
+    } catch(Exception e) {
+	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
+	return NULL;
+    } catch(std::out_of_range e) {
+	PyErr_SetString(PyExc_IndexError, "IcnFile index out of range");
+	return NULL;
+    }
+
     pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(tiles), NULL);
     return pysurface;
 }
