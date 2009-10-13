@@ -99,13 +99,12 @@ class SurfaceOptionParser(SubOptionParser):
     def process(self):
         SubOptionParser.process(self)
 
-        if self.palette == None:
-            if self.options.palfile:
-                f = openFile(self.options.palfile)
-                self.palette = PalFile(f.read()).getPalette()
-                f.close()
-            else:
-                self.error("A palette is required")
+        if self.options.palfile:
+            f = openFile(self.options.palfile)
+            self.palette = PalFile(f.read()).getPalette()
+            f.close()
+        elif self.palette == None:
+            self.error("A palette is required")
 
     def postProcess(self):
         SubOptionParser.postProcess(self)
