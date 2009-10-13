@@ -13,7 +13,7 @@ The library currently supports the following:
 ** reading of SHP format (for both formats used by Dune 2 demo & other versions)
 ** reading of WSA format (for both formats used by Dune 2 demo & other versions
    and also (untested) WSA 2 format used by later Westwood games)
-** reading of PAL palette format
+** reading and writing of PAL palette format
 ** writing to BMP format
 ** pixel art scaling using scale2x, scale2x3, scale2x4, scale3x & scale4x algorithms
 * Audio:
