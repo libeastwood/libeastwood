@@ -13,7 +13,11 @@ class Sound : public eastwood::Sound, public Mix_Chunk
 	Sound();
 	Sound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format);
 	Sound(const eastwood::Sound &sound);
+	Sound(const Mix_Chunk &sound);
 	virtual ~Sound();
+
+	Sound &operator=(const eastwood::Sound &sound);
+	Sound &operator=(const Mix_Chunk *sound);
 
 	Sound getResampled(Interpolator interpolator = I_LINEAR);
 

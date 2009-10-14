@@ -39,10 +39,50 @@ Sound::Sound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channel
     tmp = NULL;
 }
 
+Sound::Sound(const Mix_Chunk &sound) :
+    eastwood::Sound(sound.alen, NULL, 0, 0, FMT_INVALID),
+    Mix_Chunk(*(tmp = new Mix_Chunk(sound))), _sound(tmp)
+{
+    uint16_t format;
+    tmp = NULL;
+    Mix_QuerySpec((int*)&_frequency, &format, (int*)&_channels);
+    switch(format) {
+    default:
+    case AUDIO_U8:	_format = FMT_U8;	break;
+    case AUDIO_S8:	_format = FMT_S8;	break;
+    case AUDIO_U16LSB:	_format = FMT_U16LE;	break;
+    case AUDIO_S16LSB:	_format = FMT_S16LE;	break;
+    case AUDIO_U16MSB:	_format = FMT_U16BE;	break;
+    case AUDIO_S16MSB:	_format = FMT_S16BE;	break;
+    }
+
+    _buffer.reset(new Bytes((uint8_t*)malloc(_size), BufMalloc));
+    memcpy(*this, sound.abuf, _size);
+
+}
+
 Sound::~Sound()
 {
     _sound->abuf = NULL;
     Mix_FreeChunk(_sound);
+}
+
+Sound& Sound::operator=(const eastwood::Sound &sound) 
+{
+    *(eastwood::Sound*)this = sound;
+    _sound = createChunk(true, *this, size());
+    *(Mix_Chunk*)this = *_sound;
+
+    return *this;
+}
+
+Sound& Sound::operator=(const Mix_Chunk *sound) 
+{
+    _sound = const_cast<Mix_Chunk*>(sound);
+    *(Mix_Chunk*)this = *_sound;
+    _buffer.reset(new Bytes((uint8_t*)sound->abuf, BufMalloc));
+
+    return *this;
 }
 
 Sound Sound::getResampled(Interpolator interpolator)
