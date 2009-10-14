@@ -199,24 +199,24 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
 	    switch(getType(tiles[i])) {
 		case TILE_NORMAL:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() , (uint8_t*)imageOut + y * width, width);
+			memcpy(	((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.Pitch() , (uint8_t*)imageOut + y * width, width);
 		    break;
 
 		case TILE_FLIPH:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() , (uint8_t*)imageOut + (height-1-y) * width, width);
+			memcpy(	((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.Pitch() , (uint8_t*)imageOut + (height-1-y) * width, width);
 		    break;
 
 		case TILE_FLIPV:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() + x) = *((uint8_t*)imageOut + y * width + (width-1-x));
+			    *(((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.Pitch() + x) = *((uint8_t*)imageOut + y * width + (width-1-x));
 		    break;
 
 		case TILE_ROTATE:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() + x) = *((uint8_t*)imageOut + (height-1-y) * width + (width-1-x));
+			    *(((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.Pitch() + x) = *((uint8_t*)imageOut + (height-1-y) * width + (width-1-x));
 		    break;
 
 		default:
