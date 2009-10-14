@@ -14,6 +14,9 @@ class Surface : public eastwood::Surface, public SDL_Surface
 	Surface() : eastwood::Surface(), _surface(NULL) {};
 	Surface(const eastwood::Surface& surface, uint32_t flags = SDL_HWSURFACE,
 		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0);
+	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette, uint32_t flags = SDL_HWSURFACE,
+		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0);
+        
 	Surface(const SDL_Surface& surface);
 	virtual ~Surface();
 

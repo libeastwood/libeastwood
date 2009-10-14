@@ -19,6 +19,18 @@ Surface::Surface(const eastwood::Surface& surface, uint32_t flags,
     setPalette(_palette);
 }
 
+Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette, uint32_t flags,
+	uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) :
+    eastwood::Surface(NULL, width, height, bpp, palette),
+    SDL_Surface(*(tmp = SDL_CreateRGBSurface(flags, width, height, bpp, Rmask, Gmask, Bmask, Amask))),
+    _surface(tmp)
+{
+    tmp = NULL;
+    _pixels.reset(new Bytes((uint8_t*)pixels, BufMalloc));
+
+    setPalette(_palette);
+}
+
 Surface::Surface(const SDL_Surface& surface) :
     eastwood::Surface(NULL, surface.w, surface.h, surface.format->BitsPerPixel, SDL::Palette(*surface.format->palette)),
     SDL_Surface(*(tmp = SDL_ConvertSurface(const_cast<SDL_Surface*>(&surface), surface.format, surface.flags))),
