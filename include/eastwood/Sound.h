@@ -32,6 +32,7 @@ class Sound
     public:
 	Sound() : _size(0), _buffer(), _channels(0), _frequency(0), _format(FMT_INVALID) {};
 	Sound(uint32_t size, uint8_t *buffer, uint8_t channels, uint32_t frequency, AudioFormat format);
+    Sound(const Sound &sound);
 	virtual ~Sound();
 
 	virtual operator uint8_t*() const {

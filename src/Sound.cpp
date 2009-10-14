@@ -32,6 +32,14 @@ Sound::Sound(uint32_t size, uint8_t *buffer, uint8_t channels, uint32_t frequenc
 {
 }
 
+Sound::Sound(const Sound &sound) :
+    _size(sound._size), _buffer(new Bytes(new uint8_t[sound._size])),
+    _channels(sound._channels), _frequency(sound._frequency), _format(sound._format)
+{
+    if(*this)
+    	memcpy(*this, sound, size());
+}
+
 Sound::~Sound()
 {
 }
