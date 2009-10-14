@@ -68,7 +68,7 @@ Surface& Surface::operator=(const eastwood::Surface &surface)
 Surface& Surface::operator=(const SDL_Surface *surface) 
 {
     _surface = const_cast<SDL_Surface*>(surface);
-    *this = *_surface;
+    *(SDL_Surface*)this = *_surface;
     _bpp = format->BitsPerPixel;
     _width = w;
     _height = h;
