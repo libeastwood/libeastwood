@@ -193,12 +193,12 @@ class Dune2File
     public:
 	Dune2File(ExeFile &stream);
 
-	D2ExeVersion getVersion() { return _version; }
-	D2ExeStructureData getStructureData(int index) { return _structureData.at(index); }
-	D2ExeUnitData getUnitData(int index) { return _unitData.at(index); }
-	D2ExeHouseData getHouseData(int index) { return _houseData.at(index); }
-	D2ExeFileData getFileData(int index) { return _fileData.at(index); }
-	D2ExeActionData getActionData(int index) { return _actionData.at(index); }
+	D2ExeVersion getVersion() const throw() { return _version; }
+	D2ExeStructureData getStructureData(int index) const { return _structureData.at(index); }
+	D2ExeUnitData getUnitData(int index) const { return _unitData.at(index); }
+	D2ExeHouseData getHouseData(int index) const { return _houseData.at(index); }
+	D2ExeFileData getFileData(int index) const { return _fileData.at(index); }
+	D2ExeActionData getActionData(int index) const { return _actionData.at(index); }
 
 	std::string stringGet(uint32_t p);
 
