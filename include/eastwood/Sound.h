@@ -37,6 +37,12 @@ class Sound
 	virtual operator uint8_t*() const {
 	    return *_buffer.get();
 	}
+	virtual operator void*() const {
+	    return *_buffer.get();
+	}
+    virtual operator bool() const {
+        return _size != 0;
+    }
 
 	uint32_t size() const throw() { return _size; }
 	uint8_t channels() const throw() { return _channels; }
@@ -50,8 +56,8 @@ class Sound
 	template <typename T>
 	void getSound(Sound &sound, uint32_t samples, float *dataFloat, int32_t silenceLength);
 
-    	uint32_t _size;
-    	BytesPtr _buffer;
+   	uint32_t _size;
+   	BytesPtr _buffer;
 	uint8_t _channels;
 	uint32_t _frequency;
 	AudioFormat _format;
