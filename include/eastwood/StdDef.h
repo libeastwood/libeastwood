@@ -12,6 +12,9 @@
 #include <tr1/cinttypes>
 
 #ifdef _WIN32
+#ifndef __BYTE_ORDER
+#define __BYTE_ORDER __LITTLE_ENDIAN
+#endif
 #include <tchar.h>
 #else
 #include <netinet/in.h>
