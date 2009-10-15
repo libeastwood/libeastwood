@@ -12,7 +12,7 @@ public:
 	WsaFile(std::istream &stream, Palette palette,
                 Surface firstFrame = Surface());
 
-	virtual ~WsaFile();
+	~WsaFile();
 
 	Surface getSurface(uint16_t frameNumber) const { return _decodedFrames.at(frameNumber); }
 

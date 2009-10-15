@@ -11,7 +11,7 @@ class VocFile
 {
     public:
 	VocFile(std::istream &stream);
-	virtual ~VocFile();
+	~VocFile();
 
 	/**
 	  Try to load a VOC from the stream. Returns a pointer to Mix_Chunk.

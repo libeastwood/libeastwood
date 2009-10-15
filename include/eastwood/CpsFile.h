@@ -16,7 +16,7 @@ class CpsFile : public Decode
 {
     public:
 	CpsFile(std::istream &stream, Palette palette = Palette(0));
-	virtual ~CpsFile();
+	~CpsFile();
 
 	Surface getSurface();
 

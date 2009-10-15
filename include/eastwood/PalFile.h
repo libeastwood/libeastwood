@@ -11,7 +11,7 @@ class PalFile
 {
     public:
 	PalFile(std::istream &stream);
-	virtual ~PalFile();
+	~PalFile();
 
 	Palette getPalette();
 

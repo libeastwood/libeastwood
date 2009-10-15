@@ -24,7 +24,7 @@ class StringFile
 {
     public:
 	StringFile(std::istream &stream);
-	virtual ~StringFile();
+	~StringFile();
 
 	/*!
 	 * This method returns the briefing/debriefing text for the mission specified by the parameter mission. The second
@@ -33,11 +33,11 @@ class StringFile
 	 *  @param texttype one of MISSION_DESCRIPTION, MISSION_WIN, MISSION_LOSE, MISSION_ADVICE
 	 *  @return the text for this mission and of this type.
 	 */
-	inline std::string getString(uint16_t mission, MissionType texttype) {
+	inline std::string getString(uint16_t mission, MissionType texttype) const {
 	    return _strings.at(mission*4+texttype);
 	}
 
-	inline std::string getString(uint16_t i) {
+	inline std::string getString(uint16_t i) const {
 	    return _strings.at(i);
 	}
 

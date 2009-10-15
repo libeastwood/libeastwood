@@ -14,7 +14,7 @@ class PakFile : public IOStream
 {
     public:
         PakFile(std::iostream &stream);
-        virtual ~PakFile();
+        ~PakFile();
 
 	void close();
 	void open(std::string fileName, std::ios::openmode mode = std::ios_base::in | std::ios_base::binary);

@@ -29,7 +29,7 @@ class Buffer
 	    return *this;
 	} 
 
-	inline virtual ~Buffer() {
+	inline ~Buffer() {
 	    if(_buffer)
     		switch(_alloc) {
     		    case BufMalloc:
@@ -44,7 +44,7 @@ class Buffer
     		}
 	};
 
-	inline virtual operator T*() {
+	inline operator T*() {
 	    return _buffer;
 	}
 
