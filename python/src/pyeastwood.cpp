@@ -79,7 +79,7 @@ initpyeastwood(void)
     PyModule_AddObject(module, "WsaFile", (PyObject *)&WsaFile_Type);
 
     PyModule_AddObject(module, "__author__", PyString_FromString(__author__));
-
+    PyModule_AddStringConstant(module, "__version__", VERSION);
 
     PyModule_AddIntConstant(module, "Scale2X", Scale2X);
     PyModule_AddIntConstant(module, "Scale2X3", Scale2X3);
