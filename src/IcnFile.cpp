@@ -8,19 +8,13 @@ namespace eastwood {
 
 IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     Decode(stream, 16, 16, palette),
-    _map(map), _SSET(NULL), _RPAL(NULL), _RTBL(NULL)
+    _map(map), _SSET(), _RPAL(), _RTBL()
 {
     readHeader();
 }
 
 IcnFile::~IcnFile()
 {
-    if(_SSET)
-	delete _SSET;
-    if(_RPAL)
-	delete _RPAL;
-    if(_RTBL)
-	delete _RTBL;
 }
 
 void IcnFile::readHeader()
@@ -59,29 +53,29 @@ void IcnFile::readHeader()
     if(_stream.getU32BE() - 8 != (sectionSize = _stream.getU16LE() + _stream.getU16LE()))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: SSET-Section size mismatch"));
     _stream.ignore(4);
-    _SSET = new std::vector<uint8_t>(sectionSize);
-    _stream.read((char*)&_SSET->front(), _SSET->size());
+    _SSET.resize(sectionSize);
+    _stream.read((char*)&_SSET.front(), _SSET.size());
 
     _stream.read(signature, 4);
     if(strncmp(signature, "RPAL", 4))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found"));
-    _RPAL = new std::vector<uint8_t>(_stream.getU32BE());
-    _stream.read((char*)&_RPAL->front(), _RPAL->size());
+    _RPAL.resize(_stream.getU32BE());
+    _stream.read((char*)&_RPAL.front(), _RPAL.size());
 
     
 
     _stream.read(signature, 4);
     if(strncmp(signature, "RTBL", 4))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found"));
-    _RTBL = new std::vector<uint8_t>(_stream.getU32BE());
-    _stream.read((char*)&_RTBL->front(), _RTBL->size());
+    _RTBL.resize(_stream.getU32BE());
+    _stream.read((char*)&_RTBL.front(), _RTBL.size());
 
 }
 
 void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 {
-    uint8_t *paletteStart = &(*_RPAL).at((*_RTBL).at(index) << 4),
-	    *fileStart = &(*_SSET).at((index * ((_width * _height)>>1)));
+    uint8_t *paletteStart = &_RPAL.at(_RTBL.at(index) << 4),
+	    *fileStart = &_SSET.at((index * ((_width * _height)>>1)));
 
     for(int y = 0; y < _height;y++, dest += pitch)
 	for(int x = 0; x < _width; x++) {
