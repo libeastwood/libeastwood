@@ -259,23 +259,11 @@ bool truncateFile(const char *fileName, uint32_t size)
 {
 #ifdef _WIN32 // Not tested...
     HANDLE filehand;
-    uint32_t filesize;
     uint32_t result;
-    WIN32_FILE_ATTRIBUTE_DATA filedata;
-
-    /* Learn the file's length */
-    if (!GetFileAttributesEx( filename, GetFileExInfoStandard, &filedata )) return false;
-    filesize = (filedata.nFileSizeHigh << 32) +filedata.nFileSizeLow;
-
-
-    /* Calculate the new length */
-    filesize -= bytes;
-    filedata.nFileSizeHigh = filesize >> 32;
-    filedata.nFileSizeLow  = filesize & 0xFFFFFFFFL;
 
     /* Modify the file's length */
     filehand = CreateFile(
-            filename,
+            fileName,
             GENERIC_READ|GENERIC_WRITE,
             0,
             NULL,
@@ -287,10 +275,10 @@ bool truncateFile(const char *fileName, uint32_t size)
 
     result = SetFilePointer(
             filehand,
-            filedata.nFileSizeLow,
-            &filedata.nFileSizeHigh,
-            FILE_BEGIN
-            ) != 0xFFFFFFFF;
+            size,
+            NULL,
+            FILE_END
+            ) != INVALID_SET_FILE_POINTER;
 
     if (result) result = SetEndOfFile( filehand );
 

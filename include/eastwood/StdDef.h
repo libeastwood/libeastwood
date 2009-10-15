@@ -18,17 +18,23 @@
   #ifndef __BYTE_ORDER
     #define __BYTE_ORDER __LITTLE_ENDIAN
   #endif
-#include <tchar.h>
+#ifdef _MSC_VER
+  #define usleep Sleep
 #else
-#include <netinet/in.h>
+  #include <unistd.h>
 #endif
-  #ifndef htobe16
-    #define htobe16(x) htons(x)
-    #define htobe32(x) htonl(x)
-    #if __BYTE_ORDER == __LITTLE_ENDIAN
-      #define htole16(x) (x)
-      #define htole32(x) (x)
+  #include <tchar.h>
+  #include <winsock2.h>
 #else
+  #include <netinet/in.h>
+#endif
+#ifndef htobe16
+  #define htobe16(x) htons(x)
+  #define htobe32(x) htonl(x)
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
+    #define htole16(x) (x)
+    #define htole32(x) (x)
+  #else
 static inline uint16_t htobe16(uint16_t x)
 {
     std::swap(((uint8_t*)&x)[0], ((uint8_t*)&x)[1]);
@@ -42,7 +48,7 @@ static inline uint32_t htobe32(uint32_t x)
     return x;
 }
 
-#endif
+  #endif
 #endif
 
 //TODO: portability?
