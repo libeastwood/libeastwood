@@ -54,14 +54,14 @@ OStream& OStream::writeU32BE(uint32_t *buf, size_t n)
 OStream& OStream::writeU16LE(uint16_t *buf, size_t n)
 {
     for(size_t i = 0; i < n; i++)
-	buf[i] = putU16LE();
+	putU16LE(buf[i]);
     return *this;
 }
 
 OStream& OStream::writeU32LE(uint32_t *buf, size_t n)
 {
     for(size_t i = 0; i < n; i++)
-	buf[i] = putU32LE();
+	putU32LE(buf[i]);
     return *this;
 }
 #else
