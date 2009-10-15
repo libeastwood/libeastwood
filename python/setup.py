@@ -21,6 +21,7 @@
 #
 import sys, os
 from setuptools import setup, Extension
+from distutils.ccompiler import get_default_compiler
 
 descr = "Python bindings for libeastwood"
 long_descr = """PyEastwood provides a python interface for the libeastwood
@@ -48,12 +49,15 @@ c_files = [
 for i in xrange(len(c_files)):
     c_files[i] = os.path.join("src", c_files[i])
 
-compile_args = ['-fno-strict-aliasing']
-warnflags = ['-Wall', '-Wextra', '-pedantic', '-Weffc++', '-Wno-long-long']
-compile_args.extend(warnflags)
-link_args = ['-leastwood']
+compile_args = []
+link_args = []
+libraries = ['eastwood']
+if get_default_compiler() in ('cygwin', 'emx', 'mingw32', 'unix'):
+    compile_args.extend(['-fno-strict-aliasing'])
+    warnflags = ['-Wall', '-Wextra', '-pedantic', '-Weffc++', '-Wno-long-long']
+    compile_args.extend(warnflags)
 
-extens=[Extension('pyeastwood', c_files, extra_compile_args=compile_args, extra_link_args=link_args, define_macros=version_define)]
+extens=[Extension('pyeastwood', c_files, extra_compile_args=compile_args, libraries=libraries, extra_link_args=link_args, define_macros=version_define)]
 
 setup(
     name = 'pyeastwood',
