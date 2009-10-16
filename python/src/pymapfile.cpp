@@ -38,7 +38,7 @@ MapFile_init(Py_MapFile *self, PyObject *args)
     size = self->mapFile->size();
     self->tuple = PyTuple_New(size);
     for(uint16_t i = 0; i < size; i++) {
-    	std::vector<uint16_t> &mapRow = (*self->mapFile)[i];
+    	const std::vector<uint16_t> &mapRow = (*self->mapFile)[i];
 	PyObject *row = PyTuple_New(mapRow.size());
 	for(uint16_t j = 0; j < mapRow.size(); j++)
 	    if(PyTuple_SetItem(row, j, Py_BuildValue("H", mapRow[j])))

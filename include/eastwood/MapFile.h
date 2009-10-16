@@ -11,7 +11,7 @@ class MapFile
 {
     public:
 	MapFile(std::istream &stream);
-	virtual ~MapFile();
+	~MapFile();
 
 	const std::vector<uint16_t> operator[] (uint16_t i) const { return _tileSet.at(i); }
 
