@@ -363,6 +363,10 @@ class TestIcnFile(unittest.TestCase):
         for i in xrange(len(self.map)):
             surface = self.icn.getTiles(i, False)
             self.assertEqual(md5(surface.getPixels()).hexdigest(), md5sums[i])
+        for i in xrange(len(self.map)):
+            surface = self.icn.getTiles(i, False)
+            self.assertEqual(md5(surface.getPixels()).hexdigest(), md5sums[i])
+
 
     def test_tiles_frameByFrame_md5(self):
         md5sums = (

@@ -99,7 +99,7 @@ Surface IcnFile::getSurface(uint16_t index)
 
 Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
 {
-    std::vector<uint16_t> &row = _map[index];
+    const std::vector<uint16_t> &row = _map[index];
 
     int tilesX = 1,
 	tilesY = 1,
