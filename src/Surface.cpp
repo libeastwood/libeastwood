@@ -39,22 +39,22 @@ struct BMPInfoHeader {
 };
 
 Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
-    _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
-    _pixels(new Bytes(new uint8_t[(width*(bpp/8)) * _height])),
+    _bpp(bpp), _Bpp(bpp/8), _width(width), _height(height), _pitch(width*(bpp/8)),
+    _pixels(new Bytes(new uint8_t[(width*(_Bpp)) * _height])),
     _palette(palette)
 {
     memset(*this, 0, size());
 }
 
 Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
-    _bpp(bpp), _width(width), _height(height), _pitch(width*(bpp/8)),
+    _bpp(bpp), _Bpp(bpp/8), _width(width), _height(height), _pitch(width*(_Bpp)),
     _pixels(new Bytes(buffer)), _palette(palette)
 {
 }
 
 Surface::Surface(const Surface &surface) :
-    _bpp(surface._bpp), _width(surface._width), _height(surface._height), _pitch(surface._pitch),
-    _pixels(new Bytes(new uint8_t[surface.size()])), _palette(surface._palette)
+    _bpp(surface._bpp), _Bpp(surface._Bpp), _width(surface._width), _height(surface._height),
+    _pitch(surface._pitch), _pixels(new Bytes(new uint8_t[surface.size()])), _palette(surface._palette)
 {
     if(*this)
     	memcpy(*this, surface, size());
@@ -65,7 +65,7 @@ Surface::~Surface() {
 
 bool Surface::scalePrecondition(Scaler scaler)
 {
-    return scale_precondition(scaler, _bpp/8, _width, _height);
+    return scale_precondition(scaler, _Bpp, _width, _height);
 }
 
 Surface Surface::getScaled(Scaler scaler)
@@ -82,7 +82,7 @@ Surface Surface::getScaled(Scaler scaler)
 	default:
 	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
     }
-    scale(scaler, (uint8_t*)scaled, scaled._pitch, (uint8_t*)*this, _pitch, _bpp/8, _width, _height);
+    scale(scaler, (uint8_t*)scaled, scaled._pitch, (uint8_t*)*this, _pitch, _Bpp, _width, _height);
     return scaled;
 }
 

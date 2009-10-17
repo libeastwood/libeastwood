@@ -19,7 +19,7 @@ enum Scaler {
 
 class Surface {
     public:
-	Surface() : _bpp(0), _width(0), _height(0), _pitch(0), _pixels(), _palette(0) {};
+	Surface() : _bpp(0), _Bpp(0), _width(0), _height(0), _pitch(0), _pixels(), _palette(0) {};
 	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
 	Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
 	virtual ~Surface();
@@ -39,8 +39,9 @@ class Surface {
 
 	uint16_t width() const throw() { return _width; }
 	uint16_t height() const throw() { return _height; }
-	uint16_t Pitch() const throw() { return _pitch; }
+	uint16_t pitch() const throw() { return _pitch; }
 	uint8_t bpp() const throw() { return _bpp; }
+	uint8_t Bpp() const throw() { return _bpp; }
 	Palette palette() const throw() { return _palette; }
 	uint32_t size() const throw() { return _pitch * _height; }
 
@@ -49,7 +50,8 @@ class Surface {
 	bool saveBMP(std::ostream &output);
 
     protected:
-	uint8_t _bpp;
+	uint8_t _bpp,
+		_Bpp;
 	uint16_t _width,
 		 _height,
 		 _pitch;
