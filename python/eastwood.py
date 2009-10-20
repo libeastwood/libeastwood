@@ -3,7 +3,7 @@
 import sys
 from optparse import *
 from pyeastwood import *
-from os.path import exists
+from os.path import exists, join
 
 def openFile(filename):
     fname = filename.split(":")
@@ -136,6 +136,7 @@ class PakOptionParser(SubOptionParser):
                 help="list files", default=False)
         self.add_option("-x", "--extract", dest="extract",
                 help="extract file")
+        self.add_option("-X", "--extract-all", dest="extractAll", help="extract all files to EXTRACTALL")
         self.add_option("-a", "--add", dest="addfile",
                 help="add file")
 
@@ -161,6 +162,15 @@ class PakOptionParser(SubOptionParser):
             out.write(pak.read())
             out.close()
             pak.close()
+
+        elif self.options.extractAll:
+            pak = PakFile(self.options.pakfile)
+            for f in pak.listfiles():
+                pak.open(f)
+                out = open("%s" % join(self.options.extractAll, f), "w")
+                out.write(pak.read())
+                out.close()
+                pak.close()
         
         elif self.options.listfiles:
             pak = PakFile(self.options.pakfile)
