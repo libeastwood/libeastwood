@@ -27,17 +27,17 @@
   #ifndef __BYTE_ORDER
     #define __BYTE_ORDER __LITTLE_ENDIAN
   #endif
+  #include <tchar.h>
+  #include <winsock2.h>
   #ifdef _MSC_VER
     #define usleep Sleep
     #define snprintf _snprintf
     #ifdef min
       #undef min
     #endif
-    #else
-      #include <unistd.h>
-    #endif
-  #include <tchar.h>
-  #include <winsock2.h>
+  #else
+    #include <unistd.h>
+  #endif
 #else
   #include <netinet/in.h>
 #endif
