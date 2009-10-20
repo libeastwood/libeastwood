@@ -7,14 +7,18 @@
 
 namespace eastwood { namespace SDL { namespace Mixer {
 
-class Sound : public eastwood::Sound, public Mix_Chunk
+class Sound : public eastwood::Sound
 {
     public:
 	Sound();
 	Sound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format);
 	Sound(const eastwood::Sound &sound);
-	Sound(const Mix_Chunk &sound);
+	Sound(const Mix_Chunk *sound);
 	virtual ~Sound();
+
+	virtual operator Mix_Chunk*() const throw() {
+	    return _sound;
+	}
 
 	Sound &operator=(const eastwood::Sound &sound);
 	Sound &operator=(const Mix_Chunk *sound);
