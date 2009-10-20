@@ -4,6 +4,8 @@
 #include "eastwood/IcnFile.h"
 #include "eastwood/Log.h"
 
+// Some info on this format can be found at:
+// http://en.wikipedia.org/wiki/Interchange_File_Format
 namespace eastwood {
 
 IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
@@ -19,28 +21,35 @@ IcnFile::~IcnFile()
 
 void IcnFile::readHeader()
 {
-    char signature[8];
+    char signature[4];
     uint16_t sectionSize;
 
     _stream.seekg(0, std::ios::beg);
     
     _stream.read(signature, 4);
     if(strncmp(signature, "FORM", 4))
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: Missing signature"));
+	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No FORM chunk found"));
 
     if(_stream.getU32BE() != _stream.sizeg() - (uint32_t)_stream.tellg())
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: File size doesn't match size specified in header"));
 
-    _stream.read(signature, 8);
-    if(strncmp(signature, "ICONSINF", 8))
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: Missing signature"));
+    _stream.read(signature, 4);
+    if(strncmp(signature, "ICON", 4))
+	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No ICON chunk found"));
 
-    //TODO: Figure out what these 8 bytes are for
-    _stream.ignore(8);
+    // SINF = Session Information
+    _stream.read(signature, 4);
+    if(strncmp(signature, "SINF", 4))
+	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SINF chunk found "));
+
+    sectionSize = _stream.getU32BE();
+
+    //TODO: Figure out what these 4 bytes are for
+    _stream.ignore(sectionSize);
 
     _stream.read(signature, 4);
     if(strncmp(signature, "SSET", 4))
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found"));
+	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET chunk found"));
     // Don't *really* have any idea what this is good for (sanity check?):
     // Section header looks like this:
     // [BBBB00LL]
@@ -51,22 +60,25 @@ void IcnFile::readHeader()
 
     // So yeah, let's use this a sort of sanity check...
     if(_stream.getU32BE() - 8 != (sectionSize = _stream.getU16LE() + _stream.getU16LE()))
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: SSET-Section size mismatch"));
-    _stream.ignore(4);
+	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: SSET chunk size mismatch"));
+    _stream.read(signature, 4);
+    if(strncmp(signature, "\0\0\0\0", 4))
+	throw(Exception(LOG_WARNING, "IcnFile", "Suspicious ICN-File: Found non-null bytes where null bytes expected"));
     _SSET.resize(sectionSize);
     _stream.read((char*)&_SSET.front(), _SSET.size());
 
+
+    // RIFF Palette
     _stream.read(signature, 4);
     if(strncmp(signature, "RPAL", 4))
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found"));
+	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL chunk found"));
     _RPAL.resize(_stream.getU32BE());
     _stream.read((char*)&_RPAL.front(), _RPAL.size());
-
     
 
     _stream.read(signature, 4);
     if(strncmp(signature, "RTBL", 4))
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET-Section found"));
+	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RTBL chunk found"));
     _RTBL.resize(_stream.getU32BE());
     _stream.read((char*)&_RTBL.front(), _RTBL.size());
 
