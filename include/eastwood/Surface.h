@@ -39,7 +39,7 @@ class Surface {
 
 	uint16_t width() const throw() { return _width; }
 	uint16_t height() const throw() { return _height; }
-	uint16_t Pitch() const throw() { return _pitch; }
+	uint16_t pitch() const throw() { return _pitch; }
 	uint8_t bpp() const throw() { return _bpp; }
 	uint8_t Bpp() const throw() { return _bpp; }
 	Palette palette() const throw() { return _palette; }
