@@ -16,6 +16,6 @@ enum IFF_ID {
     ID_RPAL = MKID_BE('R','P','A','L'),
     ID_SSET = MKID_BE('S','S','E','T'),
     ID_SINF = MKID_BE('S','I','N','F'),
-    ID_FILL = MKID_BE(0,0,0,0)
+    ID_FILLER = 0
 };
 #endif // EASTWOOD_IFF_H

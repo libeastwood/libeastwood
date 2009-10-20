@@ -59,7 +59,7 @@ void IcnFile::readHeader()
     // So yeah, let's use this a sort of sanity check...
     if(_stream.getU32BE() - 8 != (sectionSize = _stream.getU16LE() + _stream.getU16LE()))
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: SSET chunk size mismatch"));
-    if(_stream.getU32BE() != ID_FILL)
+    if(_stream.getU32BE() != ID_FILLER)
 	throw(Exception(LOG_WARNING, "IcnFile", "Suspicious ICN-File: Found non-null bytes where null bytes expected"));
     _SSET.resize(sectionSize);
     _stream.read((char*)&_SSET.front(), _SSET.size());
