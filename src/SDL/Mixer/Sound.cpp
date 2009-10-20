@@ -71,7 +71,6 @@ Sound& Sound::operator=(const eastwood::Sound &sound)
 Sound& Sound::operator=(const Mix_Chunk *sound) 
 {
     _sound = const_cast<Mix_Chunk*>(sound);
-    *(Mix_Chunk*)this = *_sound;
     _buffer.reset(new Bytes((uint8_t*)sound->abuf, BufMalloc));
 
     return *this;
