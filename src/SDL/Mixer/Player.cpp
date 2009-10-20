@@ -3,11 +3,6 @@
 #include "eastwood/adl/emuopl.h"
 #include "eastwood/SDL/Mixer/Player.h"
 
-// workaround for MSVC?
-#ifndef _MSC_VER
-using namespace std;
-#endif
-
 namespace eastwood { namespace SDL { namespace Mixer {
 
 Player::Player(int channels, int freq, uint16_t format, Copl* opl) :
@@ -40,7 +35,7 @@ void Player::callback(void *userdata, uint8_t *audiobuf, int len)
       minicnt += self->_freq;
       self->_playing = self->update();
     }
-    i = min(towrite, (long)(minicnt / self->getrefresh() + 4) & ~3);
+    i = std::min(towrite, (long)(minicnt / self->getrefresh() + 4) & ~3);
     self->_opl->update((short *)pos, i);
     pos += i * self->getsampsize(); towrite -= i;
     minicnt -= (long)(self->getrefresh() * i);
