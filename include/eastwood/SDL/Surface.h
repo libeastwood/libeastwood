@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_SDL_SURFACE_H
 #define EASTWOOD_SDL_SURFACE_H
 
-#include <SDL/SDL_video.h>
+#include <SDL_video.h>
 
 #include "eastwood/Decode.h"
 #include "eastwood/SDL/Palette.h"

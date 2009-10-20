@@ -9,7 +9,16 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <tr1/cinttypes>
+#ifndef _MSC_VER
+  #include <tr1/cinttypes>
+#else
+  typedef signed char int8_t;
+  typedef unsigned char   uint8_t;
+  typedef short  int16_t;
+  typedef unsigned short  uint16_t;
+  typedef int  int32_t;
+  typedef unsigned   uint32_t;
+#endif
 
 #ifdef _WIN32
   #ifndef __LITTLE_ENDIAN
@@ -20,6 +29,7 @@
   #endif
 #ifdef _MSC_VER
   #define usleep Sleep
+  #define snprintf _snprintf
 #else
   #include <unistd.h>
 #endif
@@ -52,9 +62,9 @@ static inline uint32_t htobe32(uint32_t x)
 #endif
 
 //TODO: portability?
-static inline int delayMillis(uint32_t msec)
+static inline void delayMillis(uint32_t msec)
 {
-    return usleep(msec * 1000);
+    usleep(msec * 1000);
 }
 
 static inline void stringToUpper(std::string &str)

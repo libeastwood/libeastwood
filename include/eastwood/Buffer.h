@@ -1,8 +1,12 @@
 #ifndef EASTWOOD_BUFFER_H
 #define EASTWOOD_BUFFER_H
 
-#include <tr1/memory>
-#include <tr1/shared_ptr.h>
+#ifndef _MSC_VER
+  #include <tr1/memory>
+  #include <tr1/shared_ptr.h>
+#else
+  #include <memory>
+#endif
 
 namespace eastwood {
 

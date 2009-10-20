@@ -22,6 +22,10 @@
 #ifndef EASTWOOD_ADL_OPL_H
 #define EASTWOOD_ADL_OPL_H
 
+#ifdef _MSC_VER
+  #define __attribute__(x)
+#endif
+
 namespace eastwood {
 
 class Copl

@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_SDL_PALETTE_H
 #define EASTWOOD_SDL_PALETTE_H
 
-#include <SDL/SDL_video.h>
+#include <SDL_video.h>
 
 #include "eastwood/Palette.h"
 

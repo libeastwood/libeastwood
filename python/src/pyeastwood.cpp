@@ -1,4 +1,5 @@
 #include "pyeastwood.h"
+#include "eastwood/StdDef.h"
 #include "eastwood/ShpFile.h"
 #include "eastwood/Surface.h"
 
