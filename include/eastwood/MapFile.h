@@ -5,6 +5,10 @@
 
 #include "eastwood/IStream.h"
 
+// Some very nice documentation on this format, or more specifically the
+// ICON.MAP that comes with Dune 2 can be found at:
+// http://www.junkyard.dk/icon_map.asp
+
 namespace eastwood {
 
 class MapFile
