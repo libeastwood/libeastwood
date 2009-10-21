@@ -10,13 +10,13 @@ static inline std::streambuf *getBuffer(IStream &stream, size_t size)
 	throw(Exception(LOG_ERROR, "ISubStream()", "Size is greater than remaining file length"));
     std::string buffer(size, 0);
     stream.read(const_cast<char*>(buffer.data()), size);
-    return new std::stringbuf(buffer);
 
+    return new std::stringbuf(buffer);
 }
 
 ISubStream::ISubStream(IStream &stream, size_t size) : IStream(getBuffer(stream, size))
 {
-    
+        delete rdbuf();
 }
 
 }
