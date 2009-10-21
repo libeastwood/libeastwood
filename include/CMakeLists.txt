@@ -16,6 +16,7 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/IcnFile.h
   eastwood/IniFile.h
   eastwood/IStream.h
+  eastwood/ISubStream.h
   eastwood/MapFile.h
   eastwood/OStream.h
   eastwood/PakFile.h
