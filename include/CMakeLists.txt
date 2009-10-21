@@ -14,6 +14,7 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/ExeFile.h
   eastwood/Font.h
   eastwood/IcnFile.h
+  eastwood/IFFContainer.h
   eastwood/IniFile.h
   eastwood/IStream.h
   eastwood/ISubStream.h

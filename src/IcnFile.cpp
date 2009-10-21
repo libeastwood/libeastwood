@@ -1,12 +1,10 @@
 #include "eastwood/StdDef.h"
-#include "eastwood/IFF.h"
 
 #include "eastwood/Exception.h"
 #include "eastwood/IcnFile.h"
+#include "eastwood/IFFContainer.h"
 #include "eastwood/Log.h"
 
-// Some info on this format can be found at:
-// http://en.wikipedia.org/wiki/Interchange_File_Format
 namespace eastwood {
 
 IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
