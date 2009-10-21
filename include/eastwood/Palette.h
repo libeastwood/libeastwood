@@ -18,8 +18,8 @@ class Palette {
 	virtual ~Palette();
 
 	Color& operator[] (uint16_t i) { return _palette.at(i); }
-	virtual operator bool() const {
-	    return _palette.size();
+	virtual operator bool() const throw() {
+	    return !_palette.empty();
 	}
 
 	uint16_t size() const throw() { return _palette.size(); }
