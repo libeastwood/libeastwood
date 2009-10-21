@@ -11,20 +11,12 @@ class Palette : public eastwood::Palette
 {
     public:
 	Palette(const eastwood::Palette& palette);
-	Palette(const SDL_Palette& palette);
+	Palette(const SDL_Palette *palette);
 	virtual ~Palette();
 
-	virtual operator SDL_Palette*() const {
-	    return _sdlPalette;
+	virtual operator SDL_Color*() {
+	    return reinterpret_cast<SDL_Color*>(&_palette.front());
 	}
-
-	virtual operator SDL_Color*() const {
-	    return _sdlPalette->colors;
-	}
-
-
-    protected:
-	SDL_Palette *_sdlPalette;
 };
 
 }}

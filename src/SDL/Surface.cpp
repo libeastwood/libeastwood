@@ -27,7 +27,7 @@ Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette, 
 }
 
 Surface::Surface(const SDL_Surface *surface) :
-    eastwood::Surface(NULL, surface->w, surface->h, surface->format->BitsPerPixel, SDL::Palette(*surface->format->palette)),
+    eastwood::Surface(NULL, surface->w, surface->h, surface->format->BitsPerPixel, SDL::Palette(surface->format->palette)),
     _surface(SDL_ConvertSurface(const_cast<SDL_Surface*>(surface), surface->format, surface->flags))
 {
     _pixels.reset(new Bytes((uint8_t*)_surface->pixels, BufMalloc));
@@ -66,7 +66,7 @@ Surface& Surface::operator=(const SDL_Surface *surface)
     _height = surface->h;
     _pitch = surface->pitch;
     _pixels.reset(new Bytes((uint8_t*)_surface->pixels, BufMalloc));
-    _palette = SDL::Palette(*surface->format->palette);
+    _palette = SDL::Palette(surface->format->palette);
 
     return *this;
 }
