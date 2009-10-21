@@ -16,7 +16,6 @@ static inline std::streambuf *getBuffer(IStream &stream, size_t size)
 
 ISubStream::ISubStream(IStream &stream, size_t size) : IStream(getBuffer(stream, size))
 {
-        delete rdbuf();
 }
 
 ISubStream& ISubStream::operator=(const IStream &stream)
