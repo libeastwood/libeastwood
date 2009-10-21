@@ -19,4 +19,11 @@ ISubStream::ISubStream(IStream &stream, size_t size) : IStream(getBuffer(stream,
         delete rdbuf();
 }
 
+ISubStream& ISubStream::operator=(const IStream &stream)
+{
+    *(IStream*)this = stream;
+
+    return *this;
+}
+
 }

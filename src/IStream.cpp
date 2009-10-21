@@ -8,6 +8,20 @@ IStream::IStream(const std::istream &stream) :
 {
 }
 
+IStream& IStream::operator=(const std::istream &stream)
+{
+    std::ios::init(stream.rdbuf());
+
+    return *this;
+}
+
+IStream& IStream::operator=(const IStream &stream)
+{
+    std::ios::init(stream.rdbuf());
+
+    return *this;
+}
+
 template <typename T> inline
 IStream& IStream::readT(T &value) {
     return reinterpret_cast<IStream&>(read((char*)&value, sizeof(value)));

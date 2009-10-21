@@ -11,6 +11,10 @@ class IStream : public std::istream
 	IStream() : std::istream(NULL){}
 	IStream(std::streambuf *sb) : std::istream(sb) {}
 	IStream(const std::istream &stream);
+
+	IStream& operator=(const std::istream &stream);
+	IStream& operator=(const IStream &stream);
+
 	uint16_t getU16BE();
 	uint16_t getU16LE();
 	uint32_t getU32BE();

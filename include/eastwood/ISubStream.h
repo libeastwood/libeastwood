@@ -8,7 +8,10 @@ namespace eastwood {
 class ISubStream : public IStream
 {
     public:
+	ISubStream() : IStream(){}
 	ISubStream(IStream &stream, size_t size);
+
+	ISubStream& operator=(const IStream &stream);
 };
 
 }
