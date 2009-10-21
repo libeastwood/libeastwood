@@ -3,39 +3,35 @@
 
 namespace eastwood { namespace SDL { namespace Mixer {
 
-static Mix_Chunk* createChunk(bool allocated, uint8_t *buffer, uint32_t length, uint8_t volume = 128)
+static std::tr1::shared_ptr<Mix_Chunk> createChunk(bool allocated, uint8_t *buffer, uint32_t length, uint8_t volume = 128)
 {
     Mix_Chunk *chunk = (Mix_Chunk*)malloc(sizeof(Mix_Chunk));
     chunk->allocated = allocated;
     chunk->abuf = buffer;
     chunk->alen = length;
     chunk->volume = volume;
-    return chunk;
+    return std::tr1::shared_ptr<Mix_Chunk>(chunk, Mix_FreeChunk);
 }
 
 Sound::Sound() :
-    eastwood::Sound(), _chunk(createChunk(false, NULL, 0), Mix_FreeChunk)
+    eastwood::Sound(), _chunk(createChunk(false, NULL, 0))
 {
 }
 
 Sound::Sound(const eastwood::Sound &sound) :
-    eastwood::Sound(sound), _chunk(createChunk(false, NULL, 0), Mix_FreeChunk)
+    eastwood::Sound(sound), _chunk(createChunk(true, *_buffer.get(), _size))
 {
-    _chunk->allocated = true;
-    _chunk->abuf = *_buffer.get();
-    _chunk->alen = _size;
 }
-
 
 Sound::Sound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format) :
     eastwood::Sound(size, buffer, frequency, channels, format),
-    _chunk(createChunk(true, buffer, size), Mix_FreeChunk)
+    _chunk(createChunk(true, buffer, size))
 {
 }
 
 Sound::Sound(const Mix_Chunk *sound) :
     eastwood::Sound(sound->alen, NULL, 0, 0, FMT_INVALID),
-    _chunk(new Mix_Chunk(*sound))
+    _chunk(createChunk(true, NULL, sound->alen))
 {
     uint16_t format;
     Mix_QuerySpec((int*)&_frequency, &format, (int*)&_channels);
@@ -51,6 +47,7 @@ Sound::Sound(const Mix_Chunk *sound) :
 
     _buffer.reset(new Bytes((uint8_t*)malloc(_size), BufMalloc));
     memcpy(*this, sound->abuf, _size);
+    _chunk->abuf = *this;
 
 }
 
@@ -62,13 +59,15 @@ Sound::~Sound()
 Sound& Sound::operator=(const eastwood::Sound &sound) 
 {
     *(eastwood::Sound*)this = sound;
-    _chunk.reset(createChunk(true, *this, size()), Mix_FreeChunk);
+    _chunk->abuf = NULL;
+    _chunk = createChunk(true, *this, size());
 
     return *this;
 }
 
 Sound& Sound::operator=(const Mix_Chunk *sound) 
 {
+    _chunk->abuf = NULL;
     _chunk.reset(const_cast<Mix_Chunk*>(sound), Mix_FreeChunk);
     _buffer.reset(new Bytes((uint8_t*)sound->abuf, BufMalloc));
 
