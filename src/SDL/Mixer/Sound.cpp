@@ -14,28 +14,28 @@ static Mix_Chunk* createChunk(bool allocated, uint8_t *buffer, uint32_t length, 
 }
 
 Sound::Sound() :
-    eastwood::Sound(), _sound(createChunk(false, NULL, 0))
+    eastwood::Sound(), _chunk(createChunk(false, NULL, 0), Mix_FreeChunk)
 {
 }
 
 Sound::Sound(const eastwood::Sound &sound) :
-    eastwood::Sound(sound), _sound(createChunk(false, NULL, 0))
+    eastwood::Sound(sound), _chunk(createChunk(false, NULL, 0), Mix_FreeChunk)
 {
-    _sound->allocated = true;
-    _sound->abuf = *_buffer.get();
-    _sound->alen = _size;
+    _chunk->allocated = true;
+    _chunk->abuf = *_buffer.get();
+    _chunk->alen = _size;
 }
 
 
 Sound::Sound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format) :
     eastwood::Sound(size, buffer, frequency, channels, format),
-    _sound(createChunk(true, buffer, size))
+    _chunk(createChunk(true, buffer, size), Mix_FreeChunk)
 {
 }
 
 Sound::Sound(const Mix_Chunk *sound) :
     eastwood::Sound(sound->alen, NULL, 0, 0, FMT_INVALID),
-    _sound(new Mix_Chunk(*sound))
+    _chunk(new Mix_Chunk(*sound))
 {
     uint16_t format;
     Mix_QuerySpec((int*)&_frequency, &format, (int*)&_channels);
@@ -56,21 +56,20 @@ Sound::Sound(const Mix_Chunk *sound) :
 
 Sound::~Sound()
 {
-    _sound->abuf = NULL;
-    Mix_FreeChunk(_sound);
+    _chunk->abuf = NULL;
 }
 
 Sound& Sound::operator=(const eastwood::Sound &sound) 
 {
     *(eastwood::Sound*)this = sound;
-    _sound = createChunk(true, *this, size());
+    _chunk.reset(createChunk(true, *this, size()), Mix_FreeChunk);
 
     return *this;
 }
 
 Sound& Sound::operator=(const Mix_Chunk *sound) 
 {
-    _sound = const_cast<Mix_Chunk*>(sound);
+    _chunk.reset(const_cast<Mix_Chunk*>(sound), Mix_FreeChunk);
     _buffer.reset(new Bytes((uint8_t*)sound->abuf, BufMalloc));
 
     return *this;

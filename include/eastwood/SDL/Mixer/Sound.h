@@ -17,7 +17,7 @@ class Sound : public eastwood::Sound
 	virtual ~Sound();
 
 	virtual operator Mix_Chunk*() const throw() {
-	    return _sound;
+	    return _chunk.get();
 	}
 
 	Sound &operator=(const eastwood::Sound &sound);
@@ -26,8 +26,7 @@ class Sound : public eastwood::Sound
 	Sound getResampled(Interpolator interpolator = I_LINEAR);
 
     private:
-	Mix_Chunk *_sound;
-
+	std::tr1::shared_ptr<Mix_Chunk> _chunk;
 };
 
 }}}
