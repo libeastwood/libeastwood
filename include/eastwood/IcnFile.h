@@ -70,16 +70,18 @@ public:
 	Returns the number of tiles in the icn-File.
     @return	Number of tiles
 */
-	uint16_t size() const throw(){ return _SSET.size() / ((_width * _height) / 2);}
+	uint16_t size() const throw(){ return _SSET.size() / _tileSize; }
 	
 private:
 	void readHeader();
 	void createImage(uint16_t index, uint8_t *dest, uint16_t pitch);
 	MapFile &_map;
 
-	std::vector<uint8_t>	_SSET, // Structure Set Block
-				_RPAL, // Reference Palette
+	std::vector<uint8_t>	_SSET, // Structure Set Chunk
+				_RPAL, // RIFF Palette
 				_RTBL; // Reference Table
+	uint8_t			_bpp;
+	uint16_t		_tileSize;
 };
 
 }

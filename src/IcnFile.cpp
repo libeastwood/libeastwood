@@ -10,8 +10,8 @@
 namespace eastwood {
 
 IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
-    Decode(stream, 16, 16, palette),
-    _map(map), _SSET(), _RPAL(), _RTBL()
+    Decode(stream, 0, 0, palette),
+    _map(map), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0)
 {
     readHeader();
 }
@@ -23,6 +23,7 @@ IcnFile::~IcnFile()
 void IcnFile::readHeader()
 {
     uint32_t sectionSize;
+    uint8_t shift;
 
     _stream.seekg(0, std::ios::beg);
     
@@ -41,8 +42,13 @@ void IcnFile::readHeader()
 
     sectionSize = _stream.getU32BE();
 
-    //TODO: Figure out what these 4 bytes are for
-    _stream.ignore(sectionSize);
+    _width = _stream.get();
+    _height = _stream.get();
+    shift = _stream.get();
+    _width <<= shift;
+    _height <<= shift;
+    _bpp = _stream.get();
+    _tileSize = ((_width*_height)<<shift)>>_bpp;
 
 
     // Structure Set
@@ -64,7 +70,6 @@ void IcnFile::readHeader()
     _SSET.resize(sectionSize);
     _stream.read((char*)&_SSET.front(), _SSET.size());
 
-
     // RIFF Palette
     if(_stream.getU32BE() != ID_RPAL)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL chunk found"));
@@ -77,21 +82,18 @@ void IcnFile::readHeader()
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RTBL chunk found"));
     _RTBL.resize(_stream.getU32BE());
     _stream.read((char*)&_RTBL.front(), _RTBL.size());
-
 }
 
 void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 {
-    uint8_t *paletteStart = &_RPAL.at(_RTBL.at(index) << 4),
-	    *fileStart = &_SSET.at((index * ((_width * _height)>>1)));
+    const uint8_t *paletteStart = &_RPAL.at(_RTBL.at(index) << _bpp),
+	  *fileStart = &_SSET.at(index * _tileSize);
 
-    for(int y = 0; y < _height;y++, dest += pitch)
-	for(int x = 0; x < _width; x++) {
-	    uint8_t startPixel = fileStart[ (y*_width + x) >> 1];
-	    dest[x++] = paletteStart[startPixel >> 4];
-	    dest[x] = paletteStart[startPixel & 0x0F];
+    for(uint16_t y = 0; y < _height; y++, dest += pitch)
+	for(uint16_t x = 0; x < _width; x++) {
+	    dest[x++] = paletteStart[*fileStart >> _bpp];
+	    dest[x] = paletteStart[*fileStart++ & ((1<<_bpp)-1)];
 	}
-
 }
 
 Surface IcnFile::getSurface(uint16_t index)
