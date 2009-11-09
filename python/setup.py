@@ -26,7 +26,7 @@ from distutils.ccompiler import get_default_compiler
 descr = "Python bindings for libeastwood"
 long_descr = """PyEastwood provides a python interface for the libeastwood
 library to read and write several data formats used by old Westwood games."""
-version = '0.3'
+version = '0.3.1'
 version_define = [('VERSION', '"%s"' % version)]
 
 modules = ['eastwood']
