@@ -1,0 +1,28 @@
+To build this library you need the following:
+
+* cmake (http://www.cmake.org)
+* libsamplerate (http://www.mega-nerd.com/SRC/index.html)
+
+To build the python bindings (required for the command line tool) you
+additionally need:
+
+* python (http://www.python.org/)
+
+To build the SDL_eastwood library you also need:
+
+* SDL (http://www.libsdl.org/)
+* SDL_mixer (http://www.libsdl.org/projects/SDL_mixer/)
+
+Building of the optional features can be enabled and disabled by the following
+variables:
+LIBEASTWOOD_BUILD_SDL
+LIBEASTWOOD_BUILD_PYTHON
+
+For building ie. with python bindings, but without SDL_eastwood on *nix:
+cmake -DLIBEASTWOOD_BUILD_SDL=0 -DLIBEASTWOOD_BUILD_PYTHON=1
+make
+
+Additional build instructions might also be found at:
+
+* http://dunelegacy.sourceforge.net/wiki/index.php/Linux-howto
+
