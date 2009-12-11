@@ -25,6 +25,7 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/PalFile.h
   eastwood/ShpFile.h
   eastwood/Sound.h
+  eastwood/StdDef.h
   eastwood/StringFile.h
   eastwood/Surface.h
   eastwood/VocFile.h
