@@ -22,10 +22,10 @@
 
 #if defined(__GNUC__)
   #define GNUC_ATTRIBUTE(attr) __attribute__(attr)
-  #define PACK(n)
+  #define PACK
 #else
   #define GNUC_ATTRIBUTE(attr)
-  #define PACK(n) _Pragma("pack(1)")
+  #define PACK _Pragma("pack(1)")
 #endif
 
 #ifdef _WIN32
