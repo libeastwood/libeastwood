@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "eastwood/StdDef.h"
 #include "eastwood/ExeFile.h"
 
 namespace eastwood {
@@ -33,7 +34,7 @@ int	D2ExeStructureEntries = 19,
 	D2ExeHouseEntries = 6,
 	D2ExeActionEntries = 14;
 
-#include "eastwood/pragma-start.h"
+PACK
 struct	D2ExeStructureData {
     uint16_t	idShort;
     uint32_t	name;
@@ -87,9 +88,9 @@ struct	D2ExeStructureData {
     uint16_t	techUpgrade2;
     uint16_t	techUpgrade3;
 } GNUC_ATTRIBUTE((packed));
-#include "eastwood/pragma-end.h"
+PACK
 
-#include "eastwood/pragma-start.h"
+PACK
 struct	D2ExeUnitData {
    uint16_t	idShort;        
    uint32_t	name;
@@ -137,9 +138,9 @@ struct	D2ExeUnitData {
    uint16_t	weaponType;
    uint16_t	weaponSound;
 } GNUC_ATTRIBUTE((packed));
-#include "eastwood/pragma-end.h"
+PACK
 
-#include "eastwood/pragma-start.h"
+PACK
 struct	D2ExeHouseData {
    uint32_t	name;
    uint16_t	weakness;
@@ -155,10 +156,10 @@ struct	D2ExeHouseData {
    uint16_t	missionBriefMusic;
    uint32_t	houseVoice;
 } GNUC_ATTRIBUTE((packed));
-#include "eastwood/pragma-end.h"
+PACK
 
 // Stored internal File table
-#include "eastwood/pragma-start.h"
+PACK
 struct	D2ExeFileData {
    uint32_t	name;
    uint16_t	field_4;
@@ -171,10 +172,10 @@ struct	D2ExeFileData {
    uint8_t	field_11;
    uint8_t	fileType;
 } GNUC_ATTRIBUTE((packed));
-#include "eastwood/pragma-end.h"
+PACK
 
 // Unit 'Action' commands
-#include "eastwood/pragma-start.h"
+PACK
 struct	D2ExeActionData {
    uint8_t	field_0;
    uint8_t	field_1;
@@ -186,7 +187,7 @@ struct	D2ExeActionData {
    uint8_t	field_A;
    uint8_t	field_B;
 } GNUC_ATTRIBUTE((packed));
-#include "eastwood/pragma-end.h"
+PACK
 
 class Dune2File
 {

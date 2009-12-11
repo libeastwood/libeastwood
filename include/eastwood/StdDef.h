@@ -20,6 +20,14 @@
   typedef unsigned   uint32_t;
 #endif
 
+#if defined(__GNUC__)
+  #define GNUC_ATTRIBUTE(attr) __attribute__(attr)
+  #define PACK(n)
+#else
+  #define GNUC_ATTRIBUTE(attr)
+  #define PACK(n) _Pragma("pack(1)")
+#endif
+
 #ifdef _WIN32
   #ifndef __LITTLE_ENDIAN
     #define __LITTLE_ENDIAN 1234
