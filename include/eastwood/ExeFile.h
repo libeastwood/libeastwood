@@ -3,11 +3,12 @@
 
 #include <vector>
 
+#include "eastwood/StdDef.h"
 #include "eastwood/IStream.h"
 
 namespace eastwood {
 
-#include "eastwood/pragma-start.h"
+PACK
 struct ExeHeader {
         uint16_t signature;	// EXE_Header Signature MZ or ZM
         uint16_t extraBytes;	// Bytes on the last page
@@ -24,7 +25,7 @@ struct ExeHeader {
         uint16_t relocTable;
         uint16_t overlay;
 } GNUC_ATTRIBUTE((packed));
-#include "eastwood/pragma-end.h"
+PACK
 
 class ExeFile : public IStream
 {

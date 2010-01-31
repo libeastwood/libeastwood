@@ -39,14 +39,14 @@ enum VocCode {
     VOC_CODE_INVALID
 };
 
-#include "eastwood/pragma-start.h"
+PACK
 struct VocFileHeader {
     uint8_t desc[20];
     uint16_t datablock_offset;
     uint16_t version;
     uint16_t id;
 } GNUC_ATTRIBUTE((packed));
-#include "eastwood/pragma-end.h"
+PACK
 
 VocFile::VocFile(std::istream &stream) :
     _stream(stream)
