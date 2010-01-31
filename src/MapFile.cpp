@@ -20,9 +20,9 @@ MapFile::MapFile(std::istream &stream) :
     }
 
     for(std::vector<std::vector<uint16_t> >::iterator it = _tileSet.begin();
-	    it != _tileSet.end(); it++) {
+	    it != _tileSet.end(); ++it) {
 	for(std::vector<uint16_t>::iterator it2 = it->begin();
-		it2 != it->end(); it2++)
+		it2 != it->end(); ++it2)
 	    *it2 = _stream.getU16LE();
     }
 }
