@@ -83,8 +83,7 @@ setup(
     py_modules = modules,
     ext_modules = extens,
     test_suite = 'tests',
+    entry_points = {'console_scripts': ['eastwood=eastwood:main']}
 )
-
-sys.exit(0)
 
 # vim:ts=4:sw=4:et

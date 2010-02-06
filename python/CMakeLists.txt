@@ -19,5 +19,3 @@ INSTALL(CODE "
         )
     "
 )
-INSTALL(FILES eastwood DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
-
