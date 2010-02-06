@@ -16,6 +16,7 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/IcnFile.h
   eastwood/IFFContainer.h
   eastwood/IniFile.h
+  eastwood/IOStream.h
   eastwood/IStream.h
   eastwood/ISubStream.h
   eastwood/MapFile.h
@@ -30,8 +31,6 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/Surface.h
   eastwood/VocFile.h
   eastwood/WsaFile.h
-  eastwood/pragma-start.h
-  eastwood/pragma-end.h
 )
 
 SET( LIBEASTWOOD_ADLIB_HEADERS
