@@ -2,11 +2,11 @@
 #define EASTWOOD_ICNFILE_H
 
 /*!
-    A class for loading a *.ICN-File and the corresponding *.MAP-File.
+    A class for loading a ICN files.
     
-	This class can read icn-Files and return the contained pictures as a SDL_Surface. An icn-File contains
-	small 16x16 pixel tiles. The map-file contains the information how to build up a complete picture with
-	this small tiles.
+	This class can read icn files and return pictures from it as Surface objects.
+	An icn file contains small 16x16 pixel tiles which together with the information
+	from a MAP file can be used to create pictures or animation sequences from these.
 */
 
 #include <vector>
@@ -70,7 +70,9 @@ public:
 	Returns the number of tiles in the icn-File.
     @return	Number of tiles
 */
-	uint16_t size() const throw(){ return _SSET.size() / _tileSize; }
+	uint16_t size() const throw() {
+	    return _SSET.size() / _tileSize;
+	}
 	
 private:
 	void readHeader();

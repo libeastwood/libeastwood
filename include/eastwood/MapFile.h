@@ -1,6 +1,13 @@
 #ifndef EASTWOOD_MAPFILE_H
 #define EASTWOOD_MAPFILE_H
 
+/*!
+    A class for loading MAP files.
+    
+	A map file contains information on how to assemble a complete picture or
+	animation sequence from several tiles.
+*/
+
 #include <vector>
 
 #include "eastwood/IStream.h"
@@ -17,7 +24,13 @@ class MapFile
 	MapFile(std::istream &stream);
 	~MapFile();
 
-	const std::vector<uint16_t> operator[] (uint16_t i) const { return _tileSet.at(i); }
+	/*!
+	 Get a tile set.
+	 @return	A vector containing tile indexes.
+	 */
+	const std::vector<uint16_t> operator[] (uint16_t i) const {
+	    return _tileSet.at(i);
+	}
 
 	/*!
 	  Returns the number of tileSets in the map-File.
@@ -25,7 +38,7 @@ class MapFile
 	  */
 	uint16_t size() const throw() {
 	    return _tileSet.size();
-	};
+	}
 
     private:
 	IStream &_stream;
