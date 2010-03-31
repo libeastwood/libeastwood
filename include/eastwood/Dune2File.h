@@ -41,7 +41,7 @@ struct	D2ExeStructureData {
     uint16_t	idLong;
     uint32_t	picture;
     uint16_t	buildOpts;
-    uint16_t	field_E;
+    uint16_t	infantrySpawn;
     uint16_t	hitPoints;
     uint16_t	sight;    
     uint16_t	sidebarIconID;
@@ -65,17 +65,14 @@ struct	D2ExeStructureData {
     uint16_t	weaponDamageAdd;
     uint8_t	owner;
     uint16_t	repairFacility;
-    uint16_t	unitsCanEnter;
+    uint32_t	unitsCanEnter;
     uint16_t	spiceStorage;
     uint16_t	powerUsage;
     uint16_t	foundationSize;
     uint16_t	structureGfxID;
-    uint16_t	field_3E;
-    uint16_t	field_40;
-    uint16_t	field_42;
-    uint16_t	field_44;
-    uint16_t	field_46;
-    uint16_t	field_48;
+    uint32_t	field_3E;
+    uint32_t	field_42;
+    uint32_t	field_46;
     uint16_t	constructOpt1;
     uint16_t	constructOpt2;
     uint16_t	constructOpt3;
@@ -105,8 +102,8 @@ struct	D2ExeUnitData {
    uint16_t	buildTime;      
    uint16_t	techLevel;      
    uint32_t	preReqs;        
-   uint8_t	field_20;        
-   uint8_t	upgradesNeeded;  
+   uint8_t	buildOrder;
+   uint8_t	upgradesNeeded;
    uint16_t	sidebarCommand1;
    uint16_t	sidebarCommand2;
    uint16_t	sidebarCommand3;
@@ -177,15 +174,11 @@ PACK
 // Unit 'Action' commands
 PACK
 struct	D2ExeActionData {
-   uint8_t	field_0;
-   uint8_t	field_1;
+   uint16_t	field_0;
    uint32_t	name;
-   uint8_t	field_6;
-   uint8_t	field_7;
-   uint8_t	sidebarMode;
-   uint8_t	field_9;
-   uint8_t	field_A;
-   uint8_t	field_B;
+   uint16_t	interruptAction;
+   uint16_t	sidebarMode;
+   uint16_t	responseSound;
 } GNUC_ATTRIBUTE((packed));
 PACK
 
