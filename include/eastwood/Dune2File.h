@@ -89,19 +89,19 @@ PACK
 
 PACK
 struct	D2ExeUnitData {
-   uint16_t	idShort;        
+   uint16_t	idShort;
    uint32_t	name;
    uint16_t	idLong;
    uint32_t	picture;
-   uint16_t	optsWocaTuro;    
-   uint16_t	field_E;        
-   uint16_t	hitPoints;      
-   uint16_t	sight;          
-   uint16_t	sidebarIconID;  
-   uint16_t	cost;            
-   uint16_t	buildTime;      
-   uint16_t	techLevel;      
-   uint32_t	preReqs;        
+   uint16_t	optsWocaTuro;
+   uint16_t	field_E; 
+   uint16_t	hitPoints;
+   uint16_t	sight; 
+   uint16_t	sidebarIconID; 
+   uint16_t	cost; 
+   uint16_t	buildTime;
+   uint16_t	techLevel;
+   uint32_t	preReqs;
    uint8_t	buildOrder;
    uint8_t	upgradesNeeded;
    uint16_t	sidebarCommand1;
@@ -111,16 +111,16 @@ struct	D2ExeUnitData {
    uint8_t	field_2A;        
    uint16_t	field_2B;        
    uint16_t	field_2D;        
-   uint16_t	aggressivity;    
-   uint8_t	owner;          
-   uint16_t	indexMin;        
-   uint16_t	indexMax;        
-   uint16_t	optsFitW;        
-   uint8_t	field_38;        
-   uint8_t	field_39;        
-   uint16_t	field_3A;        
-   uint16_t	movementType;    
-   uint16_t	distFrame;        
+   uint16_t	aggressivity;
+   uint8_t	owner;
+   uint16_t	indexMin;
+   uint16_t	indexMax;
+   uint16_t	optsFitW;
+   uint8_t	field_38;
+   uint8_t	field_39;
+   uint16_t	field_3A;
+   uint16_t	movementType;
+   uint16_t	distFrame;
    uint16_t	speed;
    uint16_t	turningSpeed;
    uint16_t	unitGfxID;
@@ -131,7 +131,7 @@ struct	D2ExeUnitData {
    uint16_t	weaponRateFire;
    uint16_t	weaponRange;
    uint16_t	weaponDamage;
-   uint16_t	field_54;  
+   uint16_t	field_54;
    uint16_t	weaponType;
    uint16_t	weaponSound;
 } GNUC_ATTRIBUTE((packed));
