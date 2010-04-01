@@ -23,12 +23,19 @@ class PakFile : public IOStream
 	bool is_open() const throw() {
             return rdbuf() != NULL;
         }
+
+        bool exists(std::string fileName) const throw() {
+            std::transform( fileName.begin(), fileName.end(), fileName.begin(), ::toupper );
+            return _fileEntries.find(fileName) != _fileEntries.end();
+        }
+
         std::string getFileName(uint32_t index) const {
             return _fileNames.at(index);
-        };
+        }
+
         uint32_t entries() const throw() {
             return _fileEntries.size();
-        };
+        }
         // If negative, file needs to be truncated
         int32_t sizediff();
 
