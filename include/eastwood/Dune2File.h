@@ -93,8 +93,8 @@ struct	D2ExeUnitData {
    uint32_t	name;
    uint16_t	idLong;
    uint32_t	picture;
-   uint16_t	optsWocaTuro;
-   uint16_t	field_E; 
+   uint16_t	options1;
+   uint16_t	infantrySpawn; 
    uint16_t	hitPoints;
    uint16_t	sight; 
    uint16_t	sidebarIconID; 
@@ -120,13 +120,13 @@ struct	D2ExeUnitData {
    uint8_t	field_39;
    uint16_t	field_3A;
    uint16_t	movementType;
-   uint16_t	distFrame;
+   uint16_t	movementPerFrame;
    uint16_t	speed;
    uint16_t	turningSpeed;
    uint16_t	unitGfxID;
    uint16_t	turretGfxID;
    uint16_t	aiCommand;
-   uint16_t	framesPerAngle;
+   uint16_t	frameAngleMode;
    uint16_t	deathAnim;
    uint16_t	weaponRateFire;
    uint16_t	weaponRange;
