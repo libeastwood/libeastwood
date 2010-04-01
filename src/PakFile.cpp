@@ -91,7 +91,7 @@ void PakFile::open(std::string fileName, std::ios::openmode mode)
     if(!validateFileName(fileName))
         throw(FileException(LOG_ERROR, "PakFile", fileName, "Filename must be DOS-style (8.3 format)"));
 
-    stringToUpper(fileName);
+    std::transform( fileName.begin(), fileName.end(), fileName.begin(), ::toupper );
 
     _mode |= mode;
     _currentFile = _fileEntries.find(fileName);
@@ -119,7 +119,7 @@ bool PakFile::erase(std::string fileName)
 {
     uint32_t startOffset = _fileEntries[_fileNames[0]].first;
 
-    stringToUpper(fileName);
+    std::transform( fileName.begin(), fileName.end(), fileName.begin(), ::toupper );
 
     _currentFile = _fileEntries.find(fileName);
     if(_currentFile == _fileEntries.end())
