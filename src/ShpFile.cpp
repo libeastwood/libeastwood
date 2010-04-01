@@ -133,13 +133,26 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    break;
 
 	case 2:
+#if 0	//FIXME
 	    decode2(_stream, imageOut, imageSize);
+#else	    
+	    decodeDestination.resize(imageSize);	    
+	    _stream.read(reinterpret_cast<char*>(&decodeDestination.front()), imageSize);
+	    decode2(&decodeDestination.front(), imageOut, imageSize);
+#endif
 	    break;
 
 	case 3:
 	    palOffsets.resize(16);
 	    _stream.read(reinterpret_cast<char*>(&palOffsets.front()), palOffsets.size());
+
+#if 0	//FIXME
 	    decode2(_stream, imageOut, imageSize);
+#else	    
+	    decodeDestination.resize(imageSize);	    
+	    _stream.read(reinterpret_cast<char*>(&decodeDestination.front()), imageSize);
+	    decode2(&decodeDestination.front(), imageOut, imageSize);
+#endif
 
 	    apply_pal_offsets(&palOffsets.front(), imageOut, imageOutSize);
 	    break;
