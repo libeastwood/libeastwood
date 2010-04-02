@@ -34,7 +34,9 @@ int	D2ExeStructureEntries = 19,
 	D2ExeHouseEntries = 6,
 	D2ExeActionEntries = 14,
 	D2ExeMovementEntries = 24,
-	D2ExeLayoutTileCountEntries = 7;
+	D2ExeLayoutTileCountEntries = 7,
+	D2ExeLayoutTilesAroundEntries_X = 7,
+	D2ExeLayoutTilesAroundEntries_Y = 16;
 
 PACK
 struct	D2ExeStructureData {
@@ -196,6 +198,7 @@ class Dune2File
 	D2ExeActionData getActionData(int index) const { return _actionData.at(index); }
 	std::string getMovementData(int index) const { return _movementData.at(index); }
 	uint16_t getLayoutTileCount(int index) const { return _layoutTileCount.at(index); }
+	uint16_t getLayoutTilesAround(int x, int y) const { return _layoutTilesAround.at(x).at(y); }	
 
 	std::vector<uint16_t> animPtrGet(uint32_t p);
 
@@ -216,6 +219,7 @@ class Dune2File
 	std::vector<D2ExeFileData> _fileData;
 	std::vector<std::string> _movementData;
 	std::vector<uint16_t> _layoutTileCount;
+	std::vector<std::vector<uint16_t> > _layoutTilesAround;
 
 };
 

@@ -22,7 +22,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _actionData(D2ExeActionEntries),
     _fileData(0),
     _movementData(D2ExeMovementEntries),
-    _layoutTileCount(D2ExeLayoutTileCountEntries)
+    _layoutTileCount(D2ExeLayoutTileCountEntries),
+    _layoutTilesAround(D2ExeLayoutTilesAroundEntries_X)
 {
     detectDune2Version();
     readDataStructures();
@@ -86,6 +87,11 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(D2ExeLayoutTileCountOffset[_version].segment, D2ExeLayoutTileCountOffset[_version].offset);    
     _stream.readU16LE(&_layoutTileCount.front(), _layoutTileCount.size());
+    for(int x = 0; x < D2ExeLayoutTilesAroundEntries_X; x++) {
+	_layoutTilesAround[x].resize(D2ExeLayoutTilesAroundEntries_Y);
+	for(int y = 0; y < D2ExeLayoutTilesAroundEntries_Y; y++)
+	    _layoutTilesAround[x][y] = _stream.getU16LE();
+    }
 }
 
 std::vector<uint16_t> Dune2File::animPtrGet(uint32_t p) {
