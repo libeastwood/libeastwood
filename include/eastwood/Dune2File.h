@@ -32,7 +32,8 @@ static const
 int	D2ExeStructureEntries = 19,
 	D2ExeUnitEntries = 27,
 	D2ExeHouseEntries = 6,
-	D2ExeActionEntries = 14;
+	D2ExeActionEntries = 14,
+	D2MovementEntries = 24;
 
 PACK
 struct	D2ExeStructureData {
@@ -192,6 +193,7 @@ class Dune2File
 	D2ExeHouseData getHouseData(int index) const { return _houseData.at(index); }
 	D2ExeFileData getFileData(int index) const { return _fileData.at(index); }
 	D2ExeActionData getActionData(int index) const { return _actionData.at(index); }
+	const std::vector<std::string> getMovementData() const { return _movementData; }
 
 	std::vector<uint16_t> animPtrGet(uint32_t p);
 
@@ -210,6 +212,7 @@ class Dune2File
 	std::vector<D2ExeHouseData> _houseData;
 	std::vector<D2ExeActionData> _actionData;
 	std::vector<D2ExeFileData> _fileData;
+	std::vector<std::string> _movementData;
 
 };
 

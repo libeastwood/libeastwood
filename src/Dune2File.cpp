@@ -10,7 +10,8 @@ static const Address
     D2ExeUnitOffset[D2_VERSIONS] = { {0x2ca7, 0x0}, {0x2bb5, 0x0}, {0x2b0b, 0x0}, {0x2b10, 0x0}, {0x2b0b, 0x0} },
     D2ExeHouseOffset[D2_VERSIONS] = { {0x3574, 0xa}, {0x3668, 0x4}, {0x3615, 0xc}, {0x36c7, 0x8}, {0x36c0, 0xc} },
     D2ExeFileOffset[D2_VERSIONS] = { {0x2e28, 0x0}, {0x2d1b, 0x0}, {0x2ca0, 0x0}, {0x2ca5, 0x0}, {0x2ca0, 0x0} },
-    D2ExeActionOffset[D2_VERSIONS] = { {0x2e1c, 0xe}, {0x2d0f, 0xe}, {0x2c94, 0xe}, {0x2c99, 0xe}, {0x2c94, 0xe} };
+    D2ExeActionOffset[D2_VERSIONS] = { {0x2e1c, 0xe}, {0x2d0f, 0xe}, {0x2c94, 0xe}, {0x2c99, 0xe}, {0x2c94, 0xe} },
+    D2ExeMovementOffset[D2_VERSIONS] = { {0x3342, 0x2d70}, {0x3342, 0x3caa}, {0x3342, 0x3786}, {0x3342, 0x429e}, {0x3342, 0x4232 } };
 
 Dune2File::Dune2File(ExeFile &stream) :
     _stream(stream), _version(D2_VERSIONS),
@@ -18,7 +19,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _unitData(D2ExeUnitEntries),
     _houseData(D2ExeHouseEntries),
     _actionData(D2ExeActionEntries),
-    _fileData(0)
+    _fileData(0),
+    _movementData(D2MovementEntries)    
 {
     detectDune2Version();
     readDataStructures();
@@ -73,6 +75,12 @@ void Dune2File::readDataStructures()
     _stream.seekSegOff(D2ExeActionOffset[_version].segment, D2ExeActionOffset[_version].offset);
     _stream.read((char*)&_actionData.front(), _actionData.size()  * sizeof(_actionData[0]));
 
+    _stream.seekSegOff(D2ExeMovementOffset[_version].segment, D2ExeMovementOffset[_version].offset);
+    char buf[16];
+    for(std::vector<std::string>::iterator it = _movementData.begin(); it != _movementData.end(); ++it) {
+    	_stream.getline(buf, sizeof(buf), 0);
+	*it += buf;
+    }
 
 }
 
@@ -90,7 +98,7 @@ std::string Dune2File::stringGet(uint32_t p)
     char buf[64];
     _stream.seekSegOff(p);
 
-    _stream.getline(buf, 64, 0);
+    _stream.getline(buf, sizeof(buf), 0);
     return std::string(buf);
 }
 
