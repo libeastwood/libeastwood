@@ -64,7 +64,6 @@ struct	D2ExeStructureData {
     uint16_t	weaponDamage;
     uint16_t	weaponDamageAdd;
     uint8_t	owner;
-    uint16_t	repairFacility;
     uint32_t	unitsCanEnter;
     uint16_t	spiceStorage;
     uint16_t	powerUsage;
