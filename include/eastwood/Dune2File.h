@@ -193,7 +193,7 @@ class Dune2File
 	D2ExeHouseData getHouseData(int index) const { return _houseData.at(index); }
 	D2ExeFileData getFileData(int index) const { return _fileData.at(index); }
 	D2ExeActionData getActionData(int index) const { return _actionData.at(index); }
-	const std::vector<std::string> getMovementData() const { return _movementData; }
+	std::string getMovementData(int index) const { return _movementData.at(index); }
 
 	std::vector<uint16_t> animPtrGet(uint32_t p);
 
