@@ -39,4 +39,17 @@ IStream& ExeFile::seekSegOff(uint16_t seg, uint16_t off)
     return *this;
 }
 
+uint16_t ExeFile::findOff(uint16_t seg, std::string str)
+{
+    seekg(_codeSegment + (seg<<4));
+    char buf[0xffff];    
+    read(buf, sizeof(buf));
+
+    for(uint16_t off = 0, end = (uint16_t)gcount() - str.size(); off < end; ++off)
+	if(memcmp(&buf[off], str.data(), str.size()) == 0)
+	    return off;
+
+    return -1;
+}
+
 }

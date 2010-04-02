@@ -34,6 +34,7 @@ class ExeFile : public IStream
 	
 	IStream& seekSegOff(uint32_t segoff);
 	IStream& seekSegOff(uint16_t seg, uint16_t off);
+	uint16_t findOff(uint16_t seg, std::string str);
 
     private:
 	void readHeader();
