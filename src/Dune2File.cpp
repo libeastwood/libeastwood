@@ -20,7 +20,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _houseData(D2ExeHouseEntries),
     _actionData(D2ExeActionEntries),
     _fileData(0),
-    _movementData(D2MovementEntries)    
+    _movementData(D2ExeMovementEntries)    
 {
     detectDune2Version();
     readDataStructures();

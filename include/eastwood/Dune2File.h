@@ -33,7 +33,7 @@ int	D2ExeStructureEntries = 19,
 	D2ExeUnitEntries = 27,
 	D2ExeHouseEntries = 6,
 	D2ExeActionEntries = 14,
-	D2MovementEntries = 24;
+	D2ExeMovementEntries = 24;
 
 PACK
 struct	D2ExeStructureData {
