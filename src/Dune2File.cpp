@@ -14,16 +14,26 @@ static const Address
     D2ExeMovementOffset[D2_VERSIONS] = { {0x3342, 0x2d70}, {0x3342, 0x3caa}, {0x3342, 0x3786}, {0x3342, 0x429e}, {0x3342, 0x4232 } },
     D2ExeLayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } };
 
+static const
+int	D2ExeStructureEntries = 19,
+	D2ExeUnitEntries = 27,
+	D2ExeHouseEntries = 6,
+	D2ExeActionEntries = 14,
+	D2ExeMovementEntries = 24,
+	D2ExeLayoutTileCountEntries = 7,
+	D2ExeLayoutTilesAroundEntries_X = 7,
+	D2ExeLayoutTilesAroundEntries_Y = 16;
+
 Dune2File::Dune2File(ExeFile &stream) :
     _stream(stream), _version(D2_VERSIONS),
-    _structureData(D2ExeStructureEntries),
-    _unitData(D2ExeUnitEntries),
-    _houseData(D2ExeHouseEntries),
-    _actionData(D2ExeActionEntries),
+    _structureData(19),
+    _unitData(27),
+    _houseData(6),
+    _actionData(14),
     _fileData(0),
-    _movementData(D2ExeMovementEntries),
-    _layoutTileCount(D2ExeLayoutTileCountEntries),
-    _layoutTilesAround(D2ExeLayoutTilesAroundEntries_X)
+    _movementData(24),
+    _layoutTileCount(7),
+    _layoutTilesAround(16)
 {
     detectDune2Version();
     readDataStructures();

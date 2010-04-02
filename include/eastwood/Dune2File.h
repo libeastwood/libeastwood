@@ -28,16 +28,6 @@ struct Address {
     uint16_t offset;
 };
 
-static const
-int	D2ExeStructureEntries = 19,
-	D2ExeUnitEntries = 27,
-	D2ExeHouseEntries = 6,
-	D2ExeActionEntries = 14,
-	D2ExeMovementEntries = 24,
-	D2ExeLayoutTileCountEntries = 7,
-	D2ExeLayoutTilesAroundEntries_X = 7,
-	D2ExeLayoutTilesAroundEntries_Y = 16;
-
 PACK
 struct	D2ExeStructureData {
     uint16_t	idShort;
@@ -191,14 +181,14 @@ class Dune2File
 	Dune2File(ExeFile &stream);
 
 	D2ExeVersion getVersion() const throw() { return _version; }
-	D2ExeStructureData getStructureData(int index) const { return _structureData.at(index); }
-	D2ExeUnitData getUnitData(int index) const { return _unitData.at(index); }
-	D2ExeHouseData getHouseData(int index) const { return _houseData.at(index); }
-	D2ExeFileData getFileData(int index) const { return _fileData.at(index); }
-	D2ExeActionData getActionData(int index) const { return _actionData.at(index); }
-	std::string getMovementData(int index) const { return _movementData.at(index); }
-	uint16_t getLayoutTileCount(int index) const { return _layoutTileCount.at(index); }
-	uint16_t getLayoutTilesAround(int x, int y) const { return _layoutTilesAround.at(x).at(y); }	
+	const std::vector<D2ExeStructureData> getStructureData() const { return _structureData; }
+	const std::vector<D2ExeUnitData> getUnitData() const { return _unitData; }
+	const std::vector<D2ExeHouseData> getHouseData() const { return _houseData; }
+	const std::vector<D2ExeFileData> getFileData() const { return _fileData; }
+	const std::vector<D2ExeActionData> getActionData() const { return _actionData; }
+	const std::vector<std::string> getMovementData() const { return _movementData; }
+	const std::vector<uint16_t> getLayoutTileCount() const { return _layoutTileCount; }
+	const std::vector<std::vector<uint16_t> > getLayoutTilesAround() const { return _layoutTilesAround; }
 
 	std::vector<uint16_t> animPtrGet(uint32_t p);
 
