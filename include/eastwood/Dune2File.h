@@ -189,7 +189,7 @@ class Dune2File
 	const std::vector<std::string> getMovementData() const { return _movementData; }
 	const std::vector<uint16_t> getLayoutTileCount() const { return _layoutTileCount; }
 	const std::vector<std::vector<int16_t> > getLayoutTilesAround() const { return _layoutTilesAround; }
-	const std::vector<uint16_t> getAngleTable() const { return _angleTable; }
+	const std::vector<int16_t> getAngleTable() const { return _angleTable; }
 
 	std::vector<uint16_t> animPtrGet(uint32_t p);
 
@@ -211,7 +211,7 @@ class Dune2File
 	std::vector<std::string> _movementData;
 	std::vector<uint16_t> _layoutTileCount;
 	std::vector<std::vector<int16_t> > _layoutTilesAround;
-	std::vector<uint16_t> _angleTable;
+	std::vector<int16_t> _angleTable;
 
 };
 

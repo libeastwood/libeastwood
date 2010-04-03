@@ -97,7 +97,7 @@ void Dune2File::readDataStructures()
     }
 
     _stream.seekSegOff(D2ExeAngleTableOffset[_version].segment, D2ExeAngleTableOffset[_version].offset);
-    _stream.readU16LE(&_angleTable.front(), _angleTable.size());
+    _stream.readU16LE((uint16_t*)&_angleTable.front(), _angleTable.size());
 
 }
 
