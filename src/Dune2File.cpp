@@ -12,7 +12,9 @@ static const Address
     D2ExeFileOffset[D2_VERSIONS] = { {0x2e28, 0x0}, {0x2d1b, 0x0}, {0x2ca0, 0x0}, {0x2ca5, 0x0}, {0x2ca0, 0x0} },
     D2ExeActionOffset[D2_VERSIONS] = { {0x2e1c, 0xe}, {0x2d0f, 0xe}, {0x2c94, 0xe}, {0x2c99, 0xe}, {0x2c94, 0xe} },
     D2ExeMovementOffset[D2_VERSIONS] = { {0x3342, 0x2d70}, {0x3342, 0x3caa}, {0x3342, 0x3786}, {0x3342, 0x429e}, {0x3342, 0x4232 } },
-    D2ExeLayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } };
+    D2ExeLayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } },
+    D2ExeAngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
+    D2ExeGlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 Dune2File::Dune2File(ExeFile &stream) :
     _stream(stream), _version(D2_VERSIONS),
@@ -23,7 +25,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _fileData(0),
     _movementData(24),
     _layoutTileCount(7),
-    _layoutTilesAround(7)
+    _layoutTilesAround(7),
+    _angleTable(205)
 {
     detectDune2Version();
     readDataStructures();
@@ -87,11 +90,16 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(D2ExeLayoutTileCountOffset[_version].segment, D2ExeLayoutTileCountOffset[_version].offset);    
     _stream.readU16LE(&_layoutTileCount.front(), _layoutTileCount.size());
+
     for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
 	x->resize(16);
 	for(std::vector<int16_t>::iterator y = x->begin(); y != x->end(); ++y)
 	    *y = _stream.getU16LE();
     }
+
+    _stream.seekSegOff(D2ExeAngleTableOffset[_version].segment, D2ExeAngleTableOffset[_version].offset);
+    _stream.readU16LE(&_angleTable.front(), _angleTable.size());
+
 }
 
 std::vector<uint16_t> Dune2File::animPtrGet(uint32_t p) {

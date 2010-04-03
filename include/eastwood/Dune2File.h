@@ -210,6 +210,7 @@ class Dune2File
 	std::vector<std::string> _movementData;
 	std::vector<uint16_t> _layoutTileCount;
 	std::vector<std::vector<int16_t> > _layoutTilesAround;
+	std::vector<uint16_t> _angleTable;
 
 };
 
