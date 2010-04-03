@@ -87,9 +87,9 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(D2ExeLayoutTileCountOffset[_version].segment, D2ExeLayoutTileCountOffset[_version].offset);    
     _stream.readU16LE(&_layoutTileCount.front(), _layoutTileCount.size());
-    for(std::vector<std::vector<uint16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
+    for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
 	x->resize(16);
-	for(std::vector<uint16_t>::iterator y = x->begin(); y != x->end(); ++y)
+	for(std::vector<int16_t>::iterator y = x->begin(); y != x->end(); ++y)
 	    *y = _stream.getU16LE();
     }
 }
