@@ -23,9 +23,7 @@ D2ExeStructureData::D2ExeStructureData() :
     cYUpgradesNeeded(0),field_22(0),field_23(0),field_24(0),field_25(0),field_26(0),field_27(0),
     field_28(0),field_29(0),field_2A(0),structureID(0),weaponDamage(0),weaponDamageAdd(0),
     owner(0),unitsCanEnter(0),spiceStorage(0),powerUsage(0),foundationSize(0),structureGfxID(0),
-    field_3E(0),field_42(0),field_46(0),constructOpt1(0),constructOpt2(0),constructOpt3(0),
-    constructOpt4(0),constructOpt5(0),constructOpt6(0),constructOpt7(0),constructOpt8(0),
-    techUpgrade1(0),techUpgrade2(0),techUpgrade3(0)
+    frameData(3),constructOpt(8),techUpgrade(3)
     {}
 
 D2ExeUnitData::D2ExeUnitData() :
@@ -114,25 +112,25 @@ void Dune2File::readDataStructures()
 	it->weaponDamage	= _stream.getU16LE();
 	it->weaponDamageAdd	= _stream.getU16LE();
 	it->owner		= _stream.get();
-	it->unitsCanEnter	= _stream.getU32LE();	
+	it->unitsCanEnter	= _stream.getU32LE();
 	it->spiceStorage	= _stream.getU16LE();
 	it->powerUsage		= _stream.getU16LE();
 	it->foundationSize	= _stream.getU16LE();
 	it->structureGfxID	= _stream.getU16LE();
-	it->field_3E		= _stream.getU32LE();
-	it->field_42		= _stream.getU32LE();
-	it->field_46		= _stream.getU32LE();
-	it->constructOpt1	= _stream.getU16LE();
-	it->constructOpt2	= _stream.getU16LE();
-	it->constructOpt3	= _stream.getU16LE();
-	it->constructOpt4	= _stream.getU16LE();
-	it->constructOpt5	= _stream.getU16LE();
-	it->constructOpt6	= _stream.getU16LE();
-	it->constructOpt7	= _stream.getU16LE();
-	it->constructOpt8	= _stream.getU16LE();
-	it->techUpgrade1	= _stream.getU16LE();
-	it->techUpgrade2	= _stream.getU16LE();
-	it->techUpgrade3	= _stream.getU16LE();
+	it->frameData[0]	= _stream.getU32LE();
+	it->frameData[1]	= _stream.getU32LE();
+	it->frameData[2]	= _stream.getU32LE();
+	it->constructOpt[0]	= _stream.getU16LE();	
+	it->constructOpt[1]	= _stream.getU16LE();
+	it->constructOpt[2]	= _stream.getU16LE();
+	it->constructOpt[3]	= _stream.getU16LE();
+	it->constructOpt[4]	= _stream.getU16LE();
+	it->constructOpt[5]	= _stream.getU16LE();
+	it->constructOpt[6]	= _stream.getU16LE();
+	it->constructOpt[7]	= _stream.getU16LE();
+	it->techUpgrade[0]	= _stream.getU16LE();
+	it->techUpgrade[1]	= _stream.getU16LE();
+	it->techUpgrade[2]	= _stream.getU16LE();
     }
 
     _stream.seekSegOff(D2ExeUnitOffset[_version].segment, D2ExeUnitOffset[_version].offset);
