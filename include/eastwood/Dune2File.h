@@ -137,7 +137,7 @@ struct	D2ExeHouseData {
     uint16_t	color;
     uint16_t	palaceUnitRecharge;
     uint16_t	frigateTime;
-    uint16_t	houseLetter;
+    char	houseLetter;
     uint16_t	palaceMode;
     uint16_t	missionWinMusic;
     uint16_t	missionLoseMusic;
