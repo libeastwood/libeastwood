@@ -28,12 +28,12 @@ struct Address {
     uint16_t offset;
 };
 
-PACK
 struct	D2ExeStructureData {
+    D2ExeStructureData();
     uint16_t	idShort;
-    uint32_t	name;
+    std::string	name;
     uint16_t	idLong;
-    uint32_t	picture;
+    std::string	picture;
     uint16_t	buildOpts;
     uint16_t	infantrySpawn;
     uint16_t	hitPoints;
@@ -41,7 +41,7 @@ struct	D2ExeStructureData {
     uint16_t	sidebarIconID;
     uint16_t	cost;
     uint16_t	buildTime;
-    uint16_t	techlevel;
+    uint16_t	techLevel;
     uint32_t	preReqs;
     uint8_t	buildOrder;
     uint8_t	cYUpgradesNeeded;
@@ -77,103 +77,98 @@ struct	D2ExeStructureData {
     uint16_t	techUpgrade1;
     uint16_t	techUpgrade2;
     uint16_t	techUpgrade3;
-} GNUC_ATTRIBUTE((packed));
-PACK
+};
 
-PACK
 struct	D2ExeUnitData {
-   uint16_t	idShort;
-   uint32_t	name;
-   uint16_t	idLong;
-   uint32_t	picture;
-   uint16_t	options1;
-   uint16_t	infantrySpawn; 
-   uint16_t	hitPoints;
-   uint16_t	sight; 
-   uint16_t	sidebarIconID; 
-   uint16_t	cost; 
-   uint16_t	buildTime;
-   uint16_t	techLevel;
-   uint32_t	preReqs;
-   uint8_t	buildOrder;
-   uint8_t	upgradesNeeded;
-   uint16_t	sidebarCommand1;
-   uint16_t	sidebarCommand2;
-   uint16_t	sidebarCommand3;
-   uint16_t	sidebarCommand4;
-   uint8_t	field_2A;        
-   uint16_t	field_2B;        
-   uint16_t	field_2D;        
-   uint16_t	aggressivity;
-   uint8_t	owner;
-   uint16_t	indexMin;
-   uint16_t	indexMax;
-   uint16_t	optsFitW;
-   uint8_t	field_38;
-   uint8_t	field_39;
-   uint16_t	field_3A;
-   uint16_t	movementType;
-   uint16_t	movementPerFrame;
-   uint16_t	speed;
-   uint16_t	turningSpeed;
-   uint16_t	unitGfxID;
-   uint16_t	turretGfxID;
-   uint16_t	aiCommand;
-   uint16_t	frameAngleMode;
-   uint16_t	deathAnim;
-   uint16_t	weaponRateFire;
-   uint16_t	weaponRange;
-   uint16_t	weaponDamage;
-   uint16_t	field_54;
-   uint16_t	weaponType;
-   uint16_t	weaponSound;
-} GNUC_ATTRIBUTE((packed));
-PACK
+    D2ExeUnitData();
+    uint16_t	idShort;
+    std::string	name;
+    uint16_t	idLong;
+    std::string	picture;
+    uint16_t	options1;
+    uint16_t	infantrySpawn; 
+    uint16_t	hitPoints;
+    uint16_t	sight; 
+    uint16_t	sidebarIconID; 
+    uint16_t	cost; 
+    uint16_t	buildTime;
+    uint16_t	techLevel;
+    uint32_t	preReqs;
+    uint8_t	buildOrder;
+    uint8_t	upgradesNeeded;
+    uint16_t	sidebarCommand1;
+    uint16_t	sidebarCommand2;
+    uint16_t	sidebarCommand3;
+    uint16_t	sidebarCommand4;
+    uint8_t	field_2A;        
+    uint16_t	field_2B;        
+    uint16_t	field_2D;        
+    uint16_t	aggressivity;
+    uint8_t	owner;
+    uint16_t	indexMin;
+    uint16_t	indexMax;
+    uint16_t	optsFitW;
+    uint8_t	field_38;
+    uint8_t	field_39;
+    uint16_t	field_3A;
+    uint16_t	movementType;
+    uint16_t	movementPerFrame;
+    uint16_t	speed;
+    uint16_t	turningSpeed;
+    uint16_t	unitGfxID;
+    uint16_t	turretGfxID;
+    uint16_t	aiCommand;
+    uint16_t	frameAngleMode;
+    uint16_t	deathAnim;
+    uint16_t	weaponRateFire;
+    uint16_t	weaponRange;
+    uint16_t	weaponDamage;
+    uint16_t	field_54;
+    uint16_t	weaponType;
+    uint16_t	weaponSound;
+};
 
-PACK
 struct	D2ExeHouseData {
-   uint32_t	name;
-   uint16_t	weakness;
-   uint16_t	lemonFactor;
-   uint16_t	buildingDecay;
-   uint16_t	color;
-   uint16_t	palaceUnitRecharge;
-   uint16_t	frigateTime;
-   uint16_t	houseLetter;
-   uint16_t	palaceMode;
-   uint16_t	missionWinMusic;
-   uint16_t	missionLoseMusic;
-   uint16_t	missionBriefMusic;
-   uint32_t	houseVoice;
-} GNUC_ATTRIBUTE((packed));
-PACK
+    D2ExeHouseData();
+    std::string	name;
+    uint16_t	weakness;
+    uint16_t	lemonFactor;
+    uint16_t	buildingDecay;
+    uint16_t	color;
+    uint16_t	palaceUnitRecharge;
+    uint16_t	frigateTime;
+    uint16_t	houseLetter;
+    uint16_t	palaceMode;
+    uint16_t	missionWinMusic;
+    uint16_t	missionLoseMusic;
+    uint16_t	missionBriefMusic;
+    std::string	houseVoice;
+};
 
 // Stored internal File table
-PACK
 struct	D2ExeFileData {
-   uint32_t	name;
-   uint16_t	field_4;
-   uint16_t	field_6;
-   uint16_t	field_8;
-   uint16_t	field_A;
-   uint16_t	field_C;
-   uint16_t	field_E;
-   uint8_t	parentIndex;
-   uint8_t	field_11;
-   uint8_t	fileType;
-} GNUC_ATTRIBUTE((packed));
-PACK
+    D2ExeFileData();
+    std::string	name;
+    uint16_t	field_4;
+    uint16_t	field_6;
+    uint16_t	field_8;
+    uint16_t	field_A;
+    uint16_t	field_C;
+    uint16_t	field_E;
+    uint8_t	parentIndex;
+    uint8_t	field_11;
+    uint8_t	fileType;
+};
 
 // Unit 'Action' commands
-PACK
 struct	D2ExeActionData {
-   uint16_t	field_0;
-   uint32_t	name;
-   uint16_t	interruptAction;
-   uint16_t	sidebarMode;
-   uint16_t	responseSound;
-} GNUC_ATTRIBUTE((packed));
-PACK
+    D2ExeActionData();
+    uint16_t	field_0;
+    std::string	name;
+    uint16_t	interruptAction;
+    uint16_t	sidebarMode;
+    uint16_t	responseSound;
+};
 
 class Dune2File
 {

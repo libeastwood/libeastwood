@@ -1,4 +1,5 @@
 #include "eastwood/StdDef.h"
+#include <iostream>
 
 #include "eastwood/Dune2File.h"
 
@@ -15,6 +16,41 @@ static const Address
     D2ExeLayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } },
     D2ExeAngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
     D2ExeGlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
+
+D2ExeStructureData::D2ExeStructureData() :
+    idShort(0),name(""),idLong(0),picture(""),buildOpts(0),infantrySpawn(0),hitPoints(0),
+    sight(0),sidebarIconID(0),cost(0),buildTime(0),techLevel(0),preReqs(0),buildOrder(0),
+    cYUpgradesNeeded(0),field_22(0),field_23(0),field_24(0),field_25(0),field_26(0),field_27(0),
+    field_28(0),field_29(0),field_2A(0),structureID(0),weaponDamage(0),weaponDamageAdd(0),
+    owner(0),unitsCanEnter(0),spiceStorage(0),powerUsage(0),foundationSize(0),structureGfxID(0),
+    field_3E(0),field_42(0),field_46(0),constructOpt1(0),constructOpt2(0),constructOpt3(0),
+    constructOpt4(0),constructOpt5(0),constructOpt6(0),constructOpt7(0),constructOpt8(0),
+    techUpgrade1(0),techUpgrade2(0),techUpgrade3(0)
+    {}
+
+D2ExeUnitData::D2ExeUnitData() :
+    idShort(0),name(""),idLong(0),picture(""),options1(0),infantrySpawn(0),hitPoints(0),sight(0), 
+    sidebarIconID(0),cost(0),buildTime(0),techLevel(0),preReqs(0),buildOrder(0),upgradesNeeded(0),
+    sidebarCommand1(0),sidebarCommand2(0),sidebarCommand3(0),sidebarCommand4(0),field_2A(0),        
+    field_2B(0),field_2D(0),aggressivity(0),owner(0),indexMin(0),indexMax(0),optsFitW(0),
+    field_38(0),field_39(0),field_3A(0),movementType(0),movementPerFrame(0),speed(0),
+    turningSpeed(0),unitGfxID(0),turretGfxID(0),aiCommand(0),frameAngleMode(0),deathAnim(0),
+    weaponRateFire(0),weaponRange(0),weaponDamage(0),field_54(0),weaponType(0),weaponSound(0)
+    {}
+
+D2ExeHouseData::D2ExeHouseData() :
+    name(""),weakness(0),lemonFactor(0),buildingDecay(0),color(0),palaceUnitRecharge(0),frigateTime(0),
+    houseLetter(0),palaceMode(0),missionWinMusic(0),missionLoseMusic(0),missionBriefMusic(0),houseVoice("")
+    {}
+
+D2ExeFileData::D2ExeFileData() :
+    name(""),field_4(0),field_6(0),field_8(0),field_A(0),field_C(0),field_E(0),parentIndex(0),
+    field_11(0),fileType(0)
+    {}
+
+D2ExeActionData::D2ExeActionData() :
+    field_0(0),name(""),interruptAction(0),sidebarMode(0),responseSound(0)
+    {}
 
 Dune2File::Dune2File(ExeFile &stream) :
     _stream(stream), _version(D2_VERSIONS),
@@ -46,40 +82,152 @@ void Dune2File::detectDune2Version()
     }
 }
 
-template <typename T>
-void Dune2File::readData(std::vector<T> &data, const Address *offsets)
-{
-    T empty;
-    memset(&empty, 0, sizeof(T));
-
-    _stream.seekSegOff(offsets[_version].segment, offsets[_version].offset);
-
-    while(_stream.good()) {
-	data.resize(data.size()+1);
-	_stream.read((char*)&data.back(), sizeof(T));
-	if(memcmp(&data.back(), &empty, sizeof(T)) == 0) {
-	    data.pop_back();
-	    break;
-	}
-    }
-}
-
 void Dune2File::readDataStructures()
 {
     _stream.seekSegOff(D2ExeStructureOffset[_version].segment, D2ExeStructureOffset[_version].offset);
-    //FIXME: Need to fix endianness...
-    _stream.read((char*)&_structureData.front(), _structureData.size() * sizeof(_structureData[0]));
+    for(std::vector<D2ExeStructureData>::iterator it = _structureData.begin(); it != _structureData.end(); ++it) {
+	it->idShort		= _stream.getU16LE();
+	it->name		= stringGet(_stream.getU32LE());
+	it->idLong		= _stream.getU16LE();
+	it->picture		= stringGet(_stream.getU32LE());
+	it->buildOpts		= _stream.getU16LE();
+	it->infantrySpawn	= _stream.getU16LE();
+	it->hitPoints		= _stream.getU16LE();
+	it->sight		= _stream.getU16LE();
+	it->sidebarIconID	= _stream.getU16LE();
+	it->cost		= _stream.getU16LE();
+	it->buildTime		= _stream.getU16LE();
+	it->techLevel		= _stream.getU16LE();
+	it->preReqs		= _stream.getU32LE();
+	it->buildOrder		= _stream.get();
+	it->cYUpgradesNeeded	= _stream.get();
+	it->field_22		= _stream.get();
+	it->field_23		= _stream.get();
+	it->field_24		= _stream.get();
+	it->field_25		= _stream.get();
+	it->field_26		= _stream.get();
+	it->field_27		= _stream.get();
+	it->field_28		= _stream.get();
+	it->field_29		= _stream.get();
+	it->field_2A		= _stream.get();
+	it->structureID		= _stream.getU16LE();
+	it->weaponDamage	= _stream.getU16LE();
+	it->weaponDamageAdd	= _stream.getU16LE();
+	it->owner		= _stream.get();
+	it->unitsCanEnter	= _stream.getU32LE();	
+	it->spiceStorage	= _stream.getU16LE();
+	it->powerUsage		= _stream.getU16LE();
+	it->foundationSize	= _stream.getU16LE();
+	it->structureGfxID	= _stream.getU16LE();
+	it->field_3E		= _stream.getU32LE();
+	it->field_42		= _stream.getU32LE();
+	it->field_46		= _stream.getU32LE();
+	it->constructOpt1	= _stream.getU16LE();
+	it->constructOpt2	= _stream.getU16LE();
+	it->constructOpt3	= _stream.getU16LE();
+	it->constructOpt4	= _stream.getU16LE();
+	it->constructOpt5	= _stream.getU16LE();
+	it->constructOpt6	= _stream.getU16LE();
+	it->constructOpt7	= _stream.getU16LE();
+	it->constructOpt8	= _stream.getU16LE();
+	it->techUpgrade1	= _stream.getU16LE();
+	it->techUpgrade2	= _stream.getU16LE();
+	it->techUpgrade3	= _stream.getU16LE();
+    }
 
     _stream.seekSegOff(D2ExeUnitOffset[_version].segment, D2ExeUnitOffset[_version].offset);
-    _stream.read((char*)&_unitData.front(), _unitData.size() * sizeof(_unitData[0]));
+    for(std::vector<D2ExeUnitData>::iterator it = _unitData.begin(); it != _unitData.end(); ++it) {
+	it->idShort		= _stream.getU16LE(),
+	it->name		= stringGet(_stream.getU32LE()),
+	it->idLong		= _stream.getU16LE(),
+	it->picture		= stringGet(_stream.getU32LE()),
+	it->options1		= _stream.getU16LE(),
+	it->infantrySpawn	= _stream.getU16LE(),
+	it->hitPoints		= _stream.getU16LE(),
+	it->sight		= _stream.getU16LE(),
+	it->sidebarIconID	= _stream.getU16LE(),
+	it->cost		= _stream.getU16LE(),
+	it->buildTime		= _stream.getU16LE(),
+	it->techLevel		= _stream.getU16LE(),
+	it->preReqs		= _stream.getU32LE(),
+	it->buildOrder		= _stream.get(),
+	it->upgradesNeeded	= _stream.get(),	
+	it->sidebarCommand1	= _stream.getU16LE(),
+	it->sidebarCommand2	= _stream.getU16LE(),
+	it->sidebarCommand3	= _stream.getU16LE(),
+	it->sidebarCommand4	= _stream.getU16LE(),
+	it->field_2A		= _stream.get(),
+	it->field_2B		= _stream.getU16LE(),
+	it->field_2D		= _stream.getU16LE(),
+	it->aggressivity	= _stream.getU16LE(),
+	it->owner		= _stream.get(),
+	it->indexMin		= _stream.getU16LE(),
+	it->indexMax		= _stream.getU16LE(),
+	it->optsFitW		= _stream.getU16LE(),
+	it->field_38		= _stream.get(),
+	it->field_39		= _stream.get(),
+	it->field_3A		= _stream.getU16LE(),
+	it->movementType	= _stream.getU16LE(),
+	it->movementPerFrame	= _stream.getU16LE(),
+	it->speed		= _stream.getU16LE(),
+	it->turningSpeed	= _stream.getU16LE(),
+	it->unitGfxID		= _stream.getU16LE(),
+	it->turretGfxID		= _stream.getU16LE(),
+	it->aiCommand		= _stream.getU16LE(),
+	it->frameAngleMode	= _stream.getU16LE(),
+	it->deathAnim		= _stream.getU16LE(),
+	it->weaponRateFire	= _stream.getU16LE(),
+	it->weaponRange		= _stream.getU16LE(),
+	it->weaponDamage	= _stream.getU16LE(),
+	it->field_54		= _stream.getU16LE(),
+	it->weaponType		= _stream.getU16LE(),
+	it->weaponSound		= _stream.getU16LE();
+    }
 
     _stream.seekSegOff(D2ExeHouseOffset[_version].segment, D2ExeHouseOffset[_version].offset);
-    _stream.read((char*)&_houseData.front(), _houseData.size() * sizeof(_houseData[0]));
+    for(std::vector<D2ExeHouseData>::iterator it = _houseData.begin(); it != _houseData.end(); ++it) {
+	it->name		= stringGet(_stream.getU32LE()),
+	it->weakness		= _stream.getU16LE(),
+	it->lemonFactor		= _stream.getU16LE(),
+	it->buildingDecay	= _stream.getU16LE(),
+	it->color		= _stream.getU16LE(),
+	it->palaceUnitRecharge	= _stream.getU16LE(),
+	it->frigateTime		= _stream.getU16LE(),
+	it->houseLetter		= _stream.getU16LE(),
+	it->palaceMode		= _stream.getU16LE(),
+	it->missionWinMusic	= _stream.getU16LE(),
+	it->missionLoseMusic	= _stream.getU16LE(),
+	it->missionBriefMusic	= _stream.getU16LE(),
+	it->houseVoice		= stringGet(_stream.getU32LE());	
+    }
 
-    readData<D2ExeFileData>(_fileData, D2ExeFileOffset);
+    _stream.seekSegOff(D2ExeFileOffset[_version].segment, D2ExeFileOffset[_version].offset);
+
+    while(_stream.good() && _stream.peek() != 0) {
+	D2ExeFileData file;
+	file.name		= stringGet(_stream.getU32LE()),
+	file.field_4		= _stream.getU16LE(),
+	file.field_6		= _stream.getU16LE(),
+	file.field_8		= _stream.getU16LE(),
+	file.field_A		= _stream.getU16LE(),
+	file.field_C		= _stream.getU16LE(),
+	file.field_E		= _stream.getU16LE(),
+	file.parentIndex	= _stream.get(),
+	file.field_11		= _stream.get(),
+	file.fileType		= _stream.get();
+	_fileData.push_back(file);
+    }
 
     _stream.seekSegOff(D2ExeActionOffset[_version].segment, D2ExeActionOffset[_version].offset);
-    _stream.read((char*)&_actionData.front(), _actionData.size()  * sizeof(_actionData[0]));
+    for(std::vector<D2ExeActionData>::iterator it = _actionData.begin(); it != _actionData.end(); ++it) {
+	it->field_0		= _stream.getU16LE(),
+	it->name		= stringGet(_stream.getU32LE()),
+	it->interruptAction	= _stream.getU16LE(),
+	it->sidebarMode		= _stream.getU16LE(),
+	it->responseSound	= _stream.getU16LE();
+    }	
+
+    
 
     _stream.seekSegOff(D2ExeMovementOffset[_version].segment, D2ExeMovementOffset[_version].offset);
     char buf[16];
@@ -112,10 +260,12 @@ std::vector<uint16_t> Dune2File::animPtrGet(uint32_t p) {
 
 std::string Dune2File::stringGet(uint32_t p)
 {
-    char buf[64];
+    std::streampos pos(_stream.tellg());
     _stream.seekSegOff(p);
 
+    char buf[64];
     _stream.getline(buf, sizeof(buf), 0);
+    _stream.seekg(pos);
     return std::string(buf);
 }
 
