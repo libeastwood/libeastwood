@@ -1,6 +1,4 @@
 #include "eastwood/StdDef.h"
-#include <iostream>
-
 #include "eastwood/Dune2File.h"
 
 namespace eastwood {
