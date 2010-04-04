@@ -17,23 +17,24 @@ static const Address
     D2ExeAngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
     D2ExeGlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
-D2ExeStructureData::D2ExeStructureData() :
-    idShort(0),name(""),idLong(0),picture(""),buildOpts(0),infantrySpawn(0),hitPoints(0),
+D2ExeObjectData::D2ExeObjectData() :
+    idShort(0),name(""),idLong(0),picture(""),options(0),infantrySpawn(0),hitPoints(0),
     sight(0),sidebarIconID(0),cost(0),buildTime(0),techLevel(0),preReqs(0),buildOrder(0),
-    cYUpgradesNeeded(0),field_22(0),field_23(0),field_24(0),field_25(0),field_26(0),field_27(0),
-    field_28(0),field_29(0),field_2A(0),structureID(0),weaponDamage(0),weaponDamageAdd(0),
-    owner(0),unitsCanEnter(0),spiceStorage(0),powerUsage(0),foundationSize(0),structureGfxID(0),
-    frameData(3),constructOpt(8),techUpgrade(3)
+    upgradesNeeded(0),owner(0),gfxID(0),weaponDamage(0)
     {}
 
-D2ExeUnitData::D2ExeUnitData() :
-    idShort(0),name(""),idLong(0),picture(""),options1(0),infantrySpawn(0),hitPoints(0),sight(0), 
-    sidebarIconID(0),cost(0),buildTime(0),techLevel(0),preReqs(0),buildOrder(0),upgradesNeeded(0),
-    sidebarCommand1(0),sidebarCommand2(0),sidebarCommand3(0),sidebarCommand4(0),field_2A(0),        
-    field_2B(0),field_2D(0),aggressivity(0),owner(0),indexMin(0),indexMax(0),optsFitW(0),
-    field_38(0),field_39(0),field_3A(0),movementType(0),movementPerFrame(0),speed(0),
-    turningSpeed(0),unitGfxID(0),turretGfxID(0),aiCommand(0),frameAngleMode(0),deathAnim(0),
-    weaponRateFire(0),weaponRange(0),weaponDamage(0),field_54(0),weaponType(0),weaponSound(0)
+D2ExeStructureData::D2ExeStructureData() : D2ExeObjectData(),
+    field_22(0),field_23(0),field_24(0),field_25(0),field_26(0),field_27(0),field_28(0),
+    field_29(0),field_2A(0),structureID(0),weaponDamageAdd(0),unitsCanEnter(0),spiceStorage(0),
+    powerUsage(0),foundationSize(0),frameData(3),constructOpt(8),techUpgrade(3)
+    {}
+
+D2ExeUnitData::D2ExeUnitData() : D2ExeObjectData(),
+    sidebarCommand1(0),sidebarCommand2(0),sidebarCommand3(0),sidebarCommand4(0),field_2A(0),
+    field_2B(0),field_2D(0),aggressivity(0),indexMin(0),indexMax(0),optsFitW(0),field_38(0),
+    field_39(0),field_3A(0), movementType(0),movementPerFrame(0),speed(0),turningSpeed(0),
+    turretGfxID(0),aiCommand(0),frameAngleMode(0),deathAnim(0),weaponRateFire(0),weaponRange(0),
+    field_54(0),weaponType(0),weaponSound(0)
     {}
 
 D2ExeHouseData::D2ExeHouseData() :
@@ -88,7 +89,7 @@ void Dune2File::readDataStructures()
 	it->name		= stringGet(_stream.getU32LE());
 	it->idLong		= _stream.getU16LE();
 	it->picture		= stringGet(_stream.getU32LE());
-	it->buildOpts		= _stream.getU16LE();
+	it->options		= _stream.getU16LE();
 	it->infantrySpawn	= _stream.getU16LE();
 	it->hitPoints		= _stream.getU16LE();
 	it->sight		= _stream.getU16LE();
@@ -98,7 +99,7 @@ void Dune2File::readDataStructures()
 	it->techLevel		= _stream.getU16LE();
 	it->preReqs		= _stream.getU32LE();
 	it->buildOrder		= _stream.get();
-	it->cYUpgradesNeeded	= _stream.get();
+	it->upgradesNeeded	= _stream.get();
 	it->field_22		= _stream.get();
 	it->field_23		= _stream.get();
 	it->field_24		= _stream.get();
@@ -116,7 +117,7 @@ void Dune2File::readDataStructures()
 	it->spiceStorage	= _stream.getU16LE();
 	it->powerUsage		= _stream.getU16LE();
 	it->foundationSize	= _stream.getU16LE();
-	it->structureGfxID	= _stream.getU16LE();
+	it->gfxID		= _stream.getU16LE();
 	it->frameData[0]	= _stream.getU32LE();
 	it->frameData[1]	= _stream.getU32LE();
 	it->frameData[2]	= _stream.getU32LE();
@@ -139,7 +140,7 @@ void Dune2File::readDataStructures()
 	it->name		= stringGet(_stream.getU32LE()),
 	it->idLong		= _stream.getU16LE(),
 	it->picture		= stringGet(_stream.getU32LE()),
-	it->options1		= _stream.getU16LE(),
+	it->options		= _stream.getU16LE(),
 	it->infantrySpawn	= _stream.getU16LE(),
 	it->hitPoints		= _stream.getU16LE(),
 	it->sight		= _stream.getU16LE(),
@@ -169,7 +170,7 @@ void Dune2File::readDataStructures()
 	it->movementPerFrame	= _stream.getU16LE(),
 	it->speed		= _stream.getU16LE(),
 	it->turningSpeed	= _stream.getU16LE(),
-	it->unitGfxID		= _stream.getU16LE(),
+	it->gfxID		= _stream.getU16LE(),
 	it->turretGfxID		= _stream.getU16LE(),
 	it->aiCommand		= _stream.getU16LE(),
 	it->frameAngleMode	= _stream.getU16LE(),

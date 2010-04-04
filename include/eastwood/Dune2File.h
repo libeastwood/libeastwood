@@ -28,23 +28,31 @@ struct Address {
     uint16_t			offset;
 };
 
-struct	D2ExeStructureData {
-    D2ExeStructureData();
+struct	D2ExeObjectData {
+    D2ExeObjectData();
+    virtual ~D2ExeObjectData() {}
     uint16_t			idShort;
     std::string			name;
     uint16_t			idLong;
     std::string			picture;
-    uint16_t			buildOpts;
+    uint16_t			options;
     uint16_t			infantrySpawn;
     uint16_t			hitPoints;
-    uint16_t			sight;    
+    uint16_t			sight;
     uint16_t			sidebarIconID;
     uint16_t			cost;
     uint16_t			buildTime;
     uint16_t			techLevel;
     uint32_t			preReqs;
     uint8_t			buildOrder;
-    uint8_t			cYUpgradesNeeded;
+    uint8_t			upgradesNeeded;
+    uint8_t			owner;
+    uint16_t			gfxID;
+    uint16_t			weaponDamage;
+};
+
+struct	D2ExeStructureData : D2ExeObjectData {
+    D2ExeStructureData();
     uint8_t			field_22;
     uint8_t			field_23;
     uint8_t			field_24;
@@ -55,36 +63,18 @@ struct	D2ExeStructureData {
     uint8_t			field_29;
     uint8_t			field_2A;
     uint16_t			structureID;
-    uint16_t			weaponDamage;
     uint16_t			weaponDamageAdd;
-    uint8_t			owner;
     uint32_t			unitsCanEnter;
     uint16_t			spiceStorage;
     uint16_t			powerUsage;
     uint16_t			foundationSize;
-    uint16_t			structureGfxID;
     std::vector<uint32_t>	frameData;
     std::vector<uint16_t>	constructOpt;
     std::vector<uint16_t>	techUpgrade;
 };
 
-struct	D2ExeUnitData {
+struct	D2ExeUnitData : D2ExeObjectData {
     D2ExeUnitData();
-    uint16_t			idShort;
-    std::string			name;
-    uint16_t			idLong;
-    std::string			picture;
-    uint16_t			options1;
-    uint16_t			infantrySpawn; 
-    uint16_t			hitPoints;
-    uint16_t			sight;
-    uint16_t			sidebarIconID;
-    uint16_t			cost;
-    uint16_t			buildTime;
-    uint16_t			techLevel;
-    uint32_t			preReqs;
-    uint8_t			buildOrder;
-    uint8_t			upgradesNeeded;
     uint16_t			sidebarCommand1;
     uint16_t			sidebarCommand2;
     uint16_t			sidebarCommand3;
@@ -93,7 +83,6 @@ struct	D2ExeUnitData {
     uint16_t			field_2B;
     uint16_t			field_2D;
     uint16_t			aggressivity;
-    uint8_t			owner;
     uint16_t			indexMin;
     uint16_t			indexMax;
     uint16_t			optsFitW;
@@ -104,14 +93,12 @@ struct	D2ExeUnitData {
     uint16_t			movementPerFrame;
     uint16_t			speed;
     uint16_t			turningSpeed;
-    uint16_t			unitGfxID;
     uint16_t			turretGfxID;
     uint16_t			aiCommand;
     uint16_t			frameAngleMode;
     uint16_t			deathAnim;
     uint16_t			weaponRateFire;
     uint16_t			weaponRange;
-    uint16_t			weaponDamage;
     uint16_t			field_54;
     uint16_t			weaponType;
     uint16_t			weaponSound;
