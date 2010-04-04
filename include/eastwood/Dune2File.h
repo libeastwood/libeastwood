@@ -31,6 +31,7 @@ struct Address {
 struct	D2ExeObjectData {
     D2ExeObjectData();
     virtual ~D2ExeObjectData() {}
+    uint16_t			typeIndex;
     uint16_t			idShort;
     std::string			name;
     uint16_t			idLong;

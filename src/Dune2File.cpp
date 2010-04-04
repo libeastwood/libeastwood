@@ -18,9 +18,9 @@ static const Address
     D2ExeGlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 D2ExeObjectData::D2ExeObjectData() :
-    idShort(0),name(""),idLong(0),picture(""),options(0),infantrySpawn(0),hitPoints(0),
-    sight(0),sidebarIconID(0),cost(0),buildTime(0),techLevel(0),preReqs(0),buildOrder(0),
-    upgradesNeeded(0),owner(0),gfxID(0),weaponDamage(0)
+    typeIndex(0),idShort(0),name(""),idLong(0),picture(""),options(0),infantrySpawn(0),
+    hitPoints(0),sight(0),sidebarIconID(0),cost(0),buildTime(0),techLevel(0),preReqs(0),
+    buildOrder(0),upgradesNeeded(0),owner(0),gfxID(0),weaponDamage(0)
     {}
 
 D2ExeStructureData::D2ExeStructureData() : D2ExeObjectData(),
@@ -84,7 +84,9 @@ void Dune2File::detectDune2Version()
 void Dune2File::readDataStructures()
 {
     _stream.seekSegOff(D2ExeStructureOffset[_version].segment, D2ExeStructureOffset[_version].offset);
-    for(std::vector<D2ExeStructureData>::iterator it = _structureData.begin(); it != _structureData.end(); ++it) {
+    uint16_t idx = 0;    
+    for(std::vector<D2ExeStructureData>::iterator it = _structureData.begin(); it != _structureData.end(); ++it, ++idx) {
+	it->typeIndex		= idx;
 	it->idShort		= _stream.getU16LE();
 	it->name		= stringGet(_stream.getU32LE());
 	it->idLong		= _stream.getU16LE();
@@ -135,7 +137,9 @@ void Dune2File::readDataStructures()
     }
 
     _stream.seekSegOff(D2ExeUnitOffset[_version].segment, D2ExeUnitOffset[_version].offset);
-    for(std::vector<D2ExeUnitData>::iterator it = _unitData.begin(); it != _unitData.end(); ++it) {
+    idx = 0;
+    for(std::vector<D2ExeUnitData>::iterator it = _unitData.begin(); it != _unitData.end(); ++it, ++idx) {
+	it->typeIndex		= idx;
 	it->idShort		= _stream.getU16LE(),
 	it->name		= stringGet(_stream.getU32LE()),
 	it->idLong		= _stream.getU16LE(),
