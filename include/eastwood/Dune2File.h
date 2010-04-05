@@ -166,7 +166,7 @@ class Dune2File
 	const std::vector<int8_t> getMapMod() const { return _mapMod; }
 	const std::vector<uint32_t> getAnimPtrs() const { return _animPtrs; }
 	const std::vector<int16_t> getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
-	const std::vector<int8_t> getFrameAdjust() const { return _unitFrameAdjust; }
+	const std::vector<int8_t> getUnitFrameAdjust() const { return _unitFrameAdjust; }
 	const std::vector<int16_t> getUnitSiegeTurretFrame() const { return _unitSiegeTurretFrameAdjust; }
 
 	std::vector<uint16_t> animPtrGet(uint32_t p);
