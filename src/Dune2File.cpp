@@ -67,7 +67,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _animPtrs(35),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
-    _unitSiegeTurretFrameAdjust(36)
+    _unitTurretFrameAdjust(36)
 {
     detectDune2Version();
     readDataStructures();
@@ -268,7 +268,7 @@ void Dune2File::readDataStructures()
     _stream.read(reinterpret_cast<char*>(&_unitFrameAdjust.front()), _unitFrameAdjust.size());
     // dunno what these are...
     _stream.ignore(28);
-    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitSiegeTurretFrameAdjust.front()), _unitSiegeTurretFrameAdjust.size());
+    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitTurretFrameAdjust.front()), _unitTurretFrameAdjust.size());
 
 }
 
