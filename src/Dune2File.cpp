@@ -14,6 +14,7 @@ static const Address
     D2ExeLayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } },
     D2ExeAngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
     D2ExeMapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
+    D2ExeAnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },    
     D2ExeGlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 D2ExeObjectData::D2ExeObjectData() :
@@ -62,7 +63,11 @@ Dune2File::Dune2File(ExeFile &stream) :
     _layoutTilesAround(7),
     _angleTable(205),
     _mapMoveMod(8),
-    _mapMod(8)    
+    _mapMod(8),
+    _animPtrs(35),
+    _unitAngleFrameAdjust(83),
+    _unitFrameAdjust(8),
+    _unitSiegeTurretFrameAdjust(36)
 {
     detectDune2Version();
     readDataStructures();
@@ -245,15 +250,26 @@ void Dune2File::readDataStructures()
 
     for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
 	x->resize(16);
-	_stream.readU16LE((uint16_t*)&x->front(), x->size());
+	_stream.readU16LE(reinterpret_cast<uint16_t*>(&x->front()), x->size());
     }
 
     _stream.seekSegOff(D2ExeAngleTableOffset[_version].segment, D2ExeAngleTableOffset[_version].offset);
-    _stream.readU16LE((uint16_t*)&_angleTable.front(), _angleTable.size());
+    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_angleTable.front()), _angleTable.size());
 
     _stream.seekSegOff(D2ExeMapMoveModOffset[_version].segment, D2ExeMapMoveModOffset[_version].offset);
     _stream.readU16LE(&_mapMoveMod.front(), _mapMoveMod.size());
     _stream.read((char*)&_mapMod.front(), _mapMod.size());
+
+    _stream.seekSegOff(D2ExeAnimPtrsOffset[_version].segment, D2ExeAnimPtrsOffset[_version].offset);
+    _stream.readU32LE(&_animPtrs.front(), _animPtrs.size());
+    // dunno what these are: 0xFF 0xFF  0x02 0x00 0x01 0x00
+    _stream.ignore(6);
+    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitAngleFrameAdjust.front()), _unitAngleFrameAdjust.size());
+    _stream.read(reinterpret_cast<char*>(&_unitFrameAdjust.front()), _unitFrameAdjust.size());
+    // dunno what these are...
+    _stream.ignore(28);
+    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitSiegeTurretFrameAdjust.front()), _unitSiegeTurretFrameAdjust.size());
+
 }
 
 std::vector<uint16_t> Dune2File::animPtrGet(uint32_t p) {
