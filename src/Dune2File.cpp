@@ -13,6 +13,7 @@ static const Address
     D2ExeMovementOffset[D2_VERSIONS] = { {0x3342, 0x2d70}, {0x3342, 0x3caa}, {0x3342, 0x3786}, {0x3342, 0x429e}, {0x3342, 0x4232 } },
     D2ExeLayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } },
     D2ExeAngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
+    D2ExeMapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
     D2ExeGlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 D2ExeObjectData::D2ExeObjectData() :
@@ -59,7 +60,9 @@ Dune2File::Dune2File(ExeFile &stream) :
     _movementData(24),
     _layoutTileCount(7),
     _layoutTilesAround(7),
-    _angleTable(205)
+    _angleTable(205),
+    _mapMoveMod(8),
+    _mapMod(8)    
 {
     detectDune2Version();
     readDataStructures();
@@ -248,6 +251,9 @@ void Dune2File::readDataStructures()
     _stream.seekSegOff(D2ExeAngleTableOffset[_version].segment, D2ExeAngleTableOffset[_version].offset);
     _stream.readU16LE((uint16_t*)&_angleTable.front(), _angleTable.size());
 
+    _stream.seekSegOff(D2ExeMapMoveModOffset[_version].segment, D2ExeMapMoveModOffset[_version].offset);
+    _stream.readU16LE(&_mapMoveMod.front(), _mapMoveMod.size());
+    _stream.read((char*)&_mapMod.front(), _mapMod.size());
 }
 
 std::vector<uint16_t> Dune2File::animPtrGet(uint32_t p) {

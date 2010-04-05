@@ -162,6 +162,8 @@ class Dune2File
 	const std::vector<uint16_t> getLayoutTileCount() const { return _layoutTileCount; }
 	const std::vector<std::vector<int16_t> > getLayoutTilesAround() const { return _layoutTilesAround; }
 	const std::vector<int16_t> getAngleTable() const { return _angleTable; }
+	const std::vector<uint16_t> getMapMoveMod() const { return _mapMoveMod; }
+	const std::vector<uint8_t> getMapMod() const { return _mapMod; }
 
 	std::vector<uint16_t> animPtrGet(uint32_t p);
 
@@ -184,6 +186,8 @@ class Dune2File
 	std::vector<uint16_t> _layoutTileCount;
 	std::vector<std::vector<int16_t> > _layoutTilesAround;
 	std::vector<int16_t> _angleTable;
+	std::vector<uint16_t> _mapMoveMod;
+	std::vector<uint8_t> _mapMod;	
 
 };
 
