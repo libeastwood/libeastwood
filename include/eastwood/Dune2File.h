@@ -175,8 +175,6 @@ class Dune2File
 
     private:
 	void detectDune2Version();
-	template <typename T>
-	void readData(std::vector<T> &data, const Address *offsets);
 	void readDataStructures();
 
 	ExeFile &_stream;
