@@ -164,11 +164,10 @@ class Dune2File
 	const std::vector<int8_t> getUnitFrameAdjust() const { return _unitFrameAdjust; }
 	const std::vector<int16_t> getUnitTurretFrame() const { return _unitTurretFrameAdjust; }
 
-	std::string stringGet(uint32_t p);
-
     private:
 	void detectDune2Version();
 	void readDataStructures();
+	std::string stringGet(uint32_t p);
 
 	ExeFile &_stream;
 	Version _version;
