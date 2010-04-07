@@ -14,7 +14,7 @@
 
 namespace eastwood { namespace dune2 {
 
-enum	D2ExeVersion {
+enum	Version {
     D2_DEMO,
     D2_V1_00,
     D2_V1_07_US,
@@ -23,9 +23,9 @@ enum	D2ExeVersion {
     D2_VERSIONS
 };
 
-struct	D2ExeObjectData {
-    D2ExeObjectData();
-    virtual ~D2ExeObjectData() {}
+struct	ObjectData {
+    ObjectData();
+    virtual ~ObjectData() {}
     uint16_t			typeIndex;
     uint16_t			idShort;
     std::string			name;
@@ -47,8 +47,8 @@ struct	D2ExeObjectData {
     uint16_t			weaponDamage;
 };
 
-struct	D2ExeStructureData : D2ExeObjectData {
-    D2ExeStructureData();
+struct	StructureData : ObjectData {
+    StructureData();
     uint8_t			field_22;
     uint8_t			field_23;
     uint8_t			field_24;
@@ -69,8 +69,8 @@ struct	D2ExeStructureData : D2ExeObjectData {
     std::vector<uint16_t>	techUpgrade;
 };
 
-struct	D2ExeUnitData : D2ExeObjectData {
-    D2ExeUnitData();
+struct	UnitData : ObjectData {
+    UnitData();
     uint16_t			sidebarCommand1;
     uint16_t			sidebarCommand2;
     uint16_t			sidebarCommand3;
@@ -100,8 +100,8 @@ struct	D2ExeUnitData : D2ExeObjectData {
     uint16_t			weaponSound;
 };
 
-struct	D2ExeHouseData {
-    D2ExeHouseData();
+struct	HouseData {
+    HouseData();
     std::string			name;
     uint16_t			weakness;
     uint16_t			lemonFactor;
@@ -118,8 +118,8 @@ struct	D2ExeHouseData {
 };
 
 // Stored internal File table
-struct	D2ExeFileData {
-    D2ExeFileData();
+struct	FileData {
+    FileData();
     std::string			name;
     uint16_t			field_4;
     uint16_t			field_6;
@@ -133,8 +133,8 @@ struct	D2ExeFileData {
 };
 
 // Unit 'Action' commands
-struct	D2ExeActionData {
-    D2ExeActionData();
+struct	ActionData {
+    ActionData();
     uint16_t			field_0;
     std::string			name;
     uint16_t			interruptAction;
@@ -147,12 +147,12 @@ class Dune2File
     public:
 	Dune2File(ExeFile &stream);
 
-	D2ExeVersion getVersion() const throw() { return _version; }
-	const std::vector<D2ExeStructureData> getStructureData() const { return _structureData; }
-	const std::vector<D2ExeUnitData> getUnitData() const { return _unitData; }
-	const std::vector<D2ExeHouseData> getHouseData() const { return _houseData; }
-	const std::vector<D2ExeFileData> getFileData() const { return _fileData; }
-	const std::vector<D2ExeActionData> getActionData() const { return _actionData; }
+	Version getVersion() const throw() { return _version; }
+	const std::vector<StructureData> getStructureData() const { return _structureData; }
+	const std::vector<UnitData> getUnitData() const { return _unitData; }
+	const std::vector<HouseData> getHouseData() const { return _houseData; }
+	const std::vector<FileData> getFileData() const { return _fileData; }
+	const std::vector<ActionData> getActionData() const { return _actionData; }
 	const std::vector<std::string> getMovementData() const { return _movementData; }
 	const std::vector<uint16_t> getLayoutTileCount() const { return _layoutTileCount; }
 	const std::vector<std::vector<int16_t> > getLayoutTilesAround() const { return _layoutTilesAround; }
@@ -173,12 +173,12 @@ class Dune2File
 	void readDataStructures();
 
 	ExeFile &_stream;
-	D2ExeVersion _version;
-	std::vector<D2ExeStructureData> _structureData;
-	std::vector<D2ExeUnitData> _unitData;
-	std::vector<D2ExeHouseData> _houseData;
-	std::vector<D2ExeActionData> _actionData;
-	std::vector<D2ExeFileData> _fileData;
+	Version _version;
+	std::vector<StructureData> _structureData;
+	std::vector<UnitData> _unitData;
+	std::vector<HouseData> _houseData;
+	std::vector<ActionData> _actionData;
+	std::vector<FileData> _fileData;
 	std::vector<std::string> _movementData;
 	std::vector<uint16_t> _layoutTileCount;
 	std::vector<std::vector<int16_t> > _layoutTilesAround;

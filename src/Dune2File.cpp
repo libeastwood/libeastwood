@@ -9,32 +9,32 @@ struct Address {
 };
 
 static const Address
-    D2ExeVersionOffset[D2_VERSIONS] = { {0x325f, 0xe}, {0x333a, 0x2}, {0x32fb, 0x2}, {0x3353, 0x2}, {0x334d, 0x2} },
-    D2ExeStructureOffset[D2_VERSIONS] = { {0x2c2f, 0xa}, {0x2b3d, 0xa}, {0x2a98, 0xa}, {0x2a9d, 0xa}, {0x2a98, 0xa} },
-    D2ExeUnitOffset[D2_VERSIONS] = { {0x2ca7, 0x0}, {0x2bb5, 0x0}, {0x2b0b, 0x0}, {0x2b10, 0x0}, {0x2b0b, 0x0} },
-    D2ExeHouseOffset[D2_VERSIONS] = { {0x3574, 0xa}, {0x3668, 0x4}, {0x3615, 0xc}, {0x36c7, 0x8}, {0x36c0, 0xc} },
-    D2ExeFileOffset[D2_VERSIONS] = { {0x2e28, 0x0}, {0x2d1b, 0x0}, {0x2ca0, 0x0}, {0x2ca5, 0x0}, {0x2ca0, 0x0} },
-    D2ExeActionOffset[D2_VERSIONS] = { {0x2e1c, 0xe}, {0x2d0f, 0xe}, {0x2c94, 0xe}, {0x2c99, 0xe}, {0x2c94, 0xe} },
-    D2ExeMovementOffset[D2_VERSIONS] = { {0x3342, 0x2d70}, {0x3342, 0x3caa}, {0x3342, 0x3786}, {0x3342, 0x429e}, {0x3342, 0x4232 } },
-    D2ExeLayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } },
-    D2ExeAngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
-    D2ExeMapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
-    D2ExeAnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },    
-    D2ExeGlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
+    VersionOffset[D2_VERSIONS] = { {0x325f, 0xe}, {0x333a, 0x2}, {0x32fb, 0x2}, {0x3353, 0x2}, {0x334d, 0x2} },
+    StructureOffset[D2_VERSIONS] = { {0x2c2f, 0xa}, {0x2b3d, 0xa}, {0x2a98, 0xa}, {0x2a9d, 0xa}, {0x2a98, 0xa} },
+    UnitOffset[D2_VERSIONS] = { {0x2ca7, 0x0}, {0x2bb5, 0x0}, {0x2b0b, 0x0}, {0x2b10, 0x0}, {0x2b0b, 0x0} },
+    HouseOffset[D2_VERSIONS] = { {0x3574, 0xa}, {0x3668, 0x4}, {0x3615, 0xc}, {0x36c7, 0x8}, {0x36c0, 0xc} },
+    FileOffset[D2_VERSIONS] = { {0x2e28, 0x0}, {0x2d1b, 0x0}, {0x2ca0, 0x0}, {0x2ca5, 0x0}, {0x2ca0, 0x0} },
+    ActionOffset[D2_VERSIONS] = { {0x2e1c, 0xe}, {0x2d0f, 0xe}, {0x2c94, 0xe}, {0x2c99, 0xe}, {0x2c94, 0xe} },
+    MovementOffset[D2_VERSIONS] = { {0x3342, 0x2d70}, {0x3342, 0x3caa}, {0x3342, 0x3786}, {0x3342, 0x429e}, {0x3342, 0x4232 } },
+    LayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } },
+    AngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
+    MapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
+    AnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },    
+    GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
-D2ExeObjectData::D2ExeObjectData() :
+ObjectData::ObjectData() :
     typeIndex(0),idShort(0),name(""),idLong(0),picture(""),options(0),infantrySpawn(0),
     hitPoints(0),sight(0),sidebarIconID(0),cost(0),buildTime(0),techLevel(0),preReqs(0),
     buildOrder(0),upgradesNeeded(0),owner(0),gfxID(0),weaponDamage(0)
     {}
 
-D2ExeStructureData::D2ExeStructureData() : D2ExeObjectData(),
+StructureData::StructureData() : ObjectData(),
     field_22(0),field_23(0),field_24(0),field_25(0),field_26(0),field_27(0),field_28(0),
     field_29(0),field_2A(0),structureID(0),weaponDamageAdd(0),unitsCanEnter(0),spiceStorage(0),
     powerUsage(0),foundationSize(0),frameData(3),constructOpt(8),techUpgrade(3)
     {}
 
-D2ExeUnitData::D2ExeUnitData() : D2ExeObjectData(),
+UnitData::UnitData() : ObjectData(),
     sidebarCommand1(0),sidebarCommand2(0),sidebarCommand3(0),sidebarCommand4(0),field_2A(0),
     field_2B(0),field_2D(0),aggressivity(0),indexMin(0),indexMax(0),optsFitW(0),field_38(0),
     field_39(0),field_3A(0), movementType(0),movementPerFrame(0),speed(0),turningSpeed(0),
@@ -42,17 +42,17 @@ D2ExeUnitData::D2ExeUnitData() : D2ExeObjectData(),
     field_54(0),weaponType(0),weaponSound(0)
     {}
 
-D2ExeHouseData::D2ExeHouseData() :
+HouseData::HouseData() :
     name(""),weakness(0),lemonFactor(0),buildingDecay(0),color(0),palaceUnitRecharge(0),frigateTime(0),
     houseLetter(0),palaceMode(0),missionWinMusic(0),missionLoseMusic(0),missionBriefMusic(0),houseVoice("")
     {}
 
-D2ExeFileData::D2ExeFileData() :
+FileData::FileData() :
     name(""),field_4(0),field_6(0),field_8(0),field_A(0),field_C(0),field_E(0),parentIndex(0),
     field_11(0),fileType(0)
     {}
 
-D2ExeActionData::D2ExeActionData() :
+ActionData::ActionData() :
     field_0(0),name(""),interruptAction(0),sidebarMode(0),responseSound(0)
     {}
 
@@ -82,11 +82,11 @@ void Dune2File::detectDune2Version()
 {
     char tmp[10];
     for(int i = D2_DEMO; i < D2_VERSIONS; i++) {
-    	_stream.seekSegOff(D2ExeVersionOffset[i].segment, D2ExeVersionOffset[i].offset);
+    	_stream.seekSegOff(VersionOffset[i].segment, VersionOffset[i].offset);
 	_stream.read(tmp, sizeof(tmp));
 
 	if(strncmp(tmp, "DUNE2.EXE", sizeof(tmp)) == 0) {
-	    _version = (D2ExeVersion)i;
+	    _version = (Version)i;
 	    break;
 	}
     }
@@ -94,9 +94,9 @@ void Dune2File::detectDune2Version()
 
 void Dune2File::readDataStructures()
 {
-    _stream.seekSegOff(D2ExeStructureOffset[_version].segment, D2ExeStructureOffset[_version].offset);
+    _stream.seekSegOff(StructureOffset[_version].segment, StructureOffset[_version].offset);
     uint16_t idx = 0;    
-    for(std::vector<D2ExeStructureData>::iterator it = _structureData.begin(); it != _structureData.end(); ++it, ++idx) {
+    for(std::vector<StructureData>::iterator it = _structureData.begin(); it != _structureData.end(); ++it, ++idx) {
 	it->typeIndex		= idx;
 	it->idShort		= _stream.getU16LE();
 	it->name		= stringGet(_stream.getU32LE());
@@ -147,9 +147,9 @@ void Dune2File::readDataStructures()
 	it->techUpgrade[2]	= _stream.getU16LE();
     }
 
-    _stream.seekSegOff(D2ExeUnitOffset[_version].segment, D2ExeUnitOffset[_version].offset);
+    _stream.seekSegOff(UnitOffset[_version].segment, UnitOffset[_version].offset);
     idx = 0;
-    for(std::vector<D2ExeUnitData>::iterator it = _unitData.begin(); it != _unitData.end(); ++it, ++idx) {
+    for(std::vector<UnitData>::iterator it = _unitData.begin(); it != _unitData.end(); ++it, ++idx) {
 	it->typeIndex		= idx;
 	it->idShort		= _stream.getU16LE(),
 	it->name		= stringGet(_stream.getU32LE()),
@@ -198,8 +198,8 @@ void Dune2File::readDataStructures()
 	it->weaponSound		= _stream.getU16LE();
     }
 
-    _stream.seekSegOff(D2ExeHouseOffset[_version].segment, D2ExeHouseOffset[_version].offset);
-    for(std::vector<D2ExeHouseData>::iterator it = _houseData.begin(); it != _houseData.end(); ++it) {
+    _stream.seekSegOff(HouseOffset[_version].segment, HouseOffset[_version].offset);
+    for(std::vector<HouseData>::iterator it = _houseData.begin(); it != _houseData.end(); ++it) {
 	it->name		= stringGet(_stream.getU32LE()),
 	it->weakness		= _stream.getU16LE(),
 	it->lemonFactor		= _stream.getU16LE(),
@@ -215,10 +215,10 @@ void Dune2File::readDataStructures()
 	it->houseVoice		= stringGet(_stream.getU32LE());	
     }
 
-    _stream.seekSegOff(D2ExeFileOffset[_version].segment, D2ExeFileOffset[_version].offset);
+    _stream.seekSegOff(FileOffset[_version].segment, FileOffset[_version].offset);
 
     while(_stream.good() && _stream.peek() != 0) {
-	D2ExeFileData file;
+	FileData file;
 	file.name		= stringGet(_stream.getU32LE()),
 	file.field_4		= _stream.getU16LE(),
 	file.field_6		= _stream.getU16LE(),
@@ -232,8 +232,8 @@ void Dune2File::readDataStructures()
 	_fileData.push_back(file);
     }
 
-    _stream.seekSegOff(D2ExeActionOffset[_version].segment, D2ExeActionOffset[_version].offset);
-    for(std::vector<D2ExeActionData>::iterator it = _actionData.begin(); it != _actionData.end(); ++it) {
+    _stream.seekSegOff(ActionOffset[_version].segment, ActionOffset[_version].offset);
+    for(std::vector<ActionData>::iterator it = _actionData.begin(); it != _actionData.end(); ++it) {
 	it->field_0		= _stream.getU16LE(),
 	it->name		= stringGet(_stream.getU32LE()),
 	it->interruptAction	= _stream.getU16LE(),
@@ -243,14 +243,14 @@ void Dune2File::readDataStructures()
 
     
 
-    _stream.seekSegOff(D2ExeMovementOffset[_version].segment, D2ExeMovementOffset[_version].offset);
+    _stream.seekSegOff(MovementOffset[_version].segment, MovementOffset[_version].offset);
     char buf[16];
     for(std::vector<std::string>::iterator it = _movementData.begin(); it != _movementData.end(); ++it) {
     	_stream.getline(buf, sizeof(buf), 0);
 	*it += buf;
     }
 
-    _stream.seekSegOff(D2ExeLayoutTileCountOffset[_version].segment, D2ExeLayoutTileCountOffset[_version].offset);    
+    _stream.seekSegOff(LayoutTileCountOffset[_version].segment, LayoutTileCountOffset[_version].offset);    
     _stream.readU16LE(&_layoutTileCount.front(), _layoutTileCount.size());
 
     for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
@@ -258,14 +258,14 @@ void Dune2File::readDataStructures()
 	_stream.readU16LE(reinterpret_cast<uint16_t*>(&x->front()), x->size());
     }
 
-    _stream.seekSegOff(D2ExeAngleTableOffset[_version].segment, D2ExeAngleTableOffset[_version].offset);
+    _stream.seekSegOff(AngleTableOffset[_version].segment, AngleTableOffset[_version].offset);
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&_angleTable.front()), _angleTable.size());
 
-    _stream.seekSegOff(D2ExeMapMoveModOffset[_version].segment, D2ExeMapMoveModOffset[_version].offset);
+    _stream.seekSegOff(MapMoveModOffset[_version].segment, MapMoveModOffset[_version].offset);
     _stream.readU16LE(&_mapMoveMod.front(), _mapMoveMod.size());
     _stream.read((char*)&_mapMod.front(), _mapMod.size());
 
-    _stream.seekSegOff(D2ExeAnimPtrsOffset[_version].segment, D2ExeAnimPtrsOffset[_version].offset);
+    _stream.seekSegOff(AnimPtrsOffset[_version].segment, AnimPtrsOffset[_version].offset);
     _stream.readU32LE(&_animPtrs.front(), _animPtrs.size());
     // dunno what these are: 0xFF 0xFF  0x02 0x00 0x01 0x00
     _stream.ignore(6);
