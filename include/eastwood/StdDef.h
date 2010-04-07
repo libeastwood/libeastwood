@@ -75,10 +75,12 @@ static inline uint32_t htobe32(uint32_t x)
   #endif
 #endif
 
-//TODO: portability?
+namespace eastwood {
+
 static inline void delayMillis(uint32_t msec)
 {
     usleep(msec * 1000);
 }
 
+}
 #endif // EASTWOOD_STDDEF_H
