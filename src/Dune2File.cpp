@@ -1,7 +1,7 @@
 #include "eastwood/StdDef.h"
 #include "eastwood/Dune2File.h"
 
-namespace eastwood {
+namespace eastwood { namespace dune2 {
 
 static const Address
     D2ExeVersionOffset[D2_VERSIONS] = { {0x325f, 0xe}, {0x333a, 0x2}, {0x32fb, 0x2}, {0x3353, 0x2}, {0x334d, 0x2} },
@@ -292,4 +292,4 @@ std::string Dune2File::stringGet(uint32_t p)
     return std::string(buf);
 }
 
-}
+} } // namespace

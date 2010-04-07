@@ -12,7 +12,7 @@
 #include "eastwood/StdDef.h"
 #include "eastwood/ExeFile.h"
 
-namespace eastwood {
+namespace eastwood { namespace dune2 {
 
 enum	D2ExeVersion {
     D2_DEMO,
@@ -197,6 +197,6 @@ class Dune2File
 
 };
 
-}
+} } // namespace
 
 #endif // EASTWOOD_DUNE2FILE_H
