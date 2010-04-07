@@ -99,53 +99,53 @@ void Dune2File::readDataStructures()
     for(std::vector<Structure>::iterator it = _structureData.begin(); it != _structureData.end(); ++it, ++idx) {
 	it->reset(new StructureData);
 	(*it)->typeIndex		= idx;
-	(*it)->idShort		= _stream.getU16LE();
-	(*it)->name		= stringGet(_stream.getU32LE());
-	(*it)->idLong		= _stream.getU16LE();
-	(*it)->picture		= stringGet(_stream.getU32LE());
-	(*it)->options		= _stream.getU16LE();
-	(*it)->infantrySpawn	= _stream.getU16LE();
+	(*it)->idShort			= _stream.getU16LE();
+	(*it)->name			= stringGet(_stream.getU32LE());
+	(*it)->idLong			= _stream.getU16LE();
+	(*it)->picture			= stringGet(_stream.getU32LE());
+	(*it)->options			= _stream.getU16LE();
+	(*it)->infantrySpawn		= _stream.getU16LE();
 	(*it)->hitPoints		= _stream.getU16LE();
-	(*it)->sight		= _stream.getU16LE();
-	(*it)->sidebarIconID	= _stream.getU16LE();
-	(*it)->cost		= _stream.getU16LE();
+	(*it)->sight			= _stream.getU16LE();
+	(*it)->sidebarIconID		= _stream.getU16LE();
+	(*it)->cost			= _stream.getU16LE();
 	(*it)->buildTime		= _stream.getU16LE();
 	(*it)->techLevel		= _stream.getU16LE();
-	(*it)->preReqs		= _stream.getU32LE();
+	(*it)->preReqs			= _stream.getU32LE();
 	(*it)->buildOrder		= _stream.get();
-	(*it)->upgradesNeeded	= _stream.get();
-	(*it)->field_22		= _stream.get();
-	(*it)->field_23		= _stream.get();
-	(*it)->field_24		= _stream.get();
-	(*it)->field_25		= _stream.get();
-	(*it)->field_26		= _stream.get();
-	(*it)->field_27		= _stream.get();
-	(*it)->field_28		= _stream.get();
-	(*it)->field_29		= _stream.get();
-	(*it)->field_2A		= _stream.get();
+	(*it)->upgradesNeeded		= _stream.get();
+	(*it)->field_22			= _stream.get();
+	(*it)->field_23			= _stream.get();
+	(*it)->field_24			= _stream.get();
+	(*it)->field_25			= _stream.get();
+	(*it)->field_26			= _stream.get();
+	(*it)->field_27			= _stream.get();
+	(*it)->field_28			= _stream.get();
+	(*it)->field_29			= _stream.get();
+	(*it)->field_2A			= _stream.get();
 	(*it)->structureID		= _stream.getU16LE();
-	(*it)->weaponDamage	= _stream.getU16LE();
-	(*it)->weaponDamageAdd	= _stream.getU16LE();
-	(*it)->owner		= _stream.get();
-	(*it)->unitsCanEnter	= _stream.getU32LE();
-	(*it)->spiceStorage	= _stream.getU16LE();
+	(*it)->weaponDamage		= _stream.getU16LE();
+	(*it)->weaponDamageAdd		= _stream.getU16LE();
+	(*it)->owner			= _stream.get();
+	(*it)->unitsCanEnter		= _stream.getU32LE();
+	(*it)->spiceStorage		= _stream.getU16LE();
 	(*it)->powerUsage		= _stream.getU16LE();
-	(*it)->foundationSize	= _stream.getU16LE();
-	(*it)->gfxID		= _stream.getU16LE();
-	(*it)->frameData[0]	= _stream.getU32LE();
-	(*it)->frameData[1]	= _stream.getU32LE();
-	(*it)->frameData[2]	= _stream.getU32LE();
-	(*it)->constructOpt[0]	= _stream.getU16LE();	
-	(*it)->constructOpt[1]	= _stream.getU16LE();
-	(*it)->constructOpt[2]	= _stream.getU16LE();
-	(*it)->constructOpt[3]	= _stream.getU16LE();
-	(*it)->constructOpt[4]	= _stream.getU16LE();
-	(*it)->constructOpt[5]	= _stream.getU16LE();
-	(*it)->constructOpt[6]	= _stream.getU16LE();
-	(*it)->constructOpt[7]	= _stream.getU16LE();
-	(*it)->techUpgrade[0]	= _stream.getU16LE();
-	(*it)->techUpgrade[1]	= _stream.getU16LE();
-	(*it)->techUpgrade[2]	= _stream.getU16LE();
+	(*it)->foundationSize		= _stream.getU16LE();
+	(*it)->gfxID			= _stream.getU16LE();
+	(*it)->frameData[0]		= _stream.getU32LE();
+	(*it)->frameData[1]		= _stream.getU32LE();
+	(*it)->frameData[2]		= _stream.getU32LE();
+	(*it)->constructOpt[0]		= _stream.getU16LE();	
+	(*it)->constructOpt[1]		= _stream.getU16LE();
+	(*it)->constructOpt[2]		= _stream.getU16LE();
+	(*it)->constructOpt[3]		= _stream.getU16LE();
+	(*it)->constructOpt[4]		= _stream.getU16LE();
+	(*it)->constructOpt[5]		= _stream.getU16LE();
+	(*it)->constructOpt[6]		= _stream.getU16LE();
+	(*it)->constructOpt[7]		= _stream.getU16LE();
+	(*it)->techUpgrade[0]		= _stream.getU16LE();
+	(*it)->techUpgrade[1]		= _stream.getU16LE();
+	(*it)->techUpgrade[2]		= _stream.getU16LE();
     }
 
     _stream.seekSegOff(UnitOffset[_version].segment, UnitOffset[_version].offset);
@@ -153,49 +153,49 @@ void Dune2File::readDataStructures()
     for(std::vector<Unit>::iterator it = _unitData.begin(); it != _unitData.end(); ++it, ++idx) {
 	it->reset(new UnitData);	
 	(*it)->typeIndex		= idx;
-	(*it)->idShort		= _stream.getU16LE(),
-	(*it)->name		= stringGet(_stream.getU32LE()),
-	(*it)->idLong		= _stream.getU16LE(),
-	(*it)->picture		= stringGet(_stream.getU32LE()),
-	(*it)->options		= _stream.getU16LE(),
-	(*it)->infantrySpawn	= _stream.getU16LE(),
+	(*it)->idShort			= _stream.getU16LE(),
+	(*it)->name			= stringGet(_stream.getU32LE()),
+	(*it)->idLong			= _stream.getU16LE(),
+	(*it)->picture			= stringGet(_stream.getU32LE()),
+	(*it)->options			= _stream.getU16LE(),
+	(*it)->infantrySpawn		= _stream.getU16LE(),
 	(*it)->hitPoints		= _stream.getU16LE(),
-	(*it)->sight		= _stream.getU16LE(),
-	(*it)->sidebarIconID	= _stream.getU16LE(),
-	(*it)->cost		= _stream.getU16LE(),
+	(*it)->sight			= _stream.getU16LE(),
+	(*it)->sidebarIconID		= _stream.getU16LE(),
+	(*it)->cost			= _stream.getU16LE(),
 	(*it)->buildTime		= _stream.getU16LE(),
 	(*it)->techLevel		= _stream.getU16LE(),
-	(*it)->preReqs		= _stream.getU32LE(),
+	(*it)->preReqs			= _stream.getU32LE(),
 	(*it)->buildOrder		= _stream.get(),
-	(*it)->upgradesNeeded	= _stream.get(),	
-	(*it)->sidebarCommand1	= _stream.getU16LE(),
-	(*it)->sidebarCommand2	= _stream.getU16LE(),
-	(*it)->sidebarCommand3	= _stream.getU16LE(),
-	(*it)->sidebarCommand4	= _stream.getU16LE(),
-	(*it)->field_2A		= _stream.get(),
-	(*it)->field_2B		= _stream.getU16LE(),
-	(*it)->field_2D		= _stream.getU16LE(),
-	(*it)->aggressivity	= _stream.getU16LE(),
-	(*it)->owner		= _stream.get(),
-	(*it)->indexMin		= _stream.getU16LE(),
-	(*it)->indexMax		= _stream.getU16LE(),
-	(*it)->optsFitW		= _stream.getU16LE(),
-	(*it)->field_38		= _stream.get(),
-	(*it)->field_39		= _stream.get(),
-	(*it)->field_3A		= _stream.getU16LE(),
-	(*it)->movementType	= _stream.getU16LE(),
-	(*it)->movementPerFrame	= _stream.getU16LE(),
-	(*it)->speed		= _stream.getU16LE(),
-	(*it)->turningSpeed	= _stream.getU16LE(),
-	(*it)->gfxID		= _stream.getU16LE(),
+	(*it)->upgradesNeeded		= _stream.get(),	
+	(*it)->sidebarCommand1		= _stream.getU16LE(),
+	(*it)->sidebarCommand2		= _stream.getU16LE(),
+	(*it)->sidebarCommand3		= _stream.getU16LE(),
+	(*it)->sidebarCommand4		= _stream.getU16LE(),
+	(*it)->field_2A			= _stream.get(),
+	(*it)->field_2B			= _stream.getU16LE(),
+	(*it)->field_2D			= _stream.getU16LE(),
+	(*it)->aggressivity		= _stream.getU16LE(),
+	(*it)->owner			= _stream.get(),
+	(*it)->indexMin			= _stream.getU16LE(),
+	(*it)->indexMax			= _stream.getU16LE(),
+	(*it)->optsFitW			= _stream.getU16LE(),
+	(*it)->field_38			= _stream.get(),
+	(*it)->field_39			= _stream.get(),
+	(*it)->field_3A			= _stream.getU16LE(),
+	(*it)->movementType		= _stream.getU16LE(),
+	(*it)->movementPerFrame		= _stream.getU16LE(),
+	(*it)->speed			= _stream.getU16LE(),
+	(*it)->turningSpeed		= _stream.getU16LE(),
+	(*it)->gfxID			= _stream.getU16LE(),
 	(*it)->turretGfxID		= _stream.getU16LE(),
 	(*it)->aiCommand		= _stream.getU16LE(),
-	(*it)->frameAngleMode	= _stream.getU16LE(),
+	(*it)->frameAngleMode		= _stream.getU16LE(),
 	(*it)->deathAnim		= _stream.getU16LE(),
-	(*it)->weaponRateFire	= _stream.getU16LE(),
+	(*it)->weaponRateFire		= _stream.getU16LE(),
 	(*it)->weaponRange		= _stream.getU16LE(),
-	(*it)->weaponDamage	= _stream.getU16LE(),
-	(*it)->field_54		= _stream.getU16LE(),
+	(*it)->weaponDamage		= _stream.getU16LE(),
+	(*it)->field_54			= _stream.getU16LE(),
 	(*it)->weaponType		= _stream.getU16LE(),
 	(*it)->weaponSound		= _stream.getU16LE();
     }
@@ -203,17 +203,17 @@ void Dune2File::readDataStructures()
     _stream.seekSegOff(HouseOffset[_version].segment, HouseOffset[_version].offset);
     for(std::vector<House>::iterator it = _houseData.begin(); it != _houseData.end(); ++it) {
 	it->reset(new HouseData);	
-	(*it)->name		= stringGet(_stream.getU32LE()),
-	(*it)->weakness		= _stream.getU16LE(),
+	(*it)->name			= stringGet(_stream.getU32LE()),
+	(*it)->weakness			= _stream.getU16LE(),
 	(*it)->lemonFactor		= _stream.getU16LE(),
-	(*it)->buildingDecay	= _stream.getU16LE(),
-	(*it)->color		= _stream.getU16LE(),
+	(*it)->buildingDecay		= _stream.getU16LE(),
+	(*it)->color			= _stream.getU16LE(),
 	(*it)->palaceUnitRecharge	= _stream.getU16LE(),
 	(*it)->frigateTime		= _stream.getU16LE();
 	(*it)->houseLetter		= _stream.get(),_stream.ignore(1),
 	(*it)->palaceMode		= _stream.getU16LE(),
-	(*it)->missionWinMusic	= _stream.getU16LE(),
-	(*it)->missionLoseMusic	= _stream.getU16LE(),
+	(*it)->missionWinMusic		= _stream.getU16LE(),
+	(*it)->missionLoseMusic		= _stream.getU16LE(),
 	(*it)->missionBriefMusic	= _stream.getU16LE(),
 	(*it)->houseVoice		= stringGet(_stream.getU32LE());	
     }
@@ -221,26 +221,26 @@ void Dune2File::readDataStructures()
     _stream.seekSegOff(ActionOffset[_version].segment, ActionOffset[_version].offset);
     for(std::vector<Action>::iterator it = _actionData.begin(); it != _actionData.end(); ++it) {
 	it->reset(new ActionData);	
-	(*it)->field_0		= _stream.getU16LE(),
-	(*it)->name		= stringGet(_stream.getU32LE()),
-	(*it)->interruptAction	= _stream.getU16LE(),
+	(*it)->field_0			= _stream.getU16LE(),
+	(*it)->name			= stringGet(_stream.getU32LE()),
+	(*it)->interruptAction		= _stream.getU16LE(),
 	(*it)->sidebarMode		= _stream.getU16LE(),
-	(*it)->responseSound	= _stream.getU16LE();
+	(*it)->responseSound		= _stream.getU16LE();
     }	
 
     _stream.seekSegOff(FileOffset[_version].segment, FileOffset[_version].offset);
     while(_stream.good() && _stream.peek() != 0) {
 	File file(new FileData);
-	file->name		= stringGet(_stream.getU32LE()),
-	file->field_4		= _stream.getU16LE(),
-	file->field_6		= _stream.getU16LE(),
-	file->field_8		= _stream.getU16LE(),
-	file->field_A		= _stream.getU16LE(),
-	file->field_C		= _stream.getU16LE(),
-	file->field_E		= _stream.getU16LE(),
-	file->parentIndex	= _stream.get(),
-	file->field_11		= _stream.get(),
-	file->fileType		= _stream.get();
+	file->name			= stringGet(_stream.getU32LE()),
+	file->field_4			= _stream.getU16LE(),
+	file->field_6			= _stream.getU16LE(),
+	file->field_8			= _stream.getU16LE(),
+	file->field_A			= _stream.getU16LE(),
+	file->field_C			= _stream.getU16LE(),
+	file->field_E			= _stream.getU16LE(),
+	file->parentIndex		= _stream.get(),
+	file->field_11			= _stream.get(),
+	file->fileType			= _stream.get();
 	_fileData.push_back(file);
     }
 
