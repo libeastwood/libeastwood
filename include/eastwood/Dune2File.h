@@ -117,6 +117,16 @@ struct	HouseData {
     std::string			houseVoice;
 };
 
+// Unit 'Action' commands
+struct	ActionData {
+    ActionData();
+    uint16_t			field_0;
+    std::string			name;
+    uint16_t			interruptAction;
+    uint16_t			sidebarMode;
+    uint16_t			responseSound;
+};
+
 // Stored internal File table
 struct	FileData {
     FileData();
@@ -132,15 +142,13 @@ struct	FileData {
     uint8_t			fileType;
 };
 
-// Unit 'Action' commands
-struct	ActionData {
-    ActionData();
-    uint16_t			field_0;
-    std::string			name;
-    uint16_t			interruptAction;
-    uint16_t			sidebarMode;
-    uint16_t			responseSound;
-};
+typedef std::tr1::shared_ptr<ObjectData> Object;
+typedef std::tr1::shared_ptr<UnitData> Unit;
+typedef std::tr1::shared_ptr<StructureData> Structure;
+typedef std::tr1::shared_ptr<ObjectData> Object;
+typedef std::tr1::shared_ptr<HouseData> House;
+typedef std::tr1::shared_ptr<ActionData> Action;
+typedef std::tr1::shared_ptr<FileData> File;
 
 class Dune2File
 {
@@ -148,11 +156,11 @@ class Dune2File
 	Dune2File(ExeFile &stream);
 
 	Version getVersion() const throw() { return _version; }
-	const std::vector<StructureData> getStructureData() const { return _structureData; }
-	const std::vector<UnitData> getUnitData() const { return _unitData; }
-	const std::vector<HouseData> getHouseData() const { return _houseData; }
-	const std::vector<FileData> getFileData() const { return _fileData; }
-	const std::vector<ActionData> getActionData() const { return _actionData; }
+	const std::vector<Structure> getStructureData() const { return _structureData; }
+	const std::vector<Unit> getUnitData() const { return _unitData; }
+	const std::vector<House> getHouseData() const { return _houseData; }
+	const std::vector<Action> getActionData() const { return _actionData; }
+	const std::vector<File> getFileData() const { return _fileData; }
 	const std::vector<std::string> getMovementData() const { return _movementData; }
 	const std::vector<uint16_t> getLayoutTileCount() const { return _layoutTileCount; }
 	const std::vector<std::vector<int16_t> > getLayoutTilesAround() const { return _layoutTilesAround; }
@@ -171,11 +179,11 @@ class Dune2File
 
 	ExeFile &_stream;
 	Version _version;
-	std::vector<StructureData> _structureData;
-	std::vector<UnitData> _unitData;
-	std::vector<HouseData> _houseData;
-	std::vector<ActionData> _actionData;
-	std::vector<FileData> _fileData;
+	std::vector<Structure> _structureData;
+	std::vector<Unit> _unitData;
+	std::vector<House> _houseData;
+	std::vector<Action> _actionData;
+	std::vector<File> _fileData;
 	std::vector<std::string> _movementData;
 	std::vector<uint16_t> _layoutTileCount;
 	std::vector<std::vector<int16_t> > _layoutTilesAround;
