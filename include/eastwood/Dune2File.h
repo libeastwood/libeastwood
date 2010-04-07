@@ -164,8 +164,6 @@ class Dune2File
 	const std::vector<int8_t> getUnitFrameAdjust() const { return _unitFrameAdjust; }
 	const std::vector<int16_t> getUnitTurretFrame() const { return _unitTurretFrameAdjust; }
 
-	std::vector<uint16_t> animPtrGet(uint32_t p);
-
 	std::string stringGet(uint32_t p);
 
     private:

@@ -277,15 +277,6 @@ void Dune2File::readDataStructures()
 
 }
 
-std::vector<uint16_t> Dune2File::animPtrGet(uint32_t p) {
-    _stream.seekSegOff(p);
-    // one 64K (32K*2) segment
-    // TODO: 64K is more of a max value and probably way more than we actually need...
-    std::vector<uint16_t> ret(1<<15);
-    _stream.readU16LE(&ret.front(), ret.size());
-    return ret;
-}
-
 std::string Dune2File::stringGet(uint32_t p)
 {
     std::streampos pos(_stream.tellg());
