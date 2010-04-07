@@ -11,7 +11,10 @@
 #include <cstring>
 #ifndef _MSC_VER
   #include <tr1/cinttypes>
+  #include <tr1/memory>
+  #include <tr1/shared_ptr.h>
 #else
+  #include <memory>
   typedef signed char int8_t;
   typedef unsigned char   uint8_t;
   typedef short  int16_t;
