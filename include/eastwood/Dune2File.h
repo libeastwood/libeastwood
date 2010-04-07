@@ -23,11 +23,6 @@ enum	D2ExeVersion {
     D2_VERSIONS
 };
 
-struct Address {
-    uint16_t			segment;
-    uint16_t			offset;
-};
-
 struct	D2ExeObjectData {
     D2ExeObjectData();
     virtual ~D2ExeObjectData() {}
