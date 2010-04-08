@@ -142,6 +142,13 @@ struct	FileData {
     uint8_t			fileType;
 };
 
+template <typename T>
+struct Point {
+    Point(T x = 0, T y = 0) : x(x), y(y) {}
+    T				x;
+    T				y;
+};
+
 typedef std::tr1::shared_ptr<ObjectData> Object;
 typedef std::tr1::shared_ptr<UnitData> Unit;
 typedef std::tr1::shared_ptr<StructureData> Structure;
@@ -164,6 +171,8 @@ class Dune2File
 	const std::vector<std::string> getMovementData() const { return _movementData; }
 	const std::vector<uint16_t> getLayoutTileCount() const { return _layoutTileCount; }
 	const std::vector<std::vector<int16_t> > getLayoutTilesAround() const { return _layoutTilesAround; }
+	const std::vector<Point<uint16_t> > getLayoutSize() const { return _layoutSize; }
+	const std::vector<Point<uint16_t> > getLayoutTileDiff() const { return _layoutTileDiff; }
 	const std::vector<int16_t> getAngleTable() const { return _angleTable; }
 	const std::vector<uint16_t> getMapMoveMod() const { return _mapMoveMod; }
 	const std::vector<int8_t> getMapMod() const { return _mapMod; }
@@ -187,6 +196,8 @@ class Dune2File
 	std::vector<std::string> _movementData;
 	std::vector<uint16_t> _layoutTileCount;
 	std::vector<std::vector<int16_t> > _layoutTilesAround;
+	std::vector<Point<uint16_t> > _layoutSize;
+	std::vector<Point<uint16_t> > _layoutTileDiff;
 	std::vector<int16_t> _angleTable;
 	std::vector<uint16_t> _mapMoveMod;
 	std::vector<int8_t> _mapMod;

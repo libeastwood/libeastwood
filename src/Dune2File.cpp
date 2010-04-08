@@ -66,6 +66,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _movementData(24),
     _layoutTileCount(7),
     _layoutTilesAround(7),
+    _layoutSize(7),
+    _layoutTileDiff(7),
     _angleTable(205),
     _mapMoveMod(8),
     _mapMod(8),
@@ -257,6 +259,15 @@ void Dune2File::readDataStructures()
     for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
 	x->resize(16);
 	_stream.readU16LE(reinterpret_cast<uint16_t*>(&x->front()), x->size());
+    }
+
+    for(std::vector<Point<uint16_t> >::iterator it = _layoutSize.begin(); it != _layoutSize.end(); ++it) {
+	it->x = _stream.getU16LE(),
+	it->y = _stream.getU16LE();
+    }
+    for(std::vector<Point<uint16_t> >::iterator it = _layoutTileDiff.begin(); it != _layoutTileDiff.end(); ++it) {
+	it->x = _stream.getU16LE(),
+	it->y = _stream.getU16LE();
     }
 
     _stream.seekSegOff(AngleTableOffset[_version].segment, AngleTableOffset[_version].offset);
