@@ -149,62 +149,62 @@ struct Point {
     T				y;
 };
 
-typedef std::tr1::shared_ptr<ObjectData> Object;
-typedef std::tr1::shared_ptr<UnitData> Unit;
-typedef std::tr1::shared_ptr<StructureData> Structure;
-typedef std::tr1::shared_ptr<ObjectData> Object;
-typedef std::tr1::shared_ptr<HouseData> House;
-typedef std::tr1::shared_ptr<ActionData> Action;
-typedef std::tr1::shared_ptr<FileData> File;
+typedef std::tr1::shared_ptr<ObjectData>	Object;
+typedef std::tr1::shared_ptr<UnitData>		Unit;
+typedef std::tr1::shared_ptr<StructureData>	Structure;
+typedef std::tr1::shared_ptr<ObjectData>	Object;
+typedef std::tr1::shared_ptr<HouseData>		House;
+typedef std::tr1::shared_ptr<ActionData>	Action;
+typedef std::tr1::shared_ptr<FileData>		File;
 
 class Dune2File
 {
     public:
 	Dune2File(ExeFile &stream);
 
-	Version getVersion() const throw() { return _version; }
-	const std::vector<Structure> getStructureData() const { return _structureData; }
-	const std::vector<Unit> getUnitData() const { return _unitData; }
-	const std::vector<House> getHouseData() const { return _houseData; }
-	const std::vector<Action> getActionData() const { return _actionData; }
-	const std::vector<File> getFileData() const { return _fileData; }
-	const std::vector<std::string> getMovementData() const { return _movementData; }
-	const std::vector<uint16_t> getLayoutTileCount() const { return _layoutTileCount; }
-	const std::vector<std::vector<int16_t> > getLayoutTilesAround() const { return _layoutTilesAround; }
-	const std::vector<Point<uint16_t> > getLayoutSize() const { return _layoutSize; }
-	const std::vector<Point<uint16_t> > getLayoutTileDiff() const { return _layoutTileDiff; }
-	const std::vector<int16_t> getAngleTable() const { return _angleTable; }
-	const std::vector<uint16_t> getMapMoveMod() const { return _mapMoveMod; }
-	const std::vector<int8_t> getMapMod() const { return _mapMod; }
-	const std::vector<uint32_t> getAnimPtrs() const { return _animPtrs; }
-	const std::vector<int16_t> getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
-	const std::vector<int8_t> getUnitFrameAdjust() const { return _unitFrameAdjust; }
-	const std::vector<int16_t> getUnitTurretFrame() const { return _unitTurretFrameAdjust; }
+	Version						getVersion() const throw() 	{ return _version; }
+	const std::vector<Structure>			getStructureData() const	{ return _structureData; }
+	const std::vector<Unit>				getUnitData() const		{ return _unitData; }
+	const std::vector<House>			getHouseData() const		{ return _houseData; }
+	const std::vector<Action>			getActionData() const		{ return _actionData; }
+	const std::vector<File>				getFileData() const		{ return _fileData; }
+	const std::vector<std::string>			getMovementData() const		{ return _movementData; }
+	const std::vector<uint16_t>			getLayoutTileCount() const	{ return _layoutTileCount; }
+	const std::vector<std::vector<int16_t> >	getLayoutTilesAround() const	{ return _layoutTilesAround; }
+	const std::vector<Point<uint16_t> >		getLayoutSize() const		{ return _layoutSize; }
+	const std::vector<Point<uint16_t> >		getLayoutTileDiff() const	{ return _layoutTileDiff; }
+	const std::vector<int16_t>			getAngleTable() const		{ return _angleTable; }
+	const std::vector<uint16_t>			getMapMoveMod() const		{ return _mapMoveMod; }
+	const std::vector<int8_t>			getMapMod() const		{ return _mapMod; }
+	const std::vector<uint32_t>			getAnimPtrs() const		{ return _animPtrs; }
+	const std::vector<int16_t>			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
+	const std::vector<int8_t>			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
+	const std::vector<int16_t>			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
 
     private:
 	void detectDune2Version();
 	void readDataStructures();
 	std::string stringGet(uint32_t p);
 
-	ExeFile &_stream;
-	Version _version;
-	std::vector<Structure> _structureData;
-	std::vector<Unit> _unitData;
-	std::vector<House> _houseData;
-	std::vector<Action> _actionData;
-	std::vector<File> _fileData;
-	std::vector<std::string> _movementData;
-	std::vector<uint16_t> _layoutTileCount;
-	std::vector<std::vector<int16_t> > _layoutTilesAround;
-	std::vector<Point<uint16_t> > _layoutSize;
-	std::vector<Point<uint16_t> > _layoutTileDiff;
-	std::vector<int16_t> _angleTable;
-	std::vector<uint16_t> _mapMoveMod;
-	std::vector<int8_t> _mapMod;
-	std::vector<uint32_t> _animPtrs;
-	std::vector<int16_t> _unitAngleFrameAdjust;
-	std::vector<int8_t> _unitFrameAdjust;
-	std::vector<int16_t> _unitTurretFrameAdjust;
+	ExeFile					&_stream;
+	Version					_version;
+	std::vector<Structure>			_structureData;
+	std::vector<Unit>			_unitData;
+	std::vector<House>			_houseData;
+	std::vector<Action>			_actionData;
+	std::vector<File>			_fileData;
+	std::vector<std::string>		_movementData;
+	std::vector<uint16_t>			_layoutTileCount;
+	std::vector<std::vector<int16_t> >	_layoutTilesAround;
+	std::vector<Point<uint16_t> >		_layoutSize;
+	std::vector<Point<uint16_t> >		_layoutTileDiff;
+	std::vector<int16_t>			_angleTable;
+	std::vector<uint16_t>			_mapMoveMod;
+	std::vector<int8_t>			_mapMod;
+	std::vector<uint32_t>			_animPtrs;
+	std::vector<int16_t>			_unitAngleFrameAdjust;
+	std::vector<int8_t>			_unitFrameAdjust;
+	std::vector<int16_t>			_unitTurretFrameAdjust;
 
 };
 
