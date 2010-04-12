@@ -19,7 +19,8 @@ static const Address
     LayoutTileCountOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2d46 } },
     AngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
     MapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
-    AnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },    
+    AnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },
+    MapOffsetsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
     GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 ObjectData::ObjectData() :
@@ -71,6 +72,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _angleTable(205),
     _mapMoveMod(8),
     _mapMod(8),
+    _mapOffsets(357),
     _animPtrs(35),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
@@ -286,6 +288,10 @@ void Dune2File::readDataStructures()
     // dunno what these are...
     _stream.ignore(28);
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitTurretFrameAdjust.front()), _unitTurretFrameAdjust.size());
+
+    _stream.seekSegOff(MapOffsetsOffset[_version].segment, MapOffsetsOffset[_version].offset);
+    _stream.read(reinterpret_cast<char*>(&_mapOffsets.front()), _mapOffsets.size());
+
 
 }
 
