@@ -176,6 +176,7 @@ class Dune2File
 	const std::vector<int16_t>			getAngleTable() const		{ return _angleTable; }
 	const std::vector<uint16_t>			getMapMoveMod() const		{ return _mapMoveMod; }
 	const std::vector<int8_t>			getMapMod() const		{ return _mapMod; }
+	const std::vector<int8_t>			getMapOffsetIndexes() const	{ return _mapOffsetIndexes; }	
 	const std::vector<int8_t>			getMapOffsets() const		{ return _mapOffsets; }
 	const std::vector<uint32_t>			getAnimPtrs() const		{ return _animPtrs; }
 	const std::vector<int16_t>			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
@@ -202,6 +203,7 @@ class Dune2File
 	std::vector<int16_t>			_angleTable;
 	std::vector<uint16_t>			_mapMoveMod;
 	std::vector<int8_t>			_mapMod;
+	std::vector<int8_t>			_mapOffsetIndexes;	
 	std::vector<int8_t>			_mapOffsets;
 	std::vector<uint32_t>			_animPtrs;
 	std::vector<int16_t>			_unitAngleFrameAdjust;
