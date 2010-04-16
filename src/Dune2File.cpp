@@ -21,6 +21,7 @@ static const Address
     MapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
     AnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },
     MapOffsetIndexesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
+    MovementUnk1Offset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2468} },
     GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 ObjectData::ObjectData() :
@@ -77,7 +78,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _animPtrs(35),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
-    _unitTurretFrameAdjust(36)
+    _unitTurretFrameAdjust(36),
+    _movementUnk1(16)
 {
     detectDune2Version();
     readDataStructures();
@@ -294,6 +296,8 @@ void Dune2File::readDataStructures()
     _stream.read(reinterpret_cast<char*>(&_mapOffsetIndexes.front()), _mapOffsetIndexes.size());    
     _stream.read(reinterpret_cast<char*>(&_mapOffsets.front()), _mapOffsets.size());
 
+    _stream.seekSegOff(MovementUnk1Offset[_version].segment, MovementUnk1Offset[_version].offset);
+    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_movementUnk1.front()), _movementUnk1.size());    
 
 }
 

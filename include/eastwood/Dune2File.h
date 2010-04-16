@@ -182,6 +182,8 @@ class Dune2File
 	const std::vector<int16_t>			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
 	const std::vector<int8_t>			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
 	const std::vector<int16_t>			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
+	const std::vector<int16_t>			getMovementUnk1() const		{ return _movementUnk1; }
+
 
     private:
 	void detectDune2Version();
@@ -209,6 +211,7 @@ class Dune2File
 	std::vector<int16_t>			_unitAngleFrameAdjust;
 	std::vector<int8_t>			_unitFrameAdjust;
 	std::vector<int16_t>			_unitTurretFrameAdjust;
+	std::vector<int16_t>			_movementUnk1;
 
 };
 
