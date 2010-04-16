@@ -169,6 +169,8 @@ class Dune2File
 	const std::vector<Action>			getActionData() const		{ return _actionData; }
 	const std::vector<File>				getFileData() const		{ return _fileData; }
 	const std::vector<std::string>			getMovementData() const		{ return _movementData; }
+	const std::vector<std::vector<uint16_t> >	getLayoutTiles() const		{ return _layoutTiles; }
+	const std::vector<std::vector<int16_t> >	getLayoutTilesUnk1() const	{ return _layoutTilesUnk1; }
 	const std::vector<uint16_t>			getLayoutTileCount() const	{ return _layoutTileCount; }
 	const std::vector<std::vector<int16_t> >	getLayoutTilesAround() const	{ return _layoutTilesAround; }
 	const std::vector<Point<uint16_t> >		getLayoutSize() const		{ return _layoutSize; }
@@ -199,6 +201,8 @@ class Dune2File
 	std::vector<Action>			_actionData;
 	std::vector<File>			_fileData;
 	std::vector<std::string>		_movementData;
+	std::vector<std::vector<uint16_t> >	_layoutTiles;
+	std::vector<std::vector<int16_t> >	_layoutTilesUnk1;	
 	std::vector<uint16_t>			_layoutTileCount;
 	std::vector<std::vector<int16_t> >	_layoutTilesAround;
 	std::vector<Point<uint16_t> >		_layoutSize;
