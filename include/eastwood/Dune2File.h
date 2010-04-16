@@ -145,8 +145,16 @@ struct	FileData {
 template <typename T>
 struct Point {
     Point(T x = 0, T y = 0) : x(x), y(y) {}
+    virtual ~Point() {}
     T				x;
     T				y;
+};
+
+template <typename T>
+struct Rect : Point<T> {
+    Rect(T x = 0, T y = 0, T w = 0, T h = 0) : Point<T>(x,y), w(w), h(h) {}
+    T				w;
+    T				h;
 };
 
 typedef std::tr1::shared_ptr<ObjectData>	Object;
@@ -186,6 +194,7 @@ class Dune2File
 	const std::vector<int16_t>			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
 	const std::vector<int16_t>			getMovementUnk1() const		{ return _movementUnk1; }
 	const std::vector<uint16_t>			getMapTileColors() const	{ return _mapTileColors; }
+	const std::vector<Rect<uint16_t> >		getMapScales() const		{ return _mapScales; }
 
 
     private:
@@ -218,6 +227,7 @@ class Dune2File
 	std::vector<int16_t>			_unitTurretFrameAdjust;
 	std::vector<int16_t>			_movementUnk1;
 	std::vector<uint16_t>			_mapTileColors;
+	std::vector<Rect<uint16_t> >		_mapScales;
 
 };
 

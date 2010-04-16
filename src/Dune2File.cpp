@@ -22,6 +22,7 @@ static const Address
     AnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },
     MapOffsetIndexesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
     MovementUnk1Offset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2468} },
+    MapScalesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3c02} },
     GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 ObjectData::ObjectData() :
@@ -82,7 +83,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _unitFrameAdjust(8),
     _unitTurretFrameAdjust(36),
     _movementUnk1(16),
-    _mapTileColors(83)
+    _mapTileColors(83),
+    _mapScales(3)
 {
     detectDune2Version();
     readDataStructures();
@@ -310,6 +312,14 @@ void Dune2File::readDataStructures()
 
     _stream.ignore(36);
     _stream.readU16LE(&_mapTileColors.front(), _mapTileColors.size());    
+
+    _stream.seekSegOff(MapScalesOffset[_version].segment, MapScalesOffset[_version].offset);    
+    for(std::vector<Rect<uint16_t> >::iterator map = _mapScales.begin(); map != _mapScales.end(); ++map) {
+	map->x = _stream.getU16LE();
+	map->y = _stream.getU16LE();
+	map->w = _stream.getU16LE();
+	map->h = _stream.getU16LE();
+    }
 
 
 }
