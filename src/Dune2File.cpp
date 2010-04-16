@@ -79,7 +79,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
     _unitTurretFrameAdjust(36),
-    _movementUnk1(16)
+    _movementUnk1(16),
+    _mapTileColors(83)
 {
     detectDune2Version();
     readDataStructures();
@@ -298,6 +299,10 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(MovementUnk1Offset[_version].segment, MovementUnk1Offset[_version].offset);
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&_movementUnk1.front()), _movementUnk1.size());    
+
+    _stream.ignore(36);
+    _stream.readU16LE(&_mapTileColors.front(), _mapTileColors.size());    
+
 
 }
 

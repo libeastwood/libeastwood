@@ -176,13 +176,14 @@ class Dune2File
 	const std::vector<int16_t>			getAngleTable() const		{ return _angleTable; }
 	const std::vector<uint16_t>			getMapMoveMod() const		{ return _mapMoveMod; }
 	const std::vector<int8_t>			getMapMod() const		{ return _mapMod; }
-	const std::vector<int8_t>			getMapOffsetIndexes() const	{ return _mapOffsetIndexes; }	
+	const std::vector<int8_t>			getMapOffsetIndexes() const	{ return _mapOffsetIndexes; }
 	const std::vector<int8_t>			getMapOffsets() const		{ return _mapOffsets; }
 	const std::vector<uint32_t>			getAnimPtrs() const		{ return _animPtrs; }
 	const std::vector<int16_t>			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
 	const std::vector<int8_t>			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
 	const std::vector<int16_t>			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
 	const std::vector<int16_t>			getMovementUnk1() const		{ return _movementUnk1; }
+	const std::vector<uint16_t>			getMapTileColors() const	{ return _mapTileColors; }
 
 
     private:
@@ -212,6 +213,7 @@ class Dune2File
 	std::vector<int8_t>			_unitFrameAdjust;
 	std::vector<int16_t>			_unitTurretFrameAdjust;
 	std::vector<int16_t>			_movementUnk1;
+	std::vector<uint16_t>			_mapTileColors;
 
 };
 
