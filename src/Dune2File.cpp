@@ -84,7 +84,10 @@ Dune2File::Dune2File(ExeFile &stream) :
     _unitTurretFrameAdjust(36),
     _movementUnk1(16),
     _mapTileColors(83),
-    _mapScales(3)
+    _mapScales(3),
+    _actionsAI(4),
+    _sinTable(256),
+    _cosTable(256)
 {
     detectDune2Version();
     readDataStructures();
@@ -320,7 +323,11 @@ void Dune2File::readDataStructures()
 	map->w = _stream.getU16LE();
 	map->h = _stream.getU16LE();
     }
-
+    _stream.ignore(4);
+    _stream.readU16LE(&_actionsAI.front(), _actionsAI.size());
+    _stream.ignore(26);
+    _stream.read(reinterpret_cast<char*>(&_sinTable.front()), _sinTable.size());
+    _stream.read(reinterpret_cast<char*>(&_cosTable.front()), _cosTable.size());    
 
 }
 
