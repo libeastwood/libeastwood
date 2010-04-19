@@ -196,8 +196,8 @@ class Dune2File
 	const std::vector<uint16_t>			getMapTileColors() const	{ return _mapTileColors; }
 	const std::vector<Rect<uint16_t> >		getMapScales() const		{ return _mapScales; }
 	const std::vector<uint16_t>			getActionsAI() const		{ return _actionsAI; }
-	const std::vector<uint8_t>			getMapSinTable() const		{ return _mapSinTable; }
-	const std::vector<uint8_t>			getMapCosTable() const		{ return _mapCosTable; }	
+	const std::vector<int8_t>			getMapSinTable() const		{ return _mapSinTable; }
+	const std::vector<int8_t>			getMapCosTable() const		{ return _mapCosTable; }	
 
 
     private:
@@ -232,8 +232,8 @@ class Dune2File
 	std::vector<uint16_t>			_mapTileColors;
 	std::vector<Rect<uint16_t> >		_mapScales;
 	std::vector<uint16_t>			_actionsAI;
-	std::vector<uint8_t>			_mapSinTable;
-	std::vector<uint8_t>			_mapCosTable;
+	std::vector<int8_t>			_mapSinTable;
+	std::vector<int8_t>			_mapCosTable;
 
 };
 
