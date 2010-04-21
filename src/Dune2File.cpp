@@ -23,6 +23,7 @@ static const Address
     MapOffsetIndexesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
     MovementUnk1Offset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2468} },
     MapScalesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3c02} },
+    Emc15CDAOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x0001, 0x5cca} },    
     GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 ObjectData::ObjectData() :
@@ -87,7 +88,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _mapScales(3),
     _actionsAI(4),
     _mapSinTable(256),
-    _mapCosTable(256)
+    _mapCosTable(256),
+    _emc15CDA(16)
 {
     detectDune2Version();
     readDataStructures();
@@ -328,6 +330,9 @@ void Dune2File::readDataStructures()
     _stream.ignore(26);
     _stream.read(reinterpret_cast<char*>(&_mapSinTable.front()), _mapSinTable.size());
     _stream.read(reinterpret_cast<char*>(&_mapCosTable.front()), _mapCosTable.size());    
+
+    _stream.seekSegOff(Emc15CDAOffset[_version].segment, Emc15CDAOffset[_version].offset);
+    _stream.read(reinterpret_cast<char*>(&_emc15CDA.front()), _emc15CDA.size());    
 
 }
 

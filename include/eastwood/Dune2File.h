@@ -198,6 +198,7 @@ class Dune2File
 	const std::vector<uint16_t>			getActionsAI() const		{ return _actionsAI; }
 	const std::vector<int8_t>			getMapSinTable() const		{ return _mapSinTable; }
 	const std::vector<int8_t>			getMapCosTable() const		{ return _mapCosTable; }	
+	const std::vector<uint8_t>			getEmc15CDA() const		{ return _emc15CDA; }
 
 
     private:
@@ -234,6 +235,7 @@ class Dune2File
 	std::vector<uint16_t>			_actionsAI;
 	std::vector<int8_t>			_mapSinTable;
 	std::vector<int8_t>			_mapCosTable;
+	std::vector<uint8_t>			_emc15CDA;
 
 };
 
