@@ -171,34 +171,34 @@ class Dune2File
 	Dune2File(ExeFile &stream);
 
 	Version						getVersion() const throw() 	{ return _version; }
-	const std::vector<Structure>			getStructureData() const	{ return _structureData; }
-	const std::vector<Unit>				getUnitData() const		{ return _unitData; }
-	const std::vector<House>			getHouseData() const		{ return _houseData; }
-	const std::vector<Action>			getActionData() const		{ return _actionData; }
-	const std::vector<File>				getFileData() const		{ return _fileData; }
-	const std::vector<std::string>			getMovementData() const		{ return _movementData; }
-	const std::vector<std::vector<uint16_t> >	getLayoutTiles() const		{ return _layoutTiles; }
-	const std::vector<std::vector<int16_t> >	getLayoutTilesUnk1() const	{ return _layoutTilesUnk1; }
-	const std::vector<uint16_t>			getLayoutTileCount() const	{ return _layoutTileCount; }
-	const std::vector<std::vector<int16_t> >	getLayoutTilesAround() const	{ return _layoutTilesAround; }
-	const std::vector<Point<uint16_t> >		getLayoutSize() const		{ return _layoutSize; }
-	const std::vector<Point<uint16_t> >		getLayoutTileDiff() const	{ return _layoutTileDiff; }
-	const std::vector<int16_t>			getAngleTable() const		{ return _angleTable; }
-	const std::vector<uint16_t>			getMapMoveMod() const		{ return _mapMoveMod; }
-	const std::vector<int8_t>			getMapMod() const		{ return _mapMod; }
-	const std::vector<int8_t>			getMapOffsetIndexes() const	{ return _mapOffsetIndexes; }
-	const std::vector<int8_t>			getMapOffsets() const		{ return _mapOffsets; }
-	const std::vector<std::vector<uint16_t> >	getAnims() const		{ return _anims; }
-	const std::vector<int16_t>			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
-	const std::vector<int8_t>			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
-	const std::vector<int16_t>			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
-	const std::vector<int16_t>			getMovementUnk1() const		{ return _movementUnk1; }
-	const std::vector<uint16_t>			getMapTileColors() const	{ return _mapTileColors; }
-	const std::vector<Rect<uint16_t> >		getMapScales() const		{ return _mapScales; }
-	const std::vector<uint16_t>			getActionsAI() const		{ return _actionsAI; }
-	const std::vector<int8_t>			getMapSinTable() const		{ return _mapSinTable; }
-	const std::vector<int8_t>			getMapCosTable() const		{ return _mapCosTable; }	
-	const std::vector<uint8_t>			getEmc15CDA() const		{ return _emc15CDA; }
+	const std::vector<Structure>&			getStructureData() const	{ return _structureData; }
+	const std::vector<Unit>&			getUnitData() const		{ return _unitData; }
+	const std::vector<House>&			getHouseData() const		{ return _houseData; }
+	const std::vector<Action>&			getActionData() const		{ return _actionData; }
+	const std::vector<File>&			getFileData() const		{ return _fileData; }
+	const std::vector<std::string>&			getMovementData() const		{ return _movementData; }
+	const std::vector<std::vector<uint16_t> >&	getLayoutTiles() const		{ return _layoutTiles; }
+	const std::vector<std::vector<int16_t> >&	getLayoutTilesUnk1() const	{ return _layoutTilesUnk1; }
+	const std::vector<uint16_t>&			getLayoutTileCount() const	{ return _layoutTileCount; }
+	const std::vector<std::vector<int16_t> >&	getLayoutTilesAround() const	{ return _layoutTilesAround; }
+	const std::vector<Point<uint16_t> >&		getLayoutSize() const		{ return _layoutSize; }
+	const std::vector<Point<uint16_t> >&		getLayoutTileDiff() const	{ return _layoutTileDiff; }
+	const std::vector<int16_t>&			getAngleTable() const		{ return _angleTable; }
+	const std::vector<uint16_t>&			getMapMoveMod() const		{ return _mapMoveMod; }
+	const std::vector<int8_t>&			getMapMod() const		{ return _mapMod; }
+	const std::vector<int8_t>&			getMapOffsetIndexes() const	{ return _mapOffsetIndexes; }
+	const std::vector<int8_t>&			getMapOffsets() const		{ return _mapOffsets; }
+	const std::vector<std::vector<uint16_t> >&	getAnims() const		{ return _anims; }
+	const std::vector<int16_t>&			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
+	const std::vector<int8_t>&			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
+	const std::vector<int16_t>&			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
+	const std::vector<int16_t>&			getMovementUnk1() const		{ return _movementUnk1; }
+	const std::vector<uint16_t>&			getMapTileColors() const	{ return _mapTileColors; }
+	const std::vector<Rect<uint16_t> >&		getMapScales() const		{ return _mapScales; }
+	const std::vector<uint16_t>&			getActionsAI() const		{ return _actionsAI; }
+	const std::vector<int8_t>&			getMapSinTable() const		{ return _mapSinTable; }
+	const std::vector<int8_t>&			getMapCosTable() const		{ return _mapCosTable; }	
+	const std::vector<uint8_t>&			getEmc15CDA() const		{ return _emc15CDA; }
 
 
     private:
