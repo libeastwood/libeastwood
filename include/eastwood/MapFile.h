@@ -28,7 +28,7 @@ class MapFile
 	 Get a tile set.
 	 @return	A vector containing tile indexes.
 	 */
-	const std::vector<uint16_t> operator[] (uint16_t i) const {
+	const std::vector<uint16_t>& operator[] (uint16_t i) const {
 	    return _tileSet.at(i);
 	}
 
