@@ -310,7 +310,7 @@ void Dune2File::readDataStructures()
 
     // dunno what these are...
     _stream.ignore(66);
-    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitAngleFrameAdjust.front()), _unitAngleFrameAdjust.size());
+    _stream.readU16LE(&_unitAngleFrameAdjust.front(), _unitAngleFrameAdjust.size());
     _stream.read(reinterpret_cast<char*>(&_unitFrameAdjust.front()), _unitFrameAdjust.size());
 
     // dunno what these are...
