@@ -79,7 +79,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _mapMod(8),
     _mapOffsetIndexes(21),
     _mapOffsets(336),
-    _animPtrs(35),
+    _anims(20),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
     _unitTurretFrameAdjust(36),
@@ -299,11 +299,20 @@ void Dune2File::readDataStructures()
     _stream.read((char*)&_mapMod.front(), _mapMod.size());
 
     _stream.seekSegOff(AnimPtrsOffset[_version].segment, AnimPtrsOffset[_version].offset);
-    _stream.readU32LE(&_animPtrs.front(), _animPtrs.size());
-    // dunno what these are: 0xFF 0xFF  0x02 0x00 0x01 0x00
-    _stream.ignore(6);
+    for(std::vector<std::vector<uint16_t> >::iterator x = _anims.begin(); x != _anims.end(); ++x) {
+	uint32_t addr = _stream.getU32LE();
+	std::streampos pos(_stream.tellg());
+	_stream.seekSegOff(addr);
+	x->resize(8);
+	_stream.readU16LE(&x->front(), x->size());
+	_stream.seekg(pos);
+    }
+
+    // dunno what these are...
+    _stream.ignore(66);
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitAngleFrameAdjust.front()), _unitAngleFrameAdjust.size());
     _stream.read(reinterpret_cast<char*>(&_unitFrameAdjust.front()), _unitFrameAdjust.size());
+
     // dunno what these are...
     _stream.ignore(28);
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitTurretFrameAdjust.front()), _unitTurretFrameAdjust.size());
