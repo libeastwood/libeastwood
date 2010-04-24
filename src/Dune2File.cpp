@@ -15,14 +15,13 @@ static const Address
     HouseOffset[D2_VERSIONS] = { {0x3574, 0xa}, {0x3668, 0x4}, {0x3615, 0xc}, {0x36c7, 0x8}, {0x36c0, 0xc} },
     FileOffset[D2_VERSIONS] = { {0x2e28, 0x0}, {0x2d1b, 0x0}, {0x2ca0, 0x0}, {0x2ca5, 0x0}, {0x2ca0, 0x0} },
     ActionOffset[D2_VERSIONS] = { {0x2e1c, 0xe}, {0x2d0f, 0xe}, {0x2c94, 0xe}, {0x2c99, 0xe}, {0x2c94, 0xe} },
-    MovementOffset[D2_VERSIONS] = { {0x3342, 0x2d70}, {0x3342, 0x3caa}, {0x3342, 0x3786}, {0x3342, 0x429e}, {0x3342, 0x4232 } },
+    MovementOffset[D2_VERSIONS] = { {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x}, {0x3348, 0x3BE2}, {0x3342, 0x3bd6 } },
     LayoutTilesOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2c58 } },    
     AngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
     MapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
     AnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },
     MapOffsetIndexesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
     MovementUnk1Offset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2468} },
-    MapScalesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3c02} },
     Emc15CDAOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x0001, 0x5cca} },    
     GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
@@ -67,7 +66,8 @@ Dune2File::Dune2File(ExeFile &stream) :
     _houseData(6),
     _actionData(14),
     _fileData(0),
-    _movementData(24),
+    _movementNames(6),
+    _teamActionNames(5),
     _layoutTiles(7),
     _layoutTilesUnk1(7),    
     _layoutTileCount(7),
@@ -261,13 +261,6 @@ void Dune2File::readDataStructures()
 	_fileData.push_back(file);
     }
 
-    _stream.seekSegOff(MovementOffset[_version].segment, MovementOffset[_version].offset);
-    char buf[16];
-    for(std::vector<std::string>::iterator it = _movementData.begin(); it != _movementData.end(); ++it) {
-    	_stream.getline(buf, sizeof(buf), 0);
-	*it += buf;
-    }
-
     _stream.seekSegOff(LayoutTilesOffset[_version].segment, LayoutTilesOffset[_version].offset);    
     for(std::vector<std::vector<uint16_t> >::iterator x = _layoutTiles.begin(); x != _layoutTiles.end(); ++x) {
 	x->resize(9);
@@ -325,9 +318,16 @@ void Dune2File::readDataStructures()
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&_movementUnk1.front()), _movementUnk1.size());    
 
     _stream.ignore(36);
-    _stream.readU16LE(&_mapTileColors.front(), _mapTileColors.size());    
+    _stream.readU16LE(&_mapTileColors.front(), _mapTileColors.size());
 
-    _stream.seekSegOff(MapScalesOffset[_version].segment, MapScalesOffset[_version].offset);    
+    _stream.seekSegOff(MovementOffset[_version].segment, MovementOffset[_version].offset);
+    for(std::vector<std::string>::iterator it = _movementNames.begin(); it != _movementNames.end(); ++it) {
+	*it += stringGet(_stream.getU32LE());
+    }
+    for(std::vector<std::string>::iterator it = _teamActionNames.begin(); it != _teamActionNames.end(); ++it) {
+	*it += stringGet(_stream.getU32LE());
+    }
+
     for(std::vector<Rect<uint16_t> >::iterator map = _mapScales.begin(); map != _mapScales.end(); ++map) {
 	map->x = _stream.getU16LE();
 	map->y = _stream.getU16LE();
