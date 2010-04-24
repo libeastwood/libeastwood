@@ -80,6 +80,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _mapOffsetIndexes(21),
     _mapOffsets(336),
     _anims(20),
+    _structureAnims(36),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
     _unitTurretFrameAdjust(36),
@@ -342,6 +343,13 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(Emc15CDAOffset[_version].segment, Emc15CDAOffset[_version].offset);
     _stream.read(reinterpret_cast<char*>(&_emc15CDA.front()), _emc15CDA.size());    
+
+    _stream.seekSegOff(_structureData[0]->frameData[0]);
+    _stream.seekg(-16, std::ios::cur);
+    for(std::vector<std::vector<uint16_t> >::iterator x = _structureAnims.begin(); x != _structureAnims.end(); ++x) {
+	x->resize(8);
+	_stream.readU16LE(&x->front(), x->size());
+    }
 
 }
 
