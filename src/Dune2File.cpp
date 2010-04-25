@@ -246,7 +246,7 @@ void Dune2File::readDataStructures()
 	(*it)->color			= _stream.getU16LE(),
 	(*it)->palaceUnitRecharge	= _stream.getU16LE(),
 	(*it)->frigateTime		= _stream.getU16LE();
-	(*it)->houseLetter		= _stream.get(),_stream.ignore(1),
+	(*it)->houseLetter		= _stream.getU16LE(),
 	(*it)->palaceMode		= _stream.getU16LE(),
 	(*it)->missionWinMusic		= _stream.getU16LE(),
 	(*it)->missionLoseMusic		= _stream.getU16LE(),
