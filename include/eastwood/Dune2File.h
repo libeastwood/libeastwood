@@ -131,12 +131,9 @@ struct	ActionData {
 struct	FileData {
     FileData();
     std::string			name;
-    uint16_t			field_4;
-    uint16_t			field_6;
-    uint16_t			field_8;
-    uint16_t			field_A;
-    uint16_t			field_C;
-    uint16_t			field_E;
+    uint32_t			fileSize;
+    uint32_t			buffer;
+    uint32_t			filePosition;
     uint8_t			parentIndex;
     uint8_t			field_11;
     uint8_t			fileType;

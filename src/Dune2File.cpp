@@ -56,8 +56,7 @@ ActionData::ActionData() :
     {}
 
 FileData::FileData() :
-    name(""),field_4(0),field_6(0),field_8(0),field_A(0),field_C(0),field_E(0),parentIndex(0),
-    field_11(0),fileType(0)
+    name(""),fileSize(0),buffer(0),filePosition(0),parentIndex(0),field_11(0),fileType(0)
     {}
 
 Dune2File::Dune2File(ExeFile &stream) :
@@ -267,15 +266,12 @@ void Dune2File::readDataStructures()
     _stream.seekSegOff(FileOffset[_version].segment, FileOffset[_version].offset);
     while(_stream.good() && _stream.peek() != 0) {
 	File file(new FileData);
-	file->name			= stringGet(_stream.getU32LE()),
-	file->field_4			= _stream.getU16LE(),
-	file->field_6			= _stream.getU16LE(),
-	file->field_8			= _stream.getU16LE(),
-	file->field_A			= _stream.getU16LE(),
-	file->field_C			= _stream.getU16LE(),
-	file->field_E			= _stream.getU16LE(),
-	file->parentIndex		= _stream.get(),
-	file->field_11			= _stream.get(),
+	file->name			= stringGet(_stream.getU32LE());
+	file->fileSize			= _stream.getU32LE();
+	file->buffer			= _stream.getU32LE();
+	file->filePosition		= _stream.getU32LE();
+	file->parentIndex		= _stream.get();
+	file->field_11			= _stream.get();
 	file->fileType			= _stream.get();
 	_fileData.push_back(file);
     }
