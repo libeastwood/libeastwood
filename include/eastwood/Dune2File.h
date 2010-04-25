@@ -64,7 +64,7 @@ struct	StructureData : ObjectData {
     uint16_t			spiceStorage;
     uint16_t			powerUsage;
     uint16_t			foundationSize;
-    std::vector<uint32_t>	frameData;
+    std::vector<const std::vector<uint16_t>*>	frameData;
     std::vector<uint16_t>	constructOpt;
     std::vector<uint16_t>	techUpgrade;
 };

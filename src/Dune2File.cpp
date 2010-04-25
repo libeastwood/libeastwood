@@ -1,5 +1,6 @@
 #include "eastwood/StdDef.h"
 #include "eastwood/Dune2File.h"
+#include <map>
 
 namespace eastwood { namespace dune2 {
 
@@ -22,7 +23,8 @@ static const Address
     AnimPtrsOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3206} },
     MapOffsetIndexesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
     MovementUnk1Offset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2468} },
-    Emc15CDAOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x0001, 0x5cca} },    
+    Emc15CDAOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x0001, 0x5cca} },
+    StructAnimPtrOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3246, 0x6} },
     GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 ObjectData::ObjectData() :
@@ -80,7 +82,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _mapOffsetIndexes(21),
     _mapOffsets(336),
     _anims(20),
-    _structureAnims(36),
+    _structureAnims(29),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
     _unitTurretFrameAdjust(36),
@@ -112,6 +114,19 @@ void Dune2File::detectDune2Version()
 
 void Dune2File::readDataStructures()
 {
+    _stream.seekSegOff(StructAnimPtrOffset[_version].segment, StructAnimPtrOffset[_version].offset);
+    std::map<uint32_t, const std::vector<uint16_t>*> animPtrMap;
+    for(std::vector<std::vector<uint16_t> >::iterator it = _structureAnims.begin(); it != _structureAnims.end(); ++it) {
+	uint32_t addr = _stream.getU32LE();
+	animPtrMap.insert(make_pair(addr, &(*it)));
+	it->resize((_stream.getU32LE() & 0xf) / sizeof(uint16_t));
+    	std::streampos pos(_stream.tellg());
+	_stream.seekSegOff(addr);
+	_stream.readU16LE(&it->front(), it->size());
+	_stream.seekg(pos);
+    }
+    animPtrMap[0] = NULL;//.insert(make_pair(0, &_structureAnims.front()));
+
     _stream.seekSegOff(StructureOffset[_version].segment, StructureOffset[_version].offset);
     uint16_t idx = 0;    
     for(std::vector<Structure>::iterator it = _structureData.begin(); it != _structureData.end(); ++it, ++idx) {
@@ -150,9 +165,9 @@ void Dune2File::readDataStructures()
 	(*it)->powerUsage		= _stream.getU16LE();
 	(*it)->foundationSize		= _stream.getU16LE();
 	(*it)->gfxID			= _stream.getU16LE();
-	(*it)->frameData[0]		= _stream.getU32LE();
-	(*it)->frameData[1]		= _stream.getU32LE();
-	(*it)->frameData[2]		= _stream.getU32LE();
+	(*it)->frameData[0]		= animPtrMap[_stream.getU32LE()];
+	(*it)->frameData[1]		= animPtrMap[_stream.getU32LE()];
+	(*it)->frameData[2]		= animPtrMap[_stream.getU32LE()];
 	(*it)->constructOpt[0]		= _stream.getU16LE();	
 	(*it)->constructOpt[1]		= _stream.getU16LE();
 	(*it)->constructOpt[2]		= _stream.getU16LE();
@@ -343,13 +358,6 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(Emc15CDAOffset[_version].segment, Emc15CDAOffset[_version].offset);
     _stream.read(reinterpret_cast<char*>(&_emc15CDA.front()), _emc15CDA.size());    
-
-    _stream.seekSegOff(_structureData[0]->frameData[0]);
-    _stream.seekg(-16, std::ios::cur);
-    for(std::vector<std::vector<uint16_t> >::iterator x = _structureAnims.begin(); x != _structureAnims.end(); ++x) {
-	x->resize(8);
-	_stream.readU16LE(&x->front(), x->size());
-    }
 
 }
 
