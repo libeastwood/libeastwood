@@ -11,7 +11,7 @@ struct Address {
 
 static const Address
     VersionOffset[D2_VERSIONS] = { {0x325f, 0xe}, {0x333a, 0x2}, {0x32fb, 0x2}, {0x3353, 0x2}, {0x334d, 0x2} },
-    StructureOffset[D2_VERSIONS] = { {0x2c2f, 0xa}, {0x2b3d, 0xa}, {0x2a98, 0xa}, {0x2a9d, 0xa}, {0x2a98, 0xa} },
+    StructureOffset[D2_VERSIONS] = { {0x0, 0x0}, {0x0,0x0}, {0x0,0x0}, {0x0,0x0}, {0x3246, 0x6} },
     UnitOffset[D2_VERSIONS] = { {0x2ca7, 0x0}, {0x2bb5, 0x0}, {0x2b0b, 0x0}, {0x2b10, 0x0}, {0x2b0b, 0x0} },
     HouseOffset[D2_VERSIONS] = { {0x3574, 0xa}, {0x3668, 0x4}, {0x3615, 0xc}, {0x36c7, 0x8}, {0x36c0, 0xc} },
     FileOffset[D2_VERSIONS] = { {0x2e28, 0x0}, {0x2d1b, 0x0}, {0x2ca0, 0x0}, {0x2ca5, 0x0}, {0x2ca0, 0x0} },
@@ -24,7 +24,6 @@ static const Address
     MapOffsetIndexesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
     MovementUnk1Offset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2468} },
     Emc15CDAOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x0001, 0x5cca} },
-    StructAnimPtrOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3246, 0x6} },
     GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 ObjectData::ObjectData() :
@@ -114,20 +113,24 @@ void Dune2File::detectDune2Version()
 
 void Dune2File::readDataStructures()
 {
-    _stream.seekSegOff(StructAnimPtrOffset[_version].segment, StructAnimPtrOffset[_version].offset);
+    _stream.seekSegOff(StructureOffset[_version].segment, StructureOffset[_version].offset);
+    // We create a map that indexes pointers to the vectors by using the cs:ip pointers
+    // used in the binary as keys. This way we can just look them up when encountered in
+    // structures later and get the pointer to where they're (now) located.
     std::map<uint32_t, const std::vector<uint16_t>*> animPtrMap;
-    for(std::vector<std::vector<uint16_t> >::iterator it = _structureAnims.begin(); it != _structureAnims.end(); ++it) {
+    // If cs:ip pointer is a NULL pointer, we'll provide a null pointer as well ;)
+    animPtrMap[0] = NULL;
+
+    std::streampos pos;
+    for(std::vector<std::vector<uint16_t> >::iterator it = _structureAnims.begin(); it != _structureAnims.end(); ++it != _structureAnims.end() && _stream.seekg(pos)) {
 	uint32_t addr = _stream.getU32LE();
 	animPtrMap.insert(make_pair(addr, &(*it)));
 	it->resize((_stream.getU32LE() & 0xf) / sizeof(uint16_t));
-    	std::streampos pos(_stream.tellg());
+    	pos = _stream.tellg();
 	_stream.seekSegOff(addr);
 	_stream.readU16LE(&it->front(), it->size());
-	_stream.seekg(pos);
     }
-    animPtrMap[0] = NULL;//.insert(make_pair(0, &_structureAnims.front()));
 
-    _stream.seekSegOff(StructureOffset[_version].segment, StructureOffset[_version].offset);
     uint16_t idx = 0;    
     for(std::vector<Structure>::iterator it = _structureData.begin(); it != _structureData.end(); ++it, ++idx) {
 	it->reset(new StructureData);
