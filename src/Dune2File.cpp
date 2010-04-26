@@ -81,6 +81,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _mapOffsets(336),
     _anims(20, std::vector<uint16_t>(8)),
     _structureAnims(29),
+    _unitAnims(24, std::vector<uint16_t>(8)),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
     _unitTurretFrameAdjust(36),
@@ -183,6 +184,16 @@ void Dune2File::readDataStructures()
 	(*it)->techUpgrade[2]		= _stream.getU16LE();
     }
 
+    _stream.seekg(((uint32_t)pos)+224);
+    uint32_t addr = _stream.getU32LE();
+    uint32_t size = _stream.getU32LE();
+    _stream.seekSegOff(addr);
+
+    for(std::vector<std::vector<uint16_t> >::iterator it = _unitAnims.begin(); it != _unitAnims.end(); addr += it->size()*sizeof(uint16_t), ++it != _unitAnims.end()) {
+	animPtrMap.insert(make_pair(addr, &(*it)));
+	_stream.readU16LE(&it->front(), it->size());
+    }
+    
     _stream.seekSegOff(UnitOffset[_version].segment, UnitOffset[_version].offset);
     idx = 0;
     for(std::vector<Unit>::iterator it = _unitData.begin(); it != _unitData.end(); ++it, ++idx) {

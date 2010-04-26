@@ -188,6 +188,7 @@ class Dune2File
 	const std::vector<int8_t>&			getMapOffsets() const		{ return _mapOffsets; }
 	const std::vector<std::vector<uint16_t> >&	getAnims() const		{ return _anims; }
 	const std::vector<std::vector<uint16_t> >&	getStructureAnims() const	{ return _structureAnims; }	
+	const std::vector<std::vector<uint16_t> >&	getUnitAnims() const		{ return _unitAnims; }
 	const std::vector<uint16_t>&			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
 	const std::vector<int8_t>&			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
 	const std::vector<int16_t>&			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
@@ -227,6 +228,7 @@ class Dune2File
 	std::vector<int8_t>			_mapOffsets;
 	std::vector<std::vector<uint16_t> >	_anims;
 	std::vector<std::vector<uint16_t> >	_structureAnims;	
+	std::vector<std::vector<uint16_t> >	_unitAnims;
 	std::vector<uint16_t>			_unitAngleFrameAdjust;
 	std::vector<int8_t>			_unitFrameAdjust;
 	std::vector<int16_t>			_unitTurretFrameAdjust;
