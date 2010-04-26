@@ -126,7 +126,7 @@ void Dune2File::readDataStructures()
     for(std::vector<std::vector<uint16_t> >::iterator it = _structureAnims.begin(); it != _structureAnims.end(); ++it != _structureAnims.end() && _stream.seekg(pos)) {
 	uint32_t addr = _stream.getU32LE();
 	animPtrMap.insert(make_pair(addr, &(*it)));
-	it->resize((_stream.getU32LE() & 0xf) / sizeof(uint16_t));
+	it->resize((_stream.getU32LE() & ((1<<5)-1)) / sizeof(uint16_t));
     	pos = _stream.tellg();
 	_stream.seekSegOff(addr);
 	_stream.readU16LE(&it->front(), it->size());
