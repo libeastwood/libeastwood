@@ -68,10 +68,10 @@ Dune2File::Dune2File(ExeFile &stream) :
     _fileData(0),
     _movementNames(6),
     _teamActionNames(5),
-    _layoutTiles(7),
-    _layoutTilesUnk1(7),    
+    _layoutTiles(7,std::vector<uint16_t>(9)),
+    _layoutTilesUnk1(7, std::vector<int16_t>(8)),
     _layoutTileCount(7),
-    _layoutTilesAround(7),
+    _layoutTilesAround(7, std::vector<int16_t>(16)),
     _layoutSize(7),
     _layoutTileDiff(7),
     _angleTable(205),
@@ -79,7 +79,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _mapMod(8),
     _mapOffsetIndexes(21),
     _mapOffsets(336),
-    _anims(20),
+    _anims(20, std::vector<uint16_t>(8)),
     _structureAnims(29),
     _unitAngleFrameAdjust(83),
     _unitFrameAdjust(8),
@@ -278,16 +278,13 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(LayoutTilesOffset[_version].segment, LayoutTilesOffset[_version].offset);    
     for(std::vector<std::vector<uint16_t> >::iterator x = _layoutTiles.begin(); x != _layoutTiles.end(); ++x) {
-	x->resize(9);
 	_stream.readU16LE(&x->front(), x->size());
     }
     for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesUnk1.begin(); x != _layoutTilesUnk1.end(); ++x) {
-	x->resize(8);
 	_stream.readU16LE(reinterpret_cast<uint16_t*>(&x->front()), x->size());
     }
     _stream.readU16LE(&_layoutTileCount.front(), _layoutTileCount.size());
     for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
-	x->resize(16);
 	_stream.readU16LE(reinterpret_cast<uint16_t*>(&x->front()), x->size());
     }
     for(std::vector<Point<uint16_t> >::iterator it = _layoutSize.begin(); it != _layoutSize.end(); ++it) {
@@ -311,7 +308,6 @@ void Dune2File::readDataStructures()
 	uint32_t addr = _stream.getU32LE();
 	std::streampos pos(_stream.tellg());
 	_stream.seekSegOff(addr);
-	x->resize(8);
 	_stream.readU16LE(&x->front(), x->size());
 	_stream.seekg(pos);
     }
