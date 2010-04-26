@@ -66,6 +66,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _houseData(6),
     _actionData(14),
     _fileData(0),
+    _fileParents(),
     _movementNames(6),
     _teamActionNames(5),
     _layoutTiles(7,std::vector<uint16_t>(9)),
@@ -285,6 +286,9 @@ void Dune2File::readDataStructures()
 	file->field_11			= _stream.get();
 	file->fileType			= _stream.get();
 	_fileData.push_back(file);
+	if(file->fileType & 0x10) {
+	    _fileParents[file->name] = _fileData[file->parentIndex];
+	}
     }
 
     _stream.seekSegOff(LayoutTilesOffset[_version].segment, LayoutTilesOffset[_version].offset);    
@@ -365,6 +369,12 @@ void Dune2File::readDataStructures()
     _stream.seekSegOff(Emc15CDAOffset[_version].segment, Emc15CDAOffset[_version].offset);
     _stream.read(reinterpret_cast<char*>(&_emc15CDA.front()), _emc15CDA.size());    
 
+}
+
+const File& Dune2File::getFileParent(std::string name)
+{
+    std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+    return _fileParents[name];
 }
 
 std::string Dune2File::stringGet(uint32_t p)

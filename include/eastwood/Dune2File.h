@@ -8,6 +8,7 @@
  */
 
 #include <vector>
+#include <map>
 
 #include "eastwood/StdDef.h"
 #include "eastwood/ExeFile.h"
@@ -173,6 +174,7 @@ class Dune2File
 	const std::vector<House>&			getHouseData() const		{ return _houseData; }
 	const std::vector<Action>&			getActionData() const		{ return _actionData; }
 	const std::vector<File>&			getFileData() const		{ return _fileData; }
+	const File&					getFileParent(std::string name);
 	const std::vector<std::string>&			getMovementNames() const	{ return _movementNames; }
 	const std::vector<std::string>&			getTeamActionNames() const	{ return _teamActionNames; }
 	const std::vector<std::vector<uint16_t> >&	getLayoutTiles() const		{ return _layoutTiles; }
@@ -213,6 +215,7 @@ class Dune2File
 	std::vector<House>			_houseData;
 	std::vector<Action>			_actionData;
 	std::vector<File>			_fileData;
+	std::map<std::string, File>		_fileParents;
 	std::vector<std::string>		_movementNames;
 	std::vector<std::string>		_teamActionNames;
 	std::vector<std::vector<uint16_t> >	_layoutTiles;
