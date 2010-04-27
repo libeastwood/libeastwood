@@ -154,6 +154,8 @@ struct Rect : Point<T> {
     T				w;
     T				h;
 };
+typedef Point<uint16_t>				UPoint;
+typedef Point<int16_t>				SPoint;
 
 typedef std::tr1::shared_ptr<ObjectData>	Object;
 typedef std::tr1::shared_ptr<UnitData>		Unit;
@@ -181,8 +183,8 @@ class Dune2File
 	const std::vector<std::vector<int16_t> >&	getLayoutTilesUnk1() const	{ return _layoutTilesUnk1; }
 	const std::vector<uint16_t>&			getLayoutTileCount() const	{ return _layoutTileCount; }
 	const std::vector<std::vector<int16_t> >&	getLayoutTilesAround() const	{ return _layoutTilesAround; }
-	const std::vector<Point<uint16_t> >&		getLayoutSize() const		{ return _layoutSize; }
-	const std::vector<Point<uint16_t> >&		getLayoutTileDiff() const	{ return _layoutTileDiff; }
+	const std::vector<UPoint>&			getLayoutSize() const		{ return _layoutSize; }
+	const std::vector<UPoint>&			getLayoutTileDiff() const	{ return _layoutTileDiff; }
 	const std::vector<int16_t>&			getAngleTable() const		{ return _angleTable; }
 	const std::vector<uint16_t>&			getMapMoveMod() const		{ return _mapMoveMod; }
 	const std::vector<int8_t>&			getMapMod() const		{ return _mapMod; }
@@ -191,7 +193,7 @@ class Dune2File
 	const std::vector<std::vector<uint16_t> >&	getAnims() const		{ return _anims; }
 	const std::vector<std::vector<uint16_t> >&	getStructureAnims() const	{ return _structureAnims; }	
 	const std::vector<std::vector<uint16_t> >&	getUnitAnims() const		{ return _unitAnims; }
-	const std::vector<Point<uint16_t> >&		getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
+	const std::vector<UPoint>&			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
 	const std::vector<int8_t>&			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
 	const std::vector<int16_t>&			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
 	const std::vector<int16_t>&			getMovementUnk1() const		{ return _movementUnk1; }
@@ -222,8 +224,8 @@ class Dune2File
 	std::vector<std::vector<int16_t> >	_layoutTilesUnk1;	
 	std::vector<uint16_t>			_layoutTileCount;
 	std::vector<std::vector<int16_t> >	_layoutTilesAround;
-	std::vector<Point<uint16_t> >		_layoutSize;
-	std::vector<Point<uint16_t> >		_layoutTileDiff;
+	std::vector<UPoint>			_layoutSize;
+	std::vector<UPoint>			_layoutTileDiff;
 	std::vector<int16_t>			_angleTable;
 	std::vector<uint16_t>			_mapMoveMod;
 	std::vector<int8_t>			_mapMod;
@@ -232,7 +234,7 @@ class Dune2File
 	std::vector<std::vector<uint16_t> >	_anims;
 	std::vector<std::vector<uint16_t> >	_structureAnims;	
 	std::vector<std::vector<uint16_t> >	_unitAnims;
-	std::vector<Point<uint16_t> >		_unitAngleFrameAdjust;	
+	std::vector<UPoint>			_unitAngleFrameAdjust;	
 	std::vector<int8_t>			_unitFrameAdjust;
 	std::vector<int16_t>			_unitTurretFrameAdjust;
 	std::vector<int16_t>			_movementUnk1;

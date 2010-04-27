@@ -302,11 +302,11 @@ void Dune2File::readDataStructures()
     for(std::vector<std::vector<int16_t> >::iterator x = _layoutTilesAround.begin(); x != _layoutTilesAround.end(); ++x) {
 	_stream.readU16LE(reinterpret_cast<uint16_t*>(&x->front()), x->size());
     }
-    for(std::vector<Point<uint16_t> >::iterator it = _layoutSize.begin(); it != _layoutSize.end(); ++it) {
+    for(std::vector<UPoint>::iterator it = _layoutSize.begin(); it != _layoutSize.end(); ++it) {
 	it->x = _stream.getU16LE(),
 	it->y = _stream.getU16LE();
     }
-    for(std::vector<Point<uint16_t> >::iterator it = _layoutTileDiff.begin(); it != _layoutTileDiff.end(); ++it) {
+    for(std::vector<UPoint>::iterator it = _layoutTileDiff.begin(); it != _layoutTileDiff.end(); ++it) {
 	it->x = _stream.getU16LE(),
 	it->y = _stream.getU16LE();
     }
@@ -329,7 +329,7 @@ void Dune2File::readDataStructures()
 
     // dunno what these are...
     _stream.ignore(66);
-    for(std::vector<Point<uint16_t> >::iterator it = _unitAngleFrameAdjust.begin(); it != _unitAngleFrameAdjust.end(); ++it) {
+    for(std::vector<UPoint>::iterator it = _unitAngleFrameAdjust.begin(); it != _unitAngleFrameAdjust.end(); ++it) {
     	    it->x = _stream.getU16LE();
 	    it->y = _stream.getU16LE();
     }
