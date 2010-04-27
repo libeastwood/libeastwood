@@ -10,8 +10,10 @@ SET(LIBEASTWOOD_PATCH "0")
 SET(VERSION "0.3.1")
 
 IF(NOT MSVC)
-  SET( WARN_FLAGS "-Wall -Wextra -Weffc++ -pedantic -Wno-long-long -Wno-variadic-macros" )
-  SET( CMAKE_CXX_FLAGS "${WARN_FLAGS} -fPIC -g -O0 ${CMAKE_CXX_FLAGS}" )
+  SET( WARN_FLAGS "-Wall -Wno-long-long -Wno-variadic-macros" )
+  SET( WARN_FLAGS_DEBUG "-Wextra -Weffc++ -pedantic" )
+  SET( CMAKE_CXX_FLAGS "${WARN_FLAGS} -fPIC ${CMAKE_CXX_FLAGS}" )
+  SET( CMAKE_CXX_FLAGS_DEBUG "${WARN_FLAGS_DEBUG} -g -O0 ${CMAKE_CXX_FLAGS_DEBUG}" )
 ENDIF(NOT MSVC)
 
 SET( LIBEASTWOOD_VERSION_INFO "${VERSION}" )
