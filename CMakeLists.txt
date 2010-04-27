@@ -11,7 +11,7 @@ SET(VERSION "0.3.1")
 
 IF(NOT MSVC)
   SET( WARN_FLAGS "-Wall -Wno-long-long -Wno-variadic-macros" )
-  SET( WARN_FLAGS_DEBUG "-Wextra -Weffc++ -pedantic" )
+  SET( WARN_FLAGS_DEBUG "-Wextra -Weffc++ -pedantic -Wold-style-cast -Woverloaded-virtual -Wctor-dtor-privacy -Wreorder -Wabi -Wstrict-null-sentinel -Wc++0x-compat" )
   SET( CMAKE_CXX_FLAGS "${WARN_FLAGS} -fPIC ${CMAKE_CXX_FLAGS}" )
   SET( CMAKE_CXX_FLAGS_DEBUG "${WARN_FLAGS_DEBUG} -g -O0 ${CMAKE_CXX_FLAGS_DEBUG}" )
 ENDIF(NOT MSVC)
