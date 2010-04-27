@@ -83,7 +83,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _anims(20, std::vector<uint16_t>(8)),
     _structureAnims(29),
     _unitAnims(24, std::vector<uint16_t>(8)),
-    _unitAngleFrameAdjust(40),
+    _unitAngleFrameAdjust(5, std::vector<UPoint>(8)),
     _unitFrameAdjust(8),
     _unitTurretFrameAdjust(36),
     _movementUnk1(16),
@@ -329,10 +329,10 @@ void Dune2File::readDataStructures()
 
     // dunno what these are...
     _stream.ignore(66);
-    for(std::vector<UPoint>::iterator it = _unitAngleFrameAdjust.begin(); it != _unitAngleFrameAdjust.end(); ++it) {
-    	    it->x = _stream.getU16LE();
-	    it->y = _stream.getU16LE();
-    }
+    for(std::vector<std::vector<UPoint> >::iterator row = _unitAngleFrameAdjust.begin(); row != _unitAngleFrameAdjust.end(); ++row)
+	for(std::vector<UPoint>::iterator col = row->begin(); col != row->end(); ++col)
+    	    col->x = _stream.getU16LE(), col->y = _stream.getU16LE();
+
     // Terminator and/or alignment padding?
     _stream.ignore(6);
 

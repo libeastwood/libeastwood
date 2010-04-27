@@ -193,7 +193,7 @@ class Dune2File
 	const std::vector<std::vector<uint16_t> >&	getAnims() const		{ return _anims; }
 	const std::vector<std::vector<uint16_t> >&	getStructureAnims() const	{ return _structureAnims; }	
 	const std::vector<std::vector<uint16_t> >&	getUnitAnims() const		{ return _unitAnims; }
-	const std::vector<UPoint>&			getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
+	const std::vector<std::vector<UPoint> >&	getUnitAngleFrameAdjust() const { return _unitAngleFrameAdjust; }
 	const std::vector<int8_t>&			getUnitFrameAdjust() const	{ return _unitFrameAdjust; }
 	const std::vector<int16_t>&			getUnitTurretFrame() const	{ return _unitTurretFrameAdjust; }
 	const std::vector<int16_t>&			getMovementUnk1() const		{ return _movementUnk1; }
@@ -234,7 +234,7 @@ class Dune2File
 	std::vector<std::vector<uint16_t> >	_anims;
 	std::vector<std::vector<uint16_t> >	_structureAnims;	
 	std::vector<std::vector<uint16_t> >	_unitAnims;
-	std::vector<UPoint>			_unitAngleFrameAdjust;	
+	std::vector<std::vector<UPoint> >	_unitAngleFrameAdjust;	
 	std::vector<int8_t>			_unitFrameAdjust;
 	std::vector<int16_t>			_unitTurretFrameAdjust;
 	std::vector<int16_t>			_movementUnk1;
