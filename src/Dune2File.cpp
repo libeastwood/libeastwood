@@ -85,7 +85,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _unitAnims(24, std::vector<uint16_t>(8)),
     _unitAngleFrameAdjust(5, std::vector<UPoint>(8)),
     _unitFrameAdjust(8),
-    _unitTurretFrameAdjust(36),
+    _unitTurretFrame(2, std::vector<SPoint>(8)),
     _movementUnk1(16),
     _mapTileColors(83),
     _mapScales(3),
@@ -335,12 +335,13 @@ void Dune2File::readDataStructures()
 
     // Terminator and/or alignment padding?
     _stream.ignore(6);
-
     _stream.read(reinterpret_cast<char*>(&_unitFrameAdjust.front()), _unitFrameAdjust.size());
 
     // dunno what these are...
     _stream.ignore(28);
-    _stream.readU16LE(reinterpret_cast<uint16_t*>(&_unitTurretFrameAdjust.front()), _unitTurretFrameAdjust.size());
+    for(std::vector<std::vector<SPoint> >::iterator row = _unitTurretFrame.begin(); row != _unitTurretFrame.end(); ++row)
+	for(std::vector<SPoint>::iterator col = row->begin(); col != row->end(); ++col)
+    	    col->x = _stream.getU16LE(), col->y = _stream.getU16LE();
 
     _stream.seekSegOff(MapOffsetIndexesOffset[_version].segment, MapOffsetIndexesOffset[_version].offset);
     _stream.read(reinterpret_cast<char*>(&_mapOffsetIndexes.front()), _mapOffsetIndexes.size());    
