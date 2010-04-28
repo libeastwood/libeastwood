@@ -150,9 +150,9 @@ struct Point {
 
 template <typename T>
 struct Rect : Point<T> {
-    Rect(T x = 0, T y = 0, T w = 0, T h = 0) : Point<T>(x,y), w(w), h(h) {}
-    T				w;
-    T				h;
+    Rect(T x = 0, T y = 0, uint16_t w = 0, uint16_t h = 0) : Point<T>(x,y), w(w), h(h) {}
+    uint16_t			w;
+    uint16_t			h;
 };
 typedef Point<uint16_t>				UPoint;
 typedef Point<int16_t>				SPoint;
