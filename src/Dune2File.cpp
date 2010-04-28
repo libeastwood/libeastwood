@@ -361,7 +361,7 @@ void Dune2File::readDataStructures()
 	*it += stringGet(_stream.getU32LE());
     }
 
-    for(std::vector<Rect<uint16_t> >::iterator map = _mapScales.begin(); map != _mapScales.end(); ++map) {
+    for(std::vector<MapInfo>::iterator map = _mapScales.begin(); map != _mapScales.end(); ++map) {
 	map->x = _stream.getU16LE();
 	map->y = _stream.getU16LE();
 	map->w = _stream.getU16LE();

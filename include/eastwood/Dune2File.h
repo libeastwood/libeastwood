@@ -154,8 +154,10 @@ struct Rect : Point<T> {
     uint16_t			w;
     uint16_t			h;
 };
-typedef Point<uint16_t>				UPoint;
-typedef Point<int16_t>				SPoint;
+
+typedef	Point<uint16_t>				UPoint;
+typedef	Point<int16_t>				SPoint;
+typedef	Rect<uint16_t>				MapInfo;
 
 typedef std::tr1::shared_ptr<ObjectData>	Object;
 typedef std::tr1::shared_ptr<UnitData>		Unit;
@@ -198,7 +200,7 @@ class Dune2File
 	const std::vector<std::vector<SPoint> >&	getUnitTurretFrame() const	{ return _unitTurretFrame; }
 	const std::vector<int16_t>&			getMovementUnk1() const		{ return _movementUnk1; }
 	const std::vector<uint16_t>&			getMapTileColors() const	{ return _mapTileColors; }
-	const std::vector<Rect<uint16_t> >&		getMapScales() const		{ return _mapScales; }
+	const std::vector<MapInfo>&			getMapScales() const		{ return _mapScales; }
 	const std::vector<uint16_t>&			getActionsAI() const		{ return _actionsAI; }
 	const std::vector<int8_t>&			getMapSinTable() const		{ return _mapSinTable; }
 	const std::vector<int8_t>&			getMapCosTable() const		{ return _mapCosTable; }	
@@ -239,7 +241,7 @@ class Dune2File
 	std::vector<std::vector<SPoint> >	_unitTurretFrame;
 	std::vector<int16_t>			_movementUnk1;
 	std::vector<uint16_t>			_mapTileColors;
-	std::vector<Rect<uint16_t> >		_mapScales;
+	std::vector<MapInfo>			_mapScales;
 	std::vector<uint16_t>			_actionsAI;
 	std::vector<int8_t>			_mapSinTable;
 	std::vector<int8_t>			_mapCosTable;
