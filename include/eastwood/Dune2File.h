@@ -141,22 +141,46 @@ struct	FileData {
 };
 
 template <typename T>
-struct Point {
-    Point(T x = 0, T y = 0) : x(x), y(y) {}
-    virtual ~Point() {}
-    T				x;
-    T				y;
+struct Pair {
+    protected:
+    	T			_x;
+    	T			_y;
+	Pair(T x = 0, T y = 0) : _x(x), _y(x) {}
+
+    public:
+    	virtual ~Pair(){}
+};
+
+template <typename T>
+struct Size : virtual Pair<T> {
+    T				&w;
+    T				&h;
+    Size(T width = 0, T height = 0) : Pair<T>(width, height), w(this->_x), h(this->_y) {}
+    Size(const Pair<T>& p) : Pair<T>(p), w(this->_x), h(this->_y) {}
+    Size(const Size& s) : Pair<T>(s), w(this->_x), h(this->_y) {}
+    Size &operator=(const Size& p) { Pair<T>::operator=(p); return *this; }
+};
+
+template <typename T>
+struct Point : virtual Pair<T> {
+    T				&x;
+    T				&y;
+    Point(T x = 0, T y = 0) : Pair<T>(x,y), x(this->_x), y(this->_y) {}
+    Point(const Pair<T>& p) : Pair<T>(p) {}
+    Point(const Point& p) : Pair<T>(p), x(this->_x), y(this->_y) {}
+    Point &operator=(const Point& p) { Pair<T>::operator=(p); return *this; }
+
 };
 
 template <typename P, typename S>
-struct Rect : Point<P> {
-    Rect(P x = 0, P y = 0,  S = 0, S h = 0) : Point<P>(x,y), w(w), h(h) {}
-    S				w;
-    S				h;
+struct Rect : Point<P>, Size<S> {
+    Rect(P x = 0, P y = 0,  S w = 0, S h = 0) : Point<P>(x,y), Size<S>(w,h) {}
 };
 
 typedef	Point<uint16_t>				UPoint;
 typedef	Point<int16_t>				SPoint;
+typedef	Size<uint16_t>				USize;
+typedef	Size<int16_t>				SSize;
 typedef	Rect<uint16_t,uint16_t>			MapInfo;
 
 typedef std::tr1::shared_ptr<ObjectData>	Object;
