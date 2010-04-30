@@ -148,16 +148,16 @@ struct Point {
     T				y;
 };
 
-template <typename T>
-struct Rect : Point<T> {
-    Rect(T x = 0, T y = 0, uint16_t w = 0, uint16_t h = 0) : Point<T>(x,y), w(w), h(h) {}
-    uint16_t			w;
-    uint16_t			h;
+template <typename P, typename S>
+struct Rect : Point<P> {
+    Rect(P x = 0, P y = 0,  S = 0, S h = 0) : Point<P>(x,y), w(w), h(h) {}
+    S				w;
+    S				h;
 };
 
 typedef	Point<uint16_t>				UPoint;
 typedef	Point<int16_t>				SPoint;
-typedef	Rect<uint16_t>				MapInfo;
+typedef	Rect<uint16_t,uint16_t>			MapInfo;
 
 typedef std::tr1::shared_ptr<ObjectData>	Object;
 typedef std::tr1::shared_ptr<UnitData>		Unit;
