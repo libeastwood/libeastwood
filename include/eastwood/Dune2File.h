@@ -175,6 +175,9 @@ struct Point : virtual Pair<T> {
 template <typename P, typename S>
 struct Rect : Point<P>, Size<S> {
     Rect(P x = 0, P y = 0,  S w = 0, S h = 0) : Point<P>(x,y), Size<S>(w,h) {}
+    Rect(const Pair<P>& pos, const Pair<S>& size) : Point<P>(pos), Size<S>(size) {}
+    Rect(const Point<P>& pos, const Size<S>& size) : Point<P>(pos), Size<S>(size) {}
+
 };
 
 typedef	Point<uint16_t>				UPoint;
