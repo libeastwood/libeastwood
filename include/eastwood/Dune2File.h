@@ -145,7 +145,7 @@ struct Pair {
     protected:
     	T			_x;
     	T			_y;
-	Pair(T x = 0, T y = 0) : _x(x), _y(x) {}
+	Pair(T x = 0, T y = 0) : _x(x), _y(y) {}
 
     public:
     	virtual ~Pair(){}
