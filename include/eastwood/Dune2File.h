@@ -152,7 +152,7 @@ struct Pair {
 };
 
 template <typename T>
-struct Size : virtual Pair<T> {
+struct Size : Pair<T> {
     T				&w;
     T				&h;
     Size(T width = 0, T height = 0) : Pair<T>(width, height), w(this->_x), h(this->_y) {}
@@ -162,7 +162,7 @@ struct Size : virtual Pair<T> {
 };
 
 template <typename T>
-struct Point : virtual Pair<T> {
+struct Point : Pair<T> {
     T				&x;
     T				&y;
     Point(T x = 0, T y = 0) : Pair<T>(x,y), x(this->_x), y(this->_y) {}
