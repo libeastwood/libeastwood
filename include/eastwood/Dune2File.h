@@ -150,19 +150,21 @@ struct Point {
 
 template <typename P, typename S>
 struct Rect {
-    P				&x, &y;
-    S				&w, &h;
-    Point<P>			pos;
-    Point<S>			size;
-    Rect(P x = 0, P y = 0,  S w = 0, S h = 0) :
-	x(pos.x), y(pos.y), w(size.x), h(size.y), pos(x,y), size(w,h) {}
-    Rect(const Rect& p) :
-	x(pos.x), y(pos.y), w(size.x), h(size.y), pos(p.pos), size(p.size) {}
-    Rect(const Point<P>& pos, const Point<S>& size) :
-	x(pos.x), y(pos.y), w(size.x), h(size.y), pos(pos), size(size) {}
-
-    virtual ~Rect(){}
-
+    protected:
+    	Point<P>			pos;
+    	Point<S>			size;
+    public:
+    	P				&x, &y;
+    	S				&w, &h;
+	
+    	Rect(P x = 0, P y = 0,  S w = 0, S h = 0) :
+    	    pos(x,y), size(w,h), x(pos.x), y(pos.y), w(size.x), h(size.y) {}
+    	Rect(const Rect& p) :
+    	    pos(p.pos), size(p.size), x(pos.x), y(pos.y), w(size.x), h(size.y)  {}
+    	Rect(const Point<P>& pos, const Point<S>& size) :
+    	    pos(pos), size(size), x(pos.x), y(pos.y), w(size.x), h(size.y) {}
+	
+    	virtual ~Rect(){}
 };
 
 typedef	Point<uint16_t>				UPoint;
