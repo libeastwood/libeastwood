@@ -141,49 +141,32 @@ struct	FileData {
 };
 
 template <typename T>
-struct Pair {
-    protected:
-    	T			_x;
-    	T			_y;
-	Pair(T x = 0, T y = 0) : _x(x), _y(y) {}
-
-    public:
-    	virtual ~Pair(){}
-};
-
-template <typename T>
-struct Size : Pair<T> {
-    T				&w;
-    T				&h;
-    Size(T width = 0, T height = 0) : Pair<T>(width, height), w(this->_x), h(this->_y) {}
-    Size(const Pair<T>& p) : Pair<T>(p), w(this->_x), h(this->_y) {}
-    Size(const Size& s) : Pair<T>(s), w(this->_x), h(this->_y) {}
-    Size &operator=(const Size& p) { Pair<T>::operator=(p); return *this; }
-};
-
-template <typename T>
-struct Point : Pair<T> {
-    T				&x;
-    T				&y;
-    Point(T x = 0, T y = 0) : Pair<T>(x,y), x(this->_x), y(this->_y) {}
-    Point(const Pair<T>& p) : Pair<T>(p) {}
-    Point(const Point& p) : Pair<T>(p), x(this->_x), y(this->_y) {}
-    Point &operator=(const Point& p) { Pair<T>::operator=(p); return *this; }
-
+struct Point {
+    T			x;
+    T			y;
+    Point(T x = 0, T y = 0) : x(x), y(y) {}
+    virtual ~Point(){}
 };
 
 template <typename P, typename S>
-struct Rect : Point<P>, Size<S> {
-    Rect(P x = 0, P y = 0,  S w = 0, S h = 0) : Point<P>(x,y), Size<S>(w,h) {}
-    Rect(const Pair<P>& pos, const Pair<S>& size) : Point<P>(pos), Size<S>(size) {}
-    Rect(const Point<P>& pos, const Size<S>& size) : Point<P>(pos), Size<S>(size) {}
+struct Rect {
+    P				&x, &y;
+    S				&w, &h;
+    Point<P>			pos;
+    Point<S>			size;
+    Rect(P x = 0, P y = 0,  S w = 0, S h = 0) :
+	x(pos.x), y(pos.y), w(size.x), h(size.y), pos(x,y), size(w,h) {}
+    Rect(const Rect& p) :
+	x(pos.x), y(pos.y), w(size.x), h(size.y), pos(p.pos), size(p.size) {}
+    Rect(const Point<P>& pos, const Point<S>& size) :
+	x(pos.x), y(pos.y), w(size.x), h(size.y), pos(pos), size(size) {}
+
+    virtual ~Rect(){}
 
 };
 
 typedef	Point<uint16_t>				UPoint;
 typedef	Point<int16_t>				SPoint;
-typedef	Size<uint16_t>				USize;
-typedef	Size<int16_t>				SSize;
 typedef	Rect<uint16_t,uint16_t>			MapInfo;
 
 typedef std::tr1::shared_ptr<ObjectData>	Object;
