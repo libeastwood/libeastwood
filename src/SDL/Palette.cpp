@@ -14,8 +14,8 @@ Palette::Palette(const SDL_Palette *palette) :
 {
     for(uint32_t i = 0; i < size(); i++) {
 	_palette[i].r = palette->colors[i].r;
-	_palette[i].r = palette->colors[i].g;
-	_palette[i].r = palette->colors[i].b;
+	_palette[i].g = palette->colors[i].g;
+	_palette[i].b = palette->colors[i].b;
 	_palette[i].unused = palette->colors[i].unused;
     }	
 }
