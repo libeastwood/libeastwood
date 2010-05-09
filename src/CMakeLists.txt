@@ -64,16 +64,17 @@ IF(NOT WIN32)
   ENDIF( DEFINED CMAKE_INSTALL_LIBDIR )
 ENDIF(NOT WIN32)
 
+# With the SDL wrapper classes being quite simple and trivial, we no longer
+# ship them as part of a separate library, but write the whole class in
+# the headers, leaving for whoever using them to build, this way we avoid
+# additional dependencies for our library. We still build this library though
+# just to verify that the code still builds, but we don't actually install it
+# anymore...
 IF(LIBEASTWOOD_BUILD_SDL)
   ADD_LIBRARY( SDL_eastwood SHARED ${SDL_LIBEASTWOOD_SRCS} )
   TARGET_LINK_LIBRARIES( SDL_eastwood eastwood )
   TARGET_LINK_LIBRARIES( eastwood ${SDL_LIBRARY} )
   TARGET_LINK_LIBRARIES( eastwood ${SDLMIXER_LIBRARY} )
   SET_TARGET_PROPERTIES( SDL_eastwood PROPERTIES SOVERSION "${LIBEASTWOOD_SOVERSION_INFO}" )
-  IF(NOT WIN32)
-  IF( DEFINED CMAKE_INSTALL_LIBDIR )
-    INSTALL(TARGETS SDL_eastwood LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-  ENDIF( DEFINED CMAKE_INSTALL_LIBDIR )
-  ENDIF(NOT WIN32)
 ENDIF(LIBEASTWOOD_BUILD_SDL)
 
