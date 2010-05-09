@@ -38,6 +38,7 @@ class Buffer
     			delete _buffer;
     			break;
     		    case BufNewArray:
+		    default:
     			delete [] _buffer;
     			break;
     		}
