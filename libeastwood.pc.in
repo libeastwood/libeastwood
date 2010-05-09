@@ -8,5 +8,5 @@ Description: libeastwood game data library
 Version: @VERSION@
 URL: https://launchpad.net/doonlunacy
 Cflags: -I${includedir}
-Libs: -L${libdir} -lSDL -lSDL_mixer -lsamplerate -leastwood
+Libs: -L${libdir} -lsamplerate -leastwood
 
