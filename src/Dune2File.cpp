@@ -16,7 +16,8 @@ static const Address
     HouseOffset[D2_VERSIONS] = { {0x3574, 0xa}, {0x3668, 0x4}, {0x3615, 0xc}, {0x36c7, 0x8}, {0x36c0, 0xc} },
     FileOffset[D2_VERSIONS] = { {0x2e28, 0x0}, {0x2d1b, 0x0}, {0x2ca0, 0x0}, {0x2ca5, 0x0}, {0x2ca0, 0x0} },
     ActionOffset[D2_VERSIONS] = { {0x2e1c, 0xe}, {0x2d0f, 0xe}, {0x2c94, 0xe}, {0x2c99, 0xe}, {0x2c94, 0xe} },
-    MovementOffset[D2_VERSIONS] = { {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x3348, 0x3BE2}, {0x3342, 0x3bd6 } },
+    MapTerrainSpiceOffset[D2_VERSIONS] = { {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x3342, 0x3a40 } },
+    MovementOffset[D2_VERSIONS] = { {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x0, 0x0}, {0x3342, 0x3bd6 } },
     LayoutTilesOffset[D2_VERSIONS] = { {0x3342, 0x1920}, {0x3342, 0x28d4}, {0x3342, 0x2296}, {0x3342, 0x2db2}, {0x3342, 0x2c58 } },    
     AngleTableOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0x3348, 0x23da}, {0x3342, 0x23ce} },
     MapMoveModOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x3776} },
@@ -67,6 +68,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _actionData(14),
     _fileData(0),
     _fileParents(),
+    _mapTerrainSpice(10),
     _movementNames(6),
     _teamActionNames(5),
     _layoutTiles(7,std::vector<uint16_t>(9)),
@@ -353,7 +355,12 @@ void Dune2File::readDataStructures()
     _stream.ignore(36);
     _stream.readU16LE(&_mapTileColors.front(), _mapTileColors.size());
 
+    _stream.seekSegOff(MapTerrainSpiceOffset[_version].segment, MapTerrainSpiceOffset[_version].offset);
+    for(std::vector<MapTerrainSpice>::iterator it = _mapTerrainSpice.begin(); it != _mapTerrainSpice.end(); ++it)
+	_stream.readU16LE(reinterpret_cast<uint16_t*>(&(*it)), sizeof(MapTerrainSpice)/sizeof(uint16_t));
+
     _stream.seekSegOff(MovementOffset[_version].segment, MovementOffset[_version].offset);
+    
     for(std::vector<std::string>::iterator it = _movementNames.begin(); it != _movementNames.end(); ++it) {
 	*it += stringGet(_stream.getU32LE());
     }
