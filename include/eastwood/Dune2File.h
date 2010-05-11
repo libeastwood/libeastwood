@@ -147,12 +147,12 @@ struct MovementTile {
     uint16_t field_6;
     uint16_t field_8;
     uint16_t field_10;
+    uint16_t field_12;
     uint16_t leaveUnitDecay;
-    uint16_t field_14;
     uint16_t field_16;
     uint16_t field_18;
+    uint16_t field_20;
     uint16_t color;
-    uint16_t field_22;
     uint16_t field_24;
     uint16_t field_26;
 };
