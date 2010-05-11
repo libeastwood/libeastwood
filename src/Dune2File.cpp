@@ -67,7 +67,7 @@ Dune2File::Dune2File(ExeFile &stream) :
     _actionData(14),
     _fileData(0),
     _fileParents(),
-    _movementTile(15),
+    _movementTiles(15),
     _movementNames(6),
     _teamActionNames(5),
     _layoutTiles(7,std::vector<uint16_t>(9)),
@@ -355,7 +355,7 @@ void Dune2File::readDataStructures()
     _stream.readU16LE(&_mapTileColors.front(), _mapTileColors.size());
 
      _stream.seekSegOff(MovementOffset[_version].segment, MovementOffset[_version].offset);
-    for(std::vector<MovementTile>::iterator it = _movementTile.begin(); it != _movementTile.end(); ++it)
+    for(std::vector<MovementTile>::iterator it = _movementTiles.begin(); it != _movementTiles.end(); ++it)
 	_stream.readU16LE(reinterpret_cast<uint16_t*>(&(*it)), sizeof(MovementTile)/sizeof(uint16_t));
 
     for(std::vector<std::string>::iterator it = _movementNames.begin(); it != _movementNames.end(); ++it) {

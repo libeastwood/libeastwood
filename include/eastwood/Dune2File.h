@@ -208,7 +208,7 @@ class Dune2File
 	const std::vector<Action>&			getActionData() const		{ return _actionData; }
 	const std::vector<File>&			getFileData() const		{ return _fileData; }
 	const File&					getFileParent(std::string name);
-	const std::vector<MovementTile>&		getMovementTile() const	{ return _movementTile; }	
+	const std::vector<MovementTile>&		getMovementTiles() const	{ return _movementTiles; }	
 	const std::vector<std::string>&			getMovementNames() const	{ return _movementNames; }
 	const std::vector<std::string>&			getTeamActionNames() const	{ return _teamActionNames; }
 	const std::vector<std::vector<uint16_t> >&	getLayoutTiles() const		{ return _layoutTiles; }
@@ -250,7 +250,7 @@ class Dune2File
 	std::vector<Action>			_actionData;
 	std::vector<File>			_fileData;
 	std::map<std::string, File>		_fileParents;
-	std::vector<MovementTile>		_movementTile;
+	std::vector<MovementTile>		_movementTiles;
 	std::vector<std::string>		_movementNames;
 	std::vector<std::string>		_teamActionNames;
 	std::vector<std::vector<uint16_t> >	_layoutTiles;
