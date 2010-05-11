@@ -140,25 +140,21 @@ struct	FileData {
     uint8_t			fileType;
 };
 
-struct MapTerrainSpice {
-    // NOTE: offset is -4 relative to original from segra's implementation
-    // and what he's described in the IDA database
-    // We also have 10 of these structs, not just 6...
-    uint16_t leaveUnitDecay;
+struct MovementTile {
+    uint16_t field_0;
     uint16_t field_2;
-    // This is what would've been the first member...
-    uint16_t anonymous_2;
-    uint16_t anonymous_3;
-    uint16_t color;
-    uint16_t anonymous_5;
-    uint16_t anonymous_6;
-    uint16_t anonymous_7;
-    uint16_t anonymous_8;
-    uint16_t anonymous_9;
-    uint16_t anonymous_10;
+    uint16_t field_4;
+    uint16_t field_6;
+    uint16_t field_8;
+    uint16_t field_10;
+    uint16_t leaveUnitDecay;
+    uint16_t field_14;
     uint16_t field_16;
     uint16_t field_18;
-    uint16_t field_1A;
+    uint16_t color;
+    uint16_t field_22;
+    uint16_t field_24;
+    uint16_t field_26;
 };
 
 template <typename T>
@@ -212,7 +208,7 @@ class Dune2File
 	const std::vector<Action>&			getActionData() const		{ return _actionData; }
 	const std::vector<File>&			getFileData() const		{ return _fileData; }
 	const File&					getFileParent(std::string name);
-	const std::vector<MapTerrainSpice>&		getMapTerrainSpice() const	{ return _mapTerrainSpice; }	
+	const std::vector<MovementTile>&		getMovementTile() const	{ return _movementTile; }	
 	const std::vector<std::string>&			getMovementNames() const	{ return _movementNames; }
 	const std::vector<std::string>&			getTeamActionNames() const	{ return _teamActionNames; }
 	const std::vector<std::vector<uint16_t> >&	getLayoutTiles() const		{ return _layoutTiles; }
@@ -254,7 +250,7 @@ class Dune2File
 	std::vector<Action>			_actionData;
 	std::vector<File>			_fileData;
 	std::map<std::string, File>		_fileParents;
-	std::vector<MapTerrainSpice>		_mapTerrainSpice;
+	std::vector<MovementTile>		_movementTile;
 	std::vector<std::string>		_movementNames;
 	std::vector<std::string>		_teamActionNames;
 	std::vector<std::vector<uint16_t> >	_layoutTiles;
