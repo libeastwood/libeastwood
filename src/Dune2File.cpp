@@ -59,6 +59,12 @@ FileData::FileData() :
     name(""),fileSize(0),buffer(0),filePosition(0),parentIndex(0),field_11(0),fileType(0)
     {}
 
+MovementTile::MovementTile() :
+    field_0(0), field_2(0), field_4(6), onRock(false), field_12(0),
+    leaveUnitDecay(false), field_16(0), field_18(0), field_20(0), color(0),
+    field_24(0), field_26(0)
+    {}
+
 Dune2File::Dune2File(ExeFile &stream) :
     _stream(stream), _version(D2_VERSIONS),
     _structureData(19),
@@ -354,9 +360,21 @@ void Dune2File::readDataStructures()
     _stream.ignore(36);
     _stream.readU16LE(&_mapTileColors.front(), _mapTileColors.size());
 
-     _stream.seekSegOff(MovementOffset[_version].segment, MovementOffset[_version].offset);
-    for(std::vector<MovementTile>::iterator it = _movementTiles.begin(); it != _movementTiles.end(); ++it)
-	_stream.readU16LE(reinterpret_cast<uint16_t*>(&(*it)), sizeof(MovementTile)/sizeof(uint16_t));
+    _stream.seekSegOff(MovementOffset[_version].segment, MovementOffset[_version].offset);
+    for(std::vector<MovementTile>::iterator it = _movementTiles.begin(); it != _movementTiles.end(); ++it) {
+	it->field_0		= _stream.getU16LE();
+	it->field_2		= _stream.getU16LE();
+	_stream.read(reinterpret_cast<char*>(&it->field_4.front()), it->field_4.size());
+	it->onRock		= _stream.getU16LE();
+	it->field_12		= _stream.getU16LE();
+	it->leaveUnitDecay	= _stream.getU16LE();
+	it->field_16		= _stream.getU16LE();
+	it->field_18		= _stream.getU16LE();
+	it->field_20		= _stream.getU16LE();
+	it->color		= _stream.getU16LE();
+	it->field_24		= _stream.getU16LE();
+	it->field_26		= _stream.getU16LE();
+    }
 
     for(std::vector<std::string>::iterator it = _movementNames.begin(); it != _movementNames.end(); ++it) {
 	*it += stringGet(_stream.getU32LE());

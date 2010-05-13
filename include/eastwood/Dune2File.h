@@ -141,20 +141,19 @@ struct	FileData {
 };
 
 struct MovementTile {
-    uint16_t field_0;
-    uint16_t field_2;
-    uint16_t field_4;
-    uint16_t field_6;
-    uint16_t field_8;
-    uint16_t field_10;
-    uint16_t field_12;
-    uint16_t leaveUnitDecay;
-    uint16_t field_16;
-    uint16_t field_18;
-    uint16_t field_20;
-    uint16_t color;
-    uint16_t field_24;
-    uint16_t field_26;
+    MovementTile();
+    uint16_t			field_0;
+    uint16_t			field_2;
+    std::vector<uint8_t>	field_4;
+    bool			onRock;
+    bool			field_12;
+    bool			leaveUnitDecay;
+    bool			field_16;
+    uint16_t			field_18;
+    uint16_t			field_20;
+    uint16_t			color;
+    uint16_t			field_24;
+    uint16_t			field_26;
 };
 
 template <typename T>
