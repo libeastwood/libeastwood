@@ -150,10 +150,10 @@ struct MovementTile {
     bool			leaveUnitDecay;
     bool			field_16;
     uint16_t			field_18;
-    uint16_t			field_20;
+    uint8_t			field_20;
     uint16_t			color;
-    uint16_t			field_24;
-    uint16_t			field_26;
+    uint8_t			field_24;
+    uint8_t			field_26;
 };
 
 template <typename T>
