@@ -11,15 +11,6 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     Decode(stream, 0, 0, palette),
     _map(map), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0)
 {
-    readHeader();
-}
-
-IcnFile::~IcnFile()
-{
-}
-
-void IcnFile::readHeader()
-{
     uint32_t sectionSize;
     uint8_t shift;
 
@@ -80,6 +71,10 @@ void IcnFile::readHeader()
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RTBL chunk found"));
     _RTBL.resize(_stream.getU32BE());
     _stream.read((char*)&_RTBL.front(), _RTBL.size());
+}
+
+IcnFile::~IcnFile()
+{
 }
 
 void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)

@@ -75,7 +75,6 @@ public:
 	}
 	
 private:
-	void readHeader();
 	void createImage(uint16_t index, uint8_t *dest, uint16_t pitch);
 	MapFile &_map;
 
