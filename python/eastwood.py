@@ -1,6 +1,6 @@
 #!/bin/env python
 
-import sys
+from sys import argv
 from optparse import *
 from pyeastwood import *
 from os.path import exists, join
@@ -18,7 +18,7 @@ def openFile(filename):
 
 class SubOptionParser(OptionParser):
     def __init__(self, *args, **kwargs):
-        usage = "usage: %%prog %s [options] arg" % sys.argv[1]
+        usage = "usage: %%prog %s [options] arg" % argv[1]
         OptionParser.__init__(self, usage, *args, **kwargs)
         self.add_option("-o", "--output", dest="output", help="save to OUTPUT")
 
@@ -30,7 +30,7 @@ class SubOptionParser(OptionParser):
         return OptionParser.parse_args(self, args)
 
     def process(self):
-        (self.options, self.args) = self.parse_args(sys.argv[1:])
+        (self.options, self.args) = self.parse_args(argv[1:])
 
     def postProcess(self):
         pass
@@ -426,7 +426,7 @@ class VocOptionParser(SoundOptionParser):
 
         self.sound = voc.getSound()
 
-def main():
+def main(argv = argv):
     usage = "usage: %prog [options] arg"
     palette = None
     surface = None
@@ -452,10 +452,10 @@ def main():
     parser.add_option("--voc", dest="voc", action="store_true", default=False,
             help="Options for VOC files")
 
-    if len(sys.argv) == 1:
+    if len(argv) == 1:
         locargs = ["--help"]
     else:
-        locargs = [sys.argv[1]]
+        locargs = [argv[1]]
     (options, args) = parser.parse_args(locargs)
 
     subParser = None
