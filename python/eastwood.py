@@ -4,6 +4,7 @@ import sys
 from optparse import *
 from pyeastwood import *
 from os.path import exists, join
+from os import makedirs
 
 def openFile(filename):
     fname = filename.split(":")
@@ -165,6 +166,8 @@ class PakOptionParser(SubOptionParser):
 
         elif self.options.extractAll:
             pak = PakFile(self.options.pakfile)
+            if not exists(self.options.extractAll):
+                makedirs(self.options.extractAll)
             for f in pak.listfiles():
                 pak.open(f)
                 out = open("%s" % join(self.options.extractAll, f), "w")
