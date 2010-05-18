@@ -26,7 +26,7 @@
 #define EASTWOOD_IFFCONTAINER_H
 
 #include "eastwood/StdDef.h"
-#include "eastwood/ISubStream.h"
+#include "eastwood/IStream.h"
 #include "eastwood/Exception.h"
 
 namespace eastwood {
@@ -169,112 +169,53 @@ std::string ID2string(IFF_ID id);
  *  Represents a IFF chunk available to client code.
  *
  */
-struct IFFChunk {
-	IFF_ID		_type;
+struct IFFChunk : public IStream {
+	IFF_ID		_id;
 	uint32_t	_size;
-	IStream		&_stream;
 
-	IFFChunk(IFF_ID type, uint32_t size, IStream &stream) :
-	   _type(type), _size(size), _stream(stream) {}
+	IFFChunk() : _id(ID_FILLER), _size(0) {}
+	IFFChunk(IStream &stream);
+	IFFChunk(uint32_t id, uint32_t size, IStream &stream);
+	~IFFChunk();
+
+	operator std::string() const {
+	    return ID2string(_id);
+	}
 };
 
 /**
  *  Parser for IFF containers.
  */
-class IFFParser
+class IffFile
 {
 
-    /**
-     *  This private class implements IFF chunk navigation.
-     */
-    class IFFChunkNav : public ISubStream
-    {
-	public:
-	    IFF_ID _id;
-	    uint32_t _size;
-
-	    IFFChunkNav() : _id(ID_FILLER), _size(0) {}
-	    IFFChunkNav(IStream &stream);
-
-    	    IFFChunkNav& operator=(IStream &stream);
-
-	    void setInputStream(IStream &input);
-    };
-
     protected:
-	IFFChunkNav _formChunk;	//!< The root chunk of the file.
-	IFFChunkNav _chunk; 	//!< The current chunk.
-
-	uint32_t _formSize;
-	IFF_ID _formType;
-
-	IStream &_stream;
-
-	void setInputStream(IStream &stream) {
-	    _formChunk.setInputStream(stream);
-	    _formSize = _formChunk._size;
-	    _formType = static_cast<IFF_ID>(stream.getU32BE());
-	    _chunk.setInputStream(stream);
-
-	    if (_formChunk._id != ID_FORM) {
-		throw(Exception(LOG_ERROR, "IFFParser", "IFFParser input is not a FORM type IFF file"));
-	    }
-	}
+	IFF_ID		_id;
+	uint32_t	_size;
+	IStream		&_stream;
+	IFFChunk	*_formChunk;	//!< The root chunk of the file.
+	IFFChunk	*_chunk; 	//!< The current chunk.
 
     public:
-	IFFParser(IStream &stream) : _formChunk(), _chunk(), _formSize(0), _formType(), _stream(stream) {
-	    setInputStream(stream);
-	}
-	~IFFParser() {
-	}
+	IffFile(IStream &stream);
+	~IffFile();
+
+	void next();
+
+	IFFChunk* getChunk() { return _chunk; }
 
 	/**
 	 * Returns the IFF FORM type.
 	 * @return the IFF FORM type of the stream, or 0 if FORM header is not found.
 	 */
-	IFF_ID getFORMType() const { return _formType; };
+	IFF_ID getFORMType() const { return _formChunk->_id; };
 
 	/**
 	 * Returns the size of the data.
 	 * @return the size of the data in file, or -1 if FORM header is not found.
 	 */
-	uint32_t getFORMSize() const { return _formSize; }
-#if 0
-	/**
-	 * Callback type for the parser.
-	 */
-	typedef Functor1< IFFChunk&, bool > IFFCallback;
+	uint32_t getFORMSize() const { return _formChunk->_size; }
 
-	/**
-	 * Parse the IFF container, invoking the callback on each chunk encountered.
-	 * The callback can interrupt the parsing by returning 'true'.
-	 */
-	void parse(IFFCallback &callback) {
-	    bool stop;
-	    do {
-		_chunk.feed();
-		_formChunk.incBytesRead(_chunk._size);
-
-		if (_formChunk.hasReadAll()) {
-		    break;
-		}
-
-		_formChunk.incBytesRead(8);
-		_chunk.readHeader();
-
-		// invoke the callback
-		ISubStream stream(&_chunk, _chunk._size);
-		IFFChunk chunk(_chunk._id, _chunk._size, &stream);
-		stop = callback(chunk);
-
-		// eats up all the remaining data in the chunk
-		while (!stream.eof()) {
-		    stream.ignore();
-		}
-
-	    } while (!stop);
-	}
-#endif
 };
 
 

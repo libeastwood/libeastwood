@@ -2,7 +2,7 @@
 
 #include "eastwood/Exception.h"
 #include "eastwood/IcnFile.h"
-#include "eastwood/IFFContainer.h"
+#include "eastwood/IffFile.h"
 #include "eastwood/Log.h"
 
 namespace eastwood {
@@ -11,66 +11,56 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     Decode(stream, 0, 0, palette),
     _map(map), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0)
 {
-    uint32_t sectionSize;
+    uint16_t tmp;
     uint8_t shift;
 
     _stream.seekg(0, std::ios::beg);
     
-    if(_stream.getU32BE() != ID_FORM)
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No FORM chunk found"));
+    IffFile iff(_stream);
 
-    if((sectionSize = _stream.getU32BE()) != _stream.sizeg() - (uint32_t)_stream.tellg())
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: File size doesn't match size specified in header"));
-
-    if(_stream.getU32BE() != ID_ICON)
+    if(iff.getFORMType() != ID_ICON)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No ICON chunk found"));
 
+    IFFChunk *chunk = iff.getChunk();
     // Session Information
-    if(_stream.getU32BE() != ID_SINF)
+    if(chunk->_id != ID_SINF)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SINF chunk found "));
 
-    sectionSize = _stream.getU32BE();
-
-    _width = _stream.get();
-    _height = _stream.get();
-    shift = _stream.get();
+    _width = chunk->get();
+    _height = chunk->get();
+    shift = chunk->get();
     _width <<= shift;
     _height <<= shift;
-    _bpp = _stream.get();
+    _bpp = chunk->get();
     _tileSize = ((_width*_height)<<shift)>>_bpp;
 
+    iff.next();
 
     // Structure Set
-    if(_stream.getU32BE() != ID_SSET)
+    if(chunk->_id != ID_SSET)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET chunk found"));
-    // Don't *really* have any idea what this is good for (sanity check?):
-    // Section header looks like this:
-    // [BBBB00LL]
-    //
-    // BBBB: Size is first stored as a 32 bit integer, big endian
-    // 00: Two byte space (00)
-    // LL: SSET section size - header size is stored again as 16 bit integer, little endian
 
-    // So yeah, let's use this a sort of sanity check...
-    if(_stream.getU32BE() - 8 != (sectionSize = _stream.getU16LE() + _stream.getU16LE()))
-	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: SSET chunk size mismatch"));
-    if(_stream.getU32BE() != ID_FILLER)
+    tmp = chunk->getU16LE();
+    _SSET.resize(chunk->getU16LE());
+    if(tmp != 0 || chunk->getU32LE() != ID_FILLER)
 	throw(Exception(LOG_WARNING, "IcnFile", "Suspicious ICN-File: Found non-null bytes where null bytes expected"));
-    _SSET.resize(sectionSize);
-    _stream.read((char*)&_SSET.front(), _SSET.size());
+    chunk->read((char*)&_SSET.front(), _SSET.size());
+
+    iff.next();
 
     // RIFF Palette
-    if(_stream.getU32BE() != ID_RPAL)
+    if(chunk->_id != ID_RPAL)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL chunk found"));
-    _RPAL.resize(_stream.getU32BE());
-    _stream.read((char*)&_RPAL.front(), _RPAL.size());
+    _RPAL.resize(chunk->_size);
+    chunk->read((char*)&_RPAL.front(), _RPAL.size());
     
+    iff.next();
 
     // Reference table
-    if(_stream.getU32BE() != ID_RTBL)
+    if(chunk->_id != ID_RTBL)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RTBL chunk found"));
-    _RTBL.resize(_stream.getU32BE());
-    _stream.read((char*)&_RTBL.front(), _RTBL.size());
+    _RTBL.resize(chunk->_size);
+    chunk->read((char*)&_RTBL.front(), _RTBL.size());
 }
 
 IcnFile::~IcnFile()

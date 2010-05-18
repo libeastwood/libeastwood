@@ -13,7 +13,7 @@ SET( LIBEASTWOOD_SRCS
   ExeFile.cpp
   Font.cpp
   IcnFile.cpp
-  IFFContainer.cpp
+  IffFile.cpp
   IniFile.cpp
   IStream.cpp
   ISubStream.cpp  
