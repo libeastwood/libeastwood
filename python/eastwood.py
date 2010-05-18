@@ -185,7 +185,9 @@ class MapOptionParser(SubOptionParser):
         SubOptionParser.__init__(self, *args, **kwargs)
         self.remove_option("-o")
         self.add_option("--map", help="MAP", dest="mapfile")
-        self.add_option("-n", action="store_true", default=False,
+        self.add_option("-i", "--index", type="int", dest="index", default=None,
+                help="get tile map row")
+        self.add_option("-n", default=False,
                 dest="size", help="get number of tile maps")
 
 
@@ -197,6 +199,8 @@ class MapOptionParser(SubOptionParser):
 
         if self.options.size:
             print len(map)
+        if self.options.index != None:
+            print map[self.options.index]
 
 class CpsOptionParser(SurfaceOptionParser):
     def __init__(self, *args, **kwargs):
