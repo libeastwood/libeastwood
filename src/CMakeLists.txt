@@ -16,7 +16,6 @@ SET( LIBEASTWOOD_SRCS
   IffFile.cpp
   IniFile.cpp
   IStream.cpp
-  ISubStream.cpp  
   MapFile.cpp
   OStream.cpp
   PakFile.cpp
