@@ -71,18 +71,18 @@ public:
     @return	Number of tiles
 */
 	uint16_t size() const throw() {
-	    return _SSET.size() / _tileSize;
+	    return _SSET.size();
 	}
 	
 private:
 	void createImage(uint16_t index, uint8_t *dest, uint16_t pitch);
 	MapFile &_map;
 
-	std::vector<uint8_t>	_SSET, // Structure Set Chunk
-				_RPAL, // RIFF Palette
-				_RTBL; // Reference Table
-	uint8_t			_bpp;
-	uint16_t		_tileSize;
+	std::vector<std::vector<uint8_t> >	_SSET, // Structure Set Chunk
+						_RPAL; // RIFF Palette
+	std::vector<uint8_t>			_RTBL; // Reference Table
+	uint8_t					_bpp;
+	uint16_t				_tileSize;
 };
 
 }

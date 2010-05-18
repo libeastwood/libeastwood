@@ -41,18 +41,21 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET chunk found"));
 
     tmp = chunk->getU16LE();
-    _SSET.resize(chunk->getU16LE());
+    _SSET.resize(chunk->getU16LE()/_tileSize, std::vector<uint8_t>(_tileSize));
+
     if(tmp != 0 || chunk->getU32LE() != ID_FILLER)
 	throw(Exception(LOG_WARNING, "IcnFile", "Suspicious ICN-File: Found non-null bytes where null bytes expected"));
-    chunk->read((char*)&_SSET.front(), _SSET.size());
+    for(std::vector<std::vector<uint8_t> >::iterator file = _SSET.begin(); file != _SSET.end(); file++)
+    	chunk->read((char*)&file->front(), file->size());
 
     iff.next();
 
     // RIFF Palette
     if(chunk->_id != ID_RPAL)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL chunk found"));
-    _RPAL.resize(chunk->_size);
-    chunk->read((char*)&_RPAL.front(), _RPAL.size());
+    _RPAL.resize(chunk->_size >> _bpp, std::vector<uint8_t>(1<<_bpp));
+    for(std::vector<std::vector<uint8_t> >::iterator pal = _RPAL.begin(); pal != _RPAL.end(); pal++)
+    	chunk->read((char*)&pal->front(), pal->size());
     
     iff.next();
 
@@ -60,7 +63,9 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     if(chunk->_id != ID_RTBL)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RTBL chunk found"));
     _RTBL.resize(chunk->_size);
+
     chunk->read((char*)&_RTBL.front(), _RTBL.size());
+
 }
 
 IcnFile::~IcnFile()
@@ -69,13 +74,15 @@ IcnFile::~IcnFile()
 
 void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 {
-    const uint8_t *paletteStart = &_RPAL.at(_RTBL.at(index) << _bpp),
-	  *fileStart = &_SSET.at(index * _tileSize);
+    const std::vector<uint8_t>
+	&palette = _RPAL.at(_RTBL.at(index)),
+	&file = _SSET.at(index);
 
+    uint16_t i = 0;
     for(uint16_t y = 0; y < _height; y++, dest += pitch)
 	for(uint16_t x = 0; x < _width; x++) {
-	    dest[x++] = paletteStart[*fileStart >> _bpp];
-	    dest[x] = paletteStart[*fileStart++ & ((1<<_bpp)-1)];
+	    dest[x++] = palette[file[i] >> _bpp];
+	    dest[x] = palette[file[i++] & ((1<<_bpp)-1)];
 	}
 }
 
