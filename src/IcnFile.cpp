@@ -78,8 +78,7 @@ void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 	&palette = _RPAL.at(_RTBL.at(index)),
 	&file = _SSET.at(index);
 
-    uint16_t i = 0;
-    for(uint16_t y = 0; y < _height; y++, dest += pitch)
+    for(uint16_t y = 0, i = 0; y < _height; y++, dest += pitch)
 	for(uint16_t x = 0; x < _width; x++) {
 	    dest[x++] = palette[file[i] >> _bpp];
 	    dest[x] = palette[file[i++] & ((1<<_bpp)-1)];
