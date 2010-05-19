@@ -7,7 +7,6 @@
 #include "eastwood/WsaFile.h"
 
 #include "eastwood/Exception.h"
-#include "eastwood/Font.h"
 #include "eastwood/Log.h"
 
 namespace eastwood {
