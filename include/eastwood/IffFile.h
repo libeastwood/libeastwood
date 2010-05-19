@@ -32,9 +32,9 @@
 namespace eastwood {
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-    #define MKID_BE(a,b,c,d) ((uint32_t) (d | (c << 8) | (b << 16) | (a << 24)))
+    #define MKID_BE(a,b,c,d) (static_cast<uint32_t>((d | (c << 8) | (b << 16) | (a << 24))))
 #else
-    #define MKID_BE(a,b,c,d) ((uint32_t) (a | (b << 8) | (c << 16) | (d << 24)))
+    #define MKID_BE(a,b,c,d) (static_cast<uint32_t>((a | (b << 8) | (c << 16) | (d << 24))))
 #endif
 
 enum IFF_ID {
