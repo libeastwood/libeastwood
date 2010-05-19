@@ -2,23 +2,23 @@
 
 #include "eastwood/StdDef.h"
 
-#include "eastwood/Font.h"
+#include "eastwood/FntFile.h"
 #include "eastwood/Log.h"
 
 namespace eastwood {
 
-Font::Font(FNTCharacter *characters, FNTHeader *header) :
+FntFile::FntFile(FNTCharacter *characters, FNTHeader *header) :
     _header(header), _characters(characters), _nchars(0)
 {
 }
 
-Font::~Font()
+FntFile::~FntFile()
 {
     delete [] _characters;
     delete _header;
 }
 
-void Font::extents(std::string text, uint16_t& w, uint16_t& h)
+void FntFile::extents(std::string text, uint16_t& w, uint16_t& h)
 {
     FNTCharacter *ch;
     w = 0;
@@ -31,7 +31,7 @@ void Font::extents(std::string text, uint16_t& w, uint16_t& h)
     };
 }
 
-void Font::render(std::string text, Surface &surface, int offx, int offy, uint8_t paloff)
+void FntFile::render(std::string text, Surface &surface, int offx, int offy, uint8_t paloff)
 {
     std::string test = text;
     FNTCharacter *ch;

@@ -11,7 +11,7 @@ SET( LIBEASTWOOD_SRCS
   EmcFileDisassemble.cpp
   Exception.cpp
   ExeFile.cpp
-  Font.cpp
+  FntFile.cpp
   IcnFile.cpp
   IffFile.cpp
   IniFile.cpp

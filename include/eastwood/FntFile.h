@@ -35,11 +35,11 @@ struct FNTCharacter
     uint8_t *bitmap;
 };
 
-class Font 
+class FntFile 
 {
     public:
-        Font(FNTCharacter *characters, FNTHeader *header);
-        ~Font();
+        FntFile(FNTCharacter *characters, FNTHeader *header);
+        ~FntFile();
 
         void extents(std::string text, uint16_t& w, uint16_t& h);
         void render(std::string text, Surface &surface, int x, int y, uint8_t paloff);
