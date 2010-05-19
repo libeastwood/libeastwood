@@ -72,7 +72,8 @@ class Surface : public eastwood::Surface
 	    _height = surface->h;
 	    _pitch = surface->pitch;
 	    _pixels.reset(new Bytes((uint8_t*)_surface->pixels, BufMalloc));
-	    _palette = SDL::Palette(surface->format->palette);
+	    if(surface->format->palette != NULL)
+    		_palette = SDL::Palette(surface->format->palette);
 
 	    return *this;
 	}
