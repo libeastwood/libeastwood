@@ -3,6 +3,8 @@
 
 #include <istream>
 
+#include "eastwood/StdDef.h"
+
 namespace eastwood {
 
 class IStream : public std::istream
