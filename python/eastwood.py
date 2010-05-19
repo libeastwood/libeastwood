@@ -187,7 +187,7 @@ class MapOptionParser(SubOptionParser):
         self.add_option("--map", help="MAP", dest="mapfile")
         self.add_option("-i", "--index", type="int", dest="index", default=None,
                 help="get tile map row")
-        self.add_option("-n", default=False,
+        self.add_option("-n", action="store_true", default=False,
                 dest="size", help="get number of tile maps")
 
 
