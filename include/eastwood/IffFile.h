@@ -190,19 +190,19 @@ class IffFile
 {
 
     protected:
-	IFF_ID		_id;
-	uint32_t	_size;
-	IStream		&_stream;
-	IFFChunk	*_formChunk;	//!< The root chunk of the file.
-	IFFChunk	*_chunk; 	//!< The current chunk.
+	IFF_ID				_id;
+	uint32_t			_size;
+	IStream				&_stream;
+	std::tr1::shared_ptr<IFFChunk>	_formChunk;	//!< The root chunk of the file.
+	std::tr1::shared_ptr<IFFChunk>	_chunk; 	//!< The current chunk.
 
     public:
 	IffFile(IStream &stream);
 	~IffFile();
 
-	void next();
+	std::tr1::shared_ptr<IFFChunk> next();
 
-	IFFChunk* getChunk() { return _chunk; }
+	std::tr1::shared_ptr<IFFChunk> getChunk() { return _chunk; }
 
 	/**
 	 * Returns the IFF FORM type.
