@@ -19,7 +19,7 @@ struct FNTHeader
     uint16_t cdata;    /* Offset of char. graphics data (abs. from beg. of file) */
     uint16_t hpos;     /* Offset of char. heights array (abs. from beg. of file) */
     uint16_t unknown4; /* Unknown entry (always 0x1012) */
-    uint16_t nchars;   /* Number of characters in font minus 1*/ // dunk- the doc says uint16_t 
+    uint8_t nchars;   /* Number of characters in font minus 1*/ // dunk- the doc says uint16_t 
     uint8_t height;   /* Font height                   */
     uint8_t maxw;     /* Max. character width          */
 };
@@ -33,7 +33,9 @@ FntFile::FntFile(std::istream &stream) :
     if (header.unknown1 != 0x0500 || header.unknown2 != 0x000e || header.unknown3 != 0x0014)
 	throw(Exception(LOG_ERROR, "FntFile", "Invalid header"));
 
-    header.nchars = _stream.getU16BE() + 1;
+    // alignment padding
+    _stream.ignore(1);
+    header.nchars = _stream.get() + 1;
     header.height = _stream.get();
     header.maxw = _stream.get();
 
