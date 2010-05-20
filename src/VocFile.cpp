@@ -116,11 +116,15 @@ invalid:
 	goto invalid;
 
     _stream.readU16LE(&fileHeader.datablock_offset, (sizeof(VocFileHeader)-offsetof(VocFileHeader,datablock_offset))/sizeof(uint16_t));
-    assert(fileHeader.datablock_offset == sizeof(VocFileHeader));
+    
+    if(fileHeader.datablock_offset != sizeof(VocFileHeader))
+    	throw(Exception(LOG_ERROR, "VocFile", "Incorrect data block offset"));
     // 0x100 is an invalid VOC version used by German version of DOTT (Disk) and
     // French version of Simon the Sorcerer 2 (CD)
-    assert(fileHeader.version == 0x010A || fileHeader.version == 0x0114 || fileHeader.version == 0x0100);
-    assert(fileHeader.id == ~fileHeader.version + 0x1234);
+    if(fileHeader.version != 0x010A && fileHeader.version != 0x0114 && fileHeader.version != 0x0100)
+	throw(Exception(LOG_ERROR, "VocFile", "Unknown version"));
+    if(fileHeader.id != ~fileHeader.version + 0x1234)
+	throw(Exception(LOG_ERROR, "VocFile", "Incorrect header id"));
 }
 
 
@@ -230,16 +234,19 @@ Sound VocFile::getSound()
 	    case VOC_CODE_MARKER:
 	    case VOC_CODE_TEXT:
 	    case VOC_CODE_LOOPBEGIN:
-		assert(len == sizeof(vocLoops));
+		if(len != sizeof(vocLoops))
+		    throw(Exception(LOG_ERROR, "VocFile", "Size of vocLoops doesn't match expected size"));
 		vocLoops = _stream.getU16LE();
 	    break;
 
 	    case VOC_CODE_LOOPEND:
-		assert(len == 0);
+		if(len != 0)
+		    throw(Exception(LOG_WARNING, "VocFile", "Code size of loop end is non-zero"));
 	    break;
 
 	    case VOC_CODE_EXTENDED:
-		assert(len == 4);
+		if(len != 4)
+		    throw(Exception(LOG_ERROR, "VocFile", "Unexpected extended code size"));
 		_stream.seekg(len, std::ios::cur);
 	    default:
 		LOG_ERROR("VocFile", "Unhandled code in VOC file : %d", code);
