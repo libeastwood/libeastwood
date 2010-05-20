@@ -89,7 +89,7 @@ void FntFile::extents(std::string text, uint16_t& w, uint16_t& h)
     };
 }
 
-void FntFile::render(std::string text, Surface &surface, int offx, int offy, uint8_t paloff)
+void FntFile::render(std::string text, Surface &surface, uint16_t offx, uint16_t offy, uint8_t paloff)
 {
     uint8_t* pixels = surface;
 
