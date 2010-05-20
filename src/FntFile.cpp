@@ -25,11 +25,11 @@ struct FNTHeader
 };
 
 FntFile::FntFile(std::istream &stream) :
-    _characters(NULL), _nchars(0), _height(0)
+    _characters(), _height(0)
 {
     IStream &_stream = reinterpret_cast<IStream&>(stream);
     FNTHeader header;
-    _stream.readU16LE(reinterpret_cast<uint16_t*>(&header), offsetof(FNTHeader, nchars)/2);
+    _stream.readU16LE(reinterpret_cast<uint16_t*>(&header), offsetof(FNTHeader, nchars)/sizeof(uint16_t));
     if (header.unknown1 != 0x0500 || header.unknown2 != 0x000e || header.unknown3 != 0x0014)
 	throw(Exception(LOG_ERROR, "FntFile", "Invalid header"));
 

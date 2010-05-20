@@ -12,6 +12,7 @@ namespace eastwood {
 class FntFile 
 {
     public:
+	FntFile() : _characters(), _height(0) {}
         FntFile(std::istream &stream);
         ~FntFile();
 
@@ -30,7 +31,6 @@ class FntFile
 	};
 
 	std::vector<FNTCharacter> _characters;
-        uint16_t _nchars;
 	uint8_t _height;
 };
 
