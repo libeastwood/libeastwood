@@ -25,8 +25,9 @@ struct FNTHeader
 };
 
 FntFile::FntFile(std::istream &stream) :
-    _stream(reinterpret_cast<IStream&>(stream)), _characters(NULL), _nchars(0), _height(0)
+    _characters(NULL), _nchars(0), _height(0)
 {
+    IStream &_stream = reinterpret_cast<IStream&>(stream);
     FNTHeader header;
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&header), offsetof(FNTHeader, nchars)/2);
     if (header.unknown1 != 0x0500 || header.unknown2 != 0x000e || header.unknown3 != 0x0014)

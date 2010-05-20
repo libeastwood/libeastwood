@@ -29,7 +29,6 @@ class FntFile
 	    std::vector<uint8_t>	bitmap;
 	};
 
-	IStream &_stream;
 	std::vector<FNTCharacter> _characters;
         uint16_t _nchars;
 	uint8_t _height;
