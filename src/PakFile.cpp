@@ -101,13 +101,13 @@ void PakFile::open(std::string fileName, std::ios::openmode mode)
             std::ios::init(new std::stringbuf(_mode));
         else {
             std::string buffer(_currentFile->second.second, 0);
-            _stream.read((char*)buffer.data(), buffer.size());
+            _stream.read(const_cast<char*>(reinterpret_cast<const char*>(buffer.data())), buffer.size());
             std::ios::init(new std::stringbuf(buffer, _mode));
         }
     } else if(_mode & std::ios_base::out) {
         _fileNames.push_back(fileName);
         _stream.seekg(0, std::ios::end);
-        _fileEntries.insert(make_pair(fileName, FileEntry((uint32_t)_stream.tellg(), 0)));
+        _fileEntries.insert(make_pair(fileName, FileEntry(static_cast<uint32_t>(_stream.tellg()), 0)));
         _currentFile = _fileEntries.find(fileName);
         std::ios::init(new std::stringbuf(_mode));
     } else

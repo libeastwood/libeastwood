@@ -113,7 +113,7 @@ void Dune2File::detectDune2Version()
 	_stream.read(tmp, sizeof(tmp));
 
 	if(strncmp(tmp, "DUNE2.EXE", sizeof(tmp)) == 0) {
-	    _version = (Version)i;
+	    _version = static_cast<Version>(i);
 	    break;
 	}
     }
@@ -192,7 +192,7 @@ void Dune2File::readDataStructures()
 	(*it)->techUpgrade[2]		= _stream.getU16LE();
     }
 
-    _stream.seekg(((uint32_t)pos)+224);
+    _stream.seekg(static_cast<uint32_t>(pos)+224);
     uint32_t addr = _stream.getU32LE();
     uint32_t size = _stream.getU32LE();
     _stream.seekSegOff(addr);
@@ -323,7 +323,7 @@ void Dune2File::readDataStructures()
 
     _stream.seekSegOff(MapMoveModOffset[_version].segment, MapMoveModOffset[_version].offset);
     _stream.readU16LE(&_mapMoveMod.front(), _mapMoveMod.size());
-    _stream.read((char*)&_mapMod.front(), _mapMod.size());
+    _stream.read(reinterpret_cast<char*>(&_mapMod.front()), _mapMod.size());
 
     _stream.seekSegOff(AnimPtrsOffset[_version].segment, AnimPtrsOffset[_version].offset);
     for(std::vector<std::vector<uint16_t> >::iterator x = _anims.begin(); x != _anims.end(); ++x) {

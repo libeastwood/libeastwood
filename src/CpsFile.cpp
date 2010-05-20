@@ -60,6 +60,7 @@ Surface eastwood::CpsFile::getSurface()
 	    break;
 	case FORMAT_LBM:
 	    //TODO: implement?
+	    throw(Exception(LOG_ERROR, "CpsFile", "LBM format not yet supported"));
 	    break;
 	case FORMAT_80:
     	if(decode80(pic,0) == -2)
