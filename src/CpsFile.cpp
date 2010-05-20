@@ -65,6 +65,8 @@ Surface eastwood::CpsFile::getSurface()
     	if(decode80(pic,0) == -2)
     	    throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
 	break;
+	default:
+	    throw(Exception(LOG_ERROR, "CpsFile", "Unknown format"));
     }
 
     return pic;
