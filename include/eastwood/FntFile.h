@@ -2,43 +2,17 @@
 #define EASTWOOD_FONT_H
 
 #include <string>
+#include <istream>
 
+#include "eastwood/IStream.h"
 #include "eastwood/Surface.h"
 
-#define MIN_FONT_SIZE 6
-#define MAX_FONT_SIZE 24
-#define FONTS (MAX_FONT_SIZE - MIN_FONT_SIZE)
-
 namespace eastwood {
-
-struct FNTHeader
-{
-    uint16_t fsize;    /* Size of the file              */
-    uint16_t unknown1; /* Unknown entry (always 0x0500) */
-    uint16_t unknown2; /* Unknown entry (always 0x000e) */
-    uint16_t unknown3; /* Unknown entry (always 0x0014) */
-    uint16_t wpos;     /* Offset of char. widths array  (abs. from beg. of file) */
-    uint16_t cdata;    /* Offset of char. graphics data (abs. from beg. of file) */
-    uint16_t hpos;     /* Offset of char. heights array (abs. from beg. of file) */
-    uint16_t unknown4; /* Unknown entry (always 0x1012) */
-    uint8_t unknown5; // dunk- had to add this to get nchars read correctly 
-    uint8_t nchars;   /* Number of characters in font minus 1*/ // dunk- the doc says uint16_t 
-    uint8_t height;   /* Font height                   */
-    uint8_t maxw;     /* Max. character width          */
-};
-
-struct FNTCharacter
-{
-    uint8_t width;
-    uint8_t height;
-    uint8_t y_offset;
-    uint8_t *bitmap;
-};
 
 class FntFile 
 {
     public:
-        FntFile(FNTCharacter *characters, FNTHeader *header);
+        FntFile(std::istream &stream);
         ~FntFile();
 
         void extents(std::string text, uint16_t& w, uint16_t& h);
@@ -46,9 +20,19 @@ class FntFile
 
 
     private:
-        FNTHeader *_header;
-        FNTCharacter *_characters;
+	struct FNTCharacter
+	{
+	    FNTCharacter() : width(0), height(0), y_offset(0), bitmap() {}
+	    uint8_t			width;
+	    uint8_t			height;
+	    uint8_t			y_offset;
+	    std::vector<uint8_t>	bitmap;
+	};
+
+	IStream &_stream;
+	std::vector<FNTCharacter> _characters;
         uint16_t _nchars;
+	uint8_t _height;
 };
 
 }
