@@ -8,6 +8,8 @@
 #ifndef EASTWOOD_ADLIBFILE_H
 #define EASTWOOD_ADLIBFILE_H 
 
+#include "eastwood/IStream.h"
+
 namespace eastwood {
 
 class AdlibDriver;
