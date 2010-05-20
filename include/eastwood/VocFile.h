@@ -35,7 +35,7 @@ class VocFile
 	 * rates, but the VOC marks them incorrectly as 11111 or 22222 kHz. This code
 	 * works around that and "unrounds" the sampling rates.
 	 */
-	int getSampleRateFromVOCRate(int vocSR);
+	uint32_t getSampleRateFromVOCRate(uint32_t vocSR);
 
 	IStream &_stream;
 };

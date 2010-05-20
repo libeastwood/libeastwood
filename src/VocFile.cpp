@@ -68,13 +68,13 @@ VocFile::~VocFile()
  * rates, but the VOC marks them incorrectly as 11111 or 22222 kHz. This code
  * works around that and "unrounds" the sampling rates.
  */
-int VocFile::getSampleRateFromVOCRate(int vocSR) {
+uint32_t VocFile::getSampleRateFromVOCRate(uint32_t vocSR) {
     if (vocSR == 0xa5 || vocSR == 0xa6) {
 	return 11025;
     } else if (vocSR == 0xd2 || vocSR == 0xd3) {
 	return 22050;
     } else {
-	int sr = 1000000L / (256L - vocSR);
+	uint32_t sr = 1000000L / (256L - vocSR);
 	// inexact sampling rates occur e.g. in the kitchen in Monkey Island,
 	// very easy to reach right from the start of the game.
 	//warning("inexact sample rate used: %i (0x%x)", sr, vocSR);
@@ -149,9 +149,8 @@ Sound VocFile::getSound()
 	    break;
 	}
 
-	len = _stream.get();
-	len |= _stream.get() << 8;
-	len |= _stream.get() << 16;
+	len = _stream.getU16LE();
+	len |= static_cast<uint32_t>(_stream.get() << 16);
 
 	switch (code) {
 	    case VOC_CODE_DATA:
