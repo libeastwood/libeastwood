@@ -79,7 +79,7 @@ FntFile::~FntFile()
 {
 }
 
-void FntFile::extents(std::string text, uint16_t& w, uint16_t& h)
+void FntFile::extents(std::string text, uint16_t& w, uint16_t& h) const
 {
     w = 0;
     h = _height;
@@ -90,7 +90,7 @@ void FntFile::extents(std::string text, uint16_t& w, uint16_t& h)
     };
 }
 
-void FntFile::render(std::string text, Surface &surface, uint16_t offx, uint16_t offy, uint8_t paloff)
+void FntFile::render(std::string text, Surface &surface, uint16_t offx, uint16_t offy, uint8_t paloff) const
 {
     uint8_t* pixels = surface;
 
