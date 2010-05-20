@@ -44,8 +44,8 @@
 
 #include <cassert>
 
-#define SSDST(bits, num) (uint##bits##_t *)dst##num
-#define SSSRC(bits, num) (const uint##bits##_t *)src##num
+#define SSDST(bits, num) reinterpret_cast<uint##bits##_t *>(dst##num)
+#define SSSRC(bits, num) reinterpret_cast<const uint##bits##_t *>(src##num)
 
 namespace eastwood {
 
@@ -180,8 +180,8 @@ static inline void stage_scale4x(uint8_t* dst0, uint8_t* dst1, uint8_t* dst2, ui
  */
 static void scale2x(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, uint16_t srcSlice, uint8_t bpp, uint16_t width, uint16_t height)
 {
-	uint8_t* dst = (uint8_t*)dstPtr;
-	const uint8_t* src = (const uint8_t*)srcPtr;
+	uint8_t* dst = dstPtr;
+	const uint8_t* src = srcPtr;
 	uint16_t count;
 
 	assert(height >= 2);
@@ -225,8 +225,8 @@ static void scale2x(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, u
  */
 static void scale2x3(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, uint16_t srcSlice, uint8_t bpp, uint16_t width, uint16_t height)
 {
-	uint8_t* dst = (uint8_t*)dstPtr;
-	const uint8_t* src = (const uint8_t*)srcPtr;
+	uint8_t* dst = dstPtr;
+	const uint8_t* src = srcPtr;
 	uint16_t count;
 
 	assert(height >= 2);
@@ -270,8 +270,8 @@ static void scale2x3(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, 
  */
 static void scale2x4(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, uint16_t srcSlice, uint8_t bpp, uint16_t width, uint16_t height)
 {
-	uint8_t* dst = (uint8_t*)dstPtr;
-	const uint8_t* src = (const uint8_t*)srcPtr;
+	uint8_t* dst = dstPtr;
+	const uint8_t* src = srcPtr;
 	uint16_t count;
 
 	assert(height >= 2);
@@ -315,8 +315,8 @@ static void scale2x4(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, 
  */
 static void scale3x(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, uint16_t srcSlice, uint8_t bpp, uint16_t width, uint16_t height)
 {
-	uint8_t* dst = (uint8_t*)dstPtr;
-	const uint8_t* src = (const uint8_t*)srcPtr;
+	uint8_t* dst = dstPtr;
+	const uint8_t* src = srcPtr;
 	uint16_t count;
 
 	assert(height >= 2);
@@ -363,8 +363,8 @@ static void scale3x(uint8_t* dstPtr, uint16_t dstSlice, const uint8_t* srcPtr, u
  */
 static void scale4x_buf(uint8_t* dstPtr, uint16_t dstSlice, uint8_t* void_mid, uint16_t mid_slice, const uint8_t* srcPtr, uint16_t srcSlice, uint8_t bpp, uint16_t width, uint16_t height)
 {
-	uint8_t* dst = (uint8_t*)dstPtr;
-	const uint8_t* src = (const uint8_t*)srcPtr;
+	uint8_t* dst = dstPtr;
+	const uint8_t* src = srcPtr;
 	uint16_t count;
 	uint8_t* mid[6];
 
@@ -373,7 +373,7 @@ static void scale4x_buf(uint8_t* dstPtr, uint16_t dstSlice, uint8_t* void_mid, u
 	count = height;
 
 	/* set the 6 buffer pointers */
-	mid[0] = (uint8_t*)void_mid;
+	mid[0] = void_mid;
 	mid[1] = mid[0] + mid_slice;
 	mid[2] = mid[1] + mid_slice;
 	mid[3] = mid[2] + mid_slice;

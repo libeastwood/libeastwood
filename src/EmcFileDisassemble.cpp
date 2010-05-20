@@ -58,14 +58,14 @@ bool EmcFileDisassemble::scriptLoad() {
     scriptSize -= _inputStream.tellg();
     // Load file into _scriptBuffer
     _scriptBuffer = new uint8_t[scriptSize];
-    if(!_inputStream.read((char*) _scriptBuffer, scriptSize))
+    if(!_inputStream.read(reinterpret_cast<char*>(_scriptBuffer), scriptSize))
 	return false;
 
     return true;
 }
 
 bool EmcFileDisassemble::headerRead() {
-    uint16_t *buffer = (uint16_t*) _scriptBuffer;
+    uint16_t *buffer = reinterpret_cast<uint16_t*>(_scriptBuffer);
 
     // Number of script functions
     _pointerCount = htobe16(*buffer++) / 2;
@@ -85,7 +85,7 @@ bool EmcFileDisassemble::headerRead() {
     _scriptSize = htobe16(*buffer++);
 
     // Start of script data
-    _scriptStart = (uint8_t*) buffer;
+    _scriptStart = reinterpret_cast<uint8_t*>(buffer);
 
     opcodesSetup();
 
@@ -113,7 +113,7 @@ bool EmcFileDisassemble::scriptNextStart() {
     for(int count = 0; count < _pointerCount; count++) {
 
 	// In TEAM.EMC for example, two objects use the same script
-	if(_scriptPos == (uint16_t) _headerPointers[count]) {
+	if(_scriptPos == static_cast<uint16_t>(_headerPointers[count])) {
 	    if(!found)
 		_outputStream << std::endl;
 
@@ -148,8 +148,8 @@ bool EmcFileDisassemble::execute() {
 bool EmcFileDisassemble::scriptDisassemble() {
     _stackCount		= 0xF,
     _scriptPos		= 0,
-    _scriptPtr		= (uint16_t*) _scriptStart,
-    _scriptPtrEnd	= (uint16_t*) (_scriptStart + _scriptSize);
+    _scriptPtr		= reinterpret_cast<uint16_t*>(_scriptStart),
+    _scriptPtrEnd	= reinterpret_cast<uint16_t*>(_scriptStart + _scriptSize);
 
     while(_scriptPtr <  _scriptPtrEnd) {
 
@@ -157,7 +157,7 @@ bool EmcFileDisassemble::scriptDisassemble() {
 	    scriptNextStart();
 
 	    // Check if label location, print label if so
-	    if(scriptLabel(_scriptPos) != (size_t)-1)
+	    if(scriptLabel(_scriptPos) != static_cast<size_t>(-1))
 		_outputStream << "l" << _scriptPos << ":" << std::endl;
 	}
 
@@ -209,13 +209,13 @@ void EmcFileDisassemble::o_Goto() {
 
     if(!_modePreProcess) {
 
-	if(labelPos == (size_t)-1)
+	if(labelPos == static_cast<size_t>(-1))
 	    dataPrint(_scriptData);
 	else
 	    _outputStream << "l" << _scriptLabels[labelPos]._scriptPos;
 
     } else {
-	if(labelPos == (size_t)-1)
+	if(labelPos == static_cast<size_t>(-1))
 	    scriptLabelAdd("", _scriptData);
     }
 }
@@ -348,11 +348,11 @@ void EmcFileDisassemble::o_IfNotGoto() {
 	labelPos = scriptLabel(_scriptDataNext & 0x7FFF);
 
 	if(_modePreProcess)  {
-	    if(labelPos == (size_t)-1)
+	    if(labelPos == static_cast<size_t>(-1))
 		scriptLabelAdd("", _scriptDataNext & 0x7FFF);
 
 	} else {
-	    if(labelPos == (size_t)-1)
+	    if(labelPos == static_cast<size_t>(-1))
 		dataPrint(_scriptDataNext & 0x7FFF);
 	    else
 		_outputStream << "l" << _scriptLabels[labelPos]._scriptPos;
@@ -362,10 +362,10 @@ void EmcFileDisassemble::o_IfNotGoto() {
 	labelPos = scriptLabel(_scriptData);
 
 	if(_modePreProcess) {
-	    if(labelPos == (size_t)-1)
+	    if(labelPos == static_cast<size_t>(-1))
 		scriptLabelAdd("", _scriptData);
 	} else {
-	    if(labelPos == (size_t)-1)
+	    if(labelPos == static_cast<size_t>(-1))
 		dataPrint(_scriptData);
 	    else
 		_outputStream << "l" << _scriptLabels[labelPos]._scriptPos;

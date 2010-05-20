@@ -18,7 +18,7 @@ class Surface : public eastwood::Surface
 	    eastwood::Surface(NULL, surface.width(), surface.height(), surface.bpp(), surface.palette()),
 	    _surface(SDL_CreateRGBSurface(flags, surface.width(), surface.height(), surface.bpp(), Rmask, Gmask, Bmask, Amask)) {
 		memcpy(_surface->pixels, surface, surface.size());
-		_pixels.reset(new Bytes((uint8_t*)_surface->pixels, BufMalloc));
+		_pixels.reset(new Bytes(reinterpret_cast<uint8_t*>(_surface->pixels), BufMalloc));
 
 		setPalette(_palette);
 	    }
@@ -27,7 +27,7 @@ class Surface : public eastwood::Surface
 		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0) :
 	    eastwood::Surface(NULL, width, height, bpp, palette),
 	    _surface(SDL_CreateRGBSurface(flags, width, height, bpp, Rmask, Gmask, Bmask, Amask)) {
-		_pixels.reset(new Bytes((uint8_t*)_surface->pixels, BufMalloc));
+		_pixels.reset(new Bytes(reinterpret_cast<uint8_t*>(_surface->pixels), BufMalloc));
 
 		setPalette(_palette);
 	    }
@@ -35,7 +35,7 @@ class Surface : public eastwood::Surface
 	Surface(const SDL_Surface *surface) :
 	    eastwood::Surface(NULL, surface->w, surface->h, surface->format->BitsPerPixel, SDL::Palette(surface->format->palette)),
 	    _surface(SDL_ConvertSurface(const_cast<SDL_Surface*>(surface), surface->format, surface->flags)) {
-		_pixels.reset(new Bytes((uint8_t*)_surface->pixels, BufMalloc));
+		_pixels.reset(new Bytes(reinterpret_cast<uint8_t*>(_surface->pixels), BufMalloc));
 	    }
 
 	virtual ~Surface() {
@@ -52,7 +52,7 @@ class Surface : public eastwood::Surface
 	}
 
 	Surface &operator=(const eastwood::Surface &surface) {
-	    *(eastwood::Surface*)this = surface;
+	    *(static_cast<eastwood::Surface*>(this)) = surface;
 
 	    _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, _bpp, 0, 0, 0, 0);
 	    free(_surface->pixels);
@@ -71,7 +71,7 @@ class Surface : public eastwood::Surface
 	    _width = surface->w;
 	    _height = surface->h;
 	    _pitch = surface->pitch;
-	    _pixels.reset(new Bytes((uint8_t*)_surface->pixels, BufMalloc));
+	    _pixels.reset(new Bytes(reinterpret_cast<uint8_t*>(_surface->pixels), BufMalloc));
 	    if(surface->format->palette != NULL)
     		_palette = SDL::Palette(surface->format->palette);
 

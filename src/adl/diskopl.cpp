@@ -31,11 +31,11 @@ CDiskopl::CDiskopl(const std::ostream &stream) :
   _stream(const_cast<OStream&>(reinterpret_cast<const OStream&>(stream))),
   old_freq(0.0f), del(1), nowrite(false)
 {
-  unsigned short clock = 0xffff;
+  uint16_t clock = 0xffff;
 
   currType = TYPE_OPL3;
   _stream.write("RAWADATA",8);
-  _stream.write((char*)&clock, sizeof(clock));
+  _stream.putU16LE(clock);
 }
 
 CDiskopl::~CDiskopl()
@@ -44,15 +44,15 @@ CDiskopl::~CDiskopl()
 
 void CDiskopl::update(CadlPlayer *p)
 {
-  unsigned short	clock;
-  unsigned int		wait;
+  uint16_t	clock;
+  uint32_t	wait;
 
   if(p->getrefresh() != old_freq) {
     old_freq = p->getrefresh();
-    del = wait = (unsigned int)(18.2f / old_freq);
-    clock = (unsigned short)(1192737/(old_freq*(wait+1)));
+    del = wait = static_cast<uint32_t>(18.2f / old_freq);
+    clock = static_cast<uint32_t>(1192737/(old_freq*(wait+1)));
     _stream.put(0); _stream.put(2);
-    _stream.write((char*)&clock, sizeof(clock));
+    _stream.putU16LE(clock);
   }
   if(!nowrite) {
     _stream.put(del+1);

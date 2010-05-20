@@ -25,10 +25,10 @@ class Player: public CadlPlayer
 	    }
 
 	static void callback(void *userdata, uint8_t *audiobuf, int len) {
-	    Player *self = (Player *)userdata;
+	    Player	*self = reinterpret_cast<Player *>(userdata);
 	    static long	minicnt = 0;
-	    long		i, towrite = len / self->getsampsize();
-	    char		*pos = (char *)audiobuf;
+	    long	i, towrite = len / self->getsampsize();
+	    char	*pos = reinterpret_cast<char *>(audiobuf);
 
 	    // Prepare audiobuf with emulator output
 	    while(towrite > 0) {
@@ -36,10 +36,10 @@ class Player: public CadlPlayer
 		    minicnt += self->_freq;
 		    self->_playing = self->update();
 		}
-		i = std::min(towrite, (long)(minicnt / self->getrefresh() + 4) & ~3);
-		self->_opl->update((short *)pos, i);
+		i = std::min(towrite, static_cast<long>(minicnt / self->getrefresh() + 4) & ~3);
+		self->_opl->update(reinterpret_cast<short*>(pos), i);
 		pos += i * self->getsampsize(); towrite -= i;
-		minicnt -= (long)(self->getrefresh() * i);
+		minicnt -= static_cast<long>(self->getrefresh() * i);
 	    }
 	}
 

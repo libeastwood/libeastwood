@@ -10,7 +10,7 @@ namespace eastwood { namespace SDL { namespace Mixer {
 
 static std::tr1::shared_ptr<Mix_Chunk> createChunk(bool allocated, uint8_t *buffer, uint32_t length, uint8_t volume = 128)
 {
-    Mix_Chunk *chunk = (Mix_Chunk*)malloc(sizeof(Mix_Chunk));
+    Mix_Chunk *chunk = reinterpret_cast<Mix_Chunk*>(malloc(sizeof(Mix_Chunk)));
     chunk->allocated = allocated;
     chunk->abuf = buffer;
     chunk->alen = length;
@@ -35,7 +35,7 @@ class Sound : public eastwood::Sound
 	    eastwood::Sound(sound->alen, NULL, 0, 0, FMT_INVALID),
 	    _chunk(createChunk(true, NULL, sound->alen)) {
 		uint16_t format;
-		Mix_QuerySpec((int*)&_frequency, &format, (int*)&_channels);
+		Mix_QuerySpec(reinterpret_cast<int*>(&_frequency), &format, reinterpret_cast<int*>(&_channels));
 		switch(format) {
 		    default:
 		    case AUDIO_U8:	_format = FMT_U8;	break;
@@ -46,7 +46,7 @@ class Sound : public eastwood::Sound
 		    case AUDIO_S16MSB:	_format = FMT_S16BE;	break;
 		}
 
-		_buffer.reset(new Bytes((uint8_t*)malloc(_size), BufMalloc));
+		_buffer.reset(new Bytes(reinterpret_cast<uint8_t*>(malloc(_size)), BufMalloc));
 		memcpy(*this, sound->abuf, _size);
 		_chunk->abuf = *this;
 
@@ -61,7 +61,7 @@ class Sound : public eastwood::Sound
 	}
 
 	Sound &operator=(const eastwood::Sound &sound) {
-	    *(eastwood::Sound*)this = sound;
+	    *(static_cast<eastwood::Sound*>(this)) = sound;
 	    _chunk->abuf = NULL;
 	    _chunk = createChunk(true, *this, size());
 
@@ -70,7 +70,7 @@ class Sound : public eastwood::Sound
 	Sound &operator=(const Mix_Chunk *sound) {
 	    _chunk->abuf = NULL;
 	    _chunk.reset(const_cast<Mix_Chunk*>(sound), Mix_FreeChunk);
-	    _buffer.reset(new Bytes((uint8_t*)sound->abuf, BufMalloc));
+	    _buffer.reset(new Bytes(reinterpret_cast<uint8_t*>(sound->abuf), BufMalloc));
 
 	    return *this;
 	}
@@ -80,7 +80,7 @@ class Sound : public eastwood::Sound
 	    uint16_t format;
 	    uint32_t frequency;
 	    AudioFormat aformat = FMT_INVALID;
-	    Mix_QuerySpec((int*)&frequency, &format, (int*)&channels);
+	    Mix_QuerySpec(reinterpret_cast<int*>(&frequency), &format, reinterpret_cast<int*>(&channels));
 	    switch(format) {
 		default:
 		case AUDIO_U8:	aformat = FMT_U8;	break;

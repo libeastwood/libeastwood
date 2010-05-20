@@ -13,7 +13,7 @@ static inline uint32_t getIndex(const uint32_t x) {
 }
 
 static inline TileType getType(const uint32_t x) {
-    return (TileType)(x & (TILE_NORMAL-1)<<16);
+    return static_cast<TileType>(x & static_cast<uint32_t>(TILE_NORMAL-1)<<16);
 }
 
 ShpFile::ShpFile(std::istream &stream, Palette palette) :
@@ -39,7 +39,7 @@ void ShpFile::readIndex()
     }
 
 
-    if( fileSize < (uint32_t) ((_size * 4) + 2 + 2)) {
+    if( fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) {
 	char error[256];
 	sprintf(error, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize);
 	throw(Exception(LOG_ERROR, "ShpFile", error));
@@ -212,24 +212,24 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
 	    switch(getType(tiles[i])) {
 		case TILE_NORMAL:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() , (uint8_t*)imageOut + y * width, width);
+			memcpy(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch(), static_cast<uint8_t*>(imageOut) + y * width, width);
 		    break;
 
 		case TILE_FLIPH:
 		    for(int y = 0; y < height; y++)
-			memcpy(	((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() , (uint8_t*)imageOut + (height-1-y) * width, width);
+			memcpy(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch(), static_cast<uint8_t*>(imageOut) + (height-1-y) * width, width);
 		    break;
 
 		case TILE_FLIPV:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() + x) = *((uint8_t*)imageOut + y * width + (width-1-x));
+			    *(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch() + x) = *(static_cast<uint8_t*>(imageOut) + y * width + (width-1-x));
 		    break;
 
 		case TILE_ROTATE:
 		    for(int y = 0; y < height; y++)
 			for(int x = 0; x < width; x++)
-			    *(((char*) ((uint8_t*)pic)) + i*width + (y+j*height) * pic.pitch() + x) = *((uint8_t*)imageOut + (height-1-y) * width + (width-1-x));
+			    *(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch() + x) = *(static_cast<uint8_t*>(imageOut) + (height-1-y) * width + (width-1-x));
 		    break;
 
 		default:

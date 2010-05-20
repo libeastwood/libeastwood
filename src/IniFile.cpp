@@ -117,7 +117,7 @@ bool IniFile::getBoolValue(std::string section, std::string key, bool defaultVal
 	}
 	
 	// convert std::string to lower case
-	transform(value.begin(),value.end(), value.begin(), (int(*)(int)) tolower);
+	transform(value.begin(),value.end(), value.begin(), ::tolower);
 	
 	if((value == "true") || (value == "enabled") || (value == "on") || (value == "1")) {
 		return true;
@@ -446,12 +446,12 @@ void IniFile::readFile()
 		lineNum++;
 		
 		completeLine = "";
-		unsigned char tmp;
+		uint8_t tmp;
 		
 		size_t size = _stream.sizeg();
-		while((uint32_t)_stream.tellg() < size-1) {
+		while(static_cast<uint32_t>(_stream.tellg()) < size-1) {
 			tmp = _stream.get();
-			if((uint32_t)_stream.tellg() == size-1) {
+			if(static_cast<uint32_t>(_stream.tellg()) == size-1) {
 				readfinished = true;
 				break;
 			} else if(tmp == '\n') {
@@ -461,7 +461,7 @@ void IniFile::readFile()
 			}
 		}
 		
-		const unsigned char *line = (const unsigned char*) completeLine.c_str();
+		const uint8_t *line = reinterpret_cast<const uint8_t*>(completeLine.c_str());
 		SyntaxError = false;
 		int ret;
 

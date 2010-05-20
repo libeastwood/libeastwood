@@ -39,10 +39,10 @@ EmcFileAssemble::~EmcFileAssemble() {
 
 
 bool EmcFileAssemble::headerCreate() {
-    uint16_t *buffer = (uint16_t*) (_scriptBuffer);
+    uint16_t *buffer = reinterpret_cast<uint16_t*>(_scriptBuffer);
 
     // Copy the header in
-    memcpy((uint8_t*) buffer, emcHeader, sizeof(emcHeader));
+    memcpy(reinterpret_cast<uint8_t*>(buffer), emcHeader, sizeof(emcHeader));
 
     buffer += 0x3;
 
@@ -58,7 +58,7 @@ bool EmcFileAssemble::headerCreate() {
     for(size_t ptrCount = 0; ptrCount < _pointerCount; ptrCount++)
 	*buffer++ = htobe16(_headerPointers[ptrCount]);
 
-    buffer += snprintf((char*)buffer, 5, "DATA")-1;
+    buffer += snprintf(reinterpret_cast<char*>(buffer), 5, "DATA")-1;
 
     // Write total script size
     *buffer = htobe16(_scriptSize);
@@ -71,7 +71,7 @@ bool EmcFileAssemble::scriptSave() {
     headerCreate();
 
     // Write the header, the pointers and the script
-    _outputStream.write((char*)_scriptBuffer, _scriptSize + (_pointerCount*2) + 0x1C);
+    _outputStream.write(reinterpret_cast<char*>(_scriptBuffer), _scriptSize + (_pointerCount*2) + 0x1C);
 
     return true;
 }
@@ -102,7 +102,7 @@ int EmcFileAssemble::scriptSectionCheck() {
 bool EmcFileAssemble::execute() {
 
     _scriptBuffer = new uint8_t[0x100000];			// should be big enough :p
-    memset((void*) _scriptBuffer, 0, 0x100000);
+    memset(reinterpret_cast<void*>(_scriptBuffer), 0, 0x100000);
 
     // Run the script assembler in pre process mode (find all jump locations)
     if(!scriptAssemble())
@@ -146,10 +146,10 @@ bool EmcFileAssemble::scriptAssemble() {
     _headerPointers = new uint16_t[_pointerCount];
 
     // Set the script pointer to the script starting position (in buffer)
-    _scriptPtr = (uint16_t*) (_scriptBuffer + (_pointerCount*2) + 0x1C);
+    _scriptPtr = reinterpret_cast<uint16_t*>(_scriptBuffer + (_pointerCount*2) + 0x1C);
 
     // Clear memory
-    memset((void*) _headerPointers, 0, _pointerCount * 2);
+    memset(reinterpret_cast<void*>(_headerPointers), 0, _pointerCount * 2);
 
     // Loop until end of source file
     while(static_cast<std::streamoff>(_inputStream.tellg()) < lastOffset) {
@@ -228,8 +228,9 @@ void EmcFileAssemble::o_Goto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int bb = 0;
 
-    if(!_modePreProcess && labelPos == (size_t)-1)
-	*((uint8_t*) bb) = 01;
+    // huh? this can't be right???
+    if(!_modePreProcess && labelPos == static_cast<size_t>(-1))
+	*(reinterpret_cast<uint8_t*>(bb)) = 01;
 
     *(_scriptPtr) |= 0x80;
     *(_scriptPtr) |= htobe16(labelPos);

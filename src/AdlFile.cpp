@@ -57,7 +57,7 @@
 
 namespace eastwood {
 
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#define ARRAYSIZE(x) (static_cast<int>(sizeof(x) / sizeof(x[0])))
 
 // Basic Adlib Programming:
 // http://www.gamedev.net/reference/articles/article446.asp
@@ -65,11 +65,11 @@ namespace eastwood {
 #define CALLBACKS_PER_SECOND 72
 
 static inline uint16_t READ_LE_UINT16(const void *ptr) {
-    return htole16(*(uint16_t*)ptr);
+    return htole16(*reinterpret_cast<const uint16_t*>(ptr));
 }
 
 static inline uint16_t READ_BE_UINT16(const void *ptr) {
-    return htobe16(*(uint16_t*)ptr);
+    return htobe16(*reinterpret_cast<const uint16_t*>(ptr));
 }
 
 class AdlibDriver {
@@ -595,7 +595,7 @@ int AdlibDriver::snd_writeByte(va_list &list) {
     int c = va_arg(list, int);
     uint8_t *ptr = getProgram(a) + b;
     uint8_t oldValue = *ptr;
-    *ptr = (uint8_t)c;
+    *ptr = static_cast<uint8_t>(c);
     return oldValue;
 }
 
@@ -847,8 +847,8 @@ void AdlibDriver::writeOPL(uint8_t reg, uint8_t val) {
 }
 
 void AdlibDriver::initChannel(Channel &channel) {
-    LOG_INFO("AdlibDriver", "initChannel(%lu)", (long)(&channel - _channels));
-    memset(&channel.dataptr, 0, sizeof(Channel) - ((char*)&channel.dataptr - (char*)&channel));
+    LOG_INFO("AdlibDriver", "initChannel(%lu)", static_cast<long>(&channel - _channels));
+    memset(&channel.dataptr, 0, sizeof(Channel) - (reinterpret_cast<char*>(&channel.dataptr) - reinterpret_cast<char*>(&channel)));
 
     channel.tempo = 0xFF;
     channel.priority = 0;
@@ -860,7 +860,7 @@ void AdlibDriver::initChannel(Channel &channel) {
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
-    LOG_INFO("AdlibDriver", "noteOff(%lu)", (long)(&channel - _channels));
+    LOG_INFO("AdlibDriver", "noteOff(%lu)", static_cast<long>(&channel - _channels));
 
     // The control channel has no corresponding Adlib channel
 
@@ -939,7 +939,7 @@ uint16_t AdlibDriver::getRandomNr() {
 }
 
 void AdlibDriver::setupDuration(uint8_t duration, Channel &channel) {
-    LOG_INFO("AdlibDriver", "setupDuration(%d, %lu)", duration, (long)(&channel - _channels));
+    LOG_INFO("AdlibDriver", "setupDuration(%d, %lu)", duration, static_cast<long>(&channel - _channels));
     if (channel.durationRandomness) {
 	channel.duration = duration + (getRandomNr() & channel.durationRandomness);
 	return;
@@ -953,7 +953,7 @@ void AdlibDriver::setupDuration(uint8_t duration, Channel &channel) {
 // to noteOn(), which will always play the current note.
 
 void AdlibDriver::setupNote(uint8_t rawNote, Channel &channel, bool flag) {
-    LOG_INFO("AdlibDriver", "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
+    LOG_INFO("AdlibDriver", "setupNote(%d, %lu)", rawNote, static_cast<long>(&channel - _channels));
 
     channel.rawNote = rawNote;
 
@@ -1007,7 +1007,7 @@ void AdlibDriver::setupNote(uint8_t rawNote, Channel &channel, bool flag) {
 }
 
 void AdlibDriver::setupInstrument(uint8_t regOffset, uint8_t *dataptr, Channel &channel) {
-    LOG_INFO("AdlibDriver", "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
+    LOG_INFO("AdlibDriver", "setupInstrument(%d, %p, %lu)", regOffset, reinterpret_cast<const void *>(dataptr), static_cast<long>(&channel - _channels));
     // Amplitude Modulation / Vibrato / Envelope Generator Type /
     // Keyboard Scaling Rate / Modulator Frequency Multiple
     writeOPL(0x20 + regOffset, *dataptr++);
@@ -1054,7 +1054,7 @@ void AdlibDriver::setupInstrument(uint8_t regOffset, uint8_t *dataptr, Channel &
 // primary effect 2.
 
 void AdlibDriver::noteOn(Channel &channel) {
-    LOG_INFO("AdlibDriver", "noteOn(%lu)", (long)(&channel - _channels));
+    LOG_INFO("AdlibDriver", "noteOn(%lu)", static_cast<long>(&channel - _channels));
 
     // The "note on" bit is set, and the current note is played.
 
@@ -1068,7 +1068,7 @@ void AdlibDriver::noteOn(Channel &channel) {
 }
 
 void AdlibDriver::adjustVolume(Channel &channel) {
-    LOG_INFO("AdlibDriver", "adjustVolume(%lu)", (long)(&channel - _channels));
+    LOG_INFO("AdlibDriver", "adjustVolume(%lu)", static_cast<long>(&channel - _channels));
     // Level Key Scaling / Total Level
 
     writeOPL(0x43 + _regOffset[_curChannel], calculateOpLevel2(channel));
@@ -1106,7 +1106,7 @@ void AdlibDriver::primaryEffect1(Channel &channel) {
     // that it won't be affected by any of the calculations below.
     uint16_t unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
 
-    int16_t unk3 = (int16_t)channel.unk30;
+    int16_t unk3 = static_cast<int16_t>(channel.unk30);
 
     if (unk3 >= 0) {
 	unk1 += unk3;
@@ -1641,7 +1641,7 @@ int AdlibDriver::update_setDurationRandomness(__attribute__((unused)) uint8_t *&
 }
 
 int AdlibDriver::update_changeChannelTempo(__attribute__((unused)) uint8_t *&dataptr, Channel &channel, uint8_t value) {
-    int tempo = channel.tempo + (int8_t)value;
+    int tempo = channel.tempo + static_cast<int8_t>(value);
 
     if (tempo <= 0)
 	tempo = 1;
@@ -2383,15 +2383,15 @@ bool CadlPlayer::load(std::istream &stream)
     _driver->callback(8, int(-1));
 
     if(_v2)
-    	is.read((char*)_trackEntries, 500);
+    	is.read(reinterpret_cast<char*>(_trackEntries), 500);
     else
-    	is.read((char*)_trackEntries, 120);
+    	is.read(reinterpret_cast<char*>(_trackEntries), 120);
 
-    soundDataSize = is.sizeg() - (int)is.tellg();
+    soundDataSize = is.sizeg() - static_cast<int>(is.tellg());
 
     _soundDataPtr = new uint8_t[soundDataSize];
 
-    is.read((char*)_soundDataPtr, soundDataSize);
+    is.read(reinterpret_cast<char*>(_soundDataPtr), soundDataSize);
 
     _driver->callback(4, _soundDataPtr);
 

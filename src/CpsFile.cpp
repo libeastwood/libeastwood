@@ -14,10 +14,10 @@ namespace eastwood {
 CpsFile::CpsFile(std::istream &stream, Palette palette) :
     Decode(stream, 320, 200, palette), _format(UNCOMPRESSED)
 {
-    if((uint16_t)(_stream.getU16LE()+_stream.gcount()) != _stream.sizeg())
+    if(static_cast<uint16_t>(_stream.getU16LE()+_stream.gcount()) != _stream.sizeg())
 	throw(Exception(LOG_ERROR, "CpsFile", "Invalid file size"));
 
-    _format = (compressionFormat)_stream.getU16LE();
+    _format = static_cast<compressionFormat>(_stream.getU16LE());
     switch(_format) {
 	case UNCOMPRESSED:
 	case FORMAT_80:
@@ -56,7 +56,7 @@ Surface eastwood::CpsFile::getSurface()
 
     switch(_format) {
 	case UNCOMPRESSED:
-	    _stream.read(reinterpret_cast<char*>((uint8_t*)pic), pic.size());
+	    _stream.read(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)), pic.size());
 	    break;
 	case FORMAT_LBM:
 	    //TODO: implement?

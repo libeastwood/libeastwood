@@ -151,10 +151,10 @@ class EmcFileBase {
 	const char	**_objectFunctions;	// Pointer to current script executable functions
 
 	size_t		_lineCount;				
-	const uint8_t	*_scriptBuffer;		// script uint8_t stream
+	uint8_t		*_scriptBuffer;		// script uint8_t stream
 	uint16_t	*_scriptPtr;		// Pointer in _scriptBuffer to current opcode
 	uint16_t	_scriptPos;		// Line number of current opcode
-	const uint8_t	*_scriptStart;		// pointer in _scriptBuffer to start of actual script
+	uint8_t		*_scriptStart;		// pointer in _scriptBuffer to start of actual script
 	script_t	_scriptType;		// Type of script (BUILD/TEAM/UNIT)
 
 	std::vector<labelPosition> _scriptLabels;	// List of memory locations which can/are jumped to
@@ -163,7 +163,7 @@ class EmcFileBase {
 	size_t scriptLabelGet(std::string label) {
 	    size_t pos = scriptLabel(label);
 
-	    if(pos == (size_t)-1)
+	    if(pos == static_cast<size_t>(-1))
 		return -1;
 
 	    return _scriptLabels[pos]._scriptPos;
@@ -209,7 +209,7 @@ class EmcFileBase {
 	    if(labelEndPos == std::string::npos)
 		labelEndPos = label.length();
 
-	    if(labelPos == (size_t)-1) {
+	    if(labelPos == static_cast<size_t>(-1)) {
 		LP._name += label.substr(0, labelEndPos);
 		LP._scriptPos = position;
 

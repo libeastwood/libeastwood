@@ -122,7 +122,7 @@ void CEmuopl::update(short *buf, int samples)
   //now reduce to 8bit if we need to
   if(!use16bit)
     for(i=0;i<(stereo ? samples*2 : samples);i++)
-      ((char *)buf)[i] = (outbuf[i] >> 8) ^ 0x80;
+      reinterpret_cast<char *>(buf)[i] = (outbuf[i] >> 8) ^ 0x80;
 }
 
 void CEmuopl::write(int reg, int val)
