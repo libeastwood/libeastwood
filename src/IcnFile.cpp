@@ -46,7 +46,7 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     if(tmp != 0 || chunk->getU32LE() != ID_FILLER)
 	throw(Exception(LOG_WARNING, "IcnFile", "Suspicious ICN-File: Found non-null bytes where null bytes expected"));
     for(std::vector<std::vector<uint8_t> >::iterator file = _SSET.begin(); file != _SSET.end(); file++)
-    	chunk->read((char*)&file->front(), file->size());
+    	chunk->read(reinterpret_cast<char*>(&file->front()), file->size());
 
     chunk = iff.next();
 
@@ -55,7 +55,7 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL chunk found"));
     _RPAL.resize(chunk->_size >> _bpp, std::vector<uint8_t>(1<<_bpp));
     for(std::vector<std::vector<uint8_t> >::iterator pal = _RPAL.begin(); pal != _RPAL.end(); pal++)
-    	chunk->read((char*)&pal->front(), pal->size());
+    	chunk->read(reinterpret_cast<char*>(&pal->front()), pal->size());
     
     chunk = iff.next();
 
@@ -64,7 +64,7 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RTBL chunk found"));
     _RTBL.resize(chunk->_size);
 
-    chunk->read((char*)&_RTBL.front(), _RTBL.size());
+    chunk->read(reinterpret_cast<char*>(&_RTBL.front()), _RTBL.size());
 
 }
 
@@ -135,7 +135,7 @@ Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
     for(int n = 0; n < tilesN; n++)
 	for(int y = 0; y < tilesY; y++)
 	    for(int x = 0; x < tilesX; x++, idx++)
-		createImage(*idx, (uint8_t*)pic + (pic.pitch())*y*_height + (x+n*tilesX) * _width, pic.pitch());
+		createImage(*idx, static_cast<uint8_t*>(pic) + (pic.pitch())*y*_height + (x+n*tilesX) * _width, pic.pitch());
 
     return pic;
 }

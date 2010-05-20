@@ -82,7 +82,7 @@ Surface Surface::getScaled(Scaler scaler)
 	default:
 	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
     }
-    scale(scaler, (uint8_t*)scaled, scaled._pitch, (uint8_t*)*this, _pitch, _Bpp, _width, _height);
+    scale(scaler, static_cast<uint8_t*>(scaled), scaled._pitch, static_cast<uint8_t*>(*this), _pitch, _Bpp, _width, _height);
     return scaled;
 }
 
@@ -99,7 +99,7 @@ bool Surface::saveBMP(std::ostream &output)
 	throw Exception(LOG_ERROR, "Surface", "Format not supported");
 
     /* Write the BMP file header values */
-    fp_offset = (uint32_t)os.tellp();
+    fp_offset = static_cast<uint32_t>(os.tellp());
     os.write(header.magic, sizeof(header.magic));
     os.putU32LE(header.size);
     os.putU16LE(header.reserved1);
@@ -130,7 +130,7 @@ bool Surface::saveBMP(std::ostream &output)
     }
 
     /* Write the bitmap offset */
-    header.offBits = (uint32_t)os.tellp()-fp_offset;
+    header.offBits = static_cast<uint32_t>(os.tellp())-fp_offset;
     os.seekp(fp_offset+10, std::ios::beg);
     
     os.putU32LE(header.offBits);
@@ -138,14 +138,14 @@ bool Surface::saveBMP(std::ostream &output)
 
     /* Write the bitmap image upside down */
     int pad  = ((_pitch%4) ? (4-(_pitch%4)) : 0);
-    for(bits = (uint8_t*)*this+((_height-1)*_pitch); bits >= (uint8_t*)*this; bits-= _pitch) {
-	os.write((char*)bits, _pitch);
+    for(bits = static_cast<uint8_t*>(*this)+((_height-1)*_pitch); bits >= static_cast<uint8_t*>(*this); bits-= _pitch) {
+	os.write(reinterpret_cast<char*>(bits), _pitch);
 	for (int i=0; i<pad; ++i )
 	    os.put(0);
     }
 
     /* Write the BMP file size */
-    header.size = (uint32_t)os.tellp()-fp_offset;
+    header.size = static_cast<uint32_t>(os.tellp())-fp_offset;
     os.seekp(fp_offset+2, std::ios::beg);
     os.putU32LE(header.size);
     os.seekp(fp_offset+header.size, std::ios::beg);

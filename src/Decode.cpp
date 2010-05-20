@@ -80,7 +80,7 @@ int Decode::decode80(uint8_t *image_out, uint32_t checksum)
 		// Finished decoding
 		if (!count)
 		    break;
-		_stream.read((char*)writep, count);
+		_stream.read(reinterpret_cast<char*>(writep), count);
 		writep += count;
 	    } else {
 		if(count < 0x3e) {
@@ -157,7 +157,7 @@ int Decode::decode40(const uint8_t *image_in, uint8_t *image_out)
 	    //bit 7 = 1
 	    if (!(count = code & 0x7f))
 	    {
-		count =  htole16(*((uint16_t*)readp));
+		count =  htole16(*(reinterpret_cast<const uint16_t*>(readp)));
 		readp += 2;
 		code = count >> 8;
 		if (~code & 0x80)
@@ -204,7 +204,7 @@ void Decode::decode2(std::istream &stream, uint8_t *out, int size)
 {
     int count;
     while (size > 0) {
-	stream.getline((char*)out, size, 0);
+	stream.getline(reinterpret_cast<char*>(out), size, 0);
 	count = stream.gcount();
 	out += count;
 	size -= count;

@@ -24,7 +24,7 @@ IStream& IStream::operator=(const IStream &stream)
 
 template <typename T> inline
 IStream& IStream::readT(T &value) {
-    return reinterpret_cast<IStream&>(read((char*)&value, sizeof(value)));
+    return reinterpret_cast<IStream&>(read(reinterpret_cast<char*>(&value), sizeof(value)));
 }
 
 template <typename T> inline
@@ -97,12 +97,12 @@ IStream& IStream::readU32BE(uint32_t *buf, size_t n)
 
 IStream& IStream::readU16LE(uint16_t *buf, size_t n)
 {
-    return reinterpret_cast<IStream&>(read((char*)buf, n*sizeof(buf[0])));
+    return reinterpret_cast<IStream&>(read(reinterpret_cast<char*>(buf), n*sizeof(buf[0])));
 }
 
 IStream& IStream::readU32LE(uint32_t *buf, size_t n)
 {
-    return reinterpret_cast<IStream&>(read((char*)buf, n*sizeof(buf[0])));
+    return reinterpret_cast<IStream&>(read(reinterpret_cast<char*>(buf), n*sizeof(buf[0])));
 }
 #endif
 

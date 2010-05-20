@@ -16,7 +16,7 @@ ExeFile::ExeFile(std::istream &stream) :
 void ExeFile::readHeader()
 {
     seekg(0, std::ios::beg);
-    readU16LE((uint16_t*)&_header, sizeof(_header)/sizeof(uint16_t));
+    readU16LE(reinterpret_cast<uint16_t*>(&_header), sizeof(_header)/sizeof(uint16_t));
 
     // File header must start with "MZ" or "ZM"
     if(_header.signature != MAGIC1 && _header.signature != MAGIC2)
@@ -51,7 +51,7 @@ uint16_t ExeFile::findOff(uint16_t seg, std::vector<uint8_t> &data)
     char buf[0xffff];    
     read(buf, sizeof(buf));
 
-    for(uint16_t off = 0, end = (uint16_t)gcount() - data.size(); off < end; ++off)
+    for(uint16_t off = 0, end = static_cast<uint16_t>(gcount()) - data.size(); off < end; ++off)
 	if(memcmp(&buf[off], &data.front(), data.size()) == 0)
 	    return off;
 

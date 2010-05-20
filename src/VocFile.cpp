@@ -98,13 +98,13 @@ int VocFile::getSampleRateFromVOCRate(int vocSR) {
 void VocFile::readHeader() {
     VocFileHeader fileHeader;    
 
-    _stream.read((char*)&fileHeader, 8);
+    _stream.read(reinterpret_cast<char*>(&fileHeader), 8);
 
     if (!memcmp(&fileHeader, "VTLK", 4)) {
-	_stream.read((char*)&fileHeader, sizeof(VocFileHeader));
+	_stream.read(reinterpret_cast<char*>(&fileHeader), sizeof(VocFileHeader));
 	if(!_stream.good()) goto invalid;
     } else if (!memcmp(&fileHeader, "Creative", 8)) {
-	_stream.read((char*)&fileHeader + 8, sizeof(VocFileHeader) - 8);
+	_stream.read(reinterpret_cast<char*>(&fileHeader) + 8, sizeof(VocFileHeader) - 8);
 	if(!_stream.good()) goto invalid;
     } else {
 invalid:
@@ -145,7 +145,7 @@ Sound VocFile::getSound()
 
 
     while (!_stream.eof()) {
-	code = (VocCode)_stream.get();
+	code = static_cast<VocCode>(_stream.get());
 	if(code == VOC_CODE_TERM) {
 	    //TODO: throw exception?
 	    break;
@@ -171,7 +171,7 @@ Sound VocFile::getSound()
 		    format = FMT_U8;
 		    channels = 1;
 		} else {
-		    _stream.read((char*)frequency, sizeof(frequency));
+		    _stream.read(reinterpret_cast<char*>(frequency), sizeof(frequency));
 		    frequency = htole32(frequency);
 		    int bits = _stream.get();
 		    channels = _stream.get();
@@ -183,7 +183,7 @@ Sound VocFile::getSound()
 			format = FMT_U8;
 		    else if(bits == 16)
 			format = FMT_U16LE;
-		    _stream.read((char*)packing, sizeof(packing));
+		    _stream.read(reinterpret_cast<char*>(packing), sizeof(packing));
 		    packing = htole16(packing);
 		    _stream.seekg(sizeof(uint32_t), std::ios::cur);
 		    len -= 12;
@@ -192,11 +192,11 @@ Sound VocFile::getSound()
 		if (packing == 0) {
     		    if (size) {
     			uint8_t *newBuffer = new uint8_t[size + len];
-    			buffer = (uint8_t*)memcpy(newBuffer, buffer, size);
+    			buffer = reinterpret_cast<uint8_t*>(memcpy(newBuffer, buffer, size));
     		    } else
     			buffer = new uint8_t[len];
 
-		    _stream.read((char*)buffer + size, len);
+		    _stream.read(reinterpret_cast<char*>(buffer) + size, len);
 		    size += len;
 		    vocBeginLoop = size;
 		    vocEndLoop = size;
@@ -207,14 +207,14 @@ Sound VocFile::getSound()
 
 	    case VOC_CODE_SILENCE: {
 		uint16_t silenceLength;
-		_stream.read((char*)silenceLength, sizeof(silenceLength));
+		_stream.read(reinterpret_cast<char*>(silenceLength), sizeof(silenceLength));
 		silenceLength = htole16(silenceLength);
 		uint8_t time_constant = _stream.get();
 		uint32_t silenceRate = getSampleRateFromVOCRate(time_constant);
 
 		uint32_t length = 0;
 		if(frequency != 0) {
-		    length = (uint32_t) ((((double) silenceRate)/((double) frequency)) * silenceLength) + 1;
+		    length = static_cast<uint32_t>(static_cast<double>(silenceRate)/(static_cast<double>(frequency) * silenceLength)) + 1;
 		} else {
 		    LOG_ERROR("VocFile", "The silence in this voc-file is right at the beginning.\n"
 			    "Therefore it is not possible to adjust the silence sample rate to the sample rate of the other sound data in this file!");
@@ -223,7 +223,7 @@ Sound VocFile::getSound()
 
 		if (size) {
 		    uint8_t *newBuffer = new uint8_t[size + length];
-		    buffer = (uint8_t*)memcpy(newBuffer, buffer, size);
+		    buffer = reinterpret_cast<uint8_t*>(memcpy(newBuffer, buffer, size));
 		} else
 		    buffer = new uint8_t[length];
 
@@ -237,7 +237,7 @@ Sound VocFile::getSound()
 	    case VOC_CODE_TEXT:
 	    case VOC_CODE_LOOPBEGIN:
 		assert(len == sizeof(vocLoops));
-		_stream.read((char*)vocLoops, len);
+		_stream.read(reinterpret_cast<char*>(vocLoops), len);
 		vocLoops = htole16(vocLoops);
 	    break;
 

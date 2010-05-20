@@ -11,7 +11,7 @@ OStream::OStream(const std::ostream &stream) :
 template <typename T> inline
 OStream& OStream::writeT(T &value)
 {
-    return reinterpret_cast<OStream&>(write((char*)&value, sizeof(value)));
+    return reinterpret_cast<OStream&>(write(reinterpret_cast<char*>(&value), sizeof(value)));
 }
 
 template <typename T> inline
@@ -81,12 +81,12 @@ OStream& OStream::writeU32BE(uint32_t *buf, size_t n)
 
 OStream& OStream::writeU16LE(uint16_t *buf, size_t n)
 {
-    return reinterpret_cast<OStream&>(write((char*)buf, n*sizeof(buf[0])));
+    return reinterpret_cast<OStream&>(write(reinterpret_cast<char*>(buf), n*sizeof(buf[0])));
 }
 
 OStream& OStream::writeU32LE(uint32_t *buf, size_t n)
 {
-    return reinterpret_cast<OStream&>(write((char*)buf, n*sizeof(buf[0])));
+    return reinterpret_cast<OStream&>(write(reinterpret_cast<char*>(buf), n*sizeof(buf[0])));
 }
 #endif
 
