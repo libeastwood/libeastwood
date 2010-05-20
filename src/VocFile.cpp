@@ -49,7 +49,7 @@ struct VocFileHeader {
 PACK
 
 VocFile::VocFile(std::istream &stream) :
-    _stream(stream)
+    _stream(reinterpret_cast<IStream&>(stream))
 {
     readHeader();
 }
@@ -101,10 +101,10 @@ void VocFile::readHeader() {
     _stream.read(reinterpret_cast<char*>(&fileHeader), 8);
 
     if (!memcmp(&fileHeader, "VTLK", 4)) {
-	_stream.read(reinterpret_cast<char*>(&fileHeader), sizeof(VocFileHeader));
+	_stream.read(reinterpret_cast<char*>(&fileHeader), offsetof(VocFileHeader,datablock_offset));
 	if(!_stream.good()) goto invalid;
     } else if (!memcmp(&fileHeader, "Creative", 8)) {
-	_stream.read(reinterpret_cast<char*>(&fileHeader) + 8, sizeof(VocFileHeader) - 8);
+	_stream.read(reinterpret_cast<char*>(&fileHeader) + 8, offsetof(VocFileHeader,datablock_offset) - 8);
 	if(!_stream.good()) goto invalid;
     } else {
 invalid:
@@ -115,14 +115,12 @@ invalid:
     if (memcmp(fileHeader.desc, "Creative Voice File", 19) != 0)
 	goto invalid;
 
-    int32_t offset = htole16(fileHeader.datablock_offset);
-    int16_t version = htole16(fileHeader.version);
-    int16_t code = htole16(fileHeader.id);
-    assert(offset == sizeof(VocFileHeader));
+    _stream.readU16LE(&fileHeader.datablock_offset, (sizeof(VocFileHeader)-offsetof(VocFileHeader,datablock_offset))/sizeof(uint16_t));
+    assert(fileHeader.datablock_offset == sizeof(VocFileHeader));
     // 0x100 is an invalid VOC version used by German version of DOTT (Disk) and
     // French version of Simon the Sorcerer 2 (CD)
-    assert(version == 0x010A || version == 0x0114 || version == 0x0100);
-    assert(code == ~version + 0x1234);
+    assert(fileHeader.version == 0x010A || fileHeader.version == 0x0114 || fileHeader.version == 0x0100);
+    assert(fileHeader.id == ~fileHeader.version + 0x1234);
 }
 
 
@@ -131,7 +129,7 @@ Sound VocFile::getSound()
 {
     uint8_t *buffer = NULL,
 	    channels = 0;
-    int16_t vocLoops = 0;
+    uint16_t vocLoops = 0;
     uint32_t len = 0,
 	     size = 0,
 	     frequency = 0,
@@ -172,8 +170,8 @@ Sound VocFile::getSound()
 		    channels = 1;
 		} else {
 		    _stream.read(reinterpret_cast<char*>(frequency), sizeof(frequency));
-		    frequency = htole32(frequency);
-		    int bits = _stream.get();
+		    frequency = _stream.getU32LE();
+		    uint8_t bits = _stream.get();
 		    channels = _stream.get();
 		    if (bits != 8 || channels != 1) {
 			//warning("Unsupported VOC file format (%d bits per sample, %d channels)", bits, channels);
@@ -183,8 +181,7 @@ Sound VocFile::getSound()
 			format = FMT_U8;
 		    else if(bits == 16)
 			format = FMT_U16LE;
-		    _stream.read(reinterpret_cast<char*>(packing), sizeof(packing));
-		    packing = htole16(packing);
+		    packing = _stream.getU16LE();
 		    _stream.seekg(sizeof(uint32_t), std::ios::cur);
 		    len -= 12;
 		}
@@ -206,9 +203,7 @@ Sound VocFile::getSound()
 	    } break;
 
 	    case VOC_CODE_SILENCE: {
-		uint16_t silenceLength;
-		_stream.read(reinterpret_cast<char*>(silenceLength), sizeof(silenceLength));
-		silenceLength = htole16(silenceLength);
+		uint16_t silenceLength = _stream.getU16LE();
 		uint8_t time_constant = _stream.get();
 		uint32_t silenceRate = getSampleRateFromVOCRate(time_constant);
 
@@ -237,8 +232,7 @@ Sound VocFile::getSound()
 	    case VOC_CODE_TEXT:
 	    case VOC_CODE_LOOPBEGIN:
 		assert(len == sizeof(vocLoops));
-		_stream.read(reinterpret_cast<char*>(vocLoops), len);
-		vocLoops = htole16(vocLoops);
+		vocLoops = _stream.getU16LE();
 	    break;
 
 	    case VOC_CODE_LOOPEND:

@@ -1,8 +1,7 @@
 #ifndef EASTWOOD_VOCFILE_H
 #define EASTWOOD_VOCFILE_H
 
-#include <istream>
-
+#include "eastwood/IStream.h"
 #include "eastwood/Sound.h"
 
 namespace eastwood {
@@ -38,7 +37,7 @@ class VocFile
 	 */
 	int getSampleRateFromVOCRate(int vocSR);
 
-	std::istream &_stream;
+	IStream &_stream;
 };
 
 }
