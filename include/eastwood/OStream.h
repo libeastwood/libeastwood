@@ -3,6 +3,8 @@
 
 #include <ostream>
 
+#include "eastwood/StdDef.h"
+
 namespace eastwood {
 
 class OStream : public std::ostream
