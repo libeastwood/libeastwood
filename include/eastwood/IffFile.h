@@ -192,6 +192,7 @@ class IffFile
     protected:
 	IFF_ID				_id;
 	uint32_t			_size;
+	IFF_ID				_formId;
 	IStream				&_stream;
 	std::tr1::shared_ptr<IFFChunk>	_formChunk;	//!< The root chunk of the file.
 	std::tr1::shared_ptr<IFFChunk>	_chunk; 	//!< The current chunk.
@@ -204,6 +205,7 @@ class IffFile
 
 	std::tr1::shared_ptr<IFFChunk> getChunk() { return _chunk; }
 
+	IFF_ID getType() const { return _id; }
 	/**
 	 * Returns the IFF FORM type.
 	 * @return the IFF FORM type of the stream, or 0 if FORM header is not found.

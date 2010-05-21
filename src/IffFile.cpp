@@ -4,7 +4,7 @@ namespace eastwood {
 static inline std::streambuf *getBuffer(IStream &stream, size_t size)
 {
     if(static_cast<size_t>((stream.sizeg() - stream.tellg())) < size)
-	throw(Exception(LOG_ERROR, "ISubStream()", "Size is greater than remaining file length"));
+	throw(Exception(LOG_ERROR, "IffFile()", "Size is greater than remaining file length"));
     std::string buffer(size, 0);
     stream.read(const_cast<char*>(buffer.data()), size);
 
@@ -28,13 +28,14 @@ IFFChunk::~IFFChunk() {
     if(rdbuf()) delete rdbuf();
 }
 
-IffFile::IffFile(IStream &stream) : _id(static_cast<IFF_ID>(stream.getU32BE())), _size(stream.getU32BE()), _stream(stream), _formChunk(), _chunk() {
+IffFile::IffFile(IStream &stream) :
+    _id(static_cast<IFF_ID>(stream.getU32BE())), _size(stream.getU32BE()), _formId(static_cast<IFF_ID>(stream.getU32BE())),
+    _stream(stream), _formChunk(), _chunk() {
     if (_id != ID_FORM) {
 	throw(Exception(LOG_ERROR, "IffFile", "IffFile input is not a FORM type IFF file"));
     }
-    _id = static_cast<IFF_ID>(_stream.getU32BE());
     _stream.seekg(-_stream.gcount(), std::ios::cur);
-    _formChunk.reset(new IFFChunk(_id, _size, _stream));
+    _formChunk.reset(new IFFChunk(_formId, _size, _stream));
     _formChunk->seekg(4);
     next();
 }
