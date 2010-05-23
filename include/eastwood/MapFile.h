@@ -9,8 +9,9 @@
 */
 
 #include <vector>
+#include <istream>
 
-#include "eastwood/IStream.h"
+#include "eastwood/StdDef.h"
 
 // Some very nice documentation on this format, or more specifically the
 // ICON.MAP that comes with Dune 2 can be found at:
@@ -41,7 +42,6 @@ class MapFile
 	}
 
     private:
-	IStream &_stream;
 	std::vector<std::vector<uint16_t> > _tileSet;
 };
 
