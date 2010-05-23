@@ -27,6 +27,7 @@ SET( LIBEASTWOOD_SRCS
   Surface.cpp
   VocFile.cpp
   WsaFile.cpp
+  XmiFile.cpp
   adl/adlibemu.c
   adl/analopl.cpp
   adl/diskopl.cpp

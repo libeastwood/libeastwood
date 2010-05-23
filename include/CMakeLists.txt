@@ -31,6 +31,7 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/Surface.h
   eastwood/VocFile.h
   eastwood/WsaFile.h
+  eastwood/XmiFile.h
 )
 
 SET( LIBEASTWOOD_ADLIB_HEADERS
