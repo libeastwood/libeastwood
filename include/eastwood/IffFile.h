@@ -25,6 +25,8 @@
 #ifndef EASTWOOD_IFFCONTAINER_H
 #define EASTWOOD_IFFCONTAINER_H
 
+#include <vector>
+
 #include "eastwood/StdDef.h"
 #include "eastwood/IStream.h"
 #include "eastwood/Exception.h"
@@ -170,18 +172,28 @@ std::string ID2string(IFF_ID id);
  *
  */
 struct IFFChunk : public IStream {
-	IFF_ID		_id;
-	uint32_t	_size;
+	IFF_ID		id;
+	uint32_t	size;
 
-	IFFChunk() : _id(ID_FILLER), _size(0) {}
+	IFFChunk() : id(ID_FILLER), size(0) {}
 	IFFChunk(IStream &stream);
 	IFFChunk(uint32_t id, uint32_t size, IStream &stream);
-	~IFFChunk();
+	virtual ~IFFChunk();
 
 	operator std::string() const {
-	    return ID2string(_id);
+	    return ID2string(id);
 	}
 };
+
+typedef std::tr1::shared_ptr<IFFChunk> IffChunk;
+
+struct IFFGroupChunk : public IFFChunk {
+    IFF_ID		groupId;
+
+    IFFGroupChunk(uint32_t id, IStream &stream);
+};
+
+typedef std::tr1::shared_ptr<IFFGroupChunk> GroupChunk;
 
 /**
  *  Parser for IFF containers.
@@ -190,33 +202,30 @@ class IffFile
 {
 
     protected:
-	IFF_ID				_id;
-	uint32_t			_size;
-	IFF_ID				_formId;
 	IStream				&_stream;
-	std::tr1::shared_ptr<IFFChunk>	_formChunk;	//!< The root chunk of the file.
-	std::tr1::shared_ptr<IFFChunk>	_chunk; 	//!< The current chunk.
+	std::vector<GroupChunk>		_formChunk;	//!< The root chunk of the file.
+	IffChunk			_chunk; 	//!< The current chunk.
 
     public:
 	IffFile(IStream &stream);
 	~IffFile();
 
-	std::tr1::shared_ptr<IFFChunk> next();
+	IffChunk next();
 
-	std::tr1::shared_ptr<IFFChunk> getChunk() { return _chunk; }
+	IffChunk getChunk() { return _chunk; }
 
-	IFF_ID getType() const { return _id; }
+	IFF_ID getType() const { return _formChunk.back()->id; }
 	/**
 	 * Returns the IFF FORM type.
 	 * @return the IFF FORM type of the stream, or 0 if FORM header is not found.
 	 */
-	IFF_ID getFORMType() const { return _formChunk->_id; };
+	IFF_ID getGroupType() const { return _formChunk.back()->groupId; };
 
 	/**
 	 * Returns the size of the data.
 	 * @return the size of the data in file, or -1 if FORM header is not found.
 	 */
-	uint32_t getFORMSize() const { return _formChunk->_size; }
+	uint32_t getGroupSize() const { return _formChunk.back()->size; }
 
 };
 

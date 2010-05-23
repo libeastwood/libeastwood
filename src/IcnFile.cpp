@@ -18,12 +18,12 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     
     IffFile iff(_stream);
 
-    if(iff.getFORMType() != ID_ICON)
+    if(iff.getGroupType() != ID_ICON)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No ICON chunk found"));
 
     std::tr1::shared_ptr<IFFChunk> chunk = iff.getChunk();
     // Session Information
-    if(chunk->_id != ID_SINF)
+    if(chunk->id != ID_SINF)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SINF chunk found "));
 
     _width = chunk->get();
@@ -37,7 +37,7 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     chunk = iff.next();
 
     // Structure Set
-    if(chunk->_id != ID_SSET)
+    if(chunk->id != ID_SSET)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No SSET chunk found"));
 
     tmp = chunk->getU16LE();
@@ -51,18 +51,18 @@ IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
     chunk = iff.next();
 
     // RIFF Palette
-    if(chunk->_id != ID_RPAL)
+    if(chunk->id != ID_RPAL)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RPAL chunk found"));
-    _RPAL.resize(chunk->_size >> _bpp, std::vector<uint8_t>(1<<_bpp));
+    _RPAL.resize(chunk->size >> _bpp, std::vector<uint8_t>(1<<_bpp));
     for(std::vector<std::vector<uint8_t> >::iterator pal = _RPAL.begin(); pal != _RPAL.end(); pal++)
     	chunk->read(reinterpret_cast<char*>(&pal->front()), pal->size());
     
     chunk = iff.next();
 
     // Reference table
-    if(chunk->_id != ID_RTBL)
+    if(chunk->id != ID_RTBL)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No RTBL chunk found"));
-    _RTBL.resize(chunk->_size);
+    _RTBL.resize(chunk->size);
 
     chunk->read(reinterpret_cast<char*>(&_RTBL.front()), _RTBL.size());
 
