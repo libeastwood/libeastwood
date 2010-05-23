@@ -644,7 +644,7 @@ uint32_t XmiFile::convertListToMTrk (OStream &dest, midi_event *mlist)
 
 	i += putVLQ(dest, delta);
 
-	if ((event->status != last_status) || (event->status >= 0xF0)) {
+	if ((event->status != last_status) || (event->status >= MIDI_STATUS_SYSEX)) {
 	    dest.put(event->status);
 	    i++;
 	}
