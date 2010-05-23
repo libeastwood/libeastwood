@@ -205,15 +205,14 @@ void PakFile::readIndex()
     char name[256];
     uint32_t offset = stream.getU32LE();
 
-    while(stream.peek()) {
+    while(offset) {
         uint32_t start = offset,
                  size;
 
 	stream.getline(name, 256, 0);
         LOG_INFO("PakFile", "Found file %s", name);
 
-        size = ((stream.peek() != 0) ? (offset = stream.getU32LE()) : stream.sizeg()) - start;
-
+        size = ((offset = stream.getU32LE()) != 0 ? offset : stream.sizeg()) - start;
         _fileEntries.insert(make_pair(name, FileEntry(start, size)));
         _fileNames.push_back(name);
     }
