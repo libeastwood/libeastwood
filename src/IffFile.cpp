@@ -31,7 +31,7 @@ IFFChunk::~IFFChunk() {
 
 IFFGroupChunk::IFFGroupChunk(uint32_t id, IStream &stream) : IFFChunk(), groupId() {
     this->id = static_cast<IFF_ID>(id);
-    size = stream.getU32BE()-sizeof(uint32_t);
+    size = stream.getU32BE()-stream.gcount();
     groupId = static_cast<IFF_ID>(stream.getU32BE());
     std::ios::init(getBuffer(stream, size));
 }
