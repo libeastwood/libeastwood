@@ -53,11 +53,6 @@ class FileNotFoundException : public FileException {
         FileNotFoundException(logLevel level, std::string location, std::string filename);
 };
 
-class NullSizeException : public Exception {
-    public:
-        NullSizeException(logLevel level, std::string location, std::string message);
-};
-
 }
 #endif // EASTWOOD_EASTWOODEXCEPTION_H
 

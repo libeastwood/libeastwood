@@ -29,9 +29,4 @@ FileNotFoundException::FileNotFoundException(logLevel level, std::string locatio
 {
 }
 
-NullSizeException::NullSizeException(logLevel level, std::string location, std::string message) :
-    Exception(level, location, message)
-{
-}
-
 }
