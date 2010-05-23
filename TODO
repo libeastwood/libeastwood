@@ -7,12 +7,12 @@ Less urgent:
 * Implement support for loading BMP
 * Implement complete exception handling
 * Implement Format 2, Format 40 & Format 80 encoders (for creating new CPS, SHP & WSA graphics)
-* Implement regression tests
 * Add some example code demonstrating the API.
 * Fix portability issues wrt. windows & non-gcc compilers
 * Make API compatible with C
 * Move seed generator from doonlunacy to this library
-* Rewrite Font class?
 * Add support for MIDI SFX
 * Do better for conversion to ie. SDL::Surface etc.?
 * Add back debug logging, only new and improved
+* Hook XMIDI up to OPL emulator
+* Separate some code from Emc* classes into a new base class to share with EMC interpreters
