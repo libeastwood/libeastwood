@@ -12,13 +12,12 @@ SET( LIBEASTWOOD_HEADERS
   eastwood/EmcFileDisassemble.h
   eastwood/Exception.h
   eastwood/ExeFile.h
-  eastwood/Font.h
+  eastwood/FntFile.h
   eastwood/IcnFile.h
-  eastwood/IFFContainer.h
+  eastwood/IffFile.h
   eastwood/IniFile.h
   eastwood/IOStream.h
   eastwood/IStream.h
-  eastwood/ISubStream.h
   eastwood/MapFile.h
   eastwood/OStream.h
   eastwood/PakFile.h
