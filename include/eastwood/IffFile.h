@@ -214,18 +214,20 @@ class IffFile
 
 	IffChunk getChunk() { return _chunk; }
 
-	IFF_ID getType() const { return _formChunk.back()->id; }
+	IFF_ID getType(int32_t level = -1) const { return _formChunk.at(level < 0 ? _formChunk.size() + level : level)->id; }
 	/**
 	 * Returns the IFF FORM type.
 	 * @return the IFF FORM type of the stream, or 0 if FORM header is not found.
 	 */
-	IFF_ID getGroupType() const { return _formChunk.back()->groupId; };
+	IFF_ID getGroupType(int32_t level = -1) const { return _formChunk.at(level < 0 ? _formChunk.size() + level : level)->groupId; }
 
 	/**
 	 * Returns the size of the data.
 	 * @return the size of the data in file, or -1 if FORM header is not found.
 	 */
-	uint32_t getGroupSize() const { return _formChunk.back()->size; }
+	uint32_t getGroupSize(int32_t level = -1) const { return _formChunk.at(level < 0 ? _formChunk.size() + level : level)->size; }
+
+	uint32_t getLevels() const { return _formChunk.size(); }
 
 };
 

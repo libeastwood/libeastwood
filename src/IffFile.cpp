@@ -63,7 +63,7 @@ IffChunk IffFile::next() {
 	    break;
 	default:
 	    if(_formChunk.empty())
-    		throw(Exception(LOG_ERROR, "IffFile", "Invalid EA IFF 85 group identifier"));
+    		throw(Exception(LOG_ERROR, "IffFile::next()", "Invalid EA IFF 85 group identifier"));
     	    _chunk.reset(new IFFChunk(id, (_formChunk.empty() ? _stream : *_formChunk.back()).getU32BE(), _formChunk.empty() ? _stream : *_formChunk.back()));
     }
     return _chunk;
