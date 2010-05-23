@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+#include "eastwood/StdDef.h"
+
 namespace eastwood {
 
 enum logLevel
@@ -17,6 +19,7 @@ enum logLevel
 class Exception {
     public:
         Exception(logLevel level, std::string location, std::string message);
+        Exception(logLevel level, std::string location, const char *format, ...);        
         virtual ~Exception(){}
         virtual inline logLevel getLogLevel() { return _level; }
         virtual inline std::string getLocation() { return _location; }
