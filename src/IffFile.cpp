@@ -36,8 +36,8 @@ IFFGroupChunk::IFFGroupChunk(uint32_t id, IStream &stream) : IFFChunk(), groupId
     std::ios::init(getBuffer(stream, size));
 }
 
-IffFile::IffFile(IStream &stream) :
-    _stream(stream), _formChunk(), _chunk() {
+IffFile::IffFile(std::istream &stream) :
+    _stream(reinterpret_cast<IStream&>(stream)), _formChunk(), _chunk() {
     next();
 }
 

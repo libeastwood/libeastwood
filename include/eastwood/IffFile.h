@@ -207,7 +207,7 @@ class IffFile
 	IffChunk			_chunk; 	//!< The current chunk.
 
     public:
-	IffFile(IStream &stream);
+	IffFile(std::istream &stream);
 	~IffFile();
 
 	IffChunk next();
