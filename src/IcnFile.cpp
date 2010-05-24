@@ -7,16 +7,23 @@
 
 namespace eastwood {
 
-IcnFile::IcnFile(std::istream &stream, MapFile &map, Palette palette) :
-    Decode(stream, 0, 0, palette),
-    _map(map), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0)
+IcnFile::IcnFile(std::istream &stream, const MapFile &map, Palette palette) :
+    _map(map), _palette(palette), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0), _width(0), _height(0)
+{
+    readHeader(stream);
+}
+
+IcnFile::IcnFile(std::istream &stream, Palette palette) :
+    _map(), _palette(palette), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0), _width(0), _height(0)
+{
+}
+
+void IcnFile::readHeader(std::istream &stream)
 {
     uint16_t tmp;
     uint8_t shift;
-
-    _stream.seekg(0, std::ios::beg);
     
-    IffFile iff(_stream);
+    IffFile iff(stream);
 
     if(iff.getGroupType() != ID_ICON)
 	throw(Exception(LOG_ERROR, "IcnFile", "Invalid ICN-File: No ICON chunk found"));
@@ -98,6 +105,8 @@ Surface IcnFile::getSurface(uint16_t index)
 
 Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
 {
+    if(!_map)
+	throw(Exception(LOG_ERROR, "IcnFile::getTiles()", "Object initialized without required MapFile"));
     const std::vector<uint16_t> &row = _map[index];
 
     int tilesX = 1,

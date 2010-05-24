@@ -11,15 +11,17 @@
 
 #include <vector>
 
-#include "eastwood/Decode.h"
 #include "eastwood/MapFile.h"
+#include "eastwood/Palette.h"
+#include "eastwood/Surface.h"
 
 namespace eastwood {
 
-class IcnFile : public Decode
+class IcnFile
 {
 public:
-	IcnFile(std::istream &stream, MapFile &map, Palette palette);
+	IcnFile(std::istream &stream, const MapFile &map, Palette palette);
+	IcnFile(std::istream &stream, Palette palette);
 	~IcnFile();
 
 	Surface getSurface(uint16_t IndexOfFile);
@@ -75,14 +77,19 @@ public:
 	}
 	
 private:
+	void readHeader(std::istream &stream);
 	void createImage(uint16_t index, uint8_t *dest, uint16_t pitch);
-	MapFile &_map;
+	MapFile					_map;
+	Palette					_palette;
 
 	std::vector<std::vector<uint8_t> >	_SSET, // Structure Set Chunk
 						_RPAL; // RIFF Palette
 	std::vector<uint8_t>			_RTBL; // Reference Table
 	uint8_t					_bpp;
-	uint16_t				_tileSize;
+	uint16_t				_tileSize,
+						_width,
+					       	_height;
+
 };
 
 }
