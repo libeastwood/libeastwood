@@ -22,8 +22,13 @@ namespace eastwood {
 class MapFile
 {
     public:
+	MapFile() : _tileSet(0) {}
 	MapFile(std::istream &stream);
 	~MapFile();
+
+	bool operator!() const {
+	    return _tileSet.empty();
+	}
 
 	/*!
 	 Get a tile set.
