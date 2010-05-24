@@ -22,6 +22,10 @@ class Palette {
 	    return !_palette.empty();
 	}
 
+	virtual bool operator! () const throw() {
+	    return _palette.empty();
+	}
+
 	uint16_t size() const throw() { return _palette.size(); }
 
 	bool savePAL(std::ostream &output);
