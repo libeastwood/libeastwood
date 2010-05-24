@@ -26,7 +26,7 @@ class MapFile
 	MapFile(std::istream &stream);
 	~MapFile();
 
-	bool operator!() const {
+	bool operator!() const throw() {
 	    return _tileSet.empty();
 	}
 
