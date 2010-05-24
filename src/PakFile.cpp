@@ -14,7 +14,7 @@
 namespace eastwood {
 
 PakFile::PakFile(std::iostream &stream) :
-    _mode(std::ios::in), _currentFile(), _stream(stream), _fileEntries(),
+    _mode(std::ios::in), _currentFile(), _stream(reinterpret_cast<IOStream&>(stream)), _fileEntries(),
     _fileNames()
 {
     readIndex();
@@ -146,7 +146,7 @@ int32_t PakFile::sizediff()
         actualSize = (entry.first + entry.second);
     } else
         actualSize = 0;
-    return (actualSize - reinterpret_cast<IStream&>(_stream).sizeg());
+    return (actualSize - _stream.sizeg());
 }
 
 
@@ -199,20 +199,19 @@ void PakFile::removeBytes(uint32_t offset, uint32_t n)
 
 void PakFile::readIndex()
 {
-    IStream &stream = reinterpret_cast<IStream&>(_stream);
-    if(!stream.sizeg())
+    if(!_stream.sizeg())
         return;
     char name[256];
-    uint32_t offset = stream.getU32LE();
+    uint32_t offset = _stream.getU32LE();
 
     while(offset) {
         uint32_t start = offset,
                  size;
 
-	stream.getline(name, 256, 0);
+	_stream.getline(name, 256, 0);
         LOG_INFO("PakFile", "Found file %s", name);
 
-        size = ((offset = stream.getU32LE()) != 0 ? offset : stream.sizeg()) - start;
+        size = ((offset = _stream.getU32LE()) != 0 ? offset : _stream.sizeg()) - start;
         _fileEntries.insert(make_pair(name, FileEntry(start, size)));
         _fileNames.push_back(name);
     }
@@ -220,8 +219,6 @@ void PakFile::readIndex()
 
 void PakFile::writeIndex(uint32_t firstOffset)
 {
-    OStream &stream = reinterpret_cast<OStream&>(_stream);
-
     int32_t move;
     uint32_t offset = sizeof(uint32_t);
     uint32_t size = 0;
@@ -230,7 +227,7 @@ void PakFile::writeIndex(uint32_t firstOffset)
         offset += sizeof(uint32_t) + it->size() + 1;
     }
 
-    if(stream.sizep() && (move = offset - firstOffset)) {
+    if(_stream.sizep() && (move = offset - firstOffset)) {
         if(move < 0)
             removeBytes(offset, std::abs(move));
         else
@@ -245,11 +242,11 @@ void PakFile::writeIndex(uint32_t firstOffset)
         entry.first = (offset += size);
         size = entry.second;
 
-        stream.putU32LE(entry.first);
-        stream.write(it->c_str(), it->size());
-        stream.put(0);
+        _stream.putU32LE(entry.first);
+        _stream.write(it->c_str(), it->size());
+        _stream.put(0);
     }
-    stream.putU32LE(0);
+    _stream.putU32LE(0);
 }
 
 bool truncateFile(const char *fileName, uint32_t size)

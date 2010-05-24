@@ -47,7 +47,7 @@ class PakFile : public IOStream
 
         std::ios_base::openmode _mode;
         std::map<std::string, FileEntry>::iterator _currentFile;
-        std::iostream &_stream;
+        IOStream &_stream;
         std::map<std::string, FileEntry> _fileEntries;
         std::vector<std::string> _fileNames;
 };
