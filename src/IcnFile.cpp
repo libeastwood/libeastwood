@@ -7,15 +7,22 @@
 
 namespace eastwood {
 
-IcnFile::IcnFile(std::istream &stream, const MapFile &map, Palette palette) :
-    _map(map), _palette(palette), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0), _width(0), _height(0)
+IcnFile::IcnFile(std::istream &stream, const Palette &palette, const MapFile &map) :
+    _palette(palette), _map(map), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0), _width(0), _height(0)
 {
     readHeader(stream);
 }
 
-IcnFile::IcnFile(std::istream &stream, Palette palette) :
-    _map(), _palette(palette), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0), _width(0), _height(0)
+IcnFile::IcnFile(std::istream &stream, const Palette &palette) :
+    _palette(palette), _map(), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0), _width(0), _height(0)
 {
+    readHeader(stream);
+}
+
+IcnFile::IcnFile(std::istream &stream) :
+    _palette(), _map(), _SSET(), _RPAL(), _RTBL(), _bpp(0), _tileSize(0), _width(0), _height(0)
+{
+    readHeader(stream);
 }
 
 void IcnFile::readHeader(std::istream &stream)
@@ -94,6 +101,9 @@ void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 
 Surface IcnFile::getSurface(uint16_t index)
 {
+    if(!_palette)
+	throw(Exception(LOG_ERROR, "IcnFile::getSurface()", "Object initialized without required Palette"));
+
     Surface pic(_width, _height, 8, _palette);
 
     createImage(index, pic, pic.pitch());

@@ -324,7 +324,7 @@ class TestIcnFile(unittest.TestCase):
         pak.open("ICON.MAP")
         self.map = MapFile(pak.read())
         pak.open("ICON.ICN")
-        self.icn = IcnFile(pak.read(), self.map, pal)
+        self.icn = IcnFile(pak.read(), pal, self.map)
 
     def test_size(self):
         self.assertEqual(self.icn.size, 389)

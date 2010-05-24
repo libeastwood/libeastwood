@@ -29,7 +29,7 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
 {
     Py_buffer pdata;
     PyObject *palObject = NULL;
-    if (!PyArg_ParseTuple(args, "s*OO", &pdata, &self->mapFile, &palObject))
+    if (!PyArg_ParseTuple(args, "s*|OO", &pdata, &palObject, &self->mapFile))
 	return -1;
 
     self->stream = new std::istream(new std::stringbuf(std::string(reinterpret_cast<char*>(pdata.buf), pdata.len)));
@@ -37,18 +37,24 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
 	PyErr_SetFromErrno(PyExc_IOError);
 	goto error;
     }
-    if(!PyObject_TypeCheck(self->mapFile, &MapFile_Type)) {
-	PyErr_SetString(PyExc_TypeError, "Second argument must be a MapFile object");
+
+    if(palObject && !PyObject_TypeCheck(palObject, &Palette_Type)) {
+	PyErr_SetString(PyExc_TypeError, "Second argument must be a Palette object");
 	goto error;
     }
 
-    if(!PyObject_TypeCheck(palObject, &Palette_Type)) {
-	PyErr_SetString(PyExc_TypeError, "Third argument must be a Palette object");
+    if(self->mapFile && !PyObject_TypeCheck(self->mapFile, &MapFile_Type)) {
+	PyErr_SetString(PyExc_TypeError, "Third argument must be a MapFile object");
 	goto error;
     }
 
     try {
-    	self->icnFile = new IcnFile(*self->stream, *((Py_MapFile*)self->mapFile)->mapFile, *((Py_Palette*)palObject)->palette);
+	if(self->mapFile)
+    	    self->icnFile = new IcnFile(*self->stream, *((Py_Palette*)palObject)->palette, *((Py_MapFile*)self->mapFile)->mapFile);
+	else if(palObject)
+    	    self->icnFile = new IcnFile(*self->stream, *((Py_Palette*)palObject)->palette);
+	else
+    	    self->icnFile = new IcnFile(*self->stream);
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
 	goto error;
@@ -56,7 +62,8 @@ IcnFile_init(Py_IcnFile *self, PyObject *args)
 
     self->size = self->icnFile->size();
 
-    Py_INCREF(self->mapFile);
+    if(self->mapFile)
+    	Py_INCREF(self->mapFile);
 
     PyBuffer_Release(&pdata);
     return 0;

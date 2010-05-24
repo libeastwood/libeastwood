@@ -241,14 +241,17 @@ class IcnOptionParser(SurfaceOptionParser):
             f = openFile(self.options.mapfile)
             self.map = MapFile(f.read())
             f.close()
-        else:
+        elif self.options.tiles:
             self.error("Tile map (--map) is required")
 
         if not (self.options.index != None or self.options.tiles != None or self.options.size):
             self.error("An index, size & tiles list or -n argument is required")
 
         f = openFile(self.options.icnfile)
-        icn = IcnFile(f.read(), self.map, self.palette)
+        if self.options.mapfile:
+            icn = IcnFile(f.read(), self.palette, self.map)
+        elif self.palette:
+            icn = IcnFile(f.read(), self.palette)
         f.close()
 
         if self.options.size:

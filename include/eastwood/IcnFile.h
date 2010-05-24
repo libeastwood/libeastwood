@@ -20,8 +20,9 @@ namespace eastwood {
 class IcnFile
 {
 public:
-	IcnFile(std::istream &stream, const MapFile &map, Palette palette);
-	IcnFile(std::istream &stream, Palette palette);
+	IcnFile(std::istream &stream, const Palette &palette, const MapFile &map);
+	IcnFile(std::istream &stream, const Palette &palette);
+	IcnFile(std::istream &stream);
 	~IcnFile();
 
 	Surface getSurface(uint16_t IndexOfFile);
@@ -79,8 +80,8 @@ public:
 private:
 	void readHeader(std::istream &stream);
 	void createImage(uint16_t index, uint8_t *dest, uint16_t pitch);
-	MapFile					_map;
 	Palette					_palette;
+	MapFile					_map;
 
 	std::vector<std::vector<uint8_t> >	_SSET, // Structure Set Chunk
 						_RPAL; // RIFF Palette
