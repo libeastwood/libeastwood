@@ -227,7 +227,7 @@ class IffFile
 	 */
 	uint32_t getGroupSize(int32_t level = -1) const { return _formChunk.at(level < 0 ? _formChunk.size() + level : level)->size; }
 
-	uint32_t getLevels() const { return _formChunk.size(); }
+	uint32_t getLevels() const throw() { return _formChunk.size(); }
 
 };
 
