@@ -55,19 +55,13 @@ struct midi_event
 
 // Constructor
 XmiFile::XmiFile(std::istream &source) :
-    info(), _iff(source), _events(), timing(NULL), list(NULL), current(NULL), bank127(), fixed()
+    info(), _iff(source), _events(), timing(NULL), list(NULL), current(NULL)
 {
     extractTracks();
 }
 
 XmiFile::~XmiFile()
 {
-    /*
-    if (events) {
-	for (int32_t i=0; i < info.tracks; i++)
-	    deleteEventList (events[i]);
-	delete [] events;
-    }*/
 }
 
 int32_t XmiFile::retrieve (uint32_t track, std::ostream &Dest)
@@ -78,31 +72,8 @@ int32_t XmiFile::retrieve (uint32_t track, std::ostream &Dest)
     if (_events.empty())
 	throw(Exception(LOG_ERROR, "XmiFile::retrieve()", "No midi data in loaded."));
 
-    // Convert type 1 midi's to type 0
-    if (info.type == 1) {
-	duplicateAndMerge(-1);
-
-	/*for (int32_t i=0; i < info.tracks; i++)
-	    deleteEventList(events[i]);
-*/
-	//delete [] events;
-	_events.resize(1);// = new midi_event *[1];
-	_events[0] = list;
-
-	info.tracks = 1;
-	info.type = 0;
-    }
-
     if (track >= info.tracks)
 	throw(Exception(LOG_ERROR, "XmiFile::retrieve()", "Can't retrieve MIDI data, track out of range"));
-
-    // And fix the midis if they are broken
-    if (!fixed[track]) {
-	list = _events[track];
-	movePatchVolAndPan();
-	fixed[track] = true;
-	_events[track] = list;
-    }
 
     dest.put('M');
     dest.put('T');
@@ -187,7 +158,7 @@ int32_t XmiFile::getVLQ2(uint32_t &quant)
 {
     int32_t i;
     quant = 0;
-    int32_t data = 0;
+    int32_t data;
     IffChunk chunk = _iff.getChunk();
 
     for (i = 0; i < 4; i++) {
@@ -219,187 +190,6 @@ int32_t XmiFile::putVLQ(OStream &dest, uint32_t value)
     return i;
 }
 
-// MovePatchVolAndPan
-//
-// This little function attempts to correct errors in midi files
-// that relate to patch, volume and pan changing
-void XmiFile::movePatchVolAndPan(int32_t channel)
-{
-    if (channel == -1) {
-	for (int32_t i = 0; i < 16; i++)
-	    movePatchVolAndPan(i);
-
-	return;
-    }
-
-    midi_event *patch = NULL;
-    midi_event *vol = NULL;
-    midi_event *pan = NULL;
-    midi_event *bank = NULL;
-    midi_event *temp;
-
-    for (current = list; current; ) {
-	if (!patch && (current->status & 0xf0) == EV_PROG && (current->status & 0xf) == channel)
-	    patch = current;
-	else if (!vol && (current->status & 0xf0) == EV_CONTROL && current->data[0] == 7 && (current->status & 0xf) == channel)
-	    vol = current;
-	else if (!pan && (current->status & 0xf0) == EV_CONTROL && current->data[0] == 10 && (current->status & 0xf) == channel)
-	    pan = current;
-	else if (!bank && (current->status & 0xf0) == EV_CONTROL && current->data[0] == 0 && (current->status & 0xf) == channel)
-	    bank = current;
-
-	if (pan && vol && patch) break;
-
-	if (current) current = current->next;
-	else current = list;
-    }
-
-    // Got no patch change, return and don't try fixing it
-    if (!patch) return;
-
-
-    // Copy Patch Change Event
-    temp = patch;
-    patch = new midi_event;
-    patch->time = temp->time;
-    patch->status = static_cast<EventType>(channel | EV_PROG);
-    patch->data[0] = temp->data[0];
-
-
-    // Copy Volume
-    if (vol && (vol->time > patch->time+PATCH_VOL_PAN_BIAS || vol->time < patch->time-PATCH_VOL_PAN_BIAS))
-	vol = NULL;
-
-    temp = vol;
-    vol = new midi_event;
-    vol->status = static_cast<EventType>(channel | EV_CONTROL);
-    vol->data[0] = 7;
-
-    if (!temp)
-	vol->data[1] = 64;
-    else
-	vol->data[1] = temp->data[1];
-
-
-    // Copy Bank
-    if (bank && (bank->time > patch->time+PATCH_VOL_PAN_BIAS || bank->time < patch->time-PATCH_VOL_PAN_BIAS))
-	bank = NULL;
-
-    temp = bank;
-
-    bank = new midi_event;
-    bank->status = static_cast<EventType>(channel | EV_CONTROL);
-    bank->data[0] = 0;
-
-    if (!temp)
-	bank->data[1] = 0;
-    else
-	bank->data[1] = temp->data[1];
-
-    // Copy Pan
-    if (pan && (pan->time > patch->time+PATCH_VOL_PAN_BIAS || pan->time < patch->time-PATCH_VOL_PAN_BIAS))
-	pan = NULL;
-
-    temp = pan;
-    pan = new midi_event;
-    pan->status = static_cast<EventType>(channel | EV_CONTROL);
-    pan->data[0] = 10;
-
-    if (!temp)
-	pan->data[1] = 64;
-    else
-	pan->data[1] = temp->data[1];
-
-
-    vol->time = 0;
-    pan->time = 0;
-    patch->time = 0;
-    bank->time = 0;
-
-    bank->next = vol;
-    vol->next = pan;
-    pan->next = patch;
-    patch->next = list;
-    list = bank;
-}
-
-// DuplicateAndMerge
-void XmiFile::duplicateAndMerge(int32_t num)
-{
-    int32_t	i;
-    std::vector<midi_event*>	track;
-    int32_t	time = 0;
-    int32_t	start = 0;
-    int32_t	end = 1;
-
-    if (info.type == 1) {
-	start = 0;
-	end = info.tracks;
-    }
-    else if (num >= 0 && num < info.tracks) {
-	start += num;
-	end += num;
-    }
-
-    track = _events;
-
-    current = list = NULL;
-
-
-    while (true)
-    {
-	int32_t	lowest = 1 << 30;
-	int32_t	selected = -1;
-	int32_t	num_na = end-start;
-
-	// Firstly we find the track with the lowest time
-	// for it's current event
-	for (i = start; i < end; i++) {
-	    if (!track[i]) {
-		num_na--;
-	    } else if (track[i]->time < lowest) {
-		selected = i;
-		lowest = track[i]->time;			
-	    }
-	}
-
-	// This is just so I don't have to type [selected] all the time
-	i = selected;
-
-	// None left to convert
-	if (!num_na) break;
-
-	// Only need 1 end of track
-	// So take the last one and ignore the rest;
-	if ((num_na != 1) && (track[i]->status == EV_META) && (track[i]->data[0] == META_EOT))	{
-	    track[i] = NULL;
-	    continue;
-	}
-
-	if (current) {
-	    current->next = new midi_event;
-	    current = current->next;
-	}
-	else
-	    list = current = new midi_event;
-
-	current->next = NULL;
-
-	time = track[i]->time;
-	current->time = time;
-
-	current->status = track[i]->status;
-	current->data[0] = track[i]->data[0];
-	current->data[1] = track[i]->data[1];
-
-	if(!track[i]->buffer.empty())
-	    current->buffer = track[i]->buffer;
-
-	track[i] = track[i]->next;
-    }
-}
-
-
 // Converts Events
 //
 // Source is at the first data byte
@@ -420,8 +210,6 @@ int32_t XmiFile::convertEvent(const int32_t time, const EventType status, const 
     // Bank changes are handled here
     if ((status & 0xf0) == EV_CONTROL && data == 0) {
 	data = chunk->get();
-
-	bank127[status&0xF] = false;
 
 	createNewEvent (time);
 	current->status = status;
@@ -469,8 +257,7 @@ int32_t XmiFile::convertSystemMessage(const int32_t time, const EventType status
     current->status = status;
 
     // Handling of Meta events
-    if (status == EV_META)
-    {
+    if (status == EV_META) {
 	current->data[0] = chunk->get();
 	i++;	
     }
@@ -657,80 +444,10 @@ uint32_t XmiFile::convertListToMTrk (OStream &dest, midi_event *mlist)
     return i;
 }
 
-// Assumes correct xmidi
-int32_t XmiFile::extractTracksFromXmi()
-{
-    int32_t	num = 0;
-    int16_t	ppqn;
-    for(IffChunk chunk = _iff.getChunk(); chunk && num != info.tracks; chunk = _iff.next()) {
-	if(chunk->id != ID_EVNT) {
-	    continue;
-	}
-
-	list = NULL;
-
-	// Convert it
-	if (!(ppqn = convertFiletoList(true))) {
-	    //cerr << "Unable to convert data" << endl;
-	    break;
-	}
-	timing[num] = ppqn;
-	_events[num] = list;
-
-	// Increment Counter
-	num++;
-    }
-
-
-    // Return how many were converted
-    return num;
-}
-
-#if 0
-int32_t XmiFile::extractTracksFromMid (IStream &source)
-{
-    int32_t	num = 0;
-    uint32_t	len = 0;
-    char	buf[32];
-
-    while (!source.eof() && num != info.tracks)
-    {
-	// Read first 4 bytes of name
-	source.read (buf, 4);
-	len = source.getU32BE();
-
-	if (memcmp(buf,"MTrk",4))
-	{
-	    source.ignore (len);
-	    continue;
-	}
-
-	list = NULL;
-	int32_t begin = static_cast<uint32_t>(source.tellg());
-
-	// Convert it
-	if (!ConvertFiletoList (source, false))
-	{
-	    //cerr << "Unable to convert data" << endl;
-	    break;
-	}
-
-	events[num] = list;
-
-	// Increment Counter
-	num++;		
-	source.seekg (begin+len);
-    }
-
-
-    // Return how many were converted
-    return num;
-}
-#endif
-
 int32_t XmiFile::extractTracks()
 {
     int32_t 		count;
+    int16_t		ppqn;
 
     IffChunk		chunk = _iff.getChunk();
     // Could be XMIDI
@@ -751,15 +468,15 @@ int32_t XmiFile::extractTracks()
 	    if(chunk->id == ID_INFO)
 		info.tracks = chunk->getU16LE();
 	    else
-    		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Expected 'INFO' section, got '%s'", static_cast<std::string>(*chunk).c_str()));
+		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Expected 'INFO' section, got '%s'", static_cast<std::string>(*chunk).c_str()));
 
 	    chunk = _iff.next();
 
 	    if(_iff.getType(-2) != ID_CAT)
-    		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Not a recognised XMID, expected 'CAT ' section, got '%s'", ID2string(_iff.getType(-2)).c_str()));
+		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Not a recognised XMID, expected 'CAT ' section, got '%s'", ID2string(_iff.getType(-2)).c_str()));
 
 	    if(_iff.getGroupType() != ID_XMID)
-    		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Chunk id '%s' != 'XMID'", ID2string(_iff.getGroupType()).c_str()));
+		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Chunk id '%s' != 'XMID'", ID2string(_iff.getGroupType()).c_str()));
 
 	}
 
@@ -767,113 +484,30 @@ int32_t XmiFile::extractTracks()
 
 	_events.resize(info.tracks);// = new midi_event *[info.tracks];
 	timing.resize(info.tracks);
-	fixed.resize(info.tracks);
-	info.type = 0;
 
-	count = extractTracksFromXmi();
-
-	if (count != info.tracks)
-	{
-	    //cerr << "Error: unable to extract all (" << info.tracks << ") tracks specified from XMIDI. Only ("<< count << ")" << endl;
-
-	    int32_t i = 0;
-
-
-	    return 0;		
-	}
-
-	return 1;
-
-    }
-    //TODO: add support for this later..?
-#if 0 
-    // Definately a Midi
-    else if (!memcmp (buf, "MThd", 4))
-    {
-	// Simple read length of header
-	len = source.getU32BE();
-
-	if (len < 6)
-	{
-	    //cerr << "Not a valid MIDI" << endl;
-	    return 0;
-	}
-
-	info.type = source.getU16BE();
-
-	info.tracks = source.getU16BE();
-
-	events = new midi_event *[info.tracks];
-	timing.resize(info.tracks);
-	fixed.resize(info.tracks);
-	timing[0] = source.getU16BE();
-	for (i = 0; i < info.tracks; i++)
-	{
-	    timing[i] = timing[0];
-	    events[i] = NULL;
-	    fixed[i] = false;
-	}
-
-	count = extractTracksFromMid (source);
-
-	if (count != info.tracks)
-	{
-	    //cerr << "Error: unable to extract all (" << info.tracks << ") tracks specified from MIDI. Only ("<< count << ")" << endl;
-
-	    for (i = 0; i < info.tracks; i++)
-		deleteEventList (events[i]);
-
-	    delete [] events;
-
-	    return 0;
-
-	}
-
-	return 1;
-
-    }// A RIFF Midi, just pass the source back to this function at the start of the midi file
-    else if (!memcmp (buf, "RIFF", 4))
-    {
-	// Read len
-	len = source.getU32LE();
-
-	// Read 4 bytes of type
-	source.read (buf, 4);
-
-	// Not an RMID
-	if (memcmp (buf, "RMID", 4))
-	{
-	    //cerr << "Invalid RMID" << endl;
-	    return 0;
-	}
-
-	// Is a RMID
-
-	for (i = 4; i < len; i++)
-	{
-	    // Read 4 bytes of type
-	    source.read (buf, 4);
-
-	    chunk_len = source.getU32LE();
-
-	    i+=8;
-
-	    if (memcmp (buf, "data", 4))
-	    {	
-		// Must allign
-		source.ignore ((chunk_len+1)&~1);
-		i+= (chunk_len+1)&~1;
+	for(IffChunk chunk = _iff.getChunk(); chunk && count != info.tracks; chunk = _iff.next()) {
+	    if(chunk->id != ID_EVNT) {
 		continue;
 	    }
 
-	    return extractTracks (source);
+	    list = NULL;
 
+	    // Convert it
+	    if (!(ppqn = convertFiletoList(true))) {
+		//cerr << "Unable to convert data" << endl;
+		break;
+	    }
+	    timing[count] = ppqn;
+	    _events[count] = list;
+
+	    // Increment Counter
+	    count++;
 	}
 
-	//cerr << "Failed to find midi data in RIFF Midi" << endl;
-	return 0;
+
+	return 1;
+
     }
-#endif
 
     return 0;	
 }

@@ -61,10 +61,7 @@ class   XmiFile
 
 	int32_t number_of_tracks()
 	{
-	    if (info.type != 1)
-		return info.tracks;
-	    else
-		return 1;
+	    return info.tracks;
 	};
 
 	// Retrieve it to a data source
@@ -91,17 +88,11 @@ class   XmiFile
 	int32_t getVLQ2(uint32_t &quant);
 	int32_t putVLQ(OStream &dest, uint32_t value);	
 
-	void movePatchVolAndPan(int32_t channel = -1);
-	void duplicateAndMerge(int32_t num = 0);
-
 	int32_t convertEvent(const int32_t time, const EventType status, const int32_t size);
 	int32_t convertSystemMessage(const int32_t time, const EventType status);
 
 	int32_t convertFiletoList(bool is_xmi);
 	uint32_t convertListToMTrk(OStream &dest, midi_event *mlist);	
-
-	int32_t extractTracksFromXmi();
-	int32_t extractTracksFromMid();
 
 	int32_t extractTracks();
 
@@ -111,9 +102,6 @@ class   XmiFile
 
 	midi_event		*list;
 	midi_event		*current;
-
-	std::bitset<16>		bank127;
-	std::deque<bool>	fixed;
 
 };
 
