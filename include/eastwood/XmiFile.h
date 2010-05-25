@@ -33,15 +33,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace eastwood {
 
 struct midi_event;
-enum MidiStatus {
-    MIDI_STATUS_NOTE_OFF	= 0x80,
-    MIDI_STATUS_NOTE_ON		= 0x90,
-    MIDI_STATUS_AFTERTOUCH	= 0xA0,
-    MIDI_STATUS_CONTROLLER	= 0xB0,
-    MIDI_STATUS_PROG_CHANGE	= 0xC0,
-    MIDI_STATUS_PRESSURE	= 0xD0,
-    MIDI_STATUS_PITCH_WHEEL	= 0xE0,
-    MIDI_STATUS_SYSEX		= 0xF0
+enum EventType {
+    // Standard MIDI file event types
+    EV_INVALID		= 0x00,
+    EV_NOTE_OFF		= 0x80,
+    EV_NOTE_ON		= 0x90,
+    EV_POLY_PRESS	= 0xA0,
+    EV_CONTROL		= 0xB0,
+    EV_PROG		= 0xC0,
+    EV_CHAN_PRES	= 0xD0,
+    EV_PITCH		= 0xE0,
+    EV_SYSEX		= 0xF0,
+    EV_ESC		= 0xf7,
+    EV_META		= 0xff,
+    // Standard MIDI meta-event types
+    META_EOT		= 0x2f,
+    META_TRK_NAME	= 0x03,
+    META_INS_NAME	= 0x04,
+    META_TEMPO		= 0x51
 };
 
 class   XmiFile
@@ -85,8 +94,8 @@ class   XmiFile
 	void movePatchVolAndPan(int32_t channel = -1);
 	void duplicateAndMerge(int32_t num = 0);
 
-	int32_t convertEvent(const int32_t time, const MidiStatus status, const int32_t size);
-	int32_t convertSystemMessage(const int32_t time, const MidiStatus status);
+	int32_t convertEvent(const int32_t time, const EventType status, const int32_t size);
+	int32_t convertSystemMessage(const int32_t time, const EventType status);
 
 	int32_t convertFiletoList(bool is_xmi);
 	uint32_t convertListToMTrk(OStream &dest, midi_event *mlist);	

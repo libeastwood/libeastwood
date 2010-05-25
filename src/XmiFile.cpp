@@ -39,7 +39,7 @@ namespace eastwood {
 struct midi_event
 {
     int32_t			time;
-    MidiStatus			status;
+    EventType			status;
 
     uint8_t			data[2];
 
@@ -173,7 +173,7 @@ int32_t XmiFile::getVLQ(uint32_t &quant)
 	quant <<= 7;
 	quant |= data & 0x7F;
 
-	if (!(data & MIDI_STATUS_NOTE_OFF)) {
+	if (!(data & EV_NOTE_OFF)) {
 	    i++;
 	    break;
 	}
@@ -192,7 +192,7 @@ int32_t XmiFile::getVLQ2(uint32_t &quant)
 
     for (i = 0; i < 4; i++) {
 	data = chunk->get();
-	if (data & MIDI_STATUS_NOTE_OFF) {
+	if (data & EV_NOTE_OFF) {
 	    chunk->seekg(-1, std::ios::cur);
 	    break;
 	}
@@ -239,13 +239,13 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
     midi_event *temp;
 
     for (current = list; current; ) {
-	if (!patch && (current->status & 0xf0) == MIDI_STATUS_PROG_CHANGE && (current->status & 0xF) == channel)
+	if (!patch && (current->status & 0xf0) == EV_PROG && (current->status & 0xf) == channel)
 	    patch = current;
-	else if (!vol && (current->status & 0xf0) == MIDI_STATUS_CONTROLLER && current->data[0] == 7 && (current->status & 0xF) == channel)
+	else if (!vol && (current->status & 0xf0) == EV_CONTROL && current->data[0] == 7 && (current->status & 0xf) == channel)
 	    vol = current;
-	else if (!pan && (current->status & 0xf0) == MIDI_STATUS_CONTROLLER && current->data[0] == 10 && (current->status & 0xF) == channel)
+	else if (!pan && (current->status & 0xf0) == EV_CONTROL && current->data[0] == 10 && (current->status & 0xf) == channel)
 	    pan = current;
-	else if (!bank && (current->status & 0xf0) == MIDI_STATUS_CONTROLLER && current->data[0] == 0 && (current->status & 0xF) == channel)
+	else if (!bank && (current->status & 0xf0) == EV_CONTROL && current->data[0] == 0 && (current->status & 0xf) == channel)
 	    bank = current;
 
 	if (pan && vol && patch) break;
@@ -262,7 +262,7 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
     temp = patch;
     patch = new midi_event;
     patch->time = temp->time;
-    patch->status = static_cast<MidiStatus>(channel | MIDI_STATUS_PROG_CHANGE);
+    patch->status = static_cast<EventType>(channel | EV_PROG);
     patch->data[0] = temp->data[0];
 
 
@@ -272,7 +272,7 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
 
     temp = vol;
     vol = new midi_event;
-    vol->status = static_cast<MidiStatus>(channel | MIDI_STATUS_CONTROLLER);
+    vol->status = static_cast<EventType>(channel | EV_CONTROL);
     vol->data[0] = 7;
 
     if (!temp)
@@ -288,7 +288,7 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
     temp = bank;
 
     bank = new midi_event;
-    bank->status = static_cast<MidiStatus>(channel | MIDI_STATUS_CONTROLLER);
+    bank->status = static_cast<EventType>(channel | EV_CONTROL);
     bank->data[0] = 0;
 
     if (!temp)
@@ -302,7 +302,7 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
 
     temp = pan;
     pan = new midi_event;
-    pan->status = static_cast<MidiStatus>(channel | MIDI_STATUS_CONTROLLER);
+    pan->status = static_cast<EventType>(channel | EV_CONTROL);
     pan->data[0] = 10;
 
     if (!temp)
@@ -371,7 +371,7 @@ void XmiFile::duplicateAndMerge(int32_t num)
 
 	// Only need 1 end of track
 	// So take the last one and ignore the rest;
-	if ((num_na != 1) && (track[i]->status == 0xff) && (track[i]->data[0] == 0x2f))	{
+	if ((num_na != 1) && (track[i]->status == EV_META) && (track[i]->data[0] == META_EOT))	{
 	    track[i] = NULL;
 	    continue;
 	}
@@ -408,7 +408,7 @@ void XmiFile::duplicateAndMerge(int32_t num)
 // size 3 is XMI Note on
 // Returns bytes converted
 
-int32_t XmiFile::convertEvent(const int32_t time, const MidiStatus status, const int32_t size)
+int32_t XmiFile::convertEvent(const int32_t time, const EventType status, const int32_t size)
 {
     uint32_t	delta = 0;
     int32_t	data;
@@ -418,7 +418,7 @@ int32_t XmiFile::convertEvent(const int32_t time, const MidiStatus status, const
 
 
     // Bank changes are handled here
-    if ((status & 0xf0) == MIDI_STATUS_CONTROLLER && data == 0) {
+    if ((status & 0xf0) == EV_CONTROL && data == 0) {
 	data = chunk->get();
 
 	bank127[status&0xF] = false;
@@ -459,7 +459,7 @@ int32_t XmiFile::convertEvent(const int32_t time, const MidiStatus status, const
 }
 
 // Simple routine to convert system messages
-int32_t XmiFile::convertSystemMessage(const int32_t time, const MidiStatus status)
+int32_t XmiFile::convertSystemMessage(const int32_t time, const EventType status)
 {
     int32_t i=0;
     uint32_t bufsiz;
@@ -469,7 +469,7 @@ int32_t XmiFile::convertSystemMessage(const int32_t time, const MidiStatus statu
     current->status = status;
 
     // Handling of Meta events
-    if (status == 0xFF)
+    if (status == EV_META)
     {
 	current->data[0] = chunk->get();
 	i++;	
@@ -494,7 +494,7 @@ int32_t XmiFile::convertFiletoList(const bool is_xmi)
     bool	end = false;
     int32_t	tempo = 500000;
     int32_t	tempo_set = 0;
-    MidiStatus	status;
+    EventType	status;
     int32_t	play_size = 2;
 
     IffChunk chunk = _iff.getChunk();
@@ -509,8 +509,8 @@ int32_t XmiFile::convertFiletoList(const bool is_xmi)
 
 	    data = chunk->get();
 
-	    if (data >= MIDI_STATUS_NOTE_OFF) {
-		status = static_cast<MidiStatus>(data);
+	    if (data >= EV_NOTE_OFF) {
+		status = static_cast<EventType>(data);
 	    }
 	    else
 		chunk->seekg(-1, std::ios::cur);
@@ -519,41 +519,41 @@ int32_t XmiFile::convertFiletoList(const bool is_xmi)
 	    getVLQ2 (data);
 	    time += data*3;
 
-	    status = static_cast<MidiStatus>(chunk->get());
+	    status = static_cast<EventType>(chunk->get());
 	}
 
 	switch (status & 0xf0) {
-	    case MIDI_STATUS_NOTE_ON:
+	    case EV_NOTE_ON:
 		convertEvent(time, status, play_size);
 		break;
 
 		// 2 byte data
-	    case MIDI_STATUS_NOTE_OFF:
-	    case MIDI_STATUS_AFTERTOUCH:
-	    case MIDI_STATUS_CONTROLLER:
-	    case MIDI_STATUS_PITCH_WHEEL:
+	    case EV_NOTE_OFF:
+	    case EV_POLY_PRESS:
+	    case EV_CONTROL:
+	    case EV_PITCH:
 		convertEvent(time, status, 2);
 		break;
 
 
 		// 1 byte data
-	    case MIDI_STATUS_PROG_CHANGE:
-	    case MIDI_STATUS_PRESSURE:
+	    case EV_PROG:
+	    case EV_CHAN_PRES:
 		convertEvent(time, status, 1);
 		break;
 
 
-	    case MIDI_STATUS_SYSEX:
-		if (status == 0xFF) {
+	    case EV_SYSEX:
+		if (status == EV_META) {
 		    std::streampos	pos = chunk->tellg();
 		    uint32_t		data = chunk->get();
 
-		    if (data == 0x2F) // End
+		    if (data == META_EOT)
 			end = true;
-		    else if (data == 0x51 && !tempo_set) { // Tempo. Need it for PPQN
+		    else if (data == META_TEMPO && !tempo_set) { // Tempo. Need it for PPQN
 			tempo = chunk->get() * ((chunk->get()<<16) | chunk->getU16BE());
 			tempo_set = 1;
-		    } else if (data == 0x51 && tempo_set && is_xmi) {// Skip any other tempo changes
+		    } else if (data == META_TEMPO && tempo_set && is_xmi) {// Skip any other tempo changes
 			getVLQ(data);
 			chunk->ignore(data);
 			break;
@@ -596,7 +596,7 @@ uint32_t XmiFile::convertListToMTrk (OStream &dest, midi_event *mlist)
 
 	i += putVLQ(dest, delta);
 
-	if ((event->status != last_status) || (event->status >= MIDI_STATUS_SYSEX)) {
+	if ((event->status != last_status) || (event->status >= EV_SYSEX)) {
 	    dest.put(event->status);
 	    i++;
 	}
@@ -605,11 +605,11 @@ uint32_t XmiFile::convertListToMTrk (OStream &dest, midi_event *mlist)
 
 	switch (event->status & 0xf0) {
 	    // 2 bytes data
-	    case MIDI_STATUS_NOTE_OFF:
-	    case MIDI_STATUS_NOTE_ON:
-	    case MIDI_STATUS_AFTERTOUCH:
-	    case MIDI_STATUS_CONTROLLER:
-	    case MIDI_STATUS_PITCH_WHEEL:
+	    case EV_NOTE_OFF:
+	    case EV_NOTE_ON:
+	    case EV_POLY_PRESS:
+	    case EV_CONTROL:
+	    case EV_PITCH:
 		dest.put(event->data[0]);
 		dest.put(event->data[1]);
 		i += 2;
@@ -617,17 +617,17 @@ uint32_t XmiFile::convertListToMTrk (OStream &dest, midi_event *mlist)
 
 
 		// 1 bytes data
-	    case MIDI_STATUS_PROG_CHANGE:
-	    case MIDI_STATUS_PRESSURE:
+	    case EV_PROG:
+	    case EV_CHAN_PRES:
 		dest.put(event->data[0]);
 		i++;
 		break;
 
 
 		// Variable length
-	    case MIDI_STATUS_SYSEX:
-		if (event->status == 0xFF) {
-		    if (event->data[0] == 0x2f) end = true;
+	    case EV_SYSEX:
+		if (event->status == EV_META) {
+		    if (event->data[0] == META_EOT) end = true;
 		    dest.put(event->data[0]);
 		    i++;
 		}
