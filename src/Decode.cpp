@@ -220,20 +220,17 @@ void Decode::decode2(std::istream &stream, uint8_t *out, int size)
     }
 }
 
-void Decode::decode2(const uint8_t *in, uint8_t *out, int size)
+void Decode::decode2(const std::vector<uint8_t> &in, uint8_t *out)
 {
-    const uint8_t *end = in + size;
-    while (in < end) {
-	uint8_t val = *in;
-	in++;
+    for(std::vector<uint8_t>::const_iterator it = in.begin(); it != in.end();) {
+	uint8_t val = *it++;
 
 	if (val != 0) {
 	    *out = val;
 	    out++;
 	} else {
 	    uint8_t count;
-	    count = *in;
-	    in++;
+	    count = *it++;
 	    if (count == 0) {
 		return;
 	    }

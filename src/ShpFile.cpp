@@ -108,7 +108,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
 
-	    decode2(&decodeDestination.front(), imageOut, imageSize);
+	    decode2(decodeDestination, imageOut);
 	    break;
 
 	case 1:
@@ -120,7 +120,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
 		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
 	    
-	    decode2(&decodeDestination.front(), imageOut, imageSize);
+	    decode2(decodeDestination, imageOut);
 
 	    apply_pal_offsets(palOffsets,imageOut, imageOutSize);
 	    break;
@@ -131,7 +131,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 #else	    
 	    decodeDestination.resize(imageSize);	    
 	    _stream.read(reinterpret_cast<char*>(&decodeDestination.front()), imageSize);
-	    decode2(&decodeDestination.front(), imageOut, imageSize);
+	    decode2(decodeDestination, imageOut);
 #endif
 	    break;
 
@@ -144,7 +144,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 #else	    
 	    decodeDestination.resize(imageSize);	    
 	    _stream.read(reinterpret_cast<char*>(&decodeDestination.front()), imageSize);
-	    decode2(&decodeDestination.front(), imageOut, imageSize);
+	    decode2(decodeDestination, imageOut);
 #endif
 
 	    apply_pal_offsets(palOffsets, imageOut, imageOutSize);
