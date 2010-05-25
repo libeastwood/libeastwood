@@ -73,9 +73,9 @@ void ShpFile::readIndex()
     }
 }
 
-static void apply_pal_offsets(const uint8_t *offsets, uint8_t *data, uint16_t length)
+static void apply_pal_offsets(const std::vector<uint8_t> &offsets, uint8_t *data, uint16_t length)
 {
-    for (uint16_t i = 0; i < length; i ++)
+    for (uint16_t i = 0; i < length; i++)
 	data[i] = offsets[data[i]];
 }
 
@@ -129,7 +129,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    
 	    decode2(&decodeDestination.front(), imageOut, imageSize);
 
-	    apply_pal_offsets(&palOffsets.front(),imageOut, imageOutSize);
+	    apply_pal_offsets(palOffsets,imageOut, imageOutSize);
 	    break;
 
 	case 2:
@@ -154,7 +154,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    decode2(&decodeDestination.front(), imageOut, imageSize);
 #endif
 
-	    apply_pal_offsets(&palOffsets.front(), imageOut, imageOutSize);
+	    apply_pal_offsets(palOffsets, imageOut, imageOutSize);
 	    break;
 
 	default:
