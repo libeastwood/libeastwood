@@ -61,7 +61,7 @@ struct midi_event
 
 // Constructor
 XmiFile::XmiFile(std::istream &source) :
-    info(), _iff(source), events(NULL), timing(NULL), list(NULL), current(NULL), bank127(16), fixed()
+    info(), _iff(source), events(NULL), timing(NULL), list(NULL), current(NULL), bank127(), fixed()
 {
     extractTracks();
 }

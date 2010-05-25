@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef EASTWOOD_XMIFILE_H
 #define EASTWOOD_XMIFILE_H
 
+#include <bitset>
+#include <deque>
 #include <vector>
 
 #include "eastwood/IStream.h"
@@ -102,8 +104,8 @@ class   XmiFile
 	midi_event		*list;
 	midi_event		*current;
 
-	std::vector<bool>	bank127,
-				fixed;
+	std::bitset<16>		bank127;
+	std::deque<bool>	fixed;
 
 };
 
