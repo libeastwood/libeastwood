@@ -34,16 +34,12 @@ void ShpFile::readIndex()
     // First get number of files in shp-file
     _size = _stream.getU16LE();
 
-    if(_size == 0) {
+    if(_size == 0)
 	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this SHP-File!"));
-    }
 
 
-    if( fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) {
-	char error[256];
-	sprintf(error, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize);
-	throw(Exception(LOG_ERROR, "ShpFile", error));
-    }
+    if(fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) 
+	throw(Exception(LOG_ERROR, "ShpFile", "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize));
 
     _index.at(0).startOffset = _stream.getU16LE();
     _index.at(0).endOffset = _stream.getU16LE();
@@ -63,12 +59,9 @@ void ShpFile::readIndex()
 	    _stream.ignore(offset);
 	    _index.at(i).endOffset = _stream.getU16LE() - 1 + offset;
 
-	    if(_index.at(i).endOffset > fileSize) {
-		char error[256];
-		sprintf(error, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
-			i, _index.at(i).endOffset, fileSize);
-		throw(Exception(LOG_ERROR, "ShpFile", error));
-	    }
+	    if(_index.at(i).endOffset > fileSize)
+		throw(Exception(LOG_ERROR, "ShpFile", "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
+			i, _index.at(i).endOffset, fileSize));
 	}
     }
 }
@@ -158,9 +151,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    break;
 
 	default:
-	    char error[256];
-	    sprintf(error, "Type %d in SHP-Files not supported!", flags);
-	    throw(Exception(LOG_ERROR, "ShpFile", error));
+	    throw(Exception(LOG_ERROR, "ShpFile", "Type %d in SHP-Files not supported!", flags));
     }
 
     return Surface(imageOut, width, height, 8, _palette);
@@ -174,11 +165,8 @@ Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
 
     for(uint32_t i = 0; i < tilesX*tilesY; i++) {
 	tiles[i] = va_arg( arg_ptr, uint32_t );
-	if(getIndex(tiles[i]) >= _size) {
-	    char error[256];
-	    sprintf(error, "getSurfaceArray(): There exist only %d files in this *.shp.",_size);
-	    throw(Exception(LOG_ERROR, "ShpFile", error));
-	}
+	if(getIndex(tiles[i]) >= _size)
+	    throw(Exception(LOG_ERROR, "ShpFile", "getSurfaceArray(): There exist only %d files in this *.shp.",_size));
     }
 
     va_end(arg_ptr);
