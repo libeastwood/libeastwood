@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <bitset>
 #include <deque>
+#include <list>
 #include <vector>
 
 #include "eastwood/IStream.h"
@@ -60,8 +61,6 @@ class   XmiFile
 	// Retrieve it to a data source
 	int32_t retrieve(uint32_t track, std::ostream &dest);	
 
-	static void deleteEventList(midi_event *mlist);
-
     protected:
 	struct  midi_descriptor
 	{
@@ -98,7 +97,7 @@ class   XmiFile
 	int32_t extractTracks();
 
 	IffFile			_iff;
-	midi_event		**events;
+	std::vector<midi_event*>	_events;
 	std::vector<int16_t>	timing;
 
 	midi_event		*list;

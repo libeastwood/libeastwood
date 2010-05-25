@@ -38,41 +38,36 @@ namespace eastwood {
 
 struct midi_event
 {
-    int32_t	time;
-    MidiStatus	status;
+    int32_t			time;
+    MidiStatus			status;
 
-    uint8_t	data[2];
+    uint8_t			data[2];
 
-    uint32_t	len;
-    uint8_t	*buffer;
+    std::vector<uint8_t>	buffer;
 
-    midi_event	*next;
+    midi_event			*next;
 
-    midi_event() : time(0), status(), len(0), buffer(NULL), next(NULL)
+    midi_event() : time(0), status(), buffer(), next(NULL)
     {
     }
 
-    ~midi_event()
-    {
-	delete [] buffer;
-	buffer = NULL;
-    }
 };
 
 // Constructor
 XmiFile::XmiFile(std::istream &source) :
-    info(), _iff(source), events(NULL), timing(NULL), list(NULL), current(NULL), bank127(), fixed()
+    info(), _iff(source), _events(), timing(NULL), list(NULL), current(NULL), bank127(), fixed()
 {
     extractTracks();
 }
 
 XmiFile::~XmiFile()
 {
+    /*
     if (events) {
 	for (int32_t i=0; i < info.tracks; i++)
 	    deleteEventList (events[i]);
 	delete [] events;
-    }
+    }*/
 }
 
 int32_t XmiFile::retrieve (uint32_t track, std::ostream &Dest)
@@ -80,19 +75,19 @@ int32_t XmiFile::retrieve (uint32_t track, std::ostream &Dest)
     OStream &dest = reinterpret_cast<OStream&>(Dest);
     int32_t len = 0;
 
-    if (!events)
+    if (_events.empty())
 	throw(Exception(LOG_ERROR, "XmiFile::retrieve()", "No midi data in loaded."));
 
     // Convert type 1 midi's to type 0
     if (info.type == 1) {
 	duplicateAndMerge(-1);
 
-	for (int32_t i=0; i < info.tracks; i++)
+	/*for (int32_t i=0; i < info.tracks; i++)
 	    deleteEventList(events[i]);
-
-	delete [] events;
-	events = new midi_event *[1];
-	events[0] = list;
+*/
+	//delete [] events;
+	_events.resize(1);// = new midi_event *[1];
+	_events[0] = list;
 
 	info.tracks = 1;
 	info.type = 0;
@@ -103,10 +98,10 @@ int32_t XmiFile::retrieve (uint32_t track, std::ostream &Dest)
 
     // And fix the midis if they are broken
     if (!fixed[track]) {
-	list = events[track];
+	list = _events[track];
 	movePatchVolAndPan();
 	fixed[track] = true;
-	events[track] = list;
+	_events[track] = list;
     }
 
     dest.put('M');
@@ -120,23 +115,9 @@ int32_t XmiFile::retrieve (uint32_t track, std::ostream &Dest)
     dest.putU16BE(1);
     dest.putU16BE(static_cast<uint16_t>(timing[track]));
 
-    len = convertListToMTrk(dest, events[track]);
+    len = convertListToMTrk(dest, _events[track]);
 
     return len + 14;
-}
-
-void XmiFile::deleteEventList(midi_event *mlist)
-{
-    midi_event *event;
-    midi_event *next;
-
-    next = mlist;
-    event = mlist;
-
-    while ((event = next)) {
-	next = event->next;
-	delete event;
-    }
 }
 
 // Sets current to the new event and updates list
@@ -144,13 +125,8 @@ void XmiFile::createNewEvent(int32_t time)
 {
     if (!list) {
 	list = current = new midi_event;
-	current->next = NULL;
-	if (time < 0)
-	    current->time = 0;
-	else
+	if (time)
 	    current->time = time;
-	current->buffer = NULL;
-	current->len = 0;
 	return;
     }
 
@@ -158,9 +134,6 @@ void XmiFile::createNewEvent(int32_t time)
 	midi_event *event = new midi_event;
 	event->next = list;
 	list = current = event;
-	current->time = 0;
-	current->buffer = NULL;
-	current->len = 0;
 	return;
     }
 
@@ -175,8 +148,6 @@ void XmiFile::createNewEvent(int32_t time)
 	    current->next = event;
 	    current = event;
 	    current->time = time;
-	    current->buffer = NULL;
-	    current->len = 0;
 	    return;
 	}
 
@@ -185,10 +156,7 @@ void XmiFile::createNewEvent(int32_t time)
 
     current->next = new midi_event;
     current = current->next;
-    current->next = NULL;
     current->time = time;
-    current->buffer = NULL;
-    current->len = 0;
 }
 
 
@@ -295,8 +263,6 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
     patch = new midi_event;
     patch->time = temp->time;
     patch->status = static_cast<MidiStatus>(channel | MIDI_STATUS_PROG_CHANGE);
-    patch->len = 0;
-    patch->buffer = NULL;
     patch->data[0] = temp->data[0];
 
 
@@ -308,8 +274,6 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
     vol = new midi_event;
     vol->status = static_cast<MidiStatus>(channel | MIDI_STATUS_CONTROLLER);
     vol->data[0] = 7;
-    vol->len = 0;
-    vol->buffer = NULL;
 
     if (!temp)
 	vol->data[1] = 64;
@@ -326,8 +290,6 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
     bank = new midi_event;
     bank->status = static_cast<MidiStatus>(channel | MIDI_STATUS_CONTROLLER);
     bank->data[0] = 0;
-    bank->len = 0;
-    bank->buffer = NULL;
 
     if (!temp)
 	bank->data[1] = 0;
@@ -342,8 +304,6 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
     pan = new midi_event;
     pan->status = static_cast<MidiStatus>(channel | MIDI_STATUS_CONTROLLER);
     pan->data[0] = 10;
-    pan->len = 0;
-    pan->buffer = NULL;
 
     if (!temp)
 	pan->data[1] = 64;
@@ -367,7 +327,7 @@ void XmiFile::movePatchVolAndPan(int32_t channel)
 void XmiFile::duplicateAndMerge(int32_t num)
 {
     int32_t	i;
-    midi_event	**track;
+    std::vector<midi_event*>	track;
     int32_t	time = 0;
     int32_t	start = 0;
     int32_t	end = 1;
@@ -381,9 +341,7 @@ void XmiFile::duplicateAndMerge(int32_t num)
 	end += num;
     }
 
-    track = new midi_event *[info.tracks];
-
-    for (i = 0; i < info.tracks; i++) track[i] = events[i];
+    track = _events;
 
     current = list = NULL;
 
@@ -434,14 +392,8 @@ void XmiFile::duplicateAndMerge(int32_t num)
 	current->data[0] = track[i]->data[0];
 	current->data[1] = track[i]->data[1];
 
-	current->len = track[i]->len;
-
-	if (current->len) {
-	    current->buffer = new uint8_t[current->len];
-	    memcpy (current->buffer, track[i]->buffer, current->len);
-	}
-	else
-	    current->buffer = NULL;
+	if(!track[i]->buffer.empty())
+	    current->buffer = track[i]->buffer;
 
 	track[i] = track[i]->next;
     }
@@ -510,6 +462,7 @@ int32_t XmiFile::convertEvent(const int32_t time, const MidiStatus status, const
 int32_t XmiFile::convertSystemMessage(const int32_t time, const MidiStatus status)
 {
     int32_t i=0;
+    uint32_t bufsiz;
     IffChunk chunk = _iff.getChunk();
 
     createNewEvent(time);
@@ -522,15 +475,14 @@ int32_t XmiFile::convertSystemMessage(const int32_t time, const MidiStatus statu
 	i++;	
     }
 
-    i += getVLQ(current->len);
+    i += getVLQ(bufsiz);
+    current->buffer.resize(bufsiz);
 
-    if (!current->len) return i;
+    if (current->buffer.empty()) return i;
 
-    current->buffer = new uint8_t[current->len];	
+    chunk->read(reinterpret_cast<char*>(&current->buffer.front()), current->buffer.size());
 
-    chunk->read(reinterpret_cast<char*>(current->buffer), current->len);
-
-    return i+current->len;
+    return i+current->buffer.size();
 }
 
 // XMIDI and Midi to List
@@ -680,13 +632,12 @@ uint32_t XmiFile::convertListToMTrk (OStream &dest, midi_event *mlist)
 		    i++;
 		}
 
-		i += putVLQ(dest, event->len);
+		i += putVLQ(dest, event->buffer.size());
 
-		if (event->len) {
-		    for (uint32_t j = 0; j < event->len; j++) {
-			dest.put(event->buffer[j]); 
-			i++;
-		    }
+		if (!event->buffer.empty()) {
+		    for (std::vector<uint8_t>::iterator it = event->buffer.begin(); it != event->buffer.end(); ++it)
+			dest.put(*it);
+		    i += event->buffer.size();
 		}
 
 		break;
@@ -724,7 +675,7 @@ int32_t XmiFile::extractTracksFromXmi()
 	    break;
 	}
 	timing[num] = ppqn;
-	events[num] = list;
+	_events[num] = list;
 
 	// Increment Counter
 	num++;
@@ -779,7 +730,6 @@ int32_t XmiFile::extractTracksFromMid (IStream &source)
 
 int32_t XmiFile::extractTracks()
 {
-    uint32_t		i = 0;
     int32_t 		count;
 
     IffChunk		chunk = _iff.getChunk();
@@ -815,16 +765,10 @@ int32_t XmiFile::extractTracks()
 
 	// Ok it's an XMID, so pass it to the ExtractCode
 
-	events = new midi_event *[info.tracks];
+	_events.resize(info.tracks);// = new midi_event *[info.tracks];
 	timing.resize(info.tracks);
 	fixed.resize(info.tracks);
 	info.type = 0;
-
-	for (i = 0; i < info.tracks; i++)
-	{
-	    events[i] = NULL;
-	    fixed[i] = false;
-	}
 
 	count = extractTracksFromXmi();
 
@@ -834,10 +778,6 @@ int32_t XmiFile::extractTracks()
 
 	    int32_t i = 0;
 
-	    for (i = 0; i < info.tracks; i++)
-		deleteEventList(events[i]);
-
-	    delete [] events;
 
 	    return 0;		
 	}
