@@ -14,7 +14,7 @@ INSTALL(CODE "
     set( ENV{LDFLAGS} -L${CMAKE_CURRENT_BINARY_DIR}/../src )
     set( ENV{PWD} ${CMAKE_CACHEFILE_DIR} )
     execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} setup.py build -t \"${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/pyeastwood.dir\" --build-lib \"${CMAKE_CURRENT_BINARY_DIR}/lib\" install --prefix \"${CMAKE_INSTALL_PREFIX}\"
+	COMMAND ${PYTHON_EXECUTABLE} setup.py build -t \"${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/pyeastwood.dir\" --build-lib \"${CMAKE_CURRENT_BINARY_DIR}/lib\" install --prefix \"${CMAKE_INSTALL_PREFIX}\" --root \"$ENV{DESTDIR}\"
         WORKING_DIRECTORY ${LIBEASTWOOD_SOURCE_DIR}/python
         )
     "
