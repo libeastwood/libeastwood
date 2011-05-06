@@ -23,6 +23,10 @@
   typedef unsigned   uint32_t;
 #endif
 
+#ifndef offsetof
+#define offsetof(type, member)  __builtin_offsetof (type, member)
+#endif
+
 #if defined(__GNUC__)
   #define GNUC_ATTRIBUTE(attr) __attribute__(attr)
   #define PACK
