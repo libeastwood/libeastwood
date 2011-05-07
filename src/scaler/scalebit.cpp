@@ -75,7 +75,10 @@ static inline bool detect_mmx()
 static inline void stage_scale2x(uint8_t* dst0, uint8_t* dst1, const uint8_t* src0, const uint8_t* src1, const uint8_t* src2, uint8_t bpp, uint32_t bpp_per_row)
 {
 #if defined(__GNUC__) && defined(__i386__)
-	if(!detect_mmx()) {
+	static int mmx = -1;
+	if (mmx == -1)
+		mmx = detect_mmx();
+	if(mmx) {
 	switch (bpp) {
 		case 1 : scale2x_8_def(SSDST(8,0), SSDST(8,1), SSSRC(8,0), SSSRC(8,1), SSSRC(8,2), bpp_per_row); break;
 		case 2 : scale2x_16_def(SSDST(16,0), SSDST(16,1), SSSRC(16,0), SSSRC(16,1), SSSRC(16,2), bpp_per_row); break;
