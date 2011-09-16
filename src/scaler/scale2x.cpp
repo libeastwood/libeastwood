@@ -34,8 +34,12 @@
 
 #include "eastwood/StdDef.h"
 
-#ifdef _MSC_VER
-  #define __restrict__ __restrict
+#if defined(_MSC_VER) 
+#define __restrict__
+#endif
+
+#ifdef __sgi
+#define __restrict__ __restrict
 #endif
 
 #include "eastwood/scaler/scale2x.h"
