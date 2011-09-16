@@ -32,6 +32,16 @@
  * - derivative works of the program are allowed.
  */
 
+#include "eastwood/StdDef.h"
+
+#if defined(_MSC_VER)
+#define __restrict__
+#endif
+
+#ifdef __sgi
+#define __restrict__ __restrict
+#endif
+
 #include "eastwood/scaler/scale3x.h"
 
 #include <cassert>
@@ -39,7 +49,7 @@
 /***************************************************************************/
 /* Scale3x C implementation */
 
-static inline void scale3x_8_def_border(scale3x_uint8* __restrict__ dst, const scale3x_uint8* __restrict__ src0, const scale3x_uint8* __restrict__ src1, const scale3x_uint8* __restrict__ src2, unsigned count)
+static inline void scale3x_8_def_border(uint8_t* __restrict__ dst, const uint8_t* __restrict__ src0, const uint8_t* __restrict__ src1, const uint8_t* __restrict__ src2, unsigned count)
 {
 	/* central pixels */
 	while (count) {
@@ -61,7 +71,7 @@ static inline void scale3x_8_def_border(scale3x_uint8* __restrict__ dst, const s
 	}
 }
 
-static inline void scale3x_8_def_center(scale3x_uint8* __restrict__ dst, const scale3x_uint8* __restrict__ src0, const scale3x_uint8* __restrict__ src1, const scale3x_uint8* __restrict__ src2, unsigned count)
+static inline void scale3x_8_def_center(uint8_t* __restrict__ dst, const uint8_t* __restrict__ src0, const uint8_t* __restrict__ src1, const uint8_t* __restrict__ src2, unsigned count)
 {
 	/* central pixels */
 	while (count) {
@@ -83,7 +93,7 @@ static inline void scale3x_8_def_center(scale3x_uint8* __restrict__ dst, const s
 	}
 }
 
-static inline void scale3x_16_def_border(scale3x_uint16* __restrict__ dst, const scale3x_uint16* __restrict__ src0, const scale3x_uint16* __restrict__ src1, const scale3x_uint16* __restrict__ src2, unsigned count)
+static inline void scale3x_16_def_border(uint16_t* __restrict__ dst, const uint16_t* __restrict__ src0, const uint16_t* __restrict__ src1, const uint16_t* __restrict__ src2, unsigned count)
 {
 	/* central pixels */
 	while (count) {
@@ -105,7 +115,7 @@ static inline void scale3x_16_def_border(scale3x_uint16* __restrict__ dst, const
 	}
 }
 
-static inline void scale3x_16_def_center(scale3x_uint16* __restrict__ dst, const scale3x_uint16* __restrict__ src0, const scale3x_uint16* __restrict__ src1, const scale3x_uint16* __restrict__ src2, unsigned count)
+static inline void scale3x_16_def_center(uint16_t* __restrict__ dst, const uint16_t* __restrict__ src0, const uint16_t* __restrict__ src1, const uint16_t* __restrict__ src2, unsigned count)
 {
 	/* central pixels */
 	while (count) {
@@ -127,7 +137,7 @@ static inline void scale3x_16_def_center(scale3x_uint16* __restrict__ dst, const
 	}
 }
 
-static inline void scale3x_32_def_border(scale3x_uint32* __restrict__ dst, const scale3x_uint32* __restrict__ src0, const scale3x_uint32* __restrict__ src1, const scale3x_uint32* __restrict__ src2, unsigned count)
+static inline void scale3x_32_def_border(uint32_t* __restrict__ dst, const uint32_t* __restrict__ src0, const uint32_t* __restrict__ src1, const uint32_t* __restrict__ src2, unsigned count)
 {
 	/* central pixels */
 	while (count) {
@@ -149,7 +159,7 @@ static inline void scale3x_32_def_border(scale3x_uint32* __restrict__ dst, const
 	}
 }
 
-static inline void scale3x_32_def_center(scale3x_uint32* __restrict__ dst, const scale3x_uint32* __restrict__ src0, const scale3x_uint32* __restrict__ src1, const scale3x_uint32* __restrict__ src2, unsigned count)
+static inline void scale3x_32_def_center(uint32_t* __restrict__ dst, const uint32_t* __restrict__ src0, const uint32_t* __restrict__ src1, const uint32_t* __restrict__ src2, unsigned count)
 {
 	/* central pixels */
 	while (count) {
@@ -185,7 +195,7 @@ static inline void scale3x_32_def_center(scale3x_uint32* __restrict__ dst, const
  * \param dst1 Second destination row, triple length in pixels.
  * \param dst2 Third destination row, triple length in pixels.
  */
-void scale3x_8_def(scale3x_uint8* dst0, scale3x_uint8* dst1, scale3x_uint8* dst2, const scale3x_uint8* src0, const scale3x_uint8* src1, const scale3x_uint8* src2, unsigned count)
+void scale3x_8_def(uint8_t* dst0, uint8_t* dst1, uint8_t* dst2, const uint8_t* src0, const uint8_t* src1, const uint8_t* src2, unsigned count)
 {
 	scale3x_8_def_border(dst0, src0, src1, src2, count);
 	scale3x_8_def_center(dst1, src0, src1, src2, count);
@@ -204,7 +214,7 @@ void scale3x_8_def(scale3x_uint8* dst0, scale3x_uint8* dst1, scale3x_uint8* dst2
  * \param dst1 Second destination row, triple length in pixels.
  * \param dst2 Third destination row, triple length in pixels.
  */
-void scale3x_16_def(scale3x_uint16* dst0, scale3x_uint16* dst1, scale3x_uint16* dst2, const scale3x_uint16* src0, const scale3x_uint16* src1, const scale3x_uint16* src2, unsigned count)
+void scale3x_16_def(uint16_t* dst0, uint16_t* dst1, uint16_t* dst2, const uint16_t* src0, const uint16_t* src1, const uint16_t* src2, unsigned count)
 {
 	scale3x_16_def_border(dst0, src0, src1, src2, count);
 	scale3x_16_def_center(dst1, src0, src1, src2, count);
@@ -223,7 +233,7 @@ void scale3x_16_def(scale3x_uint16* dst0, scale3x_uint16* dst1, scale3x_uint16* 
  * \param dst1 Second destination row, triple length in pixels.
  * \param dst2 Third destination row, triple length in pixels.
  */
-void scale3x_32_def(scale3x_uint32* dst0, scale3x_uint32* dst1, scale3x_uint32* dst2, const scale3x_uint32* src0, const scale3x_uint32* src1, const scale3x_uint32* src2, unsigned count)
+void scale3x_32_def(uint32_t* dst0, uint32_t* dst1, uint32_t* dst2, const uint32_t* src0, const uint32_t* src1, const uint32_t* src2, unsigned count)
 {
 	scale3x_32_def_border(dst0, src0, src1, src2, count);
 	scale3x_32_def_center(dst1, src0, src1, src2, count);
