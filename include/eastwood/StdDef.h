@@ -50,10 +50,9 @@
     #ifdef min
       #undef min
     #endif
-  #else
-    #include <unistd.h>
   #endif
 #else
+  #include <unistd.h>
   #include <netinet/in.h>
 #endif
 #ifndef htobe16
