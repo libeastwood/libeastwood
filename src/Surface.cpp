@@ -40,7 +40,7 @@ struct BMPInfoHeader {
 
 Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _Bpp(bpp/8), _width(width), _height(height), _pitch(width*(bpp/8)),
-    _pixels(new Bytes(reinterpret_cast<uint8_t*>(malloc((width*(_Bpp)) * _height)), BufMalloc)),
+    _pixels(new Bytes(new uint8_t[(width*(_Bpp)) * _height])),
     _palette(palette)
 {
     memset(*this, 0, size());
@@ -48,13 +48,13 @@ Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette) 
 
 Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _Bpp(bpp/8), _width(width), _height(height), _pitch(width*(_Bpp)),
-    _pixels(new Bytes(buffer, BufMalloc)), _palette(palette)
+    _pixels(new Bytes(buffer)), _palette(palette)
 {
 }
 
 Surface::Surface(const Surface &surface) :
     _bpp(surface._bpp), _Bpp(surface._Bpp), _width(surface._width), _height(surface._height),
-    _pitch(surface._pitch), _pixels(new Bytes(reinterpret_cast<uint8_t*>(malloc(surface.size())), BufMalloc)), _palette(surface._palette)
+    _pitch(surface._pitch), _pixels(new Bytes(new uint8_t[surface.size()])), _palette(surface._palette)
 {
     if(*this)
     	memcpy(*this, surface, size());
