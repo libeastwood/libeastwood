@@ -16,7 +16,7 @@ class Surface : public eastwood::Surface
 	Surface(const eastwood::Surface& surface,
 		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0) :
 	    eastwood::Surface(surface.width(), surface.height(), surface.bpp(), surface.palette()),
-	    _surface(SDL_CreateRGBSurfaceFrom(*_pixels.get(), surface.width(), surface.height(),
+	    _surface(SDL_CreateRGBSurfaceFrom(*this, surface.width(), surface.height(),
 			surface.bpp(), surface.pitch(), Rmask, Gmask, Bmask, Amask)) {
 		memcpy(_surface->pixels, surface, surface.size());
 		setPalette(_palette);
@@ -25,8 +25,8 @@ class Surface : public eastwood::Surface
 	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette,
 		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0) :
 	    eastwood::Surface(width, height, bpp, palette),
-	    _surface(SDL_CreateRGBSurfaceFrom(*_pixels.get(), width, height, bpp,
-			pitch(), Rmask, Gmask, Bmask, Amask)) {
+	    _surface(SDL_CreateRGBSurfaceFrom(*this, width, height, bpp,
+			_pitch, Rmask, Gmask, Bmask, Amask)) {
 		setPalette(_palette);
 	    }
 
@@ -47,8 +47,7 @@ class Surface : public eastwood::Surface
 	Surface &operator=(const eastwood::Surface &surface) {
 	    *(static_cast<eastwood::Surface*>(this)) = surface;
 
-	    _surface = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_PREALLOC, _width, _height, _bpp, 0, 0, 0, 0);
-	    _surface->pixels = *this;
+	    _surface = SDL_CreateRGBSurfaceFrom(*this, _width, _height, _bpp, _pitch, 0, 0, 0, 0);
 
 	    setPalette(_palette);
 
