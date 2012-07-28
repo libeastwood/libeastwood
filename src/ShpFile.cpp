@@ -97,7 +97,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
     /* size and also checksum */
     imageSize = _stream.getU16LE();
 
-    imageOut = new uint8_t[imageOutSize = width*height];
+    imageOut = reinterpret_cast<uint8_t*>(malloc(imageOutSize = width*height));
 
     LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
 
