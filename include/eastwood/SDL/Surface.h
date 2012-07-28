@@ -54,6 +54,16 @@ class Surface : public eastwood::Surface
 	    return *this;
 	}
 
+	Surface &operator=(const eastwood::SDL::Surface &surface) {
+	    *(static_cast<eastwood::Surface*>(this)) = surface;
+
+	    _surface = SDL_ConvertSurface(surface._surface, surface._surface->format, surface._surface->flags);
+
+	    setPalette(_palette);
+
+	    return *this;
+	}
+
 	Surface &operator=(const SDL_Surface *surface) {
 	    _surface = const_cast<SDL_Surface*>(surface);
 	    _bpp = surface->format->BitsPerPixel;
