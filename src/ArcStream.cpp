@@ -11,11 +11,16 @@ _coffset(offset), _bufsize(bufsize), _buffer(bufsize)
     setg(&_buffer.front(), &_buffer.front() + _bufsize, &_buffer.front() + _bufsize);
 }
 
-ArcStream::ArcStream(std::string& filename, int mode, int bufsize) :
+ArcStream::ArcStream(std::string filename, int mode, int bufsize) :
 _mode(mode), _descriptor(NULL), _soffset(0), _eoffset(0), _coffset(0),
 _bufsize(bufsize), _buffer(bufsize)
 {
     open(filename);
+}
+
+ArcStream::~ArcStream()
+{
+    close();
 }
 
 void ArcStream::open(std::string& filename)
