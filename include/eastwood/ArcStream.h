@@ -3,21 +3,42 @@
 
 #include <streambuf>
 #include <vector>
+#include <string>
+#include <stdio.h>
 
 namespace eastwood {
     
 class ArcStream : public std::streambuf
 {
-public:
-    ArcStream(int fd, int size, int offset = 0, std::size_t buff_sz = 256, std::size_t put_back = 8);
-    ~ArcStream();
 protected:
-    underflow();
-    int _descriptor;
+    typedef std::streambuf::pos_type        pos_type;
+    typedef std::streambuf::off_type        off_type;
+    typedef std::ios_base::seekdir               seekdir;
+    typedef std::ios_base::openmode              openmode;
+    
+public:
+    ArcStream() : _mode(0), _descriptor(0), _soffset(0), _eoffset(0), _coffset(0),
+                  _bufsize(0), _buffer(0){}
+    ArcStream(FILE* fd, int size, int offset = 0, int bufsize = 256);
+    ArcStream(std::string& filename, int mode = std::ios_base::in, 
+              int bufsize = 256);
+    ~ArcStream();
+    
+    void open(std::string& filename);
+    void close();
+    
+protected:
+    int_type underflow();
+    std::streamsize xsgetn(char *dest, std::streamsize n);
+    pos_type seekoff(off_type offset, seekdir dir, openmode mode);
+    pos_type seekpos(pos_type offset, openmode mode);
+    int _mode;
+    FILE* _descriptor;
     int _soffset;
     int _eoffset;
-    const std::size_t put_back_;
-    std::vector<char> buffer_;
+    int _coffset;
+    int _bufsize;
+    std::vector<char> _buffer;
 };
     
 }//eastwood

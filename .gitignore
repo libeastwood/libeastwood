@@ -12,3 +12,5 @@ compile_commands.json
 *.so*
 CPackConfig.cmake
 CPackSourceConfig.cmake
+*.pc*
+*.spec
