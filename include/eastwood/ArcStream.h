@@ -1,10 +1,13 @@
 #ifndef EASTWOOD_ARCSTREAM_H
 #define	EASTWOOD_ARCSTREAM_H
 
+#include "eastwood/ArcFileInfo.h"
+
 #include <streambuf>
 #include <vector>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
+#include <iostream>
 
 namespace eastwood {
     
@@ -17,28 +20,34 @@ protected:
     typedef std::ios_base::openmode              openmode;
     
 public:
-    ArcStream() : _mode(0), _descriptor(0), _soffset(0), _eoffset(0), _coffset(0),
-                  _bufsize(0), _buffer(0){}
-    ArcStream(FILE* fd, int size, int offset = 0, int bufsize = 256);
-    ArcStream(std::string filename, int mode = std::ios_base::in, 
-              int bufsize = 256);
-    ~ArcStream();
+    ArcStream(FILE* fp = NULL);
+    ArcStream(ArcFileInfo& fileinfo);
+    ~ArcStream() { this->close(); }
     
-    void open(std::string& filename);
-    void close();
+    ArcStream* open(const char* filename, openmode mode);
+    ArcStream* close();
+    bool is_open() { return _fp != NULL; }
+    FILE* getiofile() const { return _fp; }
     
 protected:
-    int_type underflow();
-    std::streamsize xsgetn(char *dest, std::streamsize n);
-    pos_type seekoff(off_type offset, seekdir dir, openmode mode);
-    pos_type seekpos(pos_type offset, openmode mode);
-    int _mode;
-    FILE* _descriptor;
+    virtual int_type underflow();
+    virtual int_type uflow();
+    virtual int_type pbackfail(int_type c = traits_type::eof());
+    virtual int_type overflow(int_type c = traits_type::eof());
+    virtual ArcStream* setbuf(char* s, std::streamsize n);
+    virtual std::streamsize xsgetn(char* dest, std::streamsize n);
+    virtual std::streamsize xsputn(char* src, std::streamsize n);
+    virtual pos_type seekoff(off_type offset, seekdir direction, openmode mode = std::ios_base::in | std::ios_base::out);
+    virtual pos_type seekpos(pos_type offset, openmode mode = std::ios_base::in | std::ios_base::out);
+    virtual int sync();
+    FILE* _fp;
     int _soffset;
     int _eoffset;
-    int _coffset;
-    int _bufsize;
-    std::vector<char> _buffer;
+    std::vector <int_type> _pushbacks;
+    
+private:
+    ArcStream(const ArcStream&);
+    ArcStream& operator=(const ArcStream&);
 };
     
 }//eastwood
