@@ -5,9 +5,7 @@
 #include "eastwood/Surface.h"
 #include "eastwood/CpsFile.h"
 #include "eastwood/FntFile.h"
-#include "eastwood/CnCStrFile.h"
-#include <istream>
-#include <fstream>
+#include "eastwood/StringFile.h"
 
 const char* mixes[] = {"tdtest.mix", "ratest.mix", "rasub.mix"};
 const char* strfiles[] = {"conquer.eng", "setup.dip", "redalert.eng"};
@@ -17,11 +15,11 @@ using namespace eastwood;
 
 int main(int argc, char** argv)
 {
-    ArcStream file;
-    file.open("sole.eng", std::ios_base::in | std::ios_base::binary);
-    std::istream stream(&file);
-    CCStringFile strf(stream);
-    LOG_INFO("String %d is %s.", 121, strf.getString(120).c_str());
+    ArcFileInfo finfo = {18, 11564, "tdtest.mix"};
+    ArcIOStream file(finfo);
+    //file.open(finfo);
+    StringFile strf(file);
+    strf.list();
     
     return 0;
 }

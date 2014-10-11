@@ -2,9 +2,7 @@ INCLUDE_DIRECTORIES(${LIBEASTWOOD_SOURCE_DIR}/include)
 
 
 SET( LIBEASTWOOD_SRCS
-  ArcStream.cpp
   AdlFile.cpp
-  CnCStrFile.cpp
   CpsFile.cpp
   Decode.cpp
   Dune2File.cpp
