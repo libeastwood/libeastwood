@@ -2,6 +2,7 @@
 #define EASTWOOD_PALETTE_H
 
 #include <vector>
+#include "eastwood/StdDef.h"
 
 namespace eastwood {
 
@@ -13,25 +14,25 @@ struct Color {
 };
 
 class Palette {
-    public:
-	Palette(uint16_t colors = 256);
-	virtual ~Palette();
+public:
+    Palette(uint16_t colors = 256);
+    virtual ~Palette();
 
-	Color& operator[] (uint16_t i) { return _palette.at(i); }
-	virtual operator bool() const throw() {
-	    return !_palette.empty();
-	}
+    Color& operator[] (uint16_t i) { return _palette.at(i); }
+    virtual operator bool() const throw() {
+        return !_palette.empty();
+    }
 
-	virtual bool operator! () const throw() {
-	    return _palette.empty();
-	}
+    virtual bool operator! () const throw() {
+        return _palette.empty();
+    }
 
-	uint16_t size() const throw() { return _palette.size(); }
+    uint16_t size() const throw() { return _palette.size(); }
 
-	bool savePAL(std::ostream &output);
+    bool savePAL(std::ostream &output);
 
-    protected:
-	std::vector<Color> _palette;
+protected:
+    std::vector<Color> _palette;
 };
 }
 #endif // EASTWOOD_PALETTE_H
