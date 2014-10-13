@@ -8,6 +8,7 @@
 #include "eastwood/FntFile.h"
 #include "eastwood/StringFile.h"
 #include "eastwood/OStream.h"
+#include "eastwood/PcxFile.h"
 
 const char* mixes[] = {"tdtest.mix", "ratest.mix", "rasub.mix"};
 const char* strfiles[] = {"sole.eng", "conquer.eng", "setup.dip", "redalert.eng"};
@@ -22,22 +23,21 @@ int main(int argc, char** argv)
     arcman.indexMix("ratest.mix", true);
     arcman.indexMix("rasub.mix", true);
     //IStream file(arcman.find("setup.dip"));
-    IStream ini;
-    ini.open("REDALERT.INI", std::ios_base::in | std::ios_base::binary);
-    if(ini.is_open()){
-        IniFile inifile(ini);
-        LOG_INFO("Ini language %s.", inifile.getStringValue("Language", "Language").c_str());
-        inifile.setStringValue("Language", "Language", "GER");
-        OStream iniwrite;
-        iniwrite.open("testing.ini");
-        if(iniwrite.is_open()){
+    IStream infile;
+    infile.open("alibackh.pcx", std::ios_base::in | std::ios_base::binary);
+    if(infile.is_open()){
+        PcxFile fileformat(infile);
+        OStream outfile;
+        outfile.open("testing.bmp");
+        Surface surface = fileformat.getSurface();
+        if(outfile.is_open()){
             LOG_INFO("Out stream is open");
-            inifile.SaveChangesTo(iniwrite);
+            surface.saveBMP(outfile);
         }
     } else {
         LOG_DEBUG("File not open");
     }
-    ini.close();
+    infile.close();
     
     
     //file.open(finfo);

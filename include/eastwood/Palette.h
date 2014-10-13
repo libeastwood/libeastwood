@@ -29,7 +29,7 @@ public:
 
     uint16_t size() const throw() { return _palette.size(); }
 
-    bool savePAL(std::ostream &output);
+    bool savePAL(std::ostream &output, bool fullpal = false);
 
 protected:
     std::vector<Color> _palette;

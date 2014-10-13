@@ -22,6 +22,7 @@ protected:
     void decode2(const std::vector<uint8_t> &in, uint8_t *out);
     //FIXME:
     void encode2(const uint8_t *source, int len, int slices, std::ostream &dest);
+    void encodeRLE(const uint8_t *source, int len, std::ostream &dest);
 
 
 

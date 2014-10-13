@@ -9,7 +9,7 @@ namespace eastwood {
 class WsaFile : public Decode
 {
 public:
-	WsaFile(std::istream &stream, Palette palette,
+	WsaFile(std::istream &stream, Palette palette = Palette(),
                 Surface firstFrame = Surface());
 
 	~WsaFile();
