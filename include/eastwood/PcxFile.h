@@ -3,7 +3,7 @@
 
 #include "Palette.h"
 #include "Decode.h"
-#include "ArcStream.h"
+#include "ArcStreamBuf.h"
 #include "IStream.h"
 
 namespace eastwood {

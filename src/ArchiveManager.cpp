@@ -107,6 +107,8 @@ size_t ArchiveManager::indexPak(std::string pakfile, bool usefind)
             throw(Exception(LOG_ERROR, "ArchiveManager", "Invalid Pak format"));
     }
     
+    _stream.close();
+    
     return _archives.size() - 1;
 }
 
@@ -140,6 +142,8 @@ size_t ArchiveManager::indexMix(std::string mixfile, bool usefind)
     } else {
         handleEncrypted(archive);
     }
+    
+    _stream.close();
     
     return _archives.size() - 1;
 }
@@ -274,6 +278,7 @@ ArcFileInfo& ArchiveManager::find(std::string filename)
         if(info != _archives.at(i).end()) return info->second;
     }
     
+    LOG_DEBUG("Couldn't find file of id %08x", id);
     return _nullinfo;
 }
 
