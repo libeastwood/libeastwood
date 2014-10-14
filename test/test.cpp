@@ -9,6 +9,9 @@
 #include "eastwood/StringFile.h"
 #include "eastwood/OStream.h"
 #include "eastwood/PcxFile.h"
+#include "eastwood/WsaFile.h"
+#include "eastwood/PalFile.h"
+#include "eastwood/ShpFile.h"
 
 const char* mixes[] = {"tdtest.mix", "ratest.mix", "rasub.mix"};
 const char* strfiles[] = {"sole.eng", "conquer.eng", "setup.dip", "redalert.eng"};
@@ -24,12 +27,16 @@ int main(int argc, char** argv)
     arcman.indexMix("rasub.mix", true);
     //IStream file(arcman.find("setup.dip"));
     IStream infile;
-    infile.open("alibackh.pcx", std::ios_base::in | std::ios_base::binary);
+    infile.open("palette.cps", std::ios_base::in | std::ios_base::binary);
+    CpsFile pal(infile);
+    infile.close();
+    infile.open("einstein.shp", std::ios_base::in | std::ios_base::binary);
     if(infile.is_open()){
-        PcxFile fileformat(infile);
+        LOG_INFO("Opening shp file");
+        ShpFile fileformat(infile, pal.getPalette());
         OStream outfile;
         outfile.open("testing.bmp");
-        Surface surface = fileformat.getSurface();
+        Surface surface = pal.getSurface();
         if(outfile.is_open()){
             LOG_INFO("Out stream is open");
             surface.saveBMP(outfile);
