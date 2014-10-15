@@ -128,14 +128,14 @@ bool Surface::saveBMP(std::ostream &output)
 	    os.put(0);
 	}
     }
-
+    
     /* Write the bitmap offset */
     header.offBits = static_cast<uint32_t>(os.tellp())-fp_offset;
     os.seekp(fp_offset+10, std::ios::beg);
     
     os.putU32LE(header.offBits);
     os.seekp(fp_offset+header.offBits);
-
+    
     /* Write the bitmap image upside down */
     int pad  = ((_pitch%4) ? (4-(_pitch%4)) : 0);
     for(bits = static_cast<uint8_t*>(*this)+((_height-1)*_pitch); bits >= static_cast<uint8_t*>(*this); bits-= _pitch) {
@@ -143,7 +143,7 @@ bool Surface::saveBMP(std::ostream &output)
 	for (int i=0; i<pad; ++i )
 	    os.put(0);
     }
-
+    
     /* Write the BMP file size */
     header.size = static_cast<uint32_t>(os.tellp())-fp_offset;
     os.seekp(fp_offset+2, std::ios::beg);

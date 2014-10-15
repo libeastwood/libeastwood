@@ -30,13 +30,15 @@ int main(int argc, char** argv)
     infile.open("palette.cps", std::ios_base::in | std::ios_base::binary);
     CpsFile pal(infile);
     infile.close();
-    infile.open("einstein.shp", std::ios_base::in | std::ios_base::binary);
+    infile.open("mouse.shp", std::ios_base::in | std::ios_base::binary);
     if(infile.is_open()){
         LOG_INFO("Opening shp file");
-        ShpFile fileformat(infile, pal.getPalette());
+        ShpFile fileformat(infile, pal.getPalette(), SHP_DUNE2);
+        LOG_INFO("Shp has %d fames", fileformat.size());
         OStream outfile;
-        outfile.open("testing.bmp");
-        Surface surface = pal.getSurface();
+        outfile.open("testing.bmp", std::ios_base::out | std::ios_base::binary);
+        //Format20 in einstein 13 164 not working
+        Surface surface = fileformat.getSurface(13);
         if(outfile.is_open()){
             LOG_INFO("Out stream is open");
             surface.saveBMP(outfile);
