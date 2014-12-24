@@ -74,30 +74,22 @@ static void apply_pal_offsets(const std::vector<uint8_t> &offsets, uint8_t *data
 
 Surface ShpFile::getSurface(uint16_t fileIndex)
 {
-    uint8_t *imageOut,
-	    slices;
-    uint16_t flags,
-	     fileSize,
-	     imageSize,
-	     imageOutSize,
-	     width,
-	     height;
     std::vector<uint8_t>
 	palOffsets,
 	decodeDestination;
 
     _stream.seekg(_index.at(fileIndex).startOffset, std::ios::beg);
-    flags = _stream.getU16LE();
+    auto flags = _stream.getU16LE();
 
-    slices = _stream.get();
-    width = _stream.getU16LE();
-    height = _stream.get();
+    GNUC_ATTRIBUTE(unused) auto slices = _stream.get();
+    auto width = _stream.getU16LE();
+    auto height = _stream.get();
 
-    fileSize = _stream.getU16LE();
+    GNUC_ATTRIBUTE(unused) auto fileSize = _stream.getU16LE();
     /* size and also checksum */
-    imageSize = _stream.getU16LE();
-
-    imageOut = new uint8_t[imageOutSize = width*height];
+    auto imageSize = _stream.getU16LE();
+    auto imageOutSize = width*height;
+    auto imageOut = new uint8_t[imageOutSize];
 
     LOG_INFO("File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
 
