@@ -41,7 +41,7 @@ class StringFile
 	    return _strings.at(i);
 	}
 
-	auto size() const throw() {
+	auto size() const noexcept {
 	    return _strings.size();
 	}
 
