@@ -131,7 +131,7 @@ invalid:
 
 Sound VocFile::getSound()
 {
-    uint8_t *buffer = NULL,
+    uint8_t *buffer = nullptr,
 	    channels = 0;
     uint16_t vocLoops = 0;
     uint32_t len = 0,
