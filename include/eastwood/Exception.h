@@ -18,12 +18,12 @@ enum logLevel
 
 class Exception {
     public:
-        Exception(logLevel level, std::string location, std::string message);
-        Exception(logLevel level, std::string location, const char *format, ...);        
+        Exception(logLevel level, const std::string& location, const std::string& message);
+        Exception(logLevel level, const std::string& location, const char *format, ...);        
         virtual ~Exception(){}
-        virtual inline logLevel getLogLevel() { return _level; }
-        virtual inline std::string getLocation() { return _location; }
-        virtual inline std::string getMessage() { return _message; }
+        virtual inline const logLevel getLogLevel() const noexcept { return _level; }
+        virtual inline const std::string& getLocation() const noexcept { return _location; }
+        virtual inline const std::string& getMessage() noexcept{ return _message; }
 
     protected:
         logLevel _level;
@@ -33,13 +33,13 @@ class Exception {
 
 class FileException : public Exception {
     public:
-        FileException(logLevel level, std::string location, std::string filename, std::string message);
-        virtual inline std::string getFilename() { return _filename; };
+        FileException(logLevel level, const std::string& location, const std::string& filename, const std::string& message);
+        virtual inline const std::string& getFilename() const noexcept { return _filename; };
 
-        virtual inline std::string getMessage() {
+        virtual inline const std::string& getMessage() noexcept {
             std::stringstream ss;
             ss << _filename << ": " << _message;
-            return ss.str();
+            return std::move(ss.str());
         }
 
     private:
@@ -50,7 +50,7 @@ class FileException : public Exception {
 
 class FileNotFoundException : public FileException {
     public:
-        FileNotFoundException(logLevel level, std::string location, std::string filename);
+        FileNotFoundException(logLevel level, const std::string& location, const std::string& filename);
 };
 
 }
