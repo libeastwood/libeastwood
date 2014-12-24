@@ -47,7 +47,7 @@ struct midi_event
 
     midi_event			*next;
 
-    midi_event() : time(0), status(), buffer(), next(NULL)
+    midi_event() : time(0), status(), buffer(), next(nullptr)
     {
     }
 
@@ -55,7 +55,7 @@ struct midi_event
 
 // Constructor
 XmiFile::XmiFile(std::istream &source) :
-    info(), _iff(source), _events(), timing(NULL), list(NULL), current(NULL)
+    info(), _iff(source), _events(), timing(), list(nullptr), current(nullptr)
 {
     extractTracks();
 }
@@ -490,7 +490,7 @@ int32_t XmiFile::extractTracks()
 		continue;
 	    }
 
-	    list = NULL;
+	    list = nullptr;
 
 	    // Convert it
 	    if (!(ppqn = convertFiletoList(true))) {
