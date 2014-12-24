@@ -8,11 +8,11 @@
 
 namespace eastwood {
 
-static inline uint32_t getIndex(const uint32_t x) {
+static inline const uint32_t getIndex(const uint32_t x) {
     return (x & (TILE_NORMAL-1));
 }
 
-static inline TileType getType(const uint32_t x) {
+static inline const TileType getType(const uint32_t x) {
     return static_cast<TileType>(x & static_cast<uint32_t>(TILE_NORMAL-1)<<16);
 }
 
