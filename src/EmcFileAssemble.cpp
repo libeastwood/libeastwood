@@ -88,7 +88,7 @@ int EmcFileAssemble::scriptSectionCheck() {
     posEnd = _currentLine.find("]", posStart);
 
     // Read the section name
-    std::string name = _currentLine.substr(posStart, posEnd - posStart);
+    const std::string &name = _currentLine.substr(posStart, posEnd - posStart);
 
     // Check for the section name
     for(const char **namePtr = _objectNames; *namePtr++; count++)
