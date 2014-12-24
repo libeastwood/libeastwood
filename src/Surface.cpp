@@ -38,7 +38,7 @@ struct BMPInfoHeader {
     uint32_t colorsImportant;
 };
 
-Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
+Surface::Surface(int32_t width, int32_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _Bpp(bpp/8), _width(width), _height(height), _pitch(width*(bpp/8)),
     _pixels(new Bytes(new uint8_t[(width*(_Bpp)) * _height])),
     _palette(palette)
@@ -46,7 +46,7 @@ Surface::Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette) 
     memset(*this, 0, size());
 }
 
-Surface::Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette) :
+Surface::Surface(uint8_t *buffer, int32_t width, int32_t height, uint8_t bpp, Palette palette) :
     _bpp(bpp), _Bpp(bpp/8), _width(width), _height(height), _pitch(width*(_Bpp)),
     _pixels(new Bytes(buffer)), _palette(palette)
 {

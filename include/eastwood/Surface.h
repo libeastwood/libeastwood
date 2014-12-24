@@ -20,8 +20,8 @@ enum Scaler {
 class Surface {
     public:
 	Surface() : _bpp(0), _Bpp(0), _width(0), _height(0), _pitch(0), _pixels(), _palette(0) {};
-	Surface(uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
-	Surface(uint8_t *buffer, uint16_t width, uint16_t height, uint8_t bpp, Palette palette);
+	Surface(int32_t width, int32_t height, uint8_t bpp, Palette palette);
+	Surface(uint8_t *buffer, int32_t width, int32_t height, uint8_t bpp, Palette palette);
 	virtual ~Surface();
 
 	Surface(const Surface &surface);
