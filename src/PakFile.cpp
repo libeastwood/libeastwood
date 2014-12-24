@@ -89,7 +89,7 @@ void PakFile::open(std::string fileName, std::ios::openmode mode)
     close();
 
     if(!validateFileName(fileName))
-        throw(FileException(LOG_ERROR, "PakFile", fileName, "Filename must be DOS-style (8.3 format)"));
+        throw(FileException(LOG_ERROR, fileName, "Filename must be DOS-style (8.3 format)"));
 
     std::transform( fileName.begin(), fileName.end(), fileName.begin(), ::toupper );
 
@@ -111,7 +111,7 @@ void PakFile::open(std::string fileName, std::ios::openmode mode)
         _currentFile = _fileEntries.find(fileName);
         std::ios::init(new std::stringbuf(_mode));
     } else
-        throw(FileNotFoundException(LOG_ERROR, "PakFile", fileName));
+        throw(FileNotFoundException(LOG_ERROR, fileName));
 
 }
 
@@ -209,7 +209,7 @@ void PakFile::readIndex()
                  size;
 
 	_stream.getline(name, 256, 0);
-        LOG_INFO("PakFile", "Found file %s", name);
+        LOG_INFO("Found file %s", name);
 
         size = ((offset = _stream.getU32LE()) != 0 ? offset : _stream.sizeg()) - start;
         _fileEntries.insert(make_pair(name, FileEntry(start, size)));

@@ -35,11 +35,11 @@ void ShpFile::readIndex()
     _size = _stream.getU16LE();
 
     if(_size == 0)
-	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this SHP-File!"));
+	throw(Exception(LOG_ERROR, "There are no files in this SHP-File!"));
 
 
     if(fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) 
-	throw(Exception(LOG_ERROR, "ShpFile", "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize));
+	throw(Exception(LOG_ERROR, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize));
 
     _index.at(0).startOffset = _stream.getU16LE();
     _index.at(0).endOffset = _stream.getU16LE();
@@ -60,7 +60,7 @@ void ShpFile::readIndex()
 	    _index.at(i).endOffset = _stream.getU16LE() - 1 + offset;
 
 	    if(_index.at(i).endOffset > fileSize)
-		throw(Exception(LOG_ERROR, "ShpFile", "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
+		throw(Exception(LOG_ERROR, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
 			i, _index.at(i).endOffset, fileSize));
 	}
     }
@@ -99,14 +99,14 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 
     imageOut = new uint8_t[imageOutSize = width*height];
 
-    LOG_INFO("ShpFile", "File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
+    LOG_INFO("File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
 
     switch(flags) {
 	case 0:
 	    decodeDestination.resize(imageSize);
 	    
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
-		LOG_WARNING("ShpFile","Checksum-Error in Shp-File");
+		LOG_WARNING("Checksum-Error in Shp-File");
 
 	    decode2(decodeDestination, imageOut);
 	    break;
@@ -118,7 +118,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    _stream.read(reinterpret_cast<char*>(&palOffsets.front()), palOffsets.size());
 
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
-		LOG_WARNING("ShpFile", "Checksum-Error in Shp-File");
+		LOG_WARNING("Checksum-Error in Shp-File");
 	    
 	    decode2(decodeDestination, imageOut);
 
@@ -151,7 +151,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    break;
 
 	default:
-	    throw(Exception(LOG_ERROR, "ShpFile", "Type %d in SHP-Files not supported!", flags));
+	    throw(Exception(LOG_ERROR, "Type %d in SHP-Files not supported!", flags));
     }
 
     return Surface(imageOut, width, height, 8, _palette);
@@ -167,27 +167,6 @@ Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
 	tiles[i] = va_arg( arg_ptr, uint32_t );
 	if(getIndex(tiles[i]) >= _size)
 	    throw(Exception(LOG_ERROR, "ShpFile", "getSurfaceArray(): There exist only %d files in this *.shp.",_size));
-    }
-
-    va_end(arg_ptr);
-    return getSurfaceArray(tilesX, tilesY, &tiles.front());
-}
-
-Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles) {
-    uint8_t width,
-	    height;
-    uint16_t index = getIndex(tiles[0]);
-
-    _stream.seekg(_index.at(index).startOffset+3, std::ios::beg);
-    width = _stream.getU16LE();
-    height = _stream.get();    
-
-    for(uint32_t i = 1; i < tilesX*tilesY; i++) {
-	_stream.seekg(_index.at(getIndex(tiles[i])).startOffset+2, std::ios::beg);
-	if(_stream.get() != height || _stream.get() != width) {
-	    throw(Exception(LOG_ERROR, "ShpFile", "getSurfaceArray(): Not all pictures have the same size!"));
-	}
-    }
 
     Surface pic(width*tilesX, height*tilesY, 8, _palette);
 

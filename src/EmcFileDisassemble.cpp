@@ -46,13 +46,13 @@ bool EmcFileDisassemble::scriptLoad() {
     // Read File Size
     scriptSize = _inputStream.sizeg();
     if(scriptSize < sizeof(emcHeader))
-	throw(FileException(LOG_ERROR, "EmcFile", "_inputStream", "File is too small!"));
+	throw(FileException(LOG_ERROR, "_inputStream", "File is too small!"));
 
     // Verify header
     char fileHeader[sizeof(emcHeader)];
     _inputStream.get(fileHeader, sizeof(fileHeader));
     if(memcmp(emcHeader, fileHeader, 4) || memcmp(emcHeader+8, fileHeader+8, sizeof(emcHeader)-9))
-	throw(FileException(LOG_ERROR, "EmcFile", "_inputStream", "Invalid header!"));
+	throw(FileException(LOG_ERROR, "_inputStream", "Invalid header!"));
 
     _inputStream.seekg(3, std::ios::cur);
     scriptSize -= _inputStream.tellg();

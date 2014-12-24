@@ -2,13 +2,13 @@
 
 namespace eastwood {
 
-Exception::Exception(logLevel level, const std::string& location, const std::string& message) :
-    _level(level), _location(location), _message(message)
+Exception::Exception(logLevel level, const std::string& message) :
+    _level(level), _message(message)
 {
 }
 
-Exception::Exception(logLevel level, const std::string& location, const char *format, ...) :
-    _level(level), _location(location), _message(BUFSIZ, 0)
+Exception::Exception(logLevel level, const char *format, ...) :
+    _level(level), _message(BUFSIZ, 0)
 {
     va_list ap;
 
@@ -17,13 +17,13 @@ Exception::Exception(logLevel level, const std::string& location, const char *fo
     va_end(ap);
 }
 
-FileException::FileException(logLevel level, const std::string& location, const std::string& filename, const std::string& message) :
-    Exception(level, location, message), _filename(filename)
+FileException::FileException(logLevel level, const std::string& filename, const std::string& message) :
+    Exception(level, message), _filename(filename)
 {
 }
 
-FileNotFoundException::FileNotFoundException(logLevel level, const std::string& location, const std::string& filename) :
-    FileException(level, location, filename, "File not found!")
+FileNotFoundException::FileNotFoundException(logLevel level, const std::string& filename) :
+    FileException(level, filename, "File not found!")
 {
 }
 

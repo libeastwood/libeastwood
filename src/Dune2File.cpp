@@ -24,7 +24,7 @@ static const Address
     MapOffsetIndexesOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2006} },
     MovementUnk1Offset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x3342, 0x2468} },
     Emc15CDAOffset[D2_VERSIONS] = { {0,0}, {0,0}, {0,0}, {0,0}, {0x0001, 0x5cca} },
-    GlobalDataOffset[D2_VERSIONS] = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
+    GlobalDataOffset[D2_VERSIONS] GNUC_ATTRIBUTE(unused) = { {0x3251, 0}, {0x332f, 0}, {0x32f0, 0}, {0x3348, 0}, {0x3342, 0 } };
 
 ObjectData::ObjectData() :
     typeIndex(0),idShort(0),name(""),idLong(0),picture(""),options(0),infantrySpawn(0),

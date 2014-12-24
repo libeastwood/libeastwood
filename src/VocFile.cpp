@@ -108,7 +108,7 @@ void VocFile::readHeader() {
 	if(!_stream.good()) goto invalid;
     } else {
 invalid:
-	throw(Exception(LOG_ERROR, "VocFile", "Invalid header"));
+	throw(Exception(LOG_ERROR, "Invalid header"));
 	return;
     }
 
@@ -118,13 +118,13 @@ invalid:
     _stream.readU16LE(&fileHeader.datablock_offset, (sizeof(VocFileHeader)-offsetof(VocFileHeader,datablock_offset))/sizeof(uint16_t));
     
     if(fileHeader.datablock_offset != sizeof(VocFileHeader))
-    	throw(Exception(LOG_ERROR, "VocFile", "Incorrect data block offset"));
+    	throw(Exception(LOG_ERROR, "Incorrect data block offset"));
     // 0x100 is an invalid VOC version used by German version of DOTT (Disk) and
     // French version of Simon the Sorcerer 2 (CD)
     if(fileHeader.version != 0x010A && fileHeader.version != 0x0114 && fileHeader.version != 0x0100)
-	throw(Exception(LOG_ERROR, "VocFile", "Unknown version"));
+	throw(Exception(LOG_ERROR, "Unknown version"));
     if(fileHeader.id != ~fileHeader.version + 0x1234)
-	throw(Exception(LOG_ERROR, "VocFile", "Incorrect header id"));
+	throw(Exception(LOG_ERROR, "Incorrect header id"));
 }
 
 
@@ -167,7 +167,7 @@ Sound VocFile::getSound()
 		    len -= 2;
 		    uint32_t tmp_rate = getSampleRateFromVOCRate(time_constant);
 		    if((frequency != 0) && (frequency != frequency))
-			LOG_ERROR("VocFile", "This voc-file contains data blocks with different sampling rates: old rate: %d, new rate: %d", frequency, tmp_rate);
+			LOG_ERROR("This voc-file contains data blocks with different sampling rates: old rate: %d, new rate: %d", frequency, tmp_rate);
 		    frequency = tmp_rate;
 		    format = FMT_U8;
 		    channels = 1;
@@ -214,7 +214,7 @@ Sound VocFile::getSound()
 		if(frequency != 0) {
 		    length = static_cast<uint32_t>(static_cast<double>(silenceRate)/(static_cast<double>(frequency) * silenceLength)) + 1;
 		} else {
-		    LOG_ERROR("VocFile", "The silence in this voc-file is right at the beginning.\n"
+		    LOG_ERROR("The silence in this voc-file is right at the beginning.\n"
 			    "Therefore it is not possible to adjust the silence sample rate to the sample rate of the other sound data in this file!");
 		    length = silenceLength; 
 		}
@@ -235,21 +235,21 @@ Sound VocFile::getSound()
 	    case VOC_CODE_TEXT:
 	    case VOC_CODE_LOOPBEGIN:
 		if(len != sizeof(vocLoops))
-		    throw(Exception(LOG_ERROR, "VocFile", "Size of vocLoops doesn't match expected size"));
+		    throw(Exception(LOG_ERROR, "Size of vocLoops doesn't match expected size"));
 		vocLoops = _stream.getU16LE();
 	    break;
 
 	    case VOC_CODE_LOOPEND:
 		if(len != 0)
-		    throw(Exception(LOG_WARNING, "VocFile", "Code size of loop end is non-zero"));
+		    throw(Exception(LOG_WARNING, "Code size of loop end is non-zero"));
 	    break;
 
 	    case VOC_CODE_EXTENDED:
 		if(len != 4)
-		    throw(Exception(LOG_ERROR, "VocFile", "Unexpected extended code size"));
+		    throw(Exception(LOG_ERROR, "Unexpected extended code size"));
 		_stream.seekg(len, std::ios::cur);
 	    default:
-		LOG_ERROR("VocFile", "Unhandled code in VOC file : %d", code);
+		LOG_ERROR("Unhandled code in VOC file : %d", code);
 	}
     }
 

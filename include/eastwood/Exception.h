@@ -18,8 +18,8 @@ enum logLevel
 
 class Exception {
     public:
-        Exception(logLevel level, const std::string& location, const std::string& message);
-        Exception(logLevel level, const std::string& location, const char *format, ...);        
+        Exception(logLevel level, const std::string& message);
+        Exception(logLevel level, const char *format, ...);        
         virtual ~Exception(){}
         virtual inline const logLevel getLogLevel() const noexcept { return _level; }
         virtual inline const std::string& getLocation() const noexcept { return _location; }
@@ -33,7 +33,7 @@ class Exception {
 
 class FileException : public Exception {
     public:
-        FileException(logLevel level, const std::string& location, const std::string& filename, const std::string& message);
+        FileException(logLevel level,  const std::string& filename, const std::string& message);
         virtual inline const std::string& getFilename() const noexcept { return _filename; };
 
         virtual inline const std::string& getMessage() noexcept {
@@ -50,7 +50,7 @@ class FileException : public Exception {
 
 class FileNotFoundException : public FileException {
     public:
-        FileNotFoundException(logLevel level, const std::string& location, const std::string& filename);
+        FileNotFoundException(logLevel level, const std::string& filename);
 };
 
 }

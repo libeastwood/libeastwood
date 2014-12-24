@@ -479,11 +479,11 @@ AdlibDriver::~AdlibDriver() {
 int AdlibDriver::callback(int opcode, ...) {
     // 	lock();
     if (opcode >= _opcodesEntries || opcode < 0) {
-	LOG_WARNING("AdlibDriver",  "calling unknown opcode '%d'", opcode);
+	LOG_WARNING("calling unknown opcode '%d'", opcode);
 	return 0;
     }
 
-    LOG_INFO("AdlibDriver", "Calling opcode '%s' (%d)", _opcodeList[opcode].name, opcode);
+    LOG_INFO("Calling opcode '%s' (%d)", _opcodeList[opcode].name, opcode);
 
     va_list args;
     va_start(args, opcode);
@@ -524,7 +524,7 @@ int AdlibDriver::snd_setSoundData(va_list &list) {
 }
 
 int AdlibDriver::snd_unkOpcode1(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("AdlibDriver", "unimplemented snd_unkOpcode1");
+    LOG_WARNING("unimplemented snd_unkOpcode1");
     return 0;
 }
 
@@ -604,7 +604,7 @@ int AdlibDriver::snd_getSoundTrigger(__attribute__((unused)) va_list &list) {
 }
 
 int AdlibDriver::snd_unkOpcode4(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("AdlibDriver", "unimplemented snd_unkOpcode4");
+    LOG_WARNING("unimplemented snd_unkOpcode4");
     return 0;
 }
 
@@ -613,12 +613,12 @@ int AdlibDriver::snd_dummy(__attribute__((unused)) va_list &list) {
 }
 
 int AdlibDriver::snd_getNullvar4(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("AdlibDriver", "unimplemented snd_getNullvar4");
+    LOG_WARNING("unimplemented snd_getNullvar4");
     return 0;
 }
 
 int AdlibDriver::snd_setNullvar3(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("AdlibDriver", "unimplemented snd_setNullvar3");
+    LOG_WARNING("unimplemented snd_setNullvar3");
     return 0;
 }
 
@@ -784,13 +784,13 @@ void AdlibDriver::executePrograms() {
 			opcode &= 0x7F;
 			if (opcode >= _parserOpcodeTableSize)
 			    opcode = _parserOpcodeTableSize - 1;
-			LOG_INFO("AdlibDriver", "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
+			LOG_INFO("Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
 			result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
 			channel.dataptr = dataptr;
 			if (result)
 			    break;
 		    } else {
-			LOG_INFO("AdlibDriver", "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
+			LOG_INFO("Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
 			setupNote(opcode, channel);
 			noteOn(channel);
 			setupDuration(param, channel);
@@ -815,7 +815,7 @@ void AdlibDriver::executePrograms() {
 //
 
 void AdlibDriver::resetAdlibState() {
-    LOG_INFO("AdlibDriver", "resetAdlibState()");
+    LOG_INFO("resetAdlibState()");
     _rnd = 0x1234;
 
     // Authorize the control of the waveforms
@@ -847,7 +847,7 @@ void AdlibDriver::writeOPL(uint8_t reg, uint8_t val) {
 }
 
 void AdlibDriver::initChannel(Channel &channel) {
-    LOG_INFO("AdlibDriver", "initChannel(%lu)", static_cast<long>(&channel - _channels));
+    LOG_INFO("initChannel(%lu)", static_cast<long>(&channel - _channels));
     memset(&channel.dataptr, 0, sizeof(Channel) - (reinterpret_cast<char*>(&channel.dataptr) - reinterpret_cast<char*>(&channel)));
 
     channel.tempo = 0xFF;
@@ -860,7 +860,7 @@ void AdlibDriver::initChannel(Channel &channel) {
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
-    LOG_INFO("AdlibDriver", "noteOff(%lu)", static_cast<long>(&channel - _channels));
+    LOG_INFO("noteOff(%lu)", static_cast<long>(&channel - _channels));
 
     // The control channel has no corresponding Adlib channel
 
@@ -880,7 +880,7 @@ void AdlibDriver::noteOff(Channel &channel) {
 }
 
 void AdlibDriver::unkOutput2(uint8_t chan) {
-    LOG_INFO("AdlibDriver", "unkOutput2(%d)", chan);
+    LOG_INFO("unkOutput2(%d)", chan);
 
     // The control channel has no corresponding Adlib channel
 
@@ -939,7 +939,7 @@ uint16_t AdlibDriver::getRandomNr() {
 }
 
 void AdlibDriver::setupDuration(uint8_t duration, Channel &channel) {
-    LOG_INFO("AdlibDriver", "setupDuration(%d, %lu)", duration, static_cast<long>(&channel - _channels));
+    LOG_INFO("setupDuration(%d, %lu)", duration, static_cast<long>(&channel - _channels));
     if (channel.durationRandomness) {
 	channel.duration = duration + (getRandomNr() & channel.durationRandomness);
 	return;
@@ -953,7 +953,7 @@ void AdlibDriver::setupDuration(uint8_t duration, Channel &channel) {
 // to noteOn(), which will always play the current note.
 
 void AdlibDriver::setupNote(uint8_t rawNote, Channel &channel, bool flag) {
-    LOG_INFO("AdlibDriver", "setupNote(%d, %lu)", rawNote, static_cast<long>(&channel - _channels));
+    LOG_INFO("setupNote(%d, %lu)", rawNote, static_cast<long>(&channel - _channels));
 
     channel.rawNote = rawNote;
 
@@ -1007,7 +1007,7 @@ void AdlibDriver::setupNote(uint8_t rawNote, Channel &channel, bool flag) {
 }
 
 void AdlibDriver::setupInstrument(uint8_t regOffset, uint8_t *dataptr, Channel &channel) {
-    LOG_INFO("AdlibDriver", "setupInstrument(%d, %p, %lu)", regOffset, reinterpret_cast<const void *>(dataptr), static_cast<long>(&channel - _channels));
+    LOG_INFO("setupInstrument(%d, %p, %lu)", regOffset, reinterpret_cast<const void *>(dataptr), static_cast<long>(&channel - _channels));
     // Amplitude Modulation / Vibrato / Envelope Generator Type /
     // Keyboard Scaling Rate / Modulator Frequency Multiple
     writeOPL(0x20 + regOffset, *dataptr++);
@@ -1054,7 +1054,7 @@ void AdlibDriver::setupInstrument(uint8_t regOffset, uint8_t *dataptr, Channel &
 // primary effect 2.
 
 void AdlibDriver::noteOn(Channel &channel) {
-    LOG_INFO("AdlibDriver", "noteOn(%lu)", static_cast<long>(&channel - _channels));
+    LOG_INFO("noteOn(%lu)", static_cast<long>(&channel - _channels));
 
     // The "note on" bit is set, and the current note is played.
 
@@ -1068,7 +1068,7 @@ void AdlibDriver::noteOn(Channel &channel) {
 }
 
 void AdlibDriver::adjustVolume(Channel &channel) {
-    LOG_INFO("AdlibDriver", "adjustVolume(%lu)", static_cast<long>(&channel - _channels));
+    LOG_INFO("adjustVolume(%lu)", static_cast<long>(&channel - _channels));
     // Level Key Scaling / Total Level
 
     writeOPL(0x43 + _regOffset[_curChannel], calculateOpLevel2(channel));
@@ -1093,7 +1093,7 @@ void AdlibDriver::adjustVolume(Channel &channel) {
 // unk31 - determines how often the notes are played
 
 void AdlibDriver::primaryEffect1(Channel &channel) {
-    LOG_INFO("AdlibDriver", "Calling primaryEffect1 (channel: %d)", _curChannel);
+    LOG_INFO("Calling primaryEffect1 (channel: %d)", _curChannel);
     uint8_t temp = channel.unk31;
     channel.unk31 += channel.unk29;
     if (channel.unk31 >= temp)
@@ -1176,7 +1176,7 @@ void AdlibDriver::primaryEffect1(Channel &channel) {
 // is a bit sloppy.
 
 void AdlibDriver::primaryEffect2(Channel &channel) {
-    LOG_INFO("AdlibDriver", "Calling primaryEffect2 (channel: %d)", _curChannel);
+    LOG_INFO("Calling primaryEffect2 (channel: %d)", _curChannel);
     if (channel.unk38) {
 	--channel.unk38;
 	return;
@@ -1231,7 +1231,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
 // offset - the offset to the data chunk
 
 void AdlibDriver::secondaryEffect1(Channel &channel) {
-    LOG_INFO("AdlibDriver", "Calling secondaryEffect1 (channel: %d)", _curChannel);
+    LOG_INFO("Calling secondaryEffect1 (channel: %d)", _curChannel);
     uint8_t temp = channel.unk18;
     channel.unk18 += channel.unk19;
     if (channel.unk18 < temp) {
@@ -2266,7 +2266,7 @@ void CadlPlayer::process() {
 	if (soundId)
 	    playTrack(soundId);
     } else {
-	LOG_WARNING("AdlibDriver", "Unknown sound trigger %d", trigger);
+	LOG_WARNING("Unknown sound trigger %d", trigger);
 	// TODO: At this point, we really want to clear the trigger...
     }
 }
