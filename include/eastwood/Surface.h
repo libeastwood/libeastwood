@@ -52,7 +52,7 @@ class Surface {
     protected:
 	uint8_t _bpp,
 		_Bpp;
-	uint32_t _width,
+	int32_t _width,
 		 _height;
 	uint16_t _pitch;
 	BytesPtr _pixels;
