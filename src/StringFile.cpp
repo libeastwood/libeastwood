@@ -26,23 +26,24 @@ void StringFile::readHeader()
     if(_compressed) {
         std::vector<uint16_t> offsets(_strings.size());
 
-        for(uint16_t i = 0; i < _strings.size(); i++)
-            offsets[i] = _stream.getU16LE();
+        for(auto &offset : offsets)
+            offset = _stream.getU16LE();
 
-        for(uint16_t i = 0; i < _strings.size(); i++)
-            _strings[i] = decodeString(offsets[i]);
+        auto i = 0;
+        for(auto &string : _strings)
+            string = std::move(decodeString(offsets[i++]));
     }
     else {
-        _strings.push_back("");
+        _strings.emplace_back("");
         while(!_stream.eof()) {
-            uint8_t byte = _stream.get();
+            auto byte = _stream.get();
             //TODO: Figure out what these non-alpha numeric characters are for,
             //      some sort of formatting perhaps? Let's just treat them as
             //      separators for now... 
             if(byte >= 0x20 && byte <= 0x7e)
                 _strings.back() += byte;
             else if(_strings.back().size() != 0)
-                    _strings.push_back("");
+                    _strings.emplace_back("");
         }
     }
 }
@@ -240,9 +241,9 @@ std::string StringFile::decodeString(uint16_t offset)
 
 void StringFile::list()
 {
-    for(size_t i = 0; i < _strings.size(); i++) {
-        printf("%zu: %s\n", i, _strings[i].c_str());
-    }
+    auto i = 0;
+    for(auto &text : _strings)
+        std::cout << i++ << ":" << text << std::endl;
 }
 
 }

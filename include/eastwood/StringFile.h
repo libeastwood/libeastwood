@@ -41,7 +41,7 @@ class StringFile
 	    return _strings.at(i);
 	}
 
-	uint16_t size() const throw() {
+	auto size() const throw() {
 	    return _strings.size();
 	}
 
