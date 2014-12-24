@@ -238,5 +238,12 @@ std::string StringFile::decodeString(uint16_t offset)
     return out;
 }
 
+void StringFile::list()
+{
+    for(size_t i = 0; i < _strings.size(); i++) {
+        printf("%zu: %s\n", i, _strings[i].c_str());
+    }
+}
+
 }
 // vim:ts=8:sw=4:et
