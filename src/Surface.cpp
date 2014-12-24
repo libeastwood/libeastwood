@@ -56,8 +56,7 @@ Surface::Surface(const Surface &surface) :
     _bpp(surface._bpp), _Bpp(surface._Bpp), _width(surface._width), _height(surface._height),
     _pitch(surface._pitch), _pixels(new Bytes(new uint8_t[surface.size()])), _palette(surface._palette)
 {
-    if(*this)
-    	memcpy(*this, surface, size());
+    return *this;
 }
 
 Surface::~Surface() {
