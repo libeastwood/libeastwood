@@ -136,8 +136,9 @@ Sound VocFile::getSound()
     uint16_t vocLoops = 0;
     uint32_t len = 0,
 	     size = 0,
-	     frequency = 0,
-	     vocBeginLoop = 0,
+	     frequency = 0;
+    GNUC_ATTRIBUTE(unused) // although not really..?
+    uint32_t vocBeginLoop = 0,
 	     vocEndLoop = 0;
     AudioFormat format = FMT_INVALID;
     VocCode code = VOC_CODE_INVALID;
