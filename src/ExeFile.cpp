@@ -20,7 +20,7 @@ void ExeFile::readHeader()
 
     // File header must start with "MZ" or "ZM"
     if(_header.signature != MAGIC1 && _header.signature != MAGIC2)
-	throw(Exception(LOG_ERROR, "ExeFile", "Invalid signature"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid signature"));
     _relocations = std::vector<uint32_t>(_header.relocations);
     seekg(_header.relocTable, std::ios::beg);
     readU32LE(&_relocations.front(), _relocations.size());

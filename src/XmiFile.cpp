@@ -70,10 +70,10 @@ int32_t XmiFile::retrieve (uint32_t track, std::ostream &Dest)
     int32_t len = 0;
 
     if (_events.empty())
-	throw(Exception(LOG_ERROR, "XmiFile::retrieve()", "No midi data in loaded."));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "No midi data in loaded."));
 
     if (track >= info.tracks)
-	throw(Exception(LOG_ERROR, "XmiFile::retrieve()", "Can't retrieve MIDI data, track out of range"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Can't retrieve MIDI data, track out of range"));
 
     dest.put('M');
     dest.put('T');
@@ -460,7 +460,7 @@ int32_t XmiFile::extractTracks()
 
 	} // Not an XMIDI that we recognise
 	else if (_iff.getGroupType() != ID_XDIR)
-	    throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Not a recognised XMID, expected 'XDIR' or 'XMID' section, got '%s'", ID2string(_iff.getGroupType()).c_str()));
+	    throw(Exception(LOG_ERROR, __FUNCTION__, "Not a recognised XMID, expected 'XDIR' or 'XMID' section, got '%s'", ID2string(_iff.getGroupType()).c_str()));
 	else {
 	    info.tracks = 0;
 
@@ -468,15 +468,15 @@ int32_t XmiFile::extractTracks()
 	    if(chunk->id == ID_INFO)
 		info.tracks = chunk->getU16LE();
 	    else
-		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Expected 'INFO' section, got '%s'", static_cast<std::string>(*chunk).c_str()));
+		throw(Exception(LOG_ERROR, __FUNCTION__, "Expected 'INFO' section, got '%s'", static_cast<std::string>(*chunk).c_str()));
 
 	    chunk = _iff.next();
 
 	    if(_iff.getType(-2) != ID_CAT)
-		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Not a recognised XMID, expected 'CAT ' section, got '%s'", ID2string(_iff.getType(-2)).c_str()));
+		throw(Exception(LOG_ERROR, __FUNCTION__, "Not a recognised XMID, expected 'CAT ' section, got '%s'", ID2string(_iff.getType(-2)).c_str()));
 
 	    if(_iff.getGroupType() != ID_XMID)
-		throw(Exception(LOG_ERROR, "XmiFile::extractTracks()", "Chunk id '%s' != 'XMID'", ID2string(_iff.getGroupType()).c_str()));
+		throw(Exception(LOG_ERROR, __FUNCTION__, "Chunk id '%s' != 'XMID'", ID2string(_iff.getGroupType()).c_str()));
 
 	}
 

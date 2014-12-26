@@ -24,7 +24,11 @@
 #endif
 
 #ifndef offsetof
-#define offsetof(type, member)  __builtin_offsetof (type, member)
+  #define offsetof(type, member)  __builtin_offsetof (type, member)
+#endif
+
+#ifndef restrict
+  #define restrict __restrict__
 #endif
 
 #if defined(__GNUC__)

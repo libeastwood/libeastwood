@@ -89,7 +89,7 @@ void PakFile::open(std::string fileName, std::ios::openmode mode)
     close();
 
     if(!validateFileName(fileName))
-        throw(FileException(LOG_ERROR, fileName, "Filename must be DOS-style (8.3 format)"));
+        throw(FileException(LOG_ERROR, fileName.c_str(), std::move("Filename must be DOS-style (8.3 format)")));
 
     std::transform( fileName.begin(), fileName.end(), fileName.begin(), ::toupper );
 

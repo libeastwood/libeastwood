@@ -108,7 +108,7 @@ void VocFile::readHeader() {
 	if(!_stream.good()) goto invalid;
     } else {
 invalid:
-	throw(Exception(LOG_ERROR, "Invalid header"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid header"));
 	return;
     }
 
@@ -118,13 +118,13 @@ invalid:
     _stream.readU16LE(&fileHeader.datablock_offset, (sizeof(VocFileHeader)-offsetof(VocFileHeader,datablock_offset))/sizeof(uint16_t));
     
     if(fileHeader.datablock_offset != sizeof(VocFileHeader))
-    	throw(Exception(LOG_ERROR, "Incorrect data block offset"));
+    	throw(Exception(LOG_ERROR, __FUNCTION__,"Incorrect data block offset"));
     // 0x100 is an invalid VOC version used by German version of DOTT (Disk) and
     // French version of Simon the Sorcerer 2 (CD)
     if(fileHeader.version != 0x010A && fileHeader.version != 0x0114 && fileHeader.version != 0x0100)
-	throw(Exception(LOG_ERROR, "Unknown version"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Unknown version"));
     if(fileHeader.id != ~fileHeader.version + 0x1234)
-	throw(Exception(LOG_ERROR, "Incorrect header id"));
+	throw(Exception(LOG_ERROR, __FUNCTION__,"Incorrect header id"));
 }
 
 
@@ -236,18 +236,18 @@ Sound VocFile::getSound()
 	    case VOC_CODE_TEXT:
 	    case VOC_CODE_LOOPBEGIN:
 		if(len != sizeof(vocLoops))
-		    throw(Exception(LOG_ERROR, "Size of vocLoops doesn't match expected size"));
+		    throw(Exception(LOG_ERROR, __FUNCTION__, "Size of vocLoops doesn't match expected size"));
 		vocLoops = _stream.getU16LE();
 	    break;
 
 	    case VOC_CODE_LOOPEND:
 		if(len != 0)
-		    throw(Exception(LOG_WARNING, "Code size of loop end is non-zero"));
+		    throw(Exception(LOG_WARNING, __FUNCTION__, "Code size of loop end is non-zero"));
 	    break;
 
 	    case VOC_CODE_EXTENDED:
 		if(len != 4)
-		    throw(Exception(LOG_ERROR, "Unexpected extended code size"));
+		    throw(Exception(LOG_ERROR, __FUNCTION__, "Unexpected extended code size"));
 		_stream.seekg(len, std::ios::cur);
 	    default:
 		LOG_ERROR("Unhandled code in VOC file : %d", code);

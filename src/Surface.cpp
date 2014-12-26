@@ -79,7 +79,7 @@ Surface Surface::getScaled(Scaler scaler)
 	    scaled = Surface(_width * (scaler & ((1<<8)-1)), _height * (scaler>>8), _bpp, _palette);
     	break;
 	default:
-	    throw(Exception(LOG_ERROR, "Surface", "getScaled(): Unsupported scaler"));
+	    throw(Exception(LOG_ERROR, __FUNCTION__, "getScaled(): Unsupported scaler"));
     }
     scale(scaler, static_cast<uint8_t*>(scaled), scaled._pitch, static_cast<uint8_t*>(*this), _pitch, _Bpp, _width, _height);
     return scaled;
@@ -95,7 +95,7 @@ bool Surface::saveBMP(std::ostream &output)
 
 
     if (!_palette.size() || _bpp != 8)
-	throw Exception(LOG_ERROR, "Surface", "Format not supported");
+	throw Exception(LOG_ERROR, __FUNCTION__, "Format not supported");
 
     /* Write the BMP file header values */
     fp_offset = static_cast<uint32_t>(os.tellp());

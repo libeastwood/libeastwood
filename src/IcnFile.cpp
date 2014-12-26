@@ -33,12 +33,12 @@ void IcnFile::readHeader(std::istream &stream)
     IffFile iff(stream);
 
     if(iff.getGroupType() != ID_ICON)
-	throw(Exception(LOG_ERROR, "Invalid ICN-File: No ICON chunk found"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No ICON chunk found"));
 
     std::tr1::shared_ptr<IFFChunk> chunk = iff.getChunk();
     // Session Information
     if(chunk->id != ID_SINF)
-	throw(Exception(LOG_ERROR, "Invalid ICN-File: No SINF chunk found "));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No SINF chunk found "));
 
     _width = chunk->get();
     _height = chunk->get();
@@ -52,13 +52,13 @@ void IcnFile::readHeader(std::istream &stream)
 
     // Structure Set
     if(chunk->id != ID_SSET)
-	throw(Exception(LOG_ERROR, "Invalid ICN-File: No SSET chunk found"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No SSET chunk found"));
 
     tmp = chunk->getU16LE();
     _SSET.resize(chunk->getU16LE()/_tileSize, std::vector<uint8_t>(_tileSize));
 
     if(tmp != 0 || chunk->getU32LE() != ID_FILLER)
-	throw(Exception(LOG_WARNING, "Suspicious ICN-File: Found non-null bytes where null bytes expected"));
+	throw(Exception(LOG_WARNING, __FUNCTION__, "Suspicious ICN-File: Found non-null bytes where null bytes expected"));
     for(std::vector<std::vector<uint8_t> >::iterator file = _SSET.begin(); file != _SSET.end(); file++)
     	chunk->read(reinterpret_cast<char*>(&file->front()), file->size());
 
@@ -66,7 +66,7 @@ void IcnFile::readHeader(std::istream &stream)
 
     // RIFF Palette
     if(chunk->id != ID_RPAL)
-	throw(Exception(LOG_ERROR, "Invalid ICN-File: No RPAL chunk found"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No RPAL chunk found"));
     _RPAL.resize(chunk->size >> _bpp, std::vector<uint8_t>(1<<_bpp));
     for(std::vector<std::vector<uint8_t> >::iterator pal = _RPAL.begin(); pal != _RPAL.end(); pal++)
     	chunk->read(reinterpret_cast<char*>(&pal->front()), pal->size());
@@ -75,7 +75,7 @@ void IcnFile::readHeader(std::istream &stream)
 
     // Reference table
     if(chunk->id != ID_RTBL)
-	throw(Exception(LOG_ERROR, "Invalid ICN-File: No RTBL chunk found"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No RTBL chunk found"));
     _RTBL.resize(chunk->size);
 
     chunk->read(reinterpret_cast<char*>(&_RTBL.front()), _RTBL.size());
@@ -102,7 +102,7 @@ void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 Surface IcnFile::getSurface(uint16_t index)
 {
     if(!_palette)
-	throw(Exception(LOG_ERROR, "Object initialized without required Palette"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Object initialized without required Palette"));
 
     Surface pic(_width, _height, 8, _palette);
 
@@ -116,7 +116,7 @@ Surface IcnFile::getSurface(uint16_t index)
 Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
 {
     if(!_map)
-	throw(Exception(LOG_ERROR, "Object initialized without required MapFile"));
+	throw(Exception(LOG_ERROR, __FUNCTION__,"Object initialized without required MapFile"));
     const std::vector<uint16_t> &row = _map[index];
 
     int tilesX = 1,

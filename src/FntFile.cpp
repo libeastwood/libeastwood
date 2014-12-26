@@ -31,7 +31,7 @@ FntFile::FntFile(std::istream &stream) :
     FNTHeader header;
     _stream.readU16LE(reinterpret_cast<uint16_t*>(&header), offsetof(FNTHeader, nchars)/sizeof(uint16_t));
     if (header.unknown1 != 0x0500 || header.unknown2 != 0x000e || header.unknown3 != 0x0014)
-	throw(Exception(LOG_ERROR, "FntFile", "Invalid header"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid header"));
 
     // alignment padding
     _stream.ignore(1);

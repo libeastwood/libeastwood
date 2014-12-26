@@ -169,7 +169,7 @@ Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat form
 	getSound<int16_t>(sound, targetSamples, targetDataFloat, silenceLength);
 	break;
     default:
-	throw Exception(LOG_ERROR, "Sound", "Invalid format");
+	throw Exception(LOG_ERROR, __FUNCTION__, "Invalid format");
     }
 
     end:

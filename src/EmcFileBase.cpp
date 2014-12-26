@@ -206,7 +206,7 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 	    opcodesUnitsSetup();
 	    break;
 	default:
-	    throw Exception(LOG_ERROR, "EmcFile", "Unable to determine script type!");
+	    throw Exception(LOG_ERROR, __FUNCTION__, "Unable to determine script type!");
 	    break;
     }
 }

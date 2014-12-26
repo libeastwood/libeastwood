@@ -35,11 +35,11 @@ void ShpFile::readIndex()
     _size = _stream.getU16LE();
 
     if(_size == 0)
-	throw(Exception(LOG_ERROR, "There are no files in this SHP-File!"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "There are no files in this SHP-File!"));
 
 
     if(fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) 
-	throw(Exception(LOG_ERROR, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize));
 
     _index.at(0).startOffset = _stream.getU16LE();
     _index.at(0).endOffset = _stream.getU16LE();
@@ -60,7 +60,7 @@ void ShpFile::readIndex()
 	    _index.at(i).endOffset = _stream.getU16LE() - 1 + offset;
 
 	    if(_index.at(i).endOffset > fileSize)
-		throw(Exception(LOG_ERROR, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
+		throw(Exception(LOG_ERROR, __FUNCTION__, "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
 			i, _index.at(i).endOffset, fileSize));
 	}
     }
@@ -143,7 +143,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    break;
 
 	default:
-	    throw(Exception(LOG_ERROR, "Type %d in SHP-Files not supported!", flags));
+	    throw(Exception(LOG_ERROR, __FUNCTION__,"Type %d in SHP-Files not supported!", flags));
     }
 
     return Surface(imageOut, width, height, 8, _palette);

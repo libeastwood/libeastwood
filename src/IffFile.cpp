@@ -5,7 +5,7 @@ namespace eastwood {
 static inline std::streambuf *getBuffer(IStream &stream, size_t size)
 {
     if(static_cast<size_t>(stream.sizeg() - stream.tellg()) < size)
-	throw(Exception(LOG_ERROR, "IffFile()", "Size is greater than remaining file length"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Size is greater than remaining file length"));
     std::string buffer(size, 0);
     stream.read(const_cast<char*>(buffer.data()), static_cast<std::streamsize>(size));
 
@@ -63,7 +63,7 @@ IffChunk IffFile::next() {
 	    break;
 	default:
 	    if(_formChunk.empty())
-    		throw(Exception(LOG_ERROR, "IffFile::next()", "Invalid EA IFF 85 group identifier"));
+    		throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid EA IFF 85 group identifier"));
     	    _chunk.reset(new IFFChunk(id, (_formChunk.empty() ? _stream : *_formChunk.back()).getU32BE(), _formChunk.empty() ? _stream : *_formChunk.back()));
     }
     return _chunk;

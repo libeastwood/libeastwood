@@ -15,7 +15,7 @@ CpsFile::CpsFile(std::istream &stream, Palette palette) :
     Decode(stream, 320, 200, palette), _format(UNCOMPRESSED)
 {
     if(static_cast<uint16_t>(_stream.getU16LE()+_stream.gcount()) != _stream.sizeg())
-	throw(Exception(LOG_ERROR, "CpsFile", "Invalid file size"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid file size"));
 
     _format = static_cast<compressionFormat>(_stream.getU16LE());
     switch(_format) {
@@ -23,15 +23,15 @@ CpsFile::CpsFile(std::istream &stream, Palette palette) :
 	case FORMAT_80:
 	    break;
 	case FORMAT_LBM:
-	    throw(Exception(LOG_ERROR, "CpsFile", "LBM format support not implemented"));
+	    throw(Exception(LOG_ERROR, __FUNCTION__, "LBM format support not implemented"));
 	default:
 	    char error[256];
 	    snprintf(error, sizeof(error), "Format not supported: %x", _format);
-	    throw(Exception(LOG_ERROR, "CpsFile", error));
+	    throw(Exception(LOG_ERROR, __FUNCTION__, error));
     }
 
     if(_stream.getU16LE() + _stream.getU16LE() != _width*_height)
-	throw(Exception(LOG_ERROR, "CpsFile", "Invalid image size"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid image size"));
 
     if(_stream.getU16LE() == 768){
 	LOG_INFO("CpsFile", "CPS has embedded palette");
@@ -43,7 +43,7 @@ CpsFile::CpsFile(std::istream &stream, Palette palette) :
 	}
     }
     else if(!_palette)
-	throw(Exception(LOG_ERROR, "CpsFile", "No palette provided as argument or embedded in CPS"));
+	throw(Exception(LOG_ERROR, __FUNCTION__, "No palette provided as argument or embedded in CPS"));
 }
 
 CpsFile::~CpsFile()
@@ -60,14 +60,14 @@ Surface eastwood::CpsFile::getSurface()
 	    break;
 	case FORMAT_LBM:
 	    //TODO: implement?
-	    throw(Exception(LOG_ERROR, "CpsFile", "LBM format not yet supported"));
+	    throw(Exception(LOG_ERROR, __FUNCTION__, "LBM format not yet supported"));
 	    break;
 	case FORMAT_80:
     	if(decode80(pic,0) == -2)
-    	    throw(Exception(LOG_ERROR, "CpsFile", "Cannot decode Cps-File"));
+    	    throw(Exception(LOG_ERROR, __FUNCTION__, "Cannot decode Cps-File"));
 	break;
 	default:
-	    throw(Exception(LOG_ERROR, "CpsFile", "Unknown format"));
+	    throw(Exception(LOG_ERROR, __FUNCTION__, "Unknown format"));
     }
 
     return pic;
