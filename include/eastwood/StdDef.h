@@ -32,7 +32,7 @@
 #endif
 
 #if defined(__GNUC__)
-  #define GNUC_ATTRIBUTE(attr) __attribute__(attr)
+  #define GNUC_ATTRIBUTE(attr) __attribute__((attr))
   #define PACK
 #else
   #define GNUC_ATTRIBUTE(attr)
