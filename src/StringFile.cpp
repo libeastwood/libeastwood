@@ -1,3 +1,4 @@
+#include <iostream>
 #include "eastwood/StdDef.h"
 #include "eastwood/Exception.h"
 #include "eastwood/StringFile.h"
