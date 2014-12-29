@@ -19,11 +19,11 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     uint32_t frameDataOffs;
 
     _decodedFrames.resize(_stream.getU16LE());
-    LOG_INFO("WsaFile", "numframes = %d", _decodedFrames.size());
+    LOG_INFO("numframes = %zu", _decodedFrames.size());
 
     _width = _stream.getU16LE();
     _height = _stream.getU16LE();
-    LOG_INFO("WsaFile", "size %d x %d", _width, _height);
+    LOG_INFO("size %d x %d", _width, _height);
 
     _deltaBufferSize = _stream.getU16LE();
     // "Regular" WSA files shipped with the Dune 2 demo version does not have
@@ -51,7 +51,7 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
 
     _framesPer1024ms = _deltaBufferSize / 1024.0f;
 
-    LOG_INFO("WsaFile", "_framesPer1024ms = %d", _framesPer1024ms);
+    LOG_INFO("_framesPer1024ms = %d", _framesPer1024ms);
 
     _decodedFrames.front() = firstFrame ? firstFrame : Surface(_width, _height, 8, _palette);
 

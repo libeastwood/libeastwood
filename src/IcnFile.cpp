@@ -108,7 +108,7 @@ Surface IcnFile::getSurface(uint16_t index)
 
     createImage(index, pic, pic.pitch());
 
-    LOG_INFO("IcnFile", "File Nr.: %d (Size: %dx%d)", index, _width, _height);
+    LOG_INFO("File Nr.: %d (Size: %dx%d)", index, _width, _height);
 
     return pic;
 }
