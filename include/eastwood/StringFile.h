@@ -45,6 +45,8 @@ class StringFile
 	    return _strings.size();
 	}
 
+        void list();
+
     private:
 	/*!
 	 *  This method decodes a string to ANSI Code
