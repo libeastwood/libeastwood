@@ -45,7 +45,7 @@ struct VocFileHeader {
     uint16_t datablock_offset;
     uint16_t version;
     uint16_t id;
-} GNUC_ATTRIBUTE((packed));
+} GNUC_ATTRIBUTE(packed);
 PACK
 
 VocFile::VocFile(std::istream &stream) :

@@ -24,7 +24,7 @@ struct ExeHeader {
         uint16_t initCS;
         uint16_t relocTable;
         uint16_t overlay;
-} GNUC_ATTRIBUTE((packed));
+} GNUC_ATTRIBUTE(packed);
 PACK
 
 class ExeFile : public IStream
