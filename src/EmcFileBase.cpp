@@ -133,25 +133,25 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 
 #define OPCODE(x) { #x, &EmcFileBase::o_##x }
     static const _Opcode scriptOpcodes[] = {
-	OPCODE(Goto),
-	OPCODE(SetReturn),
-	OPCODE(PushOp),
-	OPCODE(PushWord),
-	OPCODE(Push),
-	OPCODE(PushReg),
-	OPCODE(PushFrameMinArg),
-	OPCODE(PushFramePluArg),
-	OPCODE(Pop),
-	OPCODE(PopReg),
-	OPCODE(PopFrameMinArg),
-	OPCODE(PopFramePluArg),
-	OPCODE(AddSP),
-	OPCODE(SubSP),
-	OPCODE(Execute),
-	OPCODE(IfNotGoto),
-	OPCODE(Negate),
-	OPCODE(Evaluate),
-	OPCODE(Return),
+	OPCODE(goto),
+	OPCODE(setreturn),
+	OPCODE(pushOp),
+	OPCODE(pushWord),
+	OPCODE(push),
+	OPCODE(pushreg),
+	OPCODE(pushframeMinArg),
+	OPCODE(pushframePluArg),
+	OPCODE(popret),
+	OPCODE(popreg),
+	OPCODE(popframeMinArg),
+	OPCODE(popframePluArg),
+	OPCODE(spadd),
+	OPCODE(spsub),
+	OPCODE(execute),
+	OPCODE(ifnotgoto),
+	OPCODE(negate),
+	OPCODE(evaluate),
+	OPCODE(return),
     };
 #undef OPCODE
 
@@ -193,7 +193,7 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 	case houseSize:
 	    _scriptType = script_TEAM;
 	    _objectNames = nameTeams;
-	    opcodesTeamsSetup();
+	    opcodesHousesSetup();
 	    break;
 	case structureSize:
 	    _scriptType = script_BUILD;
@@ -321,9 +321,9 @@ void EmcFileBase::opcodesUnitsSetup() {
 }
 
 // The 'Team' Execute functions
-void EmcFileBase::opcodesTeamsSetup() {
-#define OPCODE(x) { #x, &EmcFileBase::o_execute_Team_Null }
-    static const _Opcode scriptOpcodesExecuteTeams[] = {
+void EmcFileBase::opcodesHousesSetup() {
+#define OPCODE(x) { #x, &EmcFileBase::o_execute_House_Null }
+    static const _Opcode scriptOpcodesExecuteHouses[] = {
 	OPCODE(Delay),
 	OPCODE(Text?),
 	OPCODE(UnitsUsingThisTeam),
@@ -341,7 +341,7 @@ void EmcFileBase::opcodesTeamsSetup() {
 	OPCODE(Null),
     };
 
-    _opcodesExecute = scriptOpcodesExecuteTeams;
+    _opcodesExecute = scriptOpcodesExecuteHouses;
 #undef OPCODE
 }
 

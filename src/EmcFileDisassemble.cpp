@@ -204,7 +204,7 @@ bool EmcFileDisassemble::scriptDisassemble() {
     return true;
 }
 
-void EmcFileDisassemble::o_Goto() {
+void EmcFileDisassemble::o_goto() {
     size_t labelPos = scriptLabel(_scriptData);
 
     if(!_modePreProcess) {
@@ -220,14 +220,14 @@ void EmcFileDisassemble::o_Goto() {
     }
 }
 
-void EmcFileDisassemble::o_SetReturn() {
+void EmcFileDisassemble::o_setreturn() {
     if(_scriptDataNext)
 	dataPrint(_scriptDataNext);
     else
 	dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_PushOp() {
+void EmcFileDisassemble::o_pushOp() {
     uint16_t data = _scriptData;
     if(_scriptData == 0) {
 	data = _scriptDataNext;
@@ -241,7 +241,7 @@ void EmcFileDisassemble::o_PushOp() {
     dataPrint(data);
 }
 
-void EmcFileDisassemble::o_Push() {
+void EmcFileDisassemble::o_push() {
     _stackCount--;
 
     if(_scriptDataNext) {
@@ -253,11 +253,11 @@ void EmcFileDisassemble::o_Push() {
     }
 }
 
-void EmcFileDisassemble::o_PushWord() {
-    o_Push();
+void EmcFileDisassemble::o_pushWord() {
+    o_push();
 }
 
-void EmcFileDisassemble::o_PushReg() {
+void EmcFileDisassemble::o_pushreg() {
     _stackCount--;
 
     if(_scriptDataNext)
@@ -266,7 +266,7 @@ void EmcFileDisassemble::o_PushReg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_PushFrameMinArg() {
+void EmcFileDisassemble::o_pushframeMinArg() {
     _stackCount--,
     _stackCount--;
     if(_scriptDataNext)
@@ -275,7 +275,7 @@ void EmcFileDisassemble::o_PushFrameMinArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_PushFramePluArg() {
+void EmcFileDisassemble::o_pushframePluArg() {
     _stackCount--,
     _stackCount--;
     if(_scriptDataNext)
@@ -284,7 +284,7 @@ void EmcFileDisassemble::o_PushFramePluArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_Pop() {
+void EmcFileDisassemble::o_popret() {
     if(_scriptData == 1) {
 	if(!_modePreProcess)
 	    _outputStream << " (Return)";
@@ -296,7 +296,7 @@ void EmcFileDisassemble::o_Pop() {
     _stackCount++;
 }
 
-void EmcFileDisassemble::o_PopReg() {
+void EmcFileDisassemble::o_popreg() {
     _stackCount++;
 
     if(_scriptDataNext)
@@ -305,7 +305,7 @@ void EmcFileDisassemble::o_PopReg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_PopFrameMinArg() {
+void EmcFileDisassemble::o_popframeMinArg() {
     _stackCount++,
     _stackCount++;
     if(_scriptDataNext)
@@ -314,7 +314,7 @@ void EmcFileDisassemble::o_PopFrameMinArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_PopFramePluArg() {
+void EmcFileDisassemble::o_popframePluArg() {
     _stackCount++,
     _stackCount++;
     if(_scriptDataNext)
@@ -323,17 +323,17 @@ void EmcFileDisassemble::o_PopFramePluArg() {
 	dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_AddSP() {
+void EmcFileDisassemble::o_spadd() {
     dataPrint(_scriptData);
     _stackCount += (_scriptData & 0xF);
 }
 
-void EmcFileDisassemble::o_SubSP() {
+void EmcFileDisassemble::o_spsub() {
     dataPrint(_scriptData);
     _stackCount -= (_scriptData & 0xF);
 }
 
-void EmcFileDisassemble::o_Execute() {
+void EmcFileDisassemble::o_execute() {
 
     if(!_modePreProcess)
 	_outputStream << std::left << _opcodesExecute[ _scriptData ].description << " ";
@@ -341,7 +341,7 @@ void EmcFileDisassemble::o_Execute() {
     (this->*_opcodesExecute[ _scriptData ].function)();
 }
 
-void EmcFileDisassemble::o_IfNotGoto() {
+void EmcFileDisassemble::o_ifnotgoto() {
     size_t labelPos;
 
     if(_scriptDataNext) {
@@ -373,18 +373,18 @@ void EmcFileDisassemble::o_IfNotGoto() {
     }
 }
 
-void EmcFileDisassemble::o_Negate() {
+void EmcFileDisassemble::o_negate() {
     dataPrint(_scriptData);
 }
 
-void EmcFileDisassemble::o_Evaluate() {
+void EmcFileDisassemble::o_evaluate() {
     if(!_modePreProcess)
 	_outputStream << _opcodesEvaluate[ _scriptData ].description;
 
     (this->*_opcodesEvaluate[ _scriptData ].function)();
 }
 
-void EmcFileDisassemble::o_Return() {
+void EmcFileDisassemble::o_return() {
 
 }
 

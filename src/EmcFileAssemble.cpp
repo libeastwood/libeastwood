@@ -224,7 +224,7 @@ bool EmcFileAssemble::scriptAssemble() {
     return true;
 }
 
-void EmcFileAssemble::o_Goto() {
+void EmcFileAssemble::o_goto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int bb = 0;
 
@@ -237,51 +237,51 @@ void EmcFileAssemble::o_Goto() {
 
 }
 
-void EmcFileAssemble::o_SetReturn() {
+void EmcFileAssemble::o_setreturn() {
     //*(_scriptPtr) |= 0x40;
 
 }
 
-void EmcFileAssemble::o_PushOp() {
+void EmcFileAssemble::o_pushOp() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void  EmcFileAssemble::o_PushWord() {
+void  EmcFileAssemble::o_pushWord() {
     *(_scriptPtr) |= 0x20;
     *(_scriptPtr+1) |= htobe16(atoi(_currentLine.c_str()));
     _scriptPtr++;
     _scriptPos++;
 }
 
-void EmcFileAssemble::o_Push() {
+void EmcFileAssemble::o_push() {
     uint16_t value = atoi(_currentLine.c_str());
 
     // Just incase, we dont want to corrupt the opcode
     if(value > 0xFF)
-	return o_PushWord();
+	return o_pushWord();
 
     *(_scriptPtr)  = 0x04;
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(value);
 }
 
-void EmcFileAssemble::o_PushReg() {
+void EmcFileAssemble::o_pushreg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_PushFrameMinArg() {
+void EmcFileAssemble::o_pushframeMinArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_PushFramePluArg() {
+void EmcFileAssemble::o_pushframePluArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_Pop() {
+void EmcFileAssemble::o_popret() {
     *(_scriptPtr) |= 0x40;
 
     if(_currentLine == "(Return)")
@@ -292,32 +292,32 @@ void EmcFileAssemble::o_Pop() {
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_PopReg() {
+void EmcFileAssemble::o_popreg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_PopFrameMinArg() {
+void EmcFileAssemble::o_popframeMinArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_PopFramePluArg() {
+void EmcFileAssemble::o_popframePluArg() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_AddSP() {
+void EmcFileAssemble::o_spadd() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_SubSP() {
+void EmcFileAssemble::o_spsub() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_Execute() {
+void EmcFileAssemble::o_execute() {
     uint16_t opcode = 0;
 
     *(_scriptPtr) |= 0x40;
@@ -327,7 +327,7 @@ void EmcFileAssemble::o_Execute() {
     (this->*_opcodesExecute[opcode].function)();
 }
 
-void EmcFileAssemble::o_IfNotGoto() {
+void EmcFileAssemble::o_ifnotgoto() {
     size_t labelPos = scriptLabelGet(_currentLine);
     int line = 0;
 
@@ -340,12 +340,12 @@ void EmcFileAssemble::o_IfNotGoto() {
     _scriptPos++;
 }
 
-void EmcFileAssemble::o_Negate() {
+void EmcFileAssemble::o_negate() {
     *(_scriptPtr) |= 0x40;
     *(_scriptPtr) |= htobe16(atoi(_currentLine.c_str()));
 }
 
-void EmcFileAssemble::o_Evaluate() {
+void EmcFileAssemble::o_evaluate() {
     uint16_t opcode = 0;
 
     *(_scriptPtr) |= 0x40;
@@ -353,7 +353,7 @@ void EmcFileAssemble::o_Evaluate() {
     *(_scriptPtr) |= htobe16(opcode);
 }
 
-void EmcFileAssemble::o_Return() {
+void EmcFileAssemble::o_return() {
 
 }
 
