@@ -194,7 +194,7 @@ void Dune2File::readDataStructures()
 
     _stream.seekg(static_cast<uint32_t>(pos)+224);
     uint32_t addr = _stream.getU32LE();
-    uint32_t size = _stream.getU32LE();
+    GNUC_ATTRIBUTE(unused) uint32_t size = _stream.getU32LE();
     _stream.seekSegOff(addr);
 
     for(std::vector<std::vector<uint16_t> >::iterator it = _unitAnims.begin(); it != _unitAnims.end(); addr += it->size()*sizeof(uint16_t), ++it != _unitAnims.end()) {
