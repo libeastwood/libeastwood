@@ -158,7 +158,25 @@ Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
     for(uint32_t i = 0; i < tilesX*tilesY; i++) {
 	tiles[i] = va_arg( arg_ptr, uint32_t );
 	if(getIndex(tiles[i]) >= _size)
-	    throw(Exception(LOG_ERROR, "ShpFile", "getSurfaceArray(): There exist only %d files in this *.shp.",_size));
+	    throw(Exception(LOG_ERROR, __FILE__, "getSurfaceArray(): There exist only %d files in this *.shp.",_size));
+    }
+
+    va_end(arg_ptr);
+    return getSurfaceArray(tilesX, tilesY, &tiles.front());
+}
+
+Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, const uint32_t *tiles) {
+    uint16_t index = getIndex(tiles[0]);
+
+    _stream.seekg(_index.at(index).startOffset+3, std::ios::beg);
+    auto width = _stream.getU16LE();
+    auto height = _stream.get();
+    for(uint32_t i = 1; i < tilesX*tilesY; i++) {
+	_stream.seekg(_index.at(getIndex(tiles[i])).startOffset+2, std::ios::beg);
+	if(_stream.get() != height || _stream.get() != width) {
+	    throw(Exception(LOG_ERROR, __FILE__, "getSurfaceArray(): Not all pictures have the same size!"));
+	}
+    }
 
     Surface pic(width*tilesX, height*tilesY, 8, _palette);
 
@@ -192,7 +210,7 @@ Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
 		    break;
 
 		default:
-		    throw(Exception(LOG_ERROR, "ShpFile", "Invalid type for this parameter. Must be one of TILE_NORMAL, TILE_FLIPH, TILE_FLIPV or TILE_ROTATE!"));
+		    throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid type for this parameter. Must be one of TILE_NORMAL, TILE_FLIPH, TILE_FLIPV or TILE_ROTATE!"));
 		    break;
 	    }
 	}
