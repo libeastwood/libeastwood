@@ -53,7 +53,7 @@ compile_args = []
 link_args = []
 libraries = ['eastwood']
 if get_default_compiler() in ('cygwin', 'emx', 'mingw32', 'unix'):
-    compile_args.extend(['-fno-strict-aliasing'])
+    compile_args.extend(['-fno-strict-aliasing', '-I../include'])
     warnflags = ['-Wall', '-Wextra', '-pedantic', '-Weffc++', '-Wno-long-long']
     compile_args.extend(warnflags)
 elif get_default_compiler() in ('msvc'):
