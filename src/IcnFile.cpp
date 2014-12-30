@@ -27,9 +27,6 @@ IcnFile::IcnFile(std::istream &stream) :
 
 void IcnFile::readHeader(std::istream &stream)
 {
-    uint16_t tmp;
-    uint8_t shift;
-    
     IffFile iff(stream);
 
     if(iff.getGroupType() != ID_ICON)
@@ -42,7 +39,7 @@ void IcnFile::readHeader(std::istream &stream)
 
     _width = chunk->get();
     _height = chunk->get();
-    shift = chunk->get();
+    auto shift = chunk->get();
     _width <<= shift;
     _height <<= shift;
     _bpp = chunk->get();
@@ -54,7 +51,7 @@ void IcnFile::readHeader(std::istream &stream)
     if(chunk->id != ID_SSET)
 	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No SSET chunk found"));
 
-    tmp = chunk->getU16LE();
+    auto tmp = chunk->getU16LE();
     _SSET.resize(chunk->getU16LE()/_tileSize, std::vector<uint8_t>(_tileSize));
 
     if(tmp != 0 || chunk->getU32LE() != ID_FILLER)
