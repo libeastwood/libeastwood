@@ -91,8 +91,8 @@ void IcnFile::createImage(uint16_t index, uint8_t *dest, uint16_t pitch)
 	&palette = _RPAL.at(_RTBL.at(index)),
 	&file = _SSET.at(index);
 
-    for(uint16_t y = 0, i = 0; y < _height; y++, dest += pitch)
-	for(uint16_t x = 0; x < _width; x++) {
+    for(auto y = 0, i = 0; y < _height; y++, dest += pitch)
+	for(auto x = 0; x < _width; x++) {
 	    dest[x++] = palette[file[i] >> _bpp];
 	    dest[x] = palette[file[i++] & ((1<<_bpp)-1)];
 	}
@@ -150,9 +150,9 @@ Surface IcnFile::getTiles(uint16_t index, bool frameByFrame)
     Surface pic(_width*tilesX*tilesN,_height*tilesY, 8, _palette);
 
     std::vector<uint16_t>::const_iterator idx = row.begin();
-    for(int n = 0; n < tilesN; n++)
-	for(int y = 0; y < tilesY; y++)
-	    for(int x = 0; x < tilesX; x++, idx++)
+    for(auto n = 0; n < tilesN; n++)
+	for(auto y = 0; y < tilesY; y++)
+	    for(auto x = 0; x < tilesX; x++, idx++)
 		createImage(*idx, static_cast<uint8_t*>(pic) + (pic.pitch())*y*_height + (x+n*tilesX) * _width, pic.pitch());
 
     return pic;
