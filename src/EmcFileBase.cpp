@@ -74,7 +74,7 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 	"Guard",
 	"Unknown"
     };
-    static const size_t houseSize = sizeof(nameTeams)/sizeof(*nameTeams);
+    static const auto houseSize = sizeof(nameTeams)/sizeof(*nameTeams);
 
     static const char *nameStructures[] = {
 	"Concrete",
@@ -97,7 +97,7 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 	"SpiceSilo",
 	"Outpost"
     };
-    static const size_t structureSize = sizeof(nameStructures)/sizeof(*nameStructures);
+    static const auto structureSize = sizeof(nameStructures)/sizeof(*nameStructures);
 
     static const char *nameUnits[] = {
 	"Carryall",
@@ -128,7 +128,7 @@ void EmcFileBase::opcodesSetup(std::string currentLine) {
 	"Sandworm",
 	"Frigate"
     };
-    static const size_t unitSize = sizeof(nameUnits)/sizeof(*nameUnits);
+    static const auto unitSize = sizeof(nameUnits)/sizeof(*nameUnits);
 
 
 #define OPCODE(x) { #x, &EmcFileBase::o_##x }

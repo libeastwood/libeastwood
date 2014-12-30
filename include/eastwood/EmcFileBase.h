@@ -61,7 +61,7 @@ class EmcFileBase {
 	uint16_t	scriptOpcodeFind(std::string opcodeStr, const _Opcode *opcodes);	// Search the opcode table for 'Opcode' string
 
 	inline
-	size_t		labelCountGet() {
+	auto		labelCountGet() {
 	    return _lineCount;
 	}
 
