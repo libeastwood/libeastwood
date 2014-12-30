@@ -28,8 +28,8 @@ ShpFile::~ShpFile()
 
 void ShpFile::readIndex()
 {
-    uint32_t fileSize = _stream.sizeg();
-    uint16_t offset = 0;
+    auto fileSize = _stream.sizeg();
+    auto offset = 0;
 
     // First get number of files in shp-file
     _size = _stream.getU16LE();
@@ -54,7 +54,7 @@ void ShpFile::readIndex()
 	_index.resize(_size);
 
 	// now fill Index with start and end-offsets
-	for(uint16_t i = 1; i < _size; i++) {
+	for(auto i = 1; i < _size; i++) {
 	    _index.at(i).startOffset = _index.at(i-1).endOffset + 1;
 	    _stream.ignore(offset);
 	    _index.at(i).endOffset = _stream.getU16LE() - 1 + offset;
@@ -68,7 +68,7 @@ void ShpFile::readIndex()
 
 static void apply_pal_offsets(const std::vector<uint8_t> &offsets, uint8_t *data, uint16_t length)
 {
-    for (uint16_t i = 0; i < length; i++)
+    for (auto i = 0; i < length; i++)
 	data[i] = offsets[data[i]];
 }
 
@@ -155,7 +155,7 @@ Surface ShpFile::getSurfaceArray(uint8_t tilesX, uint8_t tilesY, ...) {
     va_list arg_ptr;
     va_start(arg_ptr, tilesY);
 
-    for(uint32_t i = 0; i < tilesX*tilesY; i++) {
+    for(auto i = 0; i < tilesX*tilesY; i++) {
 	tiles[i] = va_arg( arg_ptr, uint32_t );
 	if(getIndex(tiles[i]) >= _size)
 	    throw(Exception(LOG_ERROR, __FILE__, "getSurfaceArray(): There exist only %d files in this *.shp.",_size));
@@ -171,7 +171,7 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
     _stream.seekg(_index.at(index).startOffset+3, std::ios::beg);
     auto width = _stream.getU16LE();
     auto height = _stream.get();
-    for(uint32_t i = 1; i < tilesX*tilesY; i++) {
+    for(auto i = 1; i < tilesX*tilesY; i++) {
 	_stream.seekg(_index.at(getIndex(tiles[i])).startOffset+2, std::ios::beg);
 	if(_stream.get() != height || _stream.get() != width) {
 	    throw(Exception(LOG_ERROR, __FILE__, "getSurfaceArray(): Not all pictures have the same size!"));
@@ -180,32 +180,32 @@ Surface ShpFile::getSurfaceArray(const uint8_t tilesX, const uint8_t tilesY, con
 
     Surface pic(width*tilesX, height*tilesY, 8, _palette);
 
-    for(uint32_t j = 0; j < tilesY; j++)	{
-	for(uint32_t i = 0; i < tilesX; i++) {
+    for(auto j = 0; j < tilesY; j++)	{
+	for(auto i = 0; i < tilesX; i++) {
 
 	    Surface imageOut = getSurface(getIndex(tiles[j*tilesX+i]));
 
 	    //Now we can copy line by line
 	    switch(getType(tiles[i])) {
 		case TILE_NORMAL:
-		    for(int y = 0; y < height; y++)
+		    for(auto y = 0; y < height; y++)
 			memcpy(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch(), static_cast<uint8_t*>(imageOut) + y * width, width);
 		    break;
 
 		case TILE_FLIPH:
-		    for(int y = 0; y < height; y++)
+		    for(auto y = 0; y < height; y++)
 			memcpy(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch(), static_cast<uint8_t*>(imageOut) + (height-1-y) * width, width);
 		    break;
 
 		case TILE_FLIPV:
-		    for(int y = 0; y < height; y++)
-			for(int x = 0; x < width; x++)
+		    for(auto y = 0; y < height; y++)
+			for(auto x = 0; x < width; x++)
 			    *(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch() + x) = *(static_cast<uint8_t*>(imageOut) + y * width + (width-1-x));
 		    break;
 
 		case TILE_ROTATE:
-		    for(int y = 0; y < height; y++)
-			for(int x = 0; x < width; x++)
+		    for(auto y = 0; y < height; y++)
+			for(auto x = 0; x < width; x++)
 			    *(reinterpret_cast<char*>(static_cast<uint8_t*>(pic)) + i*width + (y+j*height) * pic.pitch() + x) = *(static_cast<uint8_t*>(imageOut) + (height-1-y) * width + (width-1-x));
 		    break;
 
