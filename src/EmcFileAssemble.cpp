@@ -91,8 +91,8 @@ int EmcFileAssemble::scriptSectionCheck() {
     const std::string &name = _currentLine.substr(posStart, posEnd - posStart);
 
     // Check for the section name
-    for(const char **namePtr = _objectNames; *namePtr; *namePtr++, count++)
-	if(name.compare(*namePtr) == 0)
+    for(const char **namePtr = _objectNames; *namePtr; count++)
+	if(name.compare(*namePtr++) == 0)
 	    return count;
 
     // General Section
