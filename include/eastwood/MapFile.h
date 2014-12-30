@@ -26,7 +26,7 @@ class MapFile
 	MapFile(std::istream &stream);
 	~MapFile();
 
-	bool operator!() const throw() {
+	bool operator!() const noexcept {
 	    return _tileSet.empty();
 	}
 
@@ -42,7 +42,7 @@ class MapFile
 	  Returns the number of tileSets in the map-File.
 	  @return	Number of tileSets
 	  */
-	uint16_t size() const throw() {
+	uint16_t size() const noexcept {
 	    return _tileSet.size();
 	}
 

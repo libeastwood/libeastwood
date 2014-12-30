@@ -73,7 +73,7 @@ public:
 	Returns the number of tiles in the icn-File.
     @return	Number of tiles
 */
-	uint16_t size() const throw() {
+	uint16_t size() const noexcept {
 	    return _SSET.size();
 	}
 	

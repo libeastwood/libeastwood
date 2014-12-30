@@ -16,8 +16,8 @@ public:
 
 	Surface getSurface(uint16_t frameNumber) const { return _decodedFrames.at(frameNumber); }
 
-	uint16_t size() const throw() { return _decodedFrames.size(); };
-	uint32_t getFramesPer1024ms() const throw() { return _framesPer1024ms; };
+	uint16_t size() const noexcept { return _decodedFrames.size(); };
+	uint32_t getFramesPer1024ms() const noexcept { return _framesPer1024ms; };
 
 private:
 	void decodeFrames();

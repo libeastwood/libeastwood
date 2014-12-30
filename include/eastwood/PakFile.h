@@ -20,11 +20,11 @@ class PakFile : public IOStream
 	void open(std::string fileName, std::ios::openmode mode = std::ios_base::in | std::ios_base::binary);
         bool erase(std::string fileName);
 
-	bool is_open() const throw() {
+	bool is_open() const noexcept {
             return rdbuf() != NULL;
         }
 
-        bool exists(std::string fileName) const throw() {
+        bool exists(std::string fileName) const noexcept {
             std::transform( fileName.begin(), fileName.end(), fileName.begin(), ::toupper );
             return _fileEntries.find(fileName) != _fileEntries.end();
         }
@@ -33,7 +33,7 @@ class PakFile : public IOStream
             return _fileNames.at(index);
         }
 
-        uint32_t entries() const throw() {
+        uint32_t entries() const noexcept {
             return _fileEntries.size();
         }
         // If negative, file needs to be truncated

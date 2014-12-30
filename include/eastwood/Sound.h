@@ -45,10 +45,10 @@ class Sound
         return _size != 0;
     }
 
-	uint32_t size() const throw() { return _size; }
-	uint8_t channels() const throw() { return _channels; }
-	uint32_t frequency() const throw() { return _frequency; }
-	AudioFormat format() const throw() { return _format; }
+	uint32_t size() const noexcept { return _size; }
+	uint8_t channels() const noexcept { return _channels; }
+	uint32_t frequency() const noexcept { return _frequency; }
+	AudioFormat format() const noexcept { return _format; }
 
 	Sound getResampled(uint8_t channels, uint32_t frequency, AudioFormat format, Interpolator interpolator = I_LINEAR);
 	void saveWAV(std::ostream &output);

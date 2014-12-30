@@ -56,7 +56,7 @@ class Sound : public eastwood::Sound
 	    _chunk->abuf = NULL;
 	}
 
-	virtual operator Mix_Chunk*() const throw() {
+	virtual operator Mix_Chunk*() const noexcept {
 	    return _chunk.get();
 	}
 

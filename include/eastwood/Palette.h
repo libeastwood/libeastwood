@@ -18,15 +18,15 @@ class Palette {
 	virtual ~Palette();
 
 	Color& operator[] (uint16_t i) { return _palette.at(i); }
-	virtual operator bool() const throw() {
+	virtual operator bool() const noexcept {
 	    return !_palette.empty();
 	}
 
-	virtual bool operator! () const throw() {
+	virtual bool operator! () const noexcept {
 	    return _palette.empty();
 	}
 
-	uint16_t size() const throw() { return _palette.size(); }
+	uint16_t size() const noexcept { return _palette.size(); }
 
 	bool savePAL(std::ostream &output);
 

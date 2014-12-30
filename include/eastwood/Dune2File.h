@@ -200,7 +200,7 @@ class Dune2File
     public:
 	Dune2File(ExeFile &stream);
 
-	Version						getVersion() const throw() 	{ return _version; }
+	Version						getVersion() const noexcept 	{ return _version; }
 	const std::vector<Structure>&			getStructureData() const	{ return _structureData; }
 	const std::vector<Unit>&			getUnitData() const		{ return _unitData; }
 	const std::vector<House>&			getHouseData() const		{ return _houseData; }
