@@ -15,9 +15,9 @@ using namespace eastwood;
 static PyObject *
 Sound_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *kwargs)
 {
-    Py_Sound *self = NULL;
+    Py_Sound *self = nullptr;
     self = (Py_Sound *)type->tp_alloc(type, 0);
-    if (self != NULL) {
+    if (self != nullptr) {
 	self->sound = reinterpret_cast<Sound*>(args);
 	self->channels = self->sound->channels();
 	self->frequency = self->sound->frequency();
@@ -61,18 +61,18 @@ Sound_getResampled(Py_Sound *self, PyObject *args)
     uint32_t frequency = 0;
     AudioFormat audioFormat = FMT_INVALID;
     Interpolator interpolator = I_INVALID;
-    Sound *resampled = NULL;
+    Sound *resampled = nullptr;
     if (!PyArg_ParseTuple(args, "BIHI", &channels, &frequency, &audioFormat, &interpolator))
-	return NULL;
+	return nullptr;
 
     try {
 	resampled = new Sound(self->sound->getResampled(channels, frequency, audioFormat, interpolator));
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     }
 
-    return Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(resampled), NULL);
+    return Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(resampled), nullptr);
 }
 
 PyDoc_STRVAR(Sound_saveWAV__doc__,
@@ -88,7 +88,7 @@ Sound_saveWAV(Py_Sound *self)
     std::ostream output(&rdbuf);
     if(!output.good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-	return NULL;
+	return nullptr;
     }
 
     self->sound->saveWAV(output);
@@ -101,18 +101,18 @@ static PyMethodDef Sound_methods[] = {
     {"getBuffer", (PyCFunction)Sound_getBuffer, METH_NOARGS, Sound_getBuffer__doc__},
     {"getResampled", (PyCFunction)Sound_getResampled, METH_VARARGS, Sound_getResampled__doc__},
     {"saveWAV", (PyCFunction)Sound_saveWAV, METH_NOARGS, Sound_saveWAV__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 static PyMemberDef Sound_members[] = {
-    {const_cast<char*>("channels"), T_UBYTE, offsetof(Py_Sound, channels), RO, NULL},
-    {const_cast<char*>("frequency"), T_UINT, offsetof(Py_Sound, frequency), RO, NULL},
-    {const_cast<char*>("format"), T_INT, offsetof(Py_Sound, format), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+    {const_cast<char*>("channels"), T_UBYTE, offsetof(Py_Sound, channels), RO, nullptr},
+    {const_cast<char*>("frequency"), T_UINT, offsetof(Py_Sound, frequency), RO, nullptr},
+    {const_cast<char*>("format"), T_INT, offsetof(Py_Sound, format), RO, nullptr},
+    {nullptr, 0, 0, 0, nullptr}
 };
 
 PyTypeObject Sound_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.Sound",				/*tp_name*/
     sizeof(Py_Sound),				/*tp_basicsize*/

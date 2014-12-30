@@ -28,7 +28,7 @@ static int
 IcnFile_init(Py_IcnFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    PyObject *palObject = NULL;
+    PyObject *palObject = nullptr;
     if (!PyArg_ParseTuple(args, "s*|OO", &pdata, &palObject, &self->mapFile))
 	return -1;
 
@@ -77,9 +77,9 @@ static PyObject *
 IcnFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_IcnFile *self = (Py_IcnFile *)PyType_GenericAlloc(type, nitems);
-    self->stream = NULL;
-    self->icnFile = NULL;
-    self->mapFile = NULL;
+    self->stream = nullptr;
+    self->icnFile = nullptr;
+    self->mapFile = nullptr;
 
     return (PyObject *)self;
 }
@@ -109,20 +109,20 @@ IcnFile_getSurface(Py_IcnFile *self, PyObject *args)
     uint16_t index;
     Surface *surface;
     if (!PyArg_ParseTuple(args, "H", &index))
-	return NULL;
+	return nullptr;
 
     try {
 	surface = new Surface(self->icnFile->getSurface(index));
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     } catch(std::out_of_range e) {
 	PyErr_SetString(PyExc_IndexError, "IcnFile index out of range");
-	return NULL;
+	return nullptr;
     }
 
 
-    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
+    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), nullptr);
     return pysurface;
 }
 
@@ -138,38 +138,38 @@ IcnFile_getTiles(Py_IcnFile *self, PyObject *args)
 {
     bool frameByFrame = false;
     uint16_t index = 0;
-    PyObject *pysurface = NULL;
-    Surface *tiles = NULL;
+    PyObject *pysurface = nullptr;
+    Surface *tiles = nullptr;
     if (!PyArg_ParseTuple(args, "H|B", &index, &frameByFrame))
-	return NULL;
+	return nullptr;
 
     try {
 	tiles = new Surface(self->icnFile->getTiles(index, frameByFrame));
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     } catch(std::out_of_range e) {
 	PyErr_SetString(PyExc_IndexError, "IcnFile index out of range");
-	return NULL;
+	return nullptr;
     }
 
-    pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(tiles), NULL);
+    pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(tiles), nullptr);
     return pysurface;
 }
 
 static PyMethodDef IcnFile_methods[] = {
     {"getSurface", (PyCFunction)IcnFile_getSurface, METH_VARARGS, IcnFile_getSurface__doc__},
     {"getTiles", (PyCFunction)IcnFile_getTiles, METH_VARARGS, IcnFile_getTiles__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 static PyMemberDef IcnFile_members[] = {
-    {const_cast<char*>("size"), T_USHORT, offsetof(Py_IcnFile, size), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+    {const_cast<char*>("size"), T_USHORT, offsetof(Py_IcnFile, size), RO, nullptr},
+    {nullptr, 0, 0, 0, nullptr}
 };
 
 PyTypeObject IcnFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.IcnFile",			/*tp_name*/
     sizeof(Py_IcnFile),				/*tp_basicsize*/

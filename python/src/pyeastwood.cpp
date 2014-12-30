@@ -39,8 +39,8 @@ initpyeastwood(void)
 
 	return;    
 
-    module = Py_InitModule("pyeastwood", NULL);
-    if (module == NULL)
+    module = Py_InitModule("pyeastwood", nullptr);
+    if (module == nullptr)
 	return;
 
     Py_INCREF(&CpsFile_Type);

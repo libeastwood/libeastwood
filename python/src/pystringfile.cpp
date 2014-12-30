@@ -49,8 +49,8 @@ static PyObject *
 StringFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_StringFile *self = (Py_StringFile *)PyType_GenericAlloc(type, nitems);
-    self->stream = NULL;
-    self->stringFile = NULL;
+    self->stream = nullptr;
+    self->stringFile = nullptr;
     self->size = 0;
 
     return (PyObject *)self;
@@ -83,18 +83,18 @@ StringFile_getMissionString(Py_StringFile *self, PyObject *args)
     std::string str;
 
     if(!PyArg_ParseTuple(args, "HH", &mission, &missionType))
-	return NULL;
+	return nullptr;
 
     if(missionType >= MISSION_INVALID) {
 	PyErr_SetString(PyExc_TypeError, "If given, second argument must be a valid mission type");
-	return NULL;
+	return nullptr;
     }
 
     try {
 	str = self->stringFile->getString(mission, missionType);
     } catch(std::out_of_range e) {
 	PyErr_SetString(PyExc_IndexError, "StringFile index out of range");
-	return NULL;
+	return nullptr;
     }
 
     return Py_BuildValue("s", str.c_str());
@@ -113,13 +113,13 @@ StringFile_getString(Py_StringFile *self, PyObject *args)
     std::string str;
 
     if(!PyArg_ParseTuple(args, "H", &index))
-	return NULL;
+	return nullptr;
 
     try {
 	str = self->stringFile->getString(index);
     } catch(std::out_of_range e) {
 	PyErr_SetString(PyExc_IndexError, "StringFile index out of range");
-	return NULL;
+	return nullptr;
     }
 
     return Py_BuildValue("s", str.c_str());
@@ -128,16 +128,16 @@ StringFile_getString(Py_StringFile *self, PyObject *args)
 static PyMethodDef StringFile_methods[] = {
     {"getMissionString", (PyCFunction)StringFile_getMissionString, METH_VARARGS, StringFile_getMissionString__doc__},
     {"getString", (PyCFunction)StringFile_getString, METH_VARARGS, StringFile_getString__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 static PyMemberDef StringFile_members[] = {
-    {const_cast<char*>("size"), T_USHORT, offsetof(Py_StringFile, size), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+    {const_cast<char*>("size"), T_USHORT, offsetof(Py_StringFile, size), RO, nullptr},
+    {nullptr, 0, 0, 0, nullptr}
 };
 
 PyTypeObject StringFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.StringFile",			/*tp_name*/
     sizeof(Py_StringFile),			/*tp_basicsize*/

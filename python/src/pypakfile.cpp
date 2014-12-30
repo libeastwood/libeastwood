@@ -26,7 +26,7 @@ PakFile_init(Py_PakFile *self, PyObject *args, PyObject *kwargs)
     char *fileName;
     PyObject *create = Py_False;
     std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out | std::ios_base::binary;
-    static  char *kwlist[] = {const_cast<char*>("filename"), const_cast<char*>("create"), NULL};
+    static  char *kwlist[] = {const_cast<char*>("filename"), const_cast<char*>("create"), nullptr};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|O:PakFile", kwlist, &fileName, &create))
 	return -1;
@@ -61,7 +61,7 @@ error:
 #ifdef WITH_THREAD
     if (self->lock) {
 	PyThread_free_lock(self->lock);
-	self->lock = NULL;
+	self->lock = nullptr;
     }
 #endif
     return -1;
@@ -71,11 +71,11 @@ static PyObject *
 PakFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_PakFile *self = (Py_PakFile *)PyType_GenericAlloc(type, nitems);
-    self->pakFile = NULL;
-    self->stream = NULL;
-    self->pakFileName = NULL;
+    self->pakFile = nullptr;
+    self->stream = nullptr;
+    self->pakFileName = nullptr;
     self->mode = std::ios_base::binary;
-    self->lock = NULL;
+    self->lock = nullptr;
 
     return (PyObject *)self;
 }
@@ -164,15 +164,15 @@ Open a file in the archive. The mode can be the following:\n\
 static PyObject *
 PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 {
-    const char *name = NULL;
+    const char *name = nullptr;
     const char *mode = "r";
     bool error = false;
-    static char *kwlist[] = {const_cast<char*>("name"), const_cast<char*>("mode"), NULL};
+    static char *kwlist[] = {const_cast<char*>("name"), const_cast<char*>("mode"), nullptr};
 
     PakFile_close(self);
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|s:open", kwlist, &name, &mode))
-	return NULL;
+	return nullptr;
 
     if(mode[0] == 'r') {
 	self->mode |= std::ios_base::in; if(mode[1]){if(mode[1] == '+')
@@ -187,14 +187,14 @@ PakFile_open(Py_PakFile *self, PyObject *args, PyObject *kwargs)
 
     if(error) {
 	PyErr_Format(PyExc_ValueError, "invalid mode char %s", mode);
-	return NULL;
+	return nullptr;
     }
 
     try {
 	self->pakFile->open(name, self->mode);
     } catch(FileException e) {
 	PyErr_Format(PyExc_IOError, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     }
 
     Py_RETURN_TRUE;
@@ -209,11 +209,11 @@ Deletes file from the archive.\n\
 static PyObject *
 PakFile_delete(Py_PakFile *self, PyObject *args)
 {
-    const char *name = NULL;
+    const char *name = nullptr;
     PakFile_close(self);
 
     if (!PyArg_ParseTuple(args, "s:delete", &name))
-	return NULL;
+	return nullptr;
 
     self->pakFile->erase(name);
 
@@ -233,10 +233,10 @@ PakFile_read(Py_PakFile *self, PyObject *args)
     std::streamoff offset = static_cast<std::streamoff>(self->pakFile->tellg());
     size_t bytesrequested = -1,
 	   left = self->pakFile->sizeg() - offset;
-    PyObject *v = NULL;
+    PyObject *v = nullptr;
 
     if (!PyArg_ParseTuple(args, "|l:read", &bytesrequested))
-	return NULL;
+	return nullptr;
 
     ACQUIRE_LOCK(self);
     if (bytesrequested > left)
@@ -246,8 +246,8 @@ PakFile_read(Py_PakFile *self, PyObject *args)
 		"requested number of bytes is more than a Python string can hold");
 	goto cleanup;
     }
-    v = PyString_FromStringAndSize(NULL, bytesrequested);
-    if (v == NULL)
+    v = PyString_FromStringAndSize(nullptr, bytesrequested);
+    if (v == nullptr)
 	goto cleanup;
 
     Py_BEGIN_ALLOW_THREADS
@@ -271,13 +271,13 @@ needed before the file on disk reflects the data written.\n\
 static PyObject *
 PakFile_write(Py_PakFile *self, PyObject *args)
 {
-    PyObject *ret = NULL;
+    PyObject *ret = nullptr;
     Py_buffer pbuf;
     char *buf;
     Py_ssize_t len;
 
     if (!PyArg_ParseTuple(args, "s*:write", &pbuf))
-	return NULL;
+	return nullptr;
     buf = (char*)pbuf.buf;
     len = pbuf.len;
 
@@ -311,10 +311,10 @@ PakFile_seek(Py_PakFile *self, PyObject *args, bool in)
     int where = 0;
     PyObject *offobj;
     std::streamoff offset;
-    PyObject *ret = NULL;
+    PyObject *ret = nullptr;
 
     if (!PyArg_ParseTuple(args, "O|i:seek", &offobj, &where))
-	return NULL;
+	return nullptr;
 
     if(self->pakFile->good()) {
 	    self->pakFile->seekg(where, std::ios::beg);
@@ -368,7 +368,7 @@ PakFile_seekp(Py_PakFile *self, PyObject *args)
 static PyObject *
 PakFile_tell(Py_PakFile *self, bool in)
 {
-    PyObject *ret = NULL;
+    PyObject *ret = nullptr;
 
     if(!self->pakFile->is_open()) {
 	PyErr_SetString(PyExc_ValueError,
@@ -432,14 +432,14 @@ PakFile_get_closed(Py_PakFile *self, __attribute__((unused)) void *closure)
 }
 
 static PyGetSetDef PakFile_getset[] = {
-    {const_cast<char*>("closed"), (getter)PakFile_get_closed, NULL,
-	const_cast<char*>("True if the file is closed"), NULL},
-    {NULL, NULL, NULL, NULL, NULL}	/* Sentinel */
+    {const_cast<char*>("closed"), (getter)PakFile_get_closed, nullptr,
+	const_cast<char*>("True if the file is closed"), nullptr},
+    {nullptr, nullptr, nullptr, nullptr, nullptr}	/* Sentinel */
 };
 
 
 PyTypeObject PakFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.PakFile",			/*tp_name*/
     sizeof(Py_PakFile),				/*tp_basicsize*/

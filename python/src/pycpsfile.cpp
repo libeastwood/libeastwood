@@ -26,7 +26,7 @@ static int
 CpsFile_init(Py_CpsFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    PyObject *palObject = NULL;
+    PyObject *palObject = nullptr;
     Palette palette(0);
     if (!PyArg_ParseTuple(args, "s*|O", &pdata, &palObject))
 	return -1;
@@ -63,8 +63,8 @@ static PyObject *
 CpsFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_CpsFile *self = (Py_CpsFile *)PyType_GenericAlloc(type, nitems);
-    self->cpsFile = NULL;
-    self->stream = NULL;
+    self->cpsFile = nullptr;
+    self->stream = nullptr;
 
     return (PyObject *)self;
 }
@@ -95,20 +95,20 @@ CpsFile_getSurface(Py_CpsFile *self)
        surface = new Surface(self->cpsFile->getSurface());
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     }
-    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
+    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), nullptr);
     return pysurface;
 }
 
 static PyMethodDef CpsFile_methods[] = {
     {"getSurface", (PyCFunction)CpsFile_getSurface, METH_NOARGS, CpsFile_getSurface__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 
 PyTypeObject CpsFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.CpsFile",			/*tp_name*/
     sizeof(Py_CpsFile),				/*tp_basicsize*/

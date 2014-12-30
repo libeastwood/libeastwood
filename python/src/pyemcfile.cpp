@@ -85,11 +85,11 @@ static PyObject *
 EmcFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_EmcFile *self = (Py_EmcFile *)PyType_GenericAlloc(type, nitems);
-    self->input = NULL;
-    self->output = NULL;
-    self->emcFile = NULL;
+    self->input = nullptr;
+    self->output = nullptr;
+    self->emcFile = nullptr;
     self->mode = 0;
-    self->type = NULL;
+    self->type = nullptr;
 
     return (PyObject *)self;
 }
@@ -119,18 +119,18 @@ EmcFile_get(Py_EmcFile *self)
 }
 
 static PyMethodDef EmcFile_methods[] = {
-    {"get", (PyCFunction)EmcFile_get, METH_NOARGS, NULL},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {"get", (PyCFunction)EmcFile_get, METH_NOARGS, nullptr},
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 static PyMemberDef EmcFile_members[] = {
-    {const_cast<char*>("mode"), T_CHAR, offsetof(Py_EmcFile, mode), RO, NULL},
-    {const_cast<char*>("type"), T_OBJECT, offsetof(Py_EmcFile, type), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+    {const_cast<char*>("mode"), T_CHAR, offsetof(Py_EmcFile, mode), RO, nullptr},
+    {const_cast<char*>("type"), T_OBJECT, offsetof(Py_EmcFile, type), RO, nullptr},
+    {nullptr, 0, 0, 0, nullptr}
 };
 
 PyTypeObject EmcFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.EmcFile",			/*tp_name*/
     sizeof(Py_EmcFile),				/*tp_basicsize*/

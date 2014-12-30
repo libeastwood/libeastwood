@@ -43,8 +43,8 @@ static PyObject *
 PalFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_PalFile *self = (Py_PalFile *)PyType_GenericAlloc(type, nitems);
-    self->palFile = NULL;
-    self->stream = NULL;
+    self->palFile = nullptr;
+    self->stream = nullptr;
 
     return (PyObject *)self;
 }
@@ -71,16 +71,16 @@ static PyObject *
 PalFile_getPalette(Py_PalFile *self)
 {
     Palette *palette = new Palette(self->palFile->getPalette());
-    PyObject *pypalette = Palette_Type.tp_new(&Palette_Type, reinterpret_cast<PyObject*>(palette), NULL);
+    PyObject *pypalette = Palette_Type.tp_new(&Palette_Type, reinterpret_cast<PyObject*>(palette), nullptr);
     return pypalette;
 }
 
 static PyMethodDef PalFile_methods[] = {
     {"getPalette", (PyCFunction)PalFile_getPalette, METH_NOARGS, PalFile_getPalette__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 PyTypeObject PalFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.PalFile",			/*tp_name*/
     sizeof(Py_PalFile),				/*tp_basicsize*/

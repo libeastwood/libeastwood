@@ -27,7 +27,7 @@ static int
 ShpFile_init(Py_ShpFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    PyObject *palObject = NULL;
+    PyObject *palObject = nullptr;
     if (!PyArg_ParseTuple(args, "s*O", &pdata, &palObject))
 	return -1;
 
@@ -61,8 +61,8 @@ static PyObject *
 ShpFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_ShpFile *self = (Py_ShpFile *)PyType_GenericAlloc(type, nitems);
-    self->shpFile = NULL;
-    self->stream = NULL;
+    self->shpFile = nullptr;
+    self->stream = nullptr;
 
     return (PyObject *)self;
 }
@@ -91,19 +91,19 @@ ShpFile_getSurface(Py_ShpFile *self, PyObject *args)
     uint16_t index;
     Surface *surface;
     if (!PyArg_ParseTuple(args, "H", &index))
-	return NULL;
+	return nullptr;
 
     try {
     	surface = new Surface(self->shpFile->getSurface(index));
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     } catch(std::out_of_range e) {
 	PyErr_SetString(PyExc_IndexError, "ShpFile index out of range");
-	return NULL;
+	return nullptr;
     }
 
-    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
+    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), nullptr);
     return pysurface;
 }
 
@@ -116,21 +116,21 @@ Returns a Surface of w*h surfaces from the indexes in the tiles tuple.\n\
 static PyObject *
 ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
 {
-    PyObject *array = NULL;
+    PyObject *array = nullptr;
     uint8_t x = 0,
 	    y = 0;
     Surface *surface;
     if (!PyArg_ParseTuple(args, "BBO", &x, &y, &array))
-	return NULL;
+	return nullptr;
     if(!PyTuple_Check(array)) {
 	PyErr_SetString(PyExc_TypeError, "Third argument must be a tuple!");
-	return NULL;
+	return nullptr;
     }
     std::vector<uint32_t> tiles(PyTuple_Size(array));
     for(uint16_t i = 0; i < tiles.size(); i++) {
 	PyObject *item = PyTuple_GetItem(array, i);
 	if(!item)
-	    return NULL;
+	    return nullptr;
 	tiles[i] = PyInt_AsLong(item);
     }
 
@@ -138,29 +138,29 @@ ShpFile_getSurfaceArray(Py_ShpFile *self, PyObject *args)
     	surface = new Surface(self->shpFile->getSurfaceArray(x,y, &tiles.front()));
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     } catch(std::out_of_range e) {
 	PyErr_SetString(PyExc_IndexError, "ShpFile index out of range");
-	return NULL;
+	return nullptr;
     }
 
-    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
+    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), nullptr);
     return pysurface;
 }
 
 static PyMethodDef ShpFile_methods[] = {
     {"getSurface", (PyCFunction)ShpFile_getSurface, METH_VARARGS, ShpFile_getSurface__doc__},
     {"getSurfaceArray", (PyCFunction)ShpFile_getSurfaceArray, METH_VARARGS, ShpFile_getSurfaceArray__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 static PyMemberDef ShpFile_members[] = {
-    {const_cast<char*>("size"), T_USHORT, offsetof(Py_ShpFile, size), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+    {const_cast<char*>("size"), T_USHORT, offsetof(Py_ShpFile, size), RO, nullptr},
+    {nullptr, 0, 0, 0, nullptr}
 };
 
 PyTypeObject ShpFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.ShpFile",			/*tp_name*/
     sizeof(Py_ShpFile),				/*tp_basicsize*/

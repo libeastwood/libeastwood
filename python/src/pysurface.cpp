@@ -15,9 +15,9 @@ using namespace eastwood;
 static PyObject *
 Surface_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *kwargs)
 {
-    Py_Surface *self = NULL;
+    Py_Surface *self = nullptr;
     self = (Py_Surface *)type->tp_alloc(type, 0);
-    if (self != NULL) {
+    if (self != nullptr) {
 	self->surface = reinterpret_cast<Surface*>(args);
 	self->width = self->surface->width();
 	self->height = self->surface->height();
@@ -59,19 +59,19 @@ Surface_getScaled(Py_Surface *self, PyObject *args)
     Scaler scaler;
     Surface *scaled;
     if (!PyArg_ParseTuple(args, "I", &scaler))
-	return NULL;
+	return nullptr;
 
     //TODO: throw exception
     if(!self->surface->scalePrecondition(scaler))
-	return NULL;
+	return nullptr;
     try {
     	scaled = new Surface(self->surface->getScaled(scaler));
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     }
 
-    return Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(scaled), NULL);
+    return Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(scaled), nullptr);
 }
 
 PyDoc_STRVAR(Surface_saveBMP__doc__,
@@ -87,14 +87,14 @@ Surface_saveBMP(Py_Surface *self)
     std::ostream output(&rdbuf);
     if(!output.good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-	return NULL;
+	return nullptr;
     }
 
     try {
     	self->surface->saveBMP(output);
     } catch(Exception e) {
 	PyErr_Format(PyExc_Exception, "%s: %s", e.getLocation().c_str(), e.getMessage().c_str());
-	return NULL;
+	return nullptr;
     }
 
     std::string buf = rdbuf.str();
@@ -106,18 +106,18 @@ static PyMethodDef Surface_methods[] = {
     {"getPixels", (PyCFunction)Surface_getPixels, METH_NOARGS, Surface_getPixels__doc__},
     {"getScaled", (PyCFunction)Surface_getScaled, METH_VARARGS, Surface_getScaled__doc__},
     {"saveBMP", (PyCFunction)Surface_saveBMP, METH_NOARGS, Surface_saveBMP__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 static PyMemberDef Surface_members[] = {
-    {const_cast<char*>("width"), T_USHORT, offsetof(Py_Surface, width), RO, NULL},
-    {const_cast<char*>("height"), T_USHORT, offsetof(Py_Surface, height), RO, NULL},
-    {const_cast<char*>("bpp"), T_UBYTE, offsetof(Py_Surface, bpp), RO, NULL},
-    {NULL, 0, 0, 0, NULL}
+    {const_cast<char*>("width"), T_USHORT, offsetof(Py_Surface, width), RO, nullptr},
+    {const_cast<char*>("height"), T_USHORT, offsetof(Py_Surface, height), RO, nullptr},
+    {const_cast<char*>("bpp"), T_UBYTE, offsetof(Py_Surface, bpp), RO, nullptr},
+    {nullptr, 0, 0, 0, nullptr}
 };
 
 PyTypeObject Surface_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.Surface",			/*tp_name*/
     sizeof(Py_Surface),				/*tp_basicsize*/

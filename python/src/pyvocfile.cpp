@@ -50,8 +50,8 @@ static PyObject *
 VocFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_VocFile *self = (Py_VocFile *)PyType_GenericAlloc(type, nitems);
-    self->stream = NULL;
-    self->vocFile = NULL;
+    self->stream = nullptr;
+    self->vocFile = nullptr;
 
     return (PyObject *)self;
 }
@@ -78,18 +78,18 @@ static PyObject *
 VocFile_getSound(Py_VocFile *self)
 {
     Sound *sound = new Sound(self->vocFile->getSound());
-    PyObject *pysound = Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(sound), NULL);
+    PyObject *pysound = Sound_Type.tp_new(&Sound_Type, reinterpret_cast<PyObject*>(sound), nullptr);
     return pysound;
 }
 
 static PyMethodDef VocFile_methods[] = {
     {"getSound", (PyCFunction)VocFile_getSound, METH_NOARGS, VocFile_getSound__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 
 PyTypeObject VocFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.VocFile",			/*tp_name*/
     sizeof(Py_VocFile),				/*tp_basicsize*/

@@ -14,10 +14,10 @@ using namespace eastwood;
 static PyObject *
 Palette_new(PyTypeObject *type, PyObject *args, __attribute__((unused)) PyObject *kwargs)
 {
-    Py_Palette *self = NULL;
+    Py_Palette *self = nullptr;
     uint16_t size;
     self = (Py_Palette *)type->tp_alloc(type, 0);
-    if (self != NULL) {
+    if (self != nullptr) {
 	self->palette = reinterpret_cast<Palette*>(args);
 	size = self->palette->size();
 
@@ -38,8 +38,8 @@ static PyObject *
 Palette_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_Palette *self = (Py_Palette *)PyType_GenericAlloc(type, nitems);
-    self->palette = NULL;
-    self->tuple = NULL;
+    self->palette = nullptr;
+    self->tuple = nullptr;
 
     return (PyObject *)self;
 }
@@ -84,7 +84,7 @@ Palette_savePAL(Py_Palette *self)
     std::ostream output(&rdbuf);
     if(!output.good()) {
 	PyErr_SetFromErrno(PyExc_IOError);
-	return NULL;
+	return nullptr;
     }
 
     self->palette->savePAL(output);
@@ -95,11 +95,11 @@ Palette_savePAL(Py_Palette *self)
 
 static PyMethodDef Palette_methods[] = {
     {"savePAL", (PyCFunction)Palette_savePAL, METH_NOARGS, Palette_savePAL__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 PyTypeObject Palette_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.Palette",			/*tp_name*/
     sizeof(Py_Palette),				/*tp_basicsize*/

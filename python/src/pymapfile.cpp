@@ -55,9 +55,9 @@ static PyObject *
 MapFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_MapFile *self = (Py_MapFile *)PyType_GenericAlloc(type, nitems);
-    self->stream = NULL;
-    self->mapFile = NULL;
-    self->tuple = NULL;
+    self->stream = nullptr;
+    self->mapFile = nullptr;
+    self->tuple = nullptr;
 
     return (PyObject *)self;
 }
@@ -94,7 +94,7 @@ static PyMappingMethods MapFile_as_mapping = {
 };
 
 PyTypeObject MapFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.MapFile",			/*tp_name*/
     sizeof(Py_MapFile),				/*tp_basicsize*/

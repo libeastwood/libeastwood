@@ -29,7 +29,7 @@ static int
 WsaFile_init(Py_WsaFile *self, PyObject *args)
 {
     Py_buffer pdata;
-    PyObject *palObject = NULL, *frameObject = NULL;
+    PyObject *palObject = nullptr, *frameObject = nullptr;
     Surface firstFrame;
     if (!PyArg_ParseTuple(args, "s*O|O", &pdata, &palObject, &frameObject))
 	return -1;
@@ -73,8 +73,8 @@ static PyObject *
 WsaFile_alloc(PyTypeObject *type, Py_ssize_t nitems)
 {
     Py_WsaFile *self = (Py_WsaFile *)PyType_GenericAlloc(type, nitems);
-    self->wsaFile = NULL;
-    self->stream = NULL;
+    self->wsaFile = nullptr;
+    self->stream = nullptr;
     self->size = 0;
     self->fpms = 0;
 
@@ -103,33 +103,33 @@ static PyObject *
 WsaFile_getSurface(Py_WsaFile *self, PyObject *args)
 {
     uint16_t index;
-    Surface *surface = NULL;
+    Surface *surface = nullptr;
     if (!PyArg_ParseTuple(args, "H", &index))
-	return NULL;
+	return nullptr;
 
     try {
     	surface = new Surface(self->wsaFile->getSurface(index));
     } catch(std::out_of_range e) {
 	PyErr_SetString(PyExc_IndexError, "WsaFile index out of range");
-	return NULL;
+	return nullptr;
     }
-    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), NULL);
+    PyObject *pysurface = Surface_Type.tp_new(&Surface_Type, reinterpret_cast<PyObject*>(surface), nullptr);
     return pysurface;
 }
 
 static PyMethodDef WsaFile_methods[] = {
     {"getSurface", (PyCFunction)WsaFile_getSurface, METH_VARARGS, WsaFile_getSurface__doc__},
-    {NULL, NULL, 0, NULL}		/* sentinel */
+    {nullptr, nullptr, 0, nullptr}		/* sentinel */
 };
 
 static PyMemberDef WsaFile_members[] = {
-    {const_cast<char*>("size"), T_USHORT, offsetof(Py_WsaFile, size), RO, NULL},
-    {const_cast<char*>("fpms"), T_UINT, offsetof(Py_WsaFile, size), RO, NULL},    
-    {NULL, 0, 0, 0, NULL}
+    {const_cast<char*>("size"), T_USHORT, offsetof(Py_WsaFile, size), RO, nullptr},
+    {const_cast<char*>("fpms"), T_UINT, offsetof(Py_WsaFile, size), RO, nullptr},
+    {nullptr, 0, 0, 0, nullptr}
 };
 
 PyTypeObject WsaFile_Type = {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(nullptr)
     0,						/*ob_size*/
     "pyeastwood.WsaFile",			/*tp_name*/
     sizeof(Py_WsaFile),				/*tp_basicsize*/
