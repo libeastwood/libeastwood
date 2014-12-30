@@ -25,16 +25,14 @@ CpsFile::CpsFile(std::istream &stream, Palette palette) :
 	case FORMAT_LBM:
 	    throw(Exception(LOG_ERROR, __FUNCTION__, "LBM format support not implemented"));
 	default:
-	    char error[256];
-	    snprintf(error, sizeof(error), "Format not supported: %x", _format);
-	    throw(Exception(LOG_ERROR, __FUNCTION__, error));
+	    throw(Exception(LOG_ERROR, __FUNCTION__, "Format not supported: %x", _format));
     }
 
     if(_stream.getU16LE() + _stream.getU16LE() != _width*_height)
 	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid image size"));
 
     if(_stream.getU16LE() == 768){
-	LOG_INFO("CPS has embedded palette");
+	LOG_INFO("%s", "CPS has embedded palette");
 	if(palette)
 	    _stream.ignore(768);
 	else {

@@ -524,7 +524,7 @@ int AdlibDriver::snd_setSoundData(va_list &list) {
 }
 
 int AdlibDriver::snd_unkOpcode1(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("unimplemented snd_unkOpcode1");
+    LOG_WARNING("unimplemented: %s", __func__);
     return 0;
 }
 
@@ -604,7 +604,7 @@ int AdlibDriver::snd_getSoundTrigger(__attribute__((unused)) va_list &list) {
 }
 
 int AdlibDriver::snd_unkOpcode4(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("unimplemented snd_unkOpcode4");
+    LOG_WARNING("unimplemented: %s", __func__);
     return 0;
 }
 
@@ -613,12 +613,12 @@ int AdlibDriver::snd_dummy(__attribute__((unused)) va_list &list) {
 }
 
 int AdlibDriver::snd_getNullvar4(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("unimplemented snd_getNullvar4");
+    LOG_WARNING("unimplemented: %s", __func__);
     return 0;
 }
 
 int AdlibDriver::snd_setNullvar3(__attribute__((unused)) va_list &list) {
-    LOG_WARNING("unimplemented snd_setNullvar3");
+    LOG_WARNING("unimplemented: %s", __func__);
     return 0;
 }
 
@@ -815,7 +815,7 @@ void AdlibDriver::executePrograms() {
 //
 
 void AdlibDriver::resetAdlibState() {
-    LOG_INFO("resetAdlibState()");
+    LOG_INFO("%s", "resetAdlibState()");
     _rnd = 0x1234;
 
     // Authorize the control of the waveforms
