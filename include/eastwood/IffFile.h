@@ -185,7 +185,7 @@ struct IFFChunk : public IStream {
 	}
 };
 
-typedef std::tr1::shared_ptr<IFFChunk> IffChunk;
+typedef std::shared_ptr<IFFChunk> IffChunk;
 
 struct IFFGroupChunk : public IFFChunk {
     IFF_ID		groupId;
@@ -193,7 +193,7 @@ struct IFFGroupChunk : public IFFChunk {
     IFFGroupChunk(uint32_t id, IStream &stream);
 };
 
-typedef std::tr1::shared_ptr<IFFGroupChunk> GroupChunk;
+typedef std::shared_ptr<IFFGroupChunk> GroupChunk;
 
 /**
  *  Parser for IFF containers.

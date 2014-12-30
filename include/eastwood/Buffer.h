@@ -54,7 +54,7 @@ class Buffer
 };
 
 typedef Buffer<uint8_t> Bytes;
-typedef std::tr1::shared_ptr<Bytes> BytesPtr;
+typedef std::shared_ptr<Bytes> BytesPtr;
 }
 
 #endif // EASTWOOD_BUFFER_H

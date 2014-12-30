@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "eastwood/StdDef.h"
 
 #include "eastwood/Exception.h"
@@ -32,7 +34,7 @@ void IcnFile::readHeader(std::istream &stream)
     if(iff.getGroupType() != ID_ICON)
 	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No ICON chunk found"));
 
-    std::tr1::shared_ptr<IFFChunk> chunk = iff.getChunk();
+    std::shared_ptr<IFFChunk> chunk = iff.getChunk();
     // Session Information
     if(chunk->id != ID_SINF)
 	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid ICN-File: No SINF chunk found "));

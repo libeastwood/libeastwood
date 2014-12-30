@@ -8,14 +8,14 @@
 
 namespace eastwood { namespace SDL { namespace Mixer {
 
-static std::tr1::shared_ptr<Mix_Chunk> createChunk(bool allocated, uint8_t *buffer, uint32_t length, uint8_t volume = 128)
+static std::shared_ptr<Mix_Chunk> createChunk(bool allocated, uint8_t *buffer, uint32_t length, uint8_t volume = 128)
 {
     Mix_Chunk *chunk = reinterpret_cast<Mix_Chunk*>(malloc(sizeof(Mix_Chunk)));
     chunk->allocated = allocated;
     chunk->abuf = buffer;
     chunk->alen = length;
     chunk->volume = volume;
-    return std::tr1::shared_ptr<Mix_Chunk>(chunk, Mix_FreeChunk);
+    return std::shared_ptr<Mix_Chunk>(chunk, Mix_FreeChunk);
 }
 
 class Sound : public eastwood::Sound
@@ -95,7 +95,7 @@ class Sound : public eastwood::Sound
 	}
 
     private:
-	std::tr1::shared_ptr<Mix_Chunk> _chunk;
+	std::shared_ptr<Mix_Chunk> _chunk;
 };
 
 }}}

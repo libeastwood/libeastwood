@@ -187,13 +187,13 @@ typedef	Point<uint16_t>				UPoint;
 typedef	Point<int16_t>				SPoint;
 typedef	Rect<uint16_t,uint16_t>			MapInfo;
 
-typedef std::tr1::shared_ptr<ObjectData>	Object;
-typedef std::tr1::shared_ptr<UnitData>		Unit;
-typedef std::tr1::shared_ptr<StructureData>	Structure;
-typedef std::tr1::shared_ptr<ObjectData>	Object;
-typedef std::tr1::shared_ptr<HouseData>		House;
-typedef std::tr1::shared_ptr<ActionData>	Action;
-typedef std::tr1::shared_ptr<FileData>		File;
+typedef std::shared_ptr<ObjectData>		Object;
+typedef std::shared_ptr<UnitData>		Unit;
+typedef std::shared_ptr<StructureData>		Structure;
+typedef std::shared_ptr<ObjectData>		Object;
+typedef std::shared_ptr<HouseData>		House;
+typedef std::shared_ptr<ActionData>		Action;
+typedef std::shared_ptr<FileData>		File;
 
 class Dune2File
 {
