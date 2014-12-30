@@ -42,7 +42,7 @@ class MapFile
 	  Returns the number of tileSets in the map-File.
 	  @return	Number of tileSets
 	  */
-	uint16_t size() const noexcept {
+	auto size() const noexcept {
 	    return _tileSet.size();
 	}
 

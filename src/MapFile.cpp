@@ -11,12 +11,12 @@ MapFile::MapFile(std::istream &stream) : _tileSet(0)
 {
     IStream &_stream = reinterpret_cast<IStream&>(stream);
     std::streamsize mapSize = _stream.sizeg();
-    uint16_t numTileSets = _stream.getU16LE();
+    auto numTileSets = _stream.getU16LE();
 
     _tileSet.resize(numTileSets);
 
     for(uint16_t i = 0, pre = numTileSets, cur = 0; i < numTileSets; i++, pre=cur) {
-	uint16_t size = (cur= (i == numTileSets-1) ? mapSize/2 : _stream.getU16LE()) - pre;
+	auto size = (cur= (i == numTileSets-1) ? mapSize/2 : _stream.getU16LE()) - pre;
 	_tileSet[i] = std::vector<uint16_t>(size);
     }
 
