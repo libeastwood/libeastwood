@@ -167,7 +167,7 @@ Sound VocFile::getSound()
 		    packing = _stream.get();
 		    len -= 2;
 		    uint32_t tmp_rate = getSampleRateFromVOCRate(time_constant);
-		    if((frequency != 0) && (frequency != frequency))
+		    if((frequency != 0) && (frequency != tmp_rate))
 			LOG_ERROR("This voc-file contains data blocks with different sampling rates: old rate: %d, new rate: %d", frequency, tmp_rate);
 		    frequency = tmp_rate;
 		    format = FMT_U8;
