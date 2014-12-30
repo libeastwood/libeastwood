@@ -1,7 +1,7 @@
 #ifndef EASTWOOD_LOG_H
 #define EASTWOOD_LOG_H
 
-#include <errno.h>
+#include <cerrno>
 
 #define clean_errno() (errno == 0 ? "None" : strerror(errno))
 
