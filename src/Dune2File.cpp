@@ -197,7 +197,7 @@ void Dune2File::readDataStructures()
     GNUC_ATTRIBUTE(unused) uint32_t size = _stream.getU32LE();
     _stream.seekSegOff(addr);
 
-    for(std::vector<std::vector<uint16_t> >::iterator it = _unitAnims.begin(); it != _unitAnims.end(); addr += it->size()*sizeof(uint16_t), ++it != _unitAnims.end()) {
+    for(std::vector<std::vector<uint16_t> >::iterator it = _unitAnims.begin(); it != _unitAnims.end(); addr += it->size()*sizeof(uint16_t), ++it) {
 	animPtrMap.insert(make_pair(addr, &(*it)));
 	_stream.readU16LE(&it->front(), it->size());
     }
