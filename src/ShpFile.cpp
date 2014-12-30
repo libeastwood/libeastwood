@@ -110,7 +110,7 @@ Surface ShpFile::getSurface(uint16_t fileIndex)
 	    _stream.read(reinterpret_cast<char*>(&palOffsets.front()), palOffsets.size());
 
 	    if(decode80(&decodeDestination.front(), imageSize) == -1)
-		LOG_WARNING("Checksum-Error in Shp-File: %s", flags);
+		LOG_WARNING("Checksum-Error in Shp-File: %d", flags);
 	    
 	    decode2(decodeDestination, imageOut);
 
