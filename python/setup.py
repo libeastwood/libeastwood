@@ -50,7 +50,7 @@ for i in xrange(len(c_files)):
     c_files[i] = os.path.join("src", c_files[i])
 
 compile_args = []
-link_args = []
+link_args = ['-L../build/src']
 libraries = ['eastwood']
 if get_default_compiler() in ('cygwin', 'emx', 'mingw32', 'unix'):
     compile_args.extend(['-fno-strict-aliasing', '-I../include', '-std=gnu++1y'])
