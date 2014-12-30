@@ -215,7 +215,7 @@ Sound VocFile::getSound()
 		if(frequency != 0) {
 		    length = static_cast<uint32_t>(static_cast<double>(silenceRate)/(static_cast<double>(frequency) * silenceLength)) + 1;
 		} else {
-		    LOG_ERROR("The silence in this voc-file is right at the beginning.\n"
+		    LOG_ERROR("%s", "The silence in this voc-file is right at the beginning.\n"
 			    "Therefore it is not possible to adjust the silence sample rate to the sample rate of the other sound data in this file!");
 		    length = silenceLength; 
 		}

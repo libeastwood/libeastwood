@@ -6,6 +6,7 @@
 namespace eastwood {
 
 
+
 Exception::Exception(logLevel level, const char *location, const char *format, ...) : _level(level), _location(std::move(location)), _message(BUFSIZ, 0)
 {
     va_list ap;
