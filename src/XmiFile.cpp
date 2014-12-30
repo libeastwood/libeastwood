@@ -446,7 +446,7 @@ uint32_t XmiFile::convertListToMTrk (OStream &dest, midi_event *mlist)
 
 int32_t XmiFile::extractTracks()
 {
-    int32_t 		count;
+    int32_t 		count = 0;
     int16_t		ppqn;
 
     IffChunk		chunk = _iff.getChunk();
