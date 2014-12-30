@@ -37,13 +37,13 @@ class Surface {
 	    return _bpp != 0;
 	}
 
-	uint16_t width() const throw() { return _width; }
-	uint16_t height() const throw() { return _height; }
-	uint16_t pitch() const throw() { return _pitch; }
-	uint8_t bpp() const throw() { return _bpp; }
-	uint8_t Bpp() const throw() { return _Bpp; }
-	Palette palette() const throw() { return _palette; }
-	uint32_t size() const throw() { return _pitch * _height; }
+	uint16_t width() const noexcept { return _width; }
+	uint16_t height() const noexcept { return _height; }
+	uint16_t pitch() const noexcept { return _pitch; }
+	uint8_t bpp() const noexcept { return _bpp; }
+	uint8_t Bpp() const noexcept { return _Bpp; }
+	Palette palette() const noexcept { return _palette; }
+	uint32_t size() const noexcept { return _pitch * _height; }
 
 	bool scalePrecondition(Scaler scale);
 	Surface getScaled(Scaler scale);
