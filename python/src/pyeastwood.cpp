@@ -21,7 +21,7 @@ using namespace eastwood;
 static const char __author__[] =
 "The eastwood python module was written by:\n\
 \n\
-    Per Øyvind Karlsen <peroyvind@mandriva.org>\n\
+    Per Øyvind Karlsen <proyvind@moondrake.org>\n\
 ";
 
 PyMODINIT_FUNC
