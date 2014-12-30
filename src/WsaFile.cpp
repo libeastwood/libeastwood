@@ -16,7 +16,6 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     Decode(stream, 0, 0, palette), _frameOffsTable(0),
     _decodedFrames(0), _deltaBufferSize(0), _framesPer1024ms(0)
 {
-    uint32_t frameDataOffs;
 
     _decodedFrames.resize(_stream.getU16LE());
     LOG_INFO("numframes = %zu", _decodedFrames.size());
@@ -31,7 +30,7 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     if(_stream.getU16LE())
 	_stream.seekg(-2, std::ios::cur);
 
-    frameDataOffs = _stream.getU16LE();
+    auto frameDataOffs = _stream.getU16LE();
     // "Continue" WSA files shipped with the Dune 2 demo version does not have
     // 2 bytes padding here...
     if(_stream.getU16LE())
@@ -43,10 +42,10 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     }
 
     _frameOffsTable.resize(_decodedFrames.size()+2);
-    for (uint32_t i = 1; i < _frameOffsTable.size(); ++i) {
-	_frameOffsTable[i] = _stream.getU32LE();
-	if (_frameOffsTable[i])
-	    _frameOffsTable[i] -= frameDataOffs;
+    for (auto &frameOff : _frameOffsTable) {
+	frameOff = _stream.getU32LE();
+	if (frameOff)
+	    frameOff -= frameDataOffs;
     }
 
     _framesPer1024ms = _deltaBufferSize / 1024.0f;
@@ -65,7 +64,7 @@ WsaFile::~WsaFile()
 void WsaFile::decodeFrames()
 {
     std::vector<uint8_t> dec80(_decodedFrames.front().size());
-    Surface *pic = NULL;
+    Surface *pic = nullptr;
 
     for(std::vector<Surface>::iterator it = _decodedFrames.begin();
 	    it != _decodedFrames.end(); pic = &(*it), ++it) {
