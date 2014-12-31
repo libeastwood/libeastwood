@@ -12,7 +12,7 @@ namespace eastwood { namespace SDL {
 class Surface : public eastwood::Surface
 {
     public:
-	Surface() : _surface(NULL) {};
+	Surface() : _surface(nullptr) {};
 	Surface(const eastwood::Surface& surface,
 		uint32_t Rmask = 0, uint32_t Gmask = 0, uint32_t Bmask = 0, uint32_t Amask = 0) :
 	    eastwood::Surface(surface.width(), surface.height(), surface.bpp(), surface.palette()),
@@ -72,7 +72,7 @@ class Surface : public eastwood::Surface
 	    _height = surface->h;
 	    _pitch = surface->pitch;
 	    _pixels.reset(new Bytes(reinterpret_cast<uint8_t*>(_surface->pixels), (surface->flags & SDL_PREALLOC) ? BufNewArray : BufMalloc));
-	    if(surface->format->palette != NULL)
+	    if(surface->format->palette != nullptr)
 		_palette = SDL::Palette(surface->format->palette);
 
 	    return *this;

@@ -18,8 +18,8 @@ namespace eastwood {
 IniFile::IniFile(std::istream &stream) :
     _stream(reinterpret_cast<IStream&>(stream))
 {
-	FirstLine = NULL;
-	SectionRoot = NULL;
+	FirstLine = nullptr;
+	SectionRoot = nullptr;
 	
 	readFile();
 }
@@ -33,7 +33,7 @@ IniFile::~IniFile()
 {
 	CommentEntry *curEntry = FirstLine;
 	CommentEntry *tmp;
-	while(curEntry != NULL) {
+	while(curEntry != nullptr) {
 		tmp = curEntry;
 		curEntry = curEntry->nextEntry;
 		delete tmp;
@@ -56,12 +56,12 @@ IniFile::~IniFile()
 std::string IniFile::getStringValue(std::string section, std::string key, std::string defaultValue)
 {
 	SectionEntry *curSection = getSection(section);
-	if(curSection == NULL) {
+	if(curSection == nullptr) {
 		return defaultValue;
 	}
 	
 	KeyEntry *curKey = getKey(curSection,key);
-	if(curKey == NULL) {
+	if(curKey == nullptr) {
 		return defaultValue;
 	}
 	
@@ -139,10 +139,10 @@ bool IniFile::getBoolValue(std::string section, std::string key, bool defaultVal
 */
 void IniFile::setStringValue(std::string section, std::string key, std::string value)
 {
-	CommentEntry *curEntry = NULL;
+	CommentEntry *curEntry = nullptr;
 	SectionEntry *curSection = getSection(section);
 	
-	if(curSection == NULL) {
+	if(curSection == nullptr) {
 		// create new section
 		
 		// test for valid section name
@@ -163,14 +163,14 @@ void IniFile::setStringValue(std::string section, std::string key, std::string v
 		}
 		
 		std::string completeLine = "[" + section + "]";
-		if((curSection = new SectionEntry(completeLine,1,section.size())) == NULL)
+		if((curSection = new SectionEntry(completeLine,1,section.size())) == nullptr)
 	    	    throw(std::bad_alloc());
 
-		if(FirstLine == NULL) {
+		if(FirstLine == nullptr) {
 			FirstLine = curSection;
 		} else {
 			curEntry = FirstLine;
-			while(curEntry->nextEntry != NULL) {
+			while(curEntry->nextEntry != nullptr) {
 				curEntry = curEntry->nextEntry;
 			}
 			
@@ -183,7 +183,7 @@ void IniFile::setStringValue(std::string section, std::string key, std::string v
 	}
 	
 	KeyEntry *curKey = getKey(curSection,key);
-	if(curKey == NULL) {
+	if(curKey == nullptr) {
 		// create new key
 		
 		// test for valid key name
@@ -238,17 +238,17 @@ void IniFile::setStringValue(std::string section, std::string key, std::string v
 				ValueStringLength = value.size();			
 			}
 		}
-		if((curKey = new KeyEntry(completeLine,KeyStringStart,KeyStringLength,ValueStringStart,ValueStringLength)) == NULL)
+		if((curKey = new KeyEntry(completeLine,KeyStringStart,KeyStringLength,ValueStringStart,ValueStringLength)) == nullptr)
 	    	    throw(std::bad_alloc());
 		
-		if(curEntry != NULL) {
+		if(curEntry != nullptr) {
 			curEntry->nextEntry = curKey;
 			curKey->prevEntry = curEntry;
 		} else {
 			KeyEntry *pKey = curSection->KeyRoot;
-			if(pKey == NULL) {
+			if(pKey == nullptr) {
 				// Section has no key yet
-				if(curSection->nextEntry == NULL) {
+				if(curSection->nextEntry == nullptr) {
 					// no line after this section declaration
 					curSection->nextEntry = curKey;
 					curKey->prevEntry = curSection;
@@ -261,11 +261,11 @@ void IniFile::setStringValue(std::string section, std::string key, std::string v
 				}
 			} else {
 				// Section already has some keys
-				while(pKey->nextKey != NULL) {
+				while(pKey->nextKey != nullptr) {
 					pKey = pKey->nextKey;
 				}
 				
-				if(pKey->nextEntry == NULL) {
+				if(pKey->nextEntry == nullptr) {
 					// no line after this key
 					pKey->nextEntry = curKey;
 					curKey->prevEntry = pKey;					
@@ -341,8 +341,8 @@ void IniFile::setBoolValue(std::string section, std::string key, bool value)
 */
 IniFile::KeyListHandle IniFile::KeyList_Open(std::string sectionname) {
 	SectionEntry *curSection = getSection(sectionname);
-	if(curSection == NULL) {
-		return NULL;
+	if(curSection == nullptr) {
+		return nullptr;
 	} else {
 		return curSection->KeyRoot;
 	}
@@ -357,7 +357,7 @@ IniFile::KeyListHandle IniFile::KeyList_Open(std::string sectionname) {
 	\see	KeyList_Open
 */
 bool IniFile::KeyList_EOF(KeyListHandle handle) {
-	if(handle == NULL) {
+	if(handle == nullptr) {
 		return true;
 	} else {
 		return false;
@@ -372,7 +372,7 @@ bool IniFile::KeyList_EOF(KeyListHandle handle) {
 	\see	KeyList_Open, KeyList_EOF
 */
 std::string IniFile::KeyList_GetNextKey(KeyListHandle* handle) {
-	if(handle == NULL) {
+	if(handle == nullptr) {
 		return "";
 	} else {
 		std::string ret = (*handle)->CompleteLine.substr((*handle)->KeyStringBegin,(*handle)->KeyStringLength);
@@ -388,8 +388,8 @@ std::string IniFile::KeyList_GetNextKey(KeyListHandle* handle) {
 	\see	KeyList_Open
 */
 void IniFile::KeyList_Close(KeyListHandle *handle) {
-	if(handle != NULL)
-		*handle = NULL;
+	if(handle != nullptr)
+		*handle = nullptr;
 }
 
 /// Saves the changes made in the INI-File to an output stream.
@@ -402,7 +402,7 @@ void IniFile::KeyList_Close(KeyListHandle *handle) {
 bool IniFile::SaveChangesTo(std::ostream &output) {
 	CommentEntry *curEntry = FirstLine;
 	
-	while(curEntry != NULL) {
+	while(curEntry != nullptr) {
 	    output.write(curEntry->CompleteLine.c_str(), curEntry->CompleteLine.size());
 	    curEntry = curEntry->nextEntry;
 	}
@@ -418,7 +418,7 @@ void IniFile::flush()
 	//cout << "Flush:" << endl;
 	CommentEntry* curEntry = FirstLine;
 	
-	while(curEntry != NULL) {
+	while(curEntry != nullptr) {
 		//cout << curEntry->CompleteLine << std::endl;
 		curEntry = curEntry->nextEntry;
 	}
@@ -427,7 +427,7 @@ void IniFile::flush()
 
 void IniFile::readFile()
 {	
-	if((SectionRoot = new SectionEntry("",0,0)) == NULL)
+	if((SectionRoot = new SectionEntry("",0,0)) == nullptr)
     	    throw(std::bad_alloc());
 	
 	SectionEntry *curSectionEntry = SectionRoot;
@@ -435,7 +435,7 @@ void IniFile::readFile()
 	std::string completeLine;
 	int lineNum = 0;
 	bool SyntaxError = false;
-	CommentEntry *curEntry = NULL;
+	CommentEntry *curEntry = nullptr;
 	CommentEntry *newCommentEntry;
 	SectionEntry *newSectionEntry;
 	KeyEntry *newKeyEntry;
@@ -469,10 +469,10 @@ void IniFile::readFile()
 		
 		if(ret == -1) {
 			// empty line or comment
-			if((newCommentEntry = new CommentEntry(completeLine)) == NULL)
+			if((newCommentEntry = new CommentEntry(completeLine)) == nullptr)
 		    	    throw(std::bad_alloc());
 			
-			if(curEntry == NULL) {
+			if(curEntry == nullptr) {
 				FirstLine = newCommentEntry;
 				curEntry = newCommentEntry;
 			} else {
@@ -491,10 +491,10 @@ void IniFile::readFile()
 					SyntaxError = true;
 				} else {
 					// valid section line
-					if((newSectionEntry = new SectionEntry(completeLine,sectionstart,sectionend-sectionstart)) == NULL)
+					if((newSectionEntry = new SectionEntry(completeLine,sectionstart,sectionend-sectionstart)) == nullptr)
 				    	    throw(std::bad_alloc());
 			
-					if(curEntry == NULL) {
+					if(curEntry == nullptr) {
 						FirstLine = newSectionEntry;
 						curEntry = newSectionEntry;
 					} else {
@@ -533,10 +533,10 @@ void IniFile::readFile()
 									SyntaxError = true;
 								} else {
 									// valid key/value line
-									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart+1,valueend-valuestart-1)) == NULL)
+									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart+1,valueend-valuestart-1)) == nullptr)
 								    	    throw(std::bad_alloc());
 
-									if(FirstLine == NULL) {
+									if(FirstLine == nullptr) {
 										FirstLine = newKeyEntry;
 										curEntry = newKeyEntry;
 									} else {
@@ -555,11 +555,11 @@ void IniFile::readFile()
 									SyntaxError = true;
 								} else {
 									// valid key/value line
-									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart,valueend-valuestart)) == NULL)
+									if((newKeyEntry = new KeyEntry(completeLine,keystart,keyend-keystart,valuestart,valueend-valuestart)) == nullptr)
 								    	    throw(std::bad_alloc());
 
 
-									if(FirstLine == NULL) {
+									if(FirstLine == nullptr) {
 										FirstLine = newKeyEntry;
 										curEntry = newKeyEntry;
 									} else {
@@ -585,10 +585,10 @@ void IniFile::readFile()
 			    std::cerr << "IniFile: Syntax-Error in line " << lineNum << ":" << completeLine << " !" << std::endl;
 			}
 			// save this line as a comment
-			if((newCommentEntry = new CommentEntry(completeLine)) == NULL)
+			if((newCommentEntry = new CommentEntry(completeLine)) == nullptr)
 		    	    throw(std::bad_alloc());
 			
-			if(curEntry == NULL) {
+			if(curEntry == nullptr) {
 				FirstLine = newCommentEntry;
 				curEntry = newCommentEntry;
 			} else {
@@ -604,13 +604,13 @@ void IniFile::readFile()
 }
 
 void IniFile::InsertSection(SectionEntry *newSection) {
-	if(SectionRoot == NULL) {
+	if(SectionRoot == nullptr) {
 		// New root element
 		SectionRoot = newSection;
 	} else {
 		// insert into list
 		SectionEntry* curSection = SectionRoot;
-		while(curSection->nextSection != NULL) {
+		while(curSection->nextSection != nullptr) {
 			curSection = curSection->nextSection;
 		}
 		
@@ -620,13 +620,13 @@ void IniFile::InsertSection(SectionEntry *newSection) {
 }
 
 void IniFile::InsertKey(SectionEntry *section, KeyEntry *newKeyEntry) {
-	if(section->KeyRoot == NULL) {
+	if(section->KeyRoot == nullptr) {
 		// New root element
 		section->KeyRoot = newKeyEntry;
 	} else {
 		// insert into list
 		KeyEntry* curKey = section->KeyRoot;
-		while(curKey->nextKey != NULL) {
+		while(curKey->nextKey != nullptr) {
 			curKey = curKey->nextKey;
 		}
 		
@@ -640,7 +640,7 @@ IniFile::SectionEntry *IniFile::getSection(std::string sectionname) {
 	SectionEntry *curSection = SectionRoot;
 	int sectionnameSize = sectionname.size(); 
 	
-	while(curSection != NULL) {
+	while(curSection != nullptr) {
 		if(curSection->SectionStringLength == sectionnameSize) {
 				if(strncmp(sectionname.c_str(), curSection->CompleteLine.c_str()+curSection->SectionStringBegin, sectionnameSize) == 0) {
 					return curSection;
@@ -650,14 +650,14 @@ IniFile::SectionEntry *IniFile::getSection(std::string sectionname) {
 		curSection = curSection->nextSection;
 	}
 	
-	return NULL;
+	return nullptr;
 }
 
 IniFile::KeyEntry *IniFile::getKey(SectionEntry *sectionentry, std::string keyname) {
 	KeyEntry *curKey = sectionentry->KeyRoot;
 	int keynameSize = keyname.size(); 
 	
-	while(curKey != NULL) {
+	while(curKey != nullptr) {
 		if(curKey->KeyStringLength == keynameSize) {
 				if(strncmp(keyname.c_str(), curKey->CompleteLine.c_str()+curKey->KeyStringBegin, keynameSize) == 0) {
 					return curKey;
@@ -667,7 +667,7 @@ IniFile::KeyEntry *IniFile::getKey(SectionEntry *sectionentry, std::string keyna
 		curKey = curKey->nextKey;
 	}
 	
-	return NULL;
+	return nullptr;
 }
 
 

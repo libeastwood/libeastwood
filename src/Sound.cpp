@@ -98,7 +98,7 @@ Sound Sound::getResampled(uint8_t channels, uint32_t frequency, AudioFormat form
 	  *dataFloat,
 	  *targetDataFloat;
     int32_t silenceLength;
-    Sound sound = Sound(0, NULL, channels, frequency, format);
+    Sound sound = Sound(0, nullptr, channels, frequency, format);
     SRC_DATA src_data;
     uint8_t *buffer = *_buffer.get();
 

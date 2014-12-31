@@ -22,7 +22,7 @@ class Sound : public eastwood::Sound
 {
     public:
 	Sound() :
-	    eastwood::Sound(), _chunk(createChunk(false, NULL, 0)) {}
+	    eastwood::Sound(), _chunk(createChunk(false, nullptr, 0)) {}
 
 	Sound(uint32_t size, uint8_t *buffer, uint32_t frequency, uint8_t channels, AudioFormat format) :
 	    eastwood::Sound(size, buffer, frequency, channels, format),
@@ -32,8 +32,8 @@ class Sound : public eastwood::Sound
 	    eastwood::Sound(sound), _chunk(createChunk(true, *_buffer.get(), _size)) {}
 
 	Sound(const Mix_Chunk *sound) :
-	    eastwood::Sound(sound->alen, NULL, 0, 0, FMT_INVALID),
-	    _chunk(createChunk(true, NULL, sound->alen)) {
+	    eastwood::Sound(sound->alen, nullptr, 0, 0, FMT_INVALID),
+	    _chunk(createChunk(true, nullptr, sound->alen)) {
 		uint16_t format;
 		Mix_QuerySpec(reinterpret_cast<int*>(&_frequency), &format, reinterpret_cast<int*>(&_channels));
 		switch(format) {
@@ -53,7 +53,7 @@ class Sound : public eastwood::Sound
 	    }
 
 	virtual ~Sound() {
-	    _chunk->abuf = NULL;
+	    _chunk->abuf = nullptr;
 	}
 
 	virtual operator Mix_Chunk*() const noexcept {
@@ -62,13 +62,13 @@ class Sound : public eastwood::Sound
 
 	Sound &operator=(const eastwood::Sound &sound) {
 	    *(static_cast<eastwood::Sound*>(this)) = sound;
-	    _chunk->abuf = NULL;
+	    _chunk->abuf = nullptr;
 	    _chunk = createChunk(true, *this, size());
 
 	    return *this;
 	}
 	Sound &operator=(const Mix_Chunk *sound) {
-	    _chunk->abuf = NULL;
+	    _chunk->abuf = nullptr;
 	    _chunk.reset(const_cast<Mix_Chunk*>(sound), Mix_FreeChunk);
 	    _buffer.reset(new Bytes(reinterpret_cast<uint8_t*>(sound->abuf), BufMalloc));
 

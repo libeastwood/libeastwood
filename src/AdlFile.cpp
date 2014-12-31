@@ -432,14 +432,14 @@ class AdlibDriver {
 };
 
 AdlibDriver::AdlibDriver(Copl *newopl, bool v2) :
-    _opcodeList(NULL), _opcodesEntries(0), _parserOpcodeTable(NULL), _parserOpcodeTableSize(0),
+    _opcodeList(nullptr), _opcodesEntries(0), _parserOpcodeTable(nullptr), _parserOpcodeTableSize(0),
     _samplesPerCallback(0), _samplesPerCallbackRemainder(0), _samplesTillCallback(0),
     _samplesTillCallbackRemainder(0), _lastProcessed(0), _flagTrigger(0), _curChannel(0),
     _soundTrigger(0), _soundsPlaying(0), _rnd(0x1234), _unkValue1(0), _unkValue2(0), _unkValue3(0xff),
     _unkValue4(0), _unkValue5(0), _unkValue6(0), _unkValue7(0), _unkValue8(0), _unkValue9(0),
     _unkValue10(0), _unkValue11(0), _unkValue12(0), _unkValue13(0), _unkValue14(0), _unkValue15(0),
     _unkValue16(0), _unkValue17(0), _unkValue18(0), _unkValue19(0), _unkValue20(0), _flags(0), 
-    _soundData(NULL), _vibratoAndAMDepthBits(0), _rhythmSectionBits(0), _curRegOffset(0), _tempo(0),
+    _soundData(nullptr), _vibratoAndAMDepthBits(0), _rhythmSectionBits(0), _curRegOffset(0), _tempo(0),
     _tablePtr1(0), _tablePtr2(0), _syncJumpMask(0),  _v2(v2), opl(newopl)
 {
     setupOpcodeList();
@@ -2220,9 +2220,9 @@ const int CadlPlayer::_kyra1SoundTriggers[] = {
 const int CadlPlayer::_kyra1NumSoundTriggers = ARRAYSIZE(CadlPlayer::_kyra1SoundTriggers);
 
 CadlPlayer::CadlPlayer(Copl *newopl, bool v2) :
-    _driver(NULL), _opl(newopl), numsubsongs(0), cursubsong(0), _v2(v2),
-    _soundDataPtr(NULL), _sfxPlayingSound(0), _sfxPriority(0), _sfxFourthByteOfSong(0),
-    _numSoundTriggers(0), _soundTriggers(NULL)
+    _driver(nullptr), _opl(newopl), numsubsongs(0), cursubsong(0), _v2(v2),
+    _soundDataPtr(nullptr), _sfxPlayingSound(0), _sfxPriority(0), _sfxFourthByteOfSong(0),
+    _numSoundTriggers(0), _soundTriggers(nullptr)
 {
     if(_opl)
     	init();
@@ -2426,7 +2426,7 @@ bool CadlPlayer::update()
     _driver->callback();
 
     for(int i = 0; i < 10; i++)
-	if(_driver->_channels[i].dataptr != NULL)
+	if(_driver->_channels[i].dataptr != nullptr)
 	    songend = false;
 
     return !songend;

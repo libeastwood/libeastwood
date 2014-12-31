@@ -21,7 +21,7 @@ class PakFile : public IOStream
         bool erase(std::string fileName);
 
 	bool is_open() const noexcept {
-            return rdbuf() != NULL;
+            return rdbuf() != nullptr;
         }
 
         bool exists(std::string fileName) const noexcept {

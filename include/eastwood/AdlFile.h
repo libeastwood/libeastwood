@@ -17,7 +17,7 @@ class Copl;
 class CadlPlayer
 {
     public:
-	CadlPlayer(Copl *newopl = NULL, bool v2 = false);
+	CadlPlayer(Copl *newopl = nullptr, bool v2 = false);
 	virtual ~CadlPlayer();
 
 	bool load(std::istream &stream);

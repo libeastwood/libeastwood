@@ -127,7 +127,7 @@ void Dune2File::readDataStructures()
     // structures later and get the pointer to where they're (now) located.
     std::map<uint32_t, const std::vector<uint16_t>*> animPtrMap;
     // If cs:ip pointer is a NULL pointer, we'll provide a null pointer as well ;)
-    animPtrMap[0] = NULL;
+    animPtrMap[0] = nullptr;
 
     std::streampos pos;
     for(std::vector<std::vector<uint16_t> >::iterator it = _structureAnims.begin(); it != _structureAnims.end(); ++it != _structureAnims.end() && _stream.seekg(pos)) {

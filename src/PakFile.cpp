@@ -50,7 +50,7 @@ void PakFile::close() {
             }
         }
         delete rdbuf();
-        std::ios::init(NULL);
+        std::ios::init(nullptr);
         _mode = std::ios::in;
     }
 }
@@ -260,17 +260,17 @@ bool truncateFile(const char *fileName, uint32_t size)
             fileName,
             GENERIC_READ|GENERIC_WRITE,
             0,
-            NULL,
+            nullptr,
             OPEN_EXISTING,
             FILE_FLAG_RANDOM_ACCESS,
-            NULL
+            nullptr
             );
     if (filehand == INVALID_HANDLE_VALUE) return false;
 
     result = SetFilePointer(
             filehand,
             size,
-            NULL,
+            nullptr,
             FILE_END
             ) != INVALID_SET_FILE_POINTER;
 

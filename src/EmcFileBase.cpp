@@ -31,10 +31,10 @@ namespace eastwood {
 EmcFileBase::EmcFileBase(std::istream &input, std::ostream &output) :
     _inputStream(reinterpret_cast<IStream&>(input)),
     _outputStream(reinterpret_cast<OStream&>(output)),
-    _opcodes(NULL), _opcodesEvaluate(NULL), _opcodesExecute(NULL),
+    _opcodes(nullptr), _opcodesEvaluate(nullptr), _opcodesExecute(nullptr),
     _headerPointers(0), _pointerCount(0), _scriptSize(0), _modePreProcess(true),
-    _objectNames(NULL), _objectFunctions(NULL), _lineCount(0),
-   _scriptBuffer(NULL), _scriptPtr(NULL), _scriptPos(0), _scriptStart(0),
+    _objectNames(nullptr), _objectFunctions(nullptr), _lineCount(0),
+   _scriptBuffer(nullptr), _scriptPtr(nullptr), _scriptPos(0), _scriptStart(0),
     _scriptType(script_INVALID), _scriptLabels(std::vector<labelPosition>())
 {
 }

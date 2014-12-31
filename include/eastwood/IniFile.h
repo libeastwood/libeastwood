@@ -35,8 +35,8 @@ private:
 	public:
 		CommentEntry(std::string completeLine) {
 			CompleteLine = completeLine;
-			nextEntry = NULL;
-			prevEntry = NULL;
+			nextEntry = nullptr;
+			prevEntry = nullptr;
 		};
 
 		std::string CompleteLine;
@@ -50,9 +50,9 @@ private:
 	public:
 		SectionEntry(std::string completeLine, int sectionstringbegin, int sectionstringlength)
 		: CommentEntry(completeLine) {
-			nextSection = NULL;
-			prevSection = NULL;
-			KeyRoot = NULL;
+			nextSection = nullptr;
+			prevSection = nullptr;
+			KeyRoot = nullptr;
 			SectionStringBegin = sectionstringbegin;
 			SectionStringLength = sectionstringlength;
 		};
@@ -70,8 +70,8 @@ private:
 	public:
 		KeyEntry(std::string completeLine, int keystringbegin, int keystringlength, int valuestringbegin, int valuestringlength)
 		: CommentEntry(completeLine) {
-			nextKey = NULL;
-			prevKey = NULL;
+			nextKey = nullptr;
+			prevKey = nullptr;
 			KeyStringBegin = keystringbegin;
 			KeyStringLength = keystringlength;
 			ValueStringBegin = valuestringbegin;

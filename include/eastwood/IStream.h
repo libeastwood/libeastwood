@@ -10,7 +10,7 @@ namespace eastwood {
 class IStream : public std::istream
 {
     public:
-	IStream() : std::istream(NULL){}
+	IStream() : std::istream(nullptr){}
 	IStream(std::streambuf *sb) : std::istream(sb) {}
 	IStream(const std::istream &stream);
 

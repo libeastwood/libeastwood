@@ -10,7 +10,7 @@ namespace eastwood {
 class OStream : public std::ostream
 {
     public:
-	OStream() : std::ostream(NULL){};
+	OStream() : std::ostream(nullptr){};
 	OStream(std::streambuf *sb) : std::ostream(sb) {}
 	OStream(const std::ostream &stream);
 	OStream& putU16BE(uint16_t value);

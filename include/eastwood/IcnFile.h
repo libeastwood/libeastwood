@@ -38,7 +38,7 @@ public:
 	 - If tilesX and tilesY is set to non-zero values then the result surface contains tilesX*tilesY tiles and this tilesN-times side by side.
 	 - If all there parameters are non-zero then the result surface is exactly in this arrangement.
 
-	tilesX*tilesY*tilesN must always the number of tiles in this tileSet. Otherwise NULL is returned.<br><br>
+	tilesX*tilesY*tilesN must always the number of tiles in this tileSet. Otherwise nullptr is returned.<br><br>
 	Example:
 	@code
 	TileSet = 10,11,12,13,14,15,16,17,18,19,20,21
@@ -64,7 +64,7 @@ public:
 	The returned SDL_Surface should be freed with SDL_FreeSurface() if no longer needed.
 	@param	StartIndex		The first tile to use
 	@param	EndIndex		The last tile to use
-	@return	the result surface with (EndIndex-StartIndex+1) tiles. NULL on errors.
+	@return	the result surface with (EndIndex-StartIndex+1) tiles. nullptr on errors.
 */
 //	Surface getSurfaceRow(uint32_t StartIndex, uint32_t EndIndex);
 
