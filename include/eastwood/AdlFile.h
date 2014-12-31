@@ -25,13 +25,12 @@ class CadlPlayer
 	void rewind(int subsong);
 	virtual Copl* get_opl() { return _opl; }
 	// refresh rate is fixed at 72Hz
-	float getrefresh()
-	{
-	    return 72.0f;
-	}
+	float getrefresh() const noexcept
+	{ return 72.0f;	}
 
 	unsigned int getsubsongs();
-	std::string gettype() { return std::string("Westwood ADL"); }
+	const std::string& gettype() const noexcept
+	{ return _type; }
 
     protected:
 	void init();
@@ -67,6 +66,7 @@ class CadlPlayer
 	void play(uint8_t track);
 	void unk1();
 	void unk2();
+	const std::string _type;
 
 };
 

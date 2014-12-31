@@ -2222,7 +2222,7 @@ const int CadlPlayer::_kyra1NumSoundTriggers = ARRAYSIZE(CadlPlayer::_kyra1Sound
 CadlPlayer::CadlPlayer(Copl *newopl, bool v2) :
     _driver(nullptr), _opl(newopl), numsubsongs(0), cursubsong(0), _v2(v2),
     _soundDataPtr(nullptr), _sfxPlayingSound(0), _sfxPriority(0), _sfxFourthByteOfSong(0),
-    _numSoundTriggers(0), _soundTriggers(nullptr)
+    _numSoundTriggers(0), _soundTriggers(nullptr), _type("Westwood ADL")
 {
     if(_opl)
     	init();
