@@ -32,7 +32,7 @@ CpsFile::CpsFile(std::istream &stream, Palette palette) :
 	throw(Exception(LOG_ERROR, __FUNCTION__, "Invalid image size"));
 
     if(_stream.getU16LE() == 768){
-	LOG_INFO("%s", "CPS has embedded palette");
+	LOG_DEBUG("%s", "CPS has embedded palette");
 	if(palette)
 	    _stream.ignore(768);
 	else {

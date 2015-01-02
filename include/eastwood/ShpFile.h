@@ -76,6 +76,9 @@ class ShpFile : public Decode
     private:
 	void readDuneIndex();
     void readCnCIndex();
+    Surface decodeDune(uint16_t fileIndex);
+    void decodeCnC(uint16_t fileIndex, uint8_t* imageOut);
+    uint32_t getIndex(uint32_t offset);
 
 	std::vector<ShpFileEntry> _index;
 	uint16_t _size;
