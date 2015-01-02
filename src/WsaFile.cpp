@@ -42,10 +42,10 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     }
 
     _frameOffsTable.resize(_decodedFrames.size()+2);
-    for (auto &frameOff : _frameOffsTable) {
-	frameOff = _stream.getU32LE();
-	if (frameOff)
-	    frameOff -= frameDataOffs;
+    for (auto i = 1; i < _frameOffsTable.size(); ++i) {
+	_frameOffsTable[i] = _stream.getU32LE();
+	if (_frameOffsTable[i])
+	    _frameOffsTable[i] -= frameDataOffs;
     }
 
     _framesPer1024ms = _deltaBufferSize / 1024.0f;
