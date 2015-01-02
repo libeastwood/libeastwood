@@ -15,16 +15,26 @@ enum TileType {
     TILE_ROTATE = (1<<28)
 };
 
+enum ShpFormat {
+    SHP_DUNE2,
+    SHP_CNC,
+    SHP_TS,
+    SHP_INVALID
+};
+
 struct ShpFileEntry
 {
     uint32_t startOffset;
     uint32_t endOffset;
+    uint32_t refOffset;
+    uint8_t imgFormat;
+    uint8_t refFormat;
 };
 
 class ShpFile : public Decode
 {
     public:
-	ShpFile(std::istream &stream, Palette palette);
+	ShpFile(std::istream &stream, Palette palette, ShpFormat format = SHP_DUNE2);
 	~ShpFile();
 
 	/*!
@@ -64,10 +74,12 @@ class ShpFile : public Decode
 	auto size() const noexcept { return _size; }
 
     private:
-	void readIndex();
+	void readDuneIndex();
+    void readCnCIndex();
 
 	std::vector<ShpFileEntry> _index;
 	uint16_t _size;
+    ShpFormat _format;
 };
 
 }

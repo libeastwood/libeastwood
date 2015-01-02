@@ -16,30 +16,40 @@ static inline TileType getType(const uint32_t x) {
     return static_cast<TileType>(x & static_cast<uint32_t>(TILE_NORMAL-1)<<16);
 }
 
-ShpFile::ShpFile(std::istream &stream, Palette palette) :
-    Decode(stream, 0, 0, palette), _index(1), _size(0)
+ShpFile::ShpFile(std::istream &stream, Palette palette, ShpFormat format) :
+    Decode(stream, 0, 0, palette), _index(1), _size(0), _format(format)
 {
-    readIndex();
+    if(_format = SHP_DUNE2) {
+        readDuneIndex();
+    } else if (_format = SHP_CNC) {
+        readCnCIndex();
+    } else {
+        LOG_DEBUG("Format not currently handled");
+        throw(Exception(LOG_ERROR, "ShpFile", "Specified format not currently handled"));
+    }
 }
 
 ShpFile::~ShpFile()
 {
 }
 
-void ShpFile::readIndex()
+void ShpFile::readDuneIndex()
 {
     auto fileSize = _stream.sizeg();
     auto offset = 0;
 
     // First get number of files in shp-file
     _size = _stream.getU16LE();
-
+    LOG_DEBUG("Size read from file was %d", _size);
+    
     if(_size == 0)
 	throw(Exception(LOG_ERROR, __FUNCTION__, "There are no files in this SHP-File!"));
 
 
-    if(fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) 
+    if(fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) {
+        LOG_DEBUG("Shp not the expected size");
 	throw(Exception(LOG_ERROR, __FUNCTION__, "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize));
+    }
 
     _index.at(0).startOffset = _stream.getU16LE();
     _index.at(0).endOffset = _stream.getU16LE();
@@ -64,6 +74,103 @@ void ShpFile::readIndex()
 			i, _index.at(i).endOffset, fileSize));
 	}
     }
+}
+
+void ShpFile::readCnCIndex()
+{
+    uint32_t fileSize = _stream.sizeg();
+    uint16_t offset = 0;
+    uint32_t tmpint;
+    uint32_t lrgframe = 0;
+    uint32_t fmt20count = 0;
+    uint32_t fmt40count = 0;
+    uint32_t fmt80count = 0;
+
+    // First get number of files in shp-file
+    _size = _stream.getU16LE();
+    LOG_DEBUG("Size read from file was %d", _size);
+    
+    if(_size == 0)
+	throw(Exception(LOG_ERROR, "ShpFile", "There are no files in this SHP-File!"));
+
+
+    if(fileSize < static_cast<uint32_t>((_size * 4) + 2 + 2)) {
+        LOG_DEBUG("Shp not the expected size");
+	throw(Exception(LOG_ERROR, "ShpFile", "SHP file header is incomplete! Header should be %d bytes big, but file is only %d bytes long.",(_size * 4) + 2 + 2, fileSize));
+    }
+    
+    //skip 2 unknown int16
+    _stream.ignore(4);
+    
+    _width = _stream.getU16LE();
+    _height = _stream.getU16LE();
+    
+    //another unknown int16
+    _stream.ignore(4);
+    
+    tmpint = _stream.getU32LE();
+    _index.at(0).startOffset = tmpint & 0x00FFFFFF;
+    _index.at(0).imgFormat = tmpint >> 24;
+    tmpint = _stream.getU32LE();
+    _index.at(0).refOffset = tmpint & 0x00FFFFFF;
+    _index.at(0).refFormat = tmpint >> 24;
+    tmpint = _stream.getU32LE();
+    _index.at(0).endOffset = tmpint & 0x00FFFFFF;
+    
+    _index.at(0).endOffset -= 1;
+    
+    lrgframe = _index.at(0).endOffset - _index.at(0).startOffset;
+    
+    switch(_index.at(0).imgFormat){
+    case 0x20:
+        fmt20count++;
+        break;
+    case 0x40:
+        fmt40count++;
+        break;
+    case 0x80:
+        fmt80count++;
+        break;
+    default:
+        break;
+    }
+    
+    if(_size > 1) {
+	_index.resize(_size);
+
+	// now fill Index with start and end-offsets
+	for(uint16_t i = 1; i < _size; i++) {
+            _index.at(i).startOffset = tmpint & 0x00FFFFFF;
+            _index.at(i).imgFormat = tmpint >> 24;
+            tmpint = _stream.getU32LE();
+            _index.at(i).refOffset = tmpint & 0x00FFFFFF;
+            _index.at(i).refFormat = tmpint >> 24;
+            tmpint = _stream.getU32LE();
+            _index.at(i).endOffset = (tmpint & 0x00FFFFFF) - 1;
+
+	    if(_index.at(i).endOffset > fileSize)
+		throw(Exception(LOG_ERROR, "ShpFile", "The File with Index %d, goes until byte %d, but this SHP-File is only %d bytes big.",
+			i, _index.at(i).endOffset, fileSize));
+            
+            if(lrgframe < _index.at(i).endOffset - _index.at(i).startOffset)
+                lrgframe = _index.at(i).endOffset - _index.at(i).startOffset;
+            
+            switch(_index.at(i).imgFormat){
+            case 0x20:
+                fmt20count++;
+                break;
+            case 0x40:
+                fmt40count++;
+                break;
+            case 0x80:
+                fmt80count++;
+                break;
+            default:
+                break;
+            }
+	}
+    }
+    LOG_DEBUG("\nFMT20:%d\n FMT40:%d\n FMT80:%d\n Largest frame:%d", fmt20count, fmt40count, fmt80count, lrgframe);
 }
 
 static void apply_pal_offsets(const std::vector<uint8_t> &offsets, uint8_t *data, uint16_t length)

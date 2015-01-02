@@ -19,6 +19,7 @@ class CpsFile : public Decode
 	~CpsFile();
 
 	Surface getSurface();
+    Palette getPalette() { return _palette; }
 
     private:
 	void readHeader();
