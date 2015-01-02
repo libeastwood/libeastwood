@@ -9,14 +9,14 @@ namespace eastwood {
 
 class PalFile
 {
-    public:
-	PalFile(std::istream &stream);
-	~PalFile();
+public:
+    PalFile(std::istream &stream, bool fullpal = false);
+    ~PalFile();
 
-	Palette getPalette();
+    Palette getPalette();
 
-    private:
-	Palette _palette;
+private:
+    Palette _palette;
 
 };
 

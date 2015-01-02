@@ -46,6 +46,42 @@ static inline void my_memcpy(uint8_t *dst, const uint8_t *src, uint16_t cnt)
 	dst[i] = src[i];
 }
 
+void Decode::decodeRLE(uint8_t* image_out)
+{
+    unsigned char Pixel;
+    unsigned char Number;
+    unsigned int y, x;
+    long Index;
+    unsigned int offset;
+
+
+    uint32_t Height = _height;
+    uint32_t Width = _width;
+
+    /* RLE (Run Length Encoding) */
+    offset = 128;
+    Index = 0;
+    y = 0;
+    while( y < Height ) {
+        x = 0;
+        while( x < Width ){
+            Pixel = _stream.get();
+            if( Pixel > 192 ){
+                Number = Pixel-192;
+                Pixel = _stream.get();
+                for( unsigned int i=0; i<Number; i++ ){
+                        image_out[Index++] = Pixel;
+                        x++;
+                }
+            }else{
+                image_out[Index++] = Pixel;
+                x++;
+            }
+        }
+        y++;
+    }
+}
+
 int Decode::decode80(uint8_t *image_out, uint32_t checksum)
 {
     uint8_t *writep = image_out;
