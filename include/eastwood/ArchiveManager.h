@@ -16,10 +16,10 @@ namespace eastwood {
 class ArchiveManager
 {
 public:
-    ArchiveManager() : _archives(0), _stream() {}
-    size_t indexDir(std::string& path);
-    size_t indexPak(std::string& pakfile, bool usefind = false);
-    size_t indexMix(std::string& mixfile, bool usefind = false);
+    ArchiveManager() : _archives(0), _stream(), _nullinfo() {}
+    size_t indexDir(std::string path);
+    size_t indexPak(std::string pakfile, bool usefind = false);
+    size_t indexMix(std::string mixfile, bool usefind = false);
     ArcFileInfo& find(std::string filename);
     int size() { return _archives.size(); }
     bool empty() { return _archives.empty(); }
@@ -30,6 +30,7 @@ private:
     void handleUnEncrypted(ArcFileInfo& archive, uint16_t filecount);
     std::vector<t_arc_index> _archives;
     ArcIOStream _stream;
+    ArcFileInfo _nullinfo;
 };
 
 }//eastwood

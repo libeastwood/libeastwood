@@ -1,4 +1,5 @@
 #include "eastwood/ArcStream.h"
+#include "eastwood/ArchiveManager.h"
 #include "eastwood/Log.h"
 #include "eastwood/IniFile.h"
 #include "eastwood/StdDef.h"
@@ -15,8 +16,11 @@ using namespace eastwood;
 
 int main(int argc, char** argv)
 {
-    ArcFileInfo finfo = {18, 11564, "tdtest.mix"};
-    ArcIOStream file(finfo);
+    ArchiveManager arcman;
+    arcman.indexDir(".");
+    arcman.indexMix("ratest.mix", true);
+    arcman.indexMix("rasub.mix", true);
+    ArcIOStream file(arcman.find("setup.dip"));
     //file.open(finfo);
     StringFile strf(file);
     strf.list();

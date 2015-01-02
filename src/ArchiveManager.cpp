@@ -8,44 +8,45 @@ namespace eastwood {
 
 const uint32_t ENCRYPTED = 0x00020000;
     
-size_t ArchiveManager::indexDir(std::string& path)
+size_t ArchiveManager::indexDir(std::string path)
 {
     struct dirent* dir;
     DIR *dp = opendir(path.c_str());
     struct stat st;
-    t_arc_entry info;
+    t_arc_entry entry;
     std::pair<t_arc_index_iter,bool> rv;
     
     //check we managed to open a directory path
-    if (dp == NULL) throw(Exception(LOG_ERROR, "ArchiveManager", "Could not open directory"));
+    if (dp == NULL) {
+        throw(Exception(LOG_ERROR, "ArchiveManager", "Could not open directory"));
+    }
     
     //initialise a fresh map object
     _archives.push_back(t_arc_index());
     
     while ((dir = readdir(dp)) != NULL) {
-        std::string path;
-        
+        std::string filepath;
         //ignore standard dirs
         if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0)
             continue;
         
         //check we can stat the current file
-        path = path + DIR_SEP + dir->d_name;
-        if (stat(path.c_str(), &st) < 0) {
+        filepath = path + DIR_SEP + dir->d_name;
+        if (stat(filepath.c_str(), &st) < 0) {
             //TODO error and warnings
-            LOG_WARNING("Couldn't stat %s", path.c_str());
+            LOG_WARNING("Couldn't stat %s", filepath.c_str());
             continue;
         }
         
         //ignore if a directory of any kind, sub dirs not supported
         if (S_ISDIR(st.st_mode)) continue;
         
-        info.first = idGen(dir->d_name);
-        info.second.archivepath = path;
-        info.second.size = st.st_size;
-        info.second.start = 0;
+        entry.first = idGen(dir->d_name);
+        entry.second.archivepath = filepath;
+        entry.second.size = st.st_size;
+        entry.second.start = 0;
         
-        rv = _archives.back().insert(info);
+        rv = _archives.back().insert(entry);
         
         //if insertion failed, assume it was due to id collision
         if(!rv.second) {
@@ -58,27 +59,73 @@ size_t ArchiveManager::indexDir(std::string& path)
     return _archives.size() - 1;
 }
 
-size_t ArchiveManager::indexPak(std::string& pakfile, bool usefind)
-{
-    return _archives.size() - 1;
-}
-
-size_t ArchiveManager::indexMix(std::string& mixfile, bool usefind)
+size_t ArchiveManager::indexPak(std::string pakfile, bool usefind)
 {
     uint32_t flags;
     uint16_t filecount;
-    std::string archivename;
-    ArcFileInfo info;
+    char name[256];
+    ArcFileInfo archive;
+    t_arc_entry entry;
     std::pair<t_arc_index_iter,bool> rv;
     
     if(usefind) {
-        info = find(mixfile);
-        _stream.open(info);
+        archive = find(pakfile);
+        _stream.open(archive);
+    } else {
+        _stream.open(pakfile.c_str(), std::ios_base::binary | std::ios_base::in);
+        archive.archivepath = pakfile;
+        archive.start = 0;
+        archive.size = _stream.sizeg();
+    }
+    
+    if(!_stream.is_open())
+        throw(Exception(LOG_ERROR, "ArchiveManager", "Could not open Pak"));
+    
+    //initialise a fresh map object
+    _archives.push_back(t_arc_index());
+    
+    //get our first file offset
+    uint32_t offset = _stream.getU32LE();
+
+    while(offset) {
+        uint32_t start = offset;
+        uint32_t size;
+
+	_stream.getline(name, 256, 0);
+        LOG_DEBUG("PakFile", "Found file %s", name);
+
+        size = ((offset = _stream.getU32LE()) != 0 ? offset : _stream.sizeg()) - start;
+        
+        entry.first = idGen(name);
+        entry.second.start = start + archive.start;
+        entry.second.size = size;
+        entry.second.archivepath = archive.archivepath;
+        rv = _archives.back().insert(entry);
+        
+        //if insertion failed, assume bad format.
+        if(!rv.second)
+            throw(Exception(LOG_ERROR, "ArchiveManager", "Invalid Pak format"));
+    }
+    
+    return _archives.size() - 1;
+}
+
+size_t ArchiveManager::indexMix(std::string mixfile, bool usefind)
+{
+    uint32_t flags;
+    uint16_t filecount;
+    //std::string archivename;
+    ArcFileInfo archive;
+    std::pair<t_arc_index_iter,bool> rv;
+    
+    if(usefind) {
+        archive = find(mixfile);
+        _stream.open(archive);
     } else {
         _stream.open(mixfile.c_str(), std::ios_base::binary | std::ios_base::in);
-        info.archivepath = mixfile;
-        info.start = 0;
-        info.size = _stream.sizeg();
+        archive.archivepath = mixfile;
+        archive.start = 0;
+        archive.size = _stream.sizeg();
     }
     
     if(!_stream.is_open())
@@ -87,10 +134,11 @@ size_t ArchiveManager::indexMix(std::string& mixfile, bool usefind)
     flags = _stream.getU32LE();
     filecount = *reinterpret_cast<uint16_t*>(&flags);
     
+    //decide what type of mix file we are handling
     if(filecount || !(flags & ENCRYPTED)){
-        handleUnEncrypted(info, filecount);
+        handleUnEncrypted(archive, filecount);
     } else {
-        handleEncrypted(info);
+        handleEncrypted(archive);
     }
     
     return _archives.size() - 1;
@@ -99,7 +147,7 @@ size_t ArchiveManager::indexMix(std::string& mixfile, bool usefind)
 void ArchiveManager::handleUnEncrypted(ArcFileInfo& archive, uint16_t filecount)
 {
     uint32_t offset = 6;  //at least 6 at this point
-    t_arc_entry info;
+    t_arc_entry entry;
     std::pair<t_arc_index_iter,bool> rv;
     
     _archives.push_back(t_arc_index());
@@ -119,11 +167,11 @@ void ArchiveManager::handleUnEncrypted(ArcFileInfo& archive, uint16_t filecount)
     offset += 12 * filecount;
     
     for(uint32_t i = 0; i < filecount; i++) {
-        info.first = _stream.getU32LE();
-        info.second.start = _stream.getU32LE() + offset + archive.start;
-        info.second.size = _stream.getU32LE();
-        info.second.archivepath = archive.archivepath;
-        rv = _archives.back().insert(info);
+        entry.first = _stream.getU32LE();
+        entry.second.start = _stream.getU32LE() + offset + archive.start;
+        entry.second.size = _stream.getU32LE();
+        entry.second.archivepath = archive.archivepath;
+        rv = _archives.back().insert(entry);
         
         //if insertion failed, assume bad format.
         if(!rv.second)
@@ -141,7 +189,7 @@ void ArchiveManager::handleEncrypted(ArcFileInfo& archive)
     uint8_t keysource[80];
     uint8_t key[56];
     uint32_t bcount;
-    t_arc_entry info;
+    t_arc_entry entry;
     std::pair<t_arc_index_iter,bool> rv;
     
     
@@ -179,16 +227,16 @@ void ArchiveManager::handleEncrypted(ArcFileInfo& archive)
     _archives.push_back(t_arc_index());
     
     for(uint32_t i = 0; i < filecount; i++){
-        memcpy(reinterpret_cast<char*>(&info.first), pindbuf + i * 12,
+        memcpy(reinterpret_cast<char*>(&entry.first), pindbuf + i * 12,
                sizeof(int32_t));
-        memcpy(reinterpret_cast<char*>(&info.second.start), 
+        memcpy(reinterpret_cast<char*>(&entry.second.start), 
                pindbuf + 4 + i * 12, sizeof(int32_t));
-        memcpy(reinterpret_cast<char*>(&info.second.size), 
+        memcpy(reinterpret_cast<char*>(&entry.second.size), 
                pindbuf + 8 + i * 12, sizeof(int32_t));
         
-        info.second.start += offset;
-        info.second.archivepath = archive.archivepath;
-        rv = _archives.back().insert(info);
+        entry.second.start += offset;
+        entry.second.archivepath = archive.archivepath;
+        rv = _archives.back().insert(entry);
         
         //if insertion failed, assume bad format.
         if(!rv.second)
@@ -215,6 +263,18 @@ int32_t ArchiveManager::idGen(std::string filename)
         id = (id << 1 | id >> 31) + a;
     }
     return id;
+}
+
+ArcFileInfo& ArchiveManager::find(std::string filename)
+{  
+    int32_t id = idGen(filename);
+    
+    for(size_t i = 0; i < _archives.size(); i++) {
+        t_arc_index_iter info = _archives.at(i).find(id);
+        if(info != _archives.at(i).end()) return info->second;
+    }
+    
+    return _nullinfo;
 }
 
 }//eastwood
