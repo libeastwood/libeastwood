@@ -18,6 +18,7 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     _decodedFrames(0), _deltaBufferSize(0), _framesPer1024ms(0)
 {
     uint32_t frameDataOffs = 0;
+    int offsetadjust = 0;
     bool newformat;
 
     _decodedFrames.resize(_stream.getU16LE());
