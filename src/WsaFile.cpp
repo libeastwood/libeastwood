@@ -22,7 +22,7 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     bool newformat;
 
     _decodedFrames.resize(_stream.getU16LE());
-    LOG_DEBUG("WsaFile numframes = %d", _decodedFrames.size());
+    LOG_DEBUG("numframes = %zu", _decodedFrames.size());
 
     _width = _stream.getU16LE();
     _height = _stream.getU16LE();
