@@ -20,7 +20,7 @@ public:
     ArcStream() : _mode(0), _descriptor(0), _soffset(0), _eoffset(0), _coffset(0),
                   _bufsize(0), _buffer(0){}
     ArcStream(FILE* fd, int size, int offset = 0, int bufsize = 256);
-    ArcStream(std::string& filename, int mode = std::ios_base::in, 
+    ArcStream(std::string filename, int mode = std::ios_base::in, 
               int bufsize = 256);
     ~ArcStream();
     
