@@ -47,8 +47,6 @@ class StringFile
         
         void list();
 
-        void list();
-
     private:
 	/*!
 	 *  This method decodes a string to ANSI Code
