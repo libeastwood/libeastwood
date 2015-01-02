@@ -44,7 +44,8 @@ public:
     void open(const char* filename, std::ios_base::openmode mode = std::ios_base::out) 
     {
         sbuf_type* buf = static_cast<sbuf_type*>(this->rdbuf());
-        if (!(buf->open(filename, mode)));
+        if (!(buf->open(filename, mode)))
+	    ;
     }
     
     void open(ArcFileInfo& fileinfo) 
