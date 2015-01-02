@@ -19,7 +19,7 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
 {
     uint32_t frameDataOffs = 0;
     int offsetadjust = 0;
-    bool newformat;
+    bool newformat = false;
 
     _decodedFrames.resize(_stream.getU16LE());
     LOG_DEBUG("numframes = %zu", _decodedFrames.size());
