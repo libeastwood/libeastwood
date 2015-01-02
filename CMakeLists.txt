@@ -13,7 +13,10 @@ SET(VERSION "0.3.1")
 SET ( CMAKE_CXX_FLAGS -std=gnu++1y)
 
 IF(NOT MSVC)
-  SET( WARN_FLAGS "-Wall -Wgnu-zero-variadic-macro-arguments -Wno-variadic-macros" )
+  SET( WARN_FLAGS "-Wall -Wno-variadic-macros" )
+  IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    SET( WARN_FLAGS "${WARN_FLAGS} -Wgnu-zero-variadic-macro-arguments" )
+  ENDIF()
   SET( WARN_FLAGS_DEBUG "-Wextra -Weffc++ -pedantic -Wold-style-cast -Woverloaded-virtual -Wctor-dtor-privacy -Wreorder -Wabi -Wstrict-null-sentinel -Wc++0x-compat -Wformat=2 -Winit-self -Wswitch-default -Wsign-conversion -Wlogical-op -Wmissing-declarations -Wmissing-noreturn -Wmissing-format-attribute -Wredundant-decls -Winline" )
   # Don't enable these for now, but leave them around to investigate closer later
   SET( WARN_FLAGS_DEBUG_EXCESSIVE "-Wpadded -Wunreachable-code -Wconversion" )
