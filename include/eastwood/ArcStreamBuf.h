@@ -219,7 +219,7 @@ protected:
         return nread;
     }
     
-    virtual std::streamsize xsputn(char* src, std::streamsize n)
+    virtual std::streamsize xsputn(const char_type* src, std::streamsize n)
     {
         std::streamsize rv = fwrite(src, 1, n, _fp);
         _eoffset += rv;
