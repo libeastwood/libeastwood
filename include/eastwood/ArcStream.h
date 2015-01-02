@@ -91,6 +91,23 @@ public:
         return this;
     }
     
+    this_type* open(ArcFileInfo& fileinfo)
+    {
+        if(!fileinfo.size) return NULL;
+        _soffset = fileinfo.start;
+        _eoffset = fileinfo.start + fileinfo.size;
+                
+        _fp = fopen(fileinfo.archivepath.c_str(), "rb");
+        
+        if(_fp != NULL) {
+            fseek(_fp, _soffset, SEEK_SET);
+        } else {
+            _soffset = _eoffset = 0;
+        }
+        
+        return this;
+    }
+    
     this_type* close()
     {
         _soffset = 0;
@@ -270,14 +287,27 @@ public:
     void open(const char* filename, std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out) 
     {
         sbuf_type* buf = static_cast<sbuf_type*>(this->rdbuf());
-        if (!(buf->open( filename, mode )))
-        this->setstate( std::ios_base::badbit );
+        if (!(buf->open(filename, mode)))
+        this->setstate(std::ios_base::badbit);
+    }
+    
+    void open(ArcFileInfo& fileinfo) 
+    {
+        sbuf_type* buf = static_cast<sbuf_type*>(this->rdbuf());
+        if (!(buf->open(fileinfo)))
+        this->setstate(std::ios_base::badbit);
     }
     
     void close()
     {
         sbuf_type* buf = static_cast<sbuf_type*>(this->rdbuf());
         buf->close();
+    }
+    
+    bool is_open()
+    {
+        sbuf_type* buf = static_cast<sbuf_type*>(this->rdbuf());
+        return buf->is_open();
     }
     
     std::streamsize sizeg()
