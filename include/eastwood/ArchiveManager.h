@@ -2,7 +2,7 @@
 #define	EASTWOOD_ARCHIVEMANAGER_H
 
 #include "StdDef.h"
-#include "ArcStream.h"
+#include "IOStream.h"
 #include "DirEnt.h"
 #include <vector>
 #include <map>
@@ -29,7 +29,7 @@ private:
     void handleEncrypted(ArcFileInfo& archive);
     void handleUnEncrypted(ArcFileInfo& archive, uint16_t filecount);
     std::vector<t_arc_index> _archives;
-    ArcIOStream _stream;
+    IOStream _stream;
     ArcFileInfo _nullinfo;
 };
 

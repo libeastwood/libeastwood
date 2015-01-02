@@ -5,11 +5,11 @@
 
 namespace eastwood {
 
-StringFile::StringFile(ArcIOStream& stream)
-    : _stream(stream),
+StringFile::StringFile(std::istream& stream)
+    : _stream(reinterpret_cast<IStream&>(stream)),
     _strings(0), _compressed(true)
 {
-    LOG_DEBUG("We are at pos %d", _stream.tellg());
+    //LOG_DEBUG("We are at pos %d", _stream.tellg());
     //FIXME: This is a "bit" poor detection...
     if(_stream.peek() == 0x2)
         _compressed = false;

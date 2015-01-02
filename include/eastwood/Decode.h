@@ -2,7 +2,7 @@
 #define EASTWOOD_DECODE_H
 
 #include "eastwood/IStream.h"
-#include "eastwood/ArcStream.h"
+#include "eastwood/ArcStreamBuf.h"
 #include "eastwood/Palette.h"
 #include "eastwood/Surface.h"
 

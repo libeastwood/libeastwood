@@ -117,7 +117,7 @@ bool IniFile::getBoolValue(std::string section, std::string key, bool defaultVal
 	}
 	
 	// convert std::string to lower case
-	transform(value.begin(),value.end(), value.begin(), ::tolower);
+	std::transform(value.begin(),value.end(), value.begin(), ::tolower);
 	
 	if((value == "true") || (value == "enabled") || (value == "on") || (value == "1")) {
 		return true;
@@ -403,7 +403,7 @@ bool IniFile::SaveChangesTo(std::ostream &output) {
 	CommentEntry *curEntry = FirstLine;
 	
 	while(curEntry != nullptr) {
-	    output.write(curEntry->CompleteLine.c_str(), curEntry->CompleteLine.size());
+	    output.write((curEntry->CompleteLine + "\r\n").c_str(), curEntry->CompleteLine.size() + 2);
 	    curEntry = curEntry->nextEntry;
 	}
 	

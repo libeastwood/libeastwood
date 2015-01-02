@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "eastwood/ArcStream.h"
+#include "eastwood/IStream.h"
 
 namespace eastwood {
 
@@ -23,7 +23,7 @@ enum MissionType {
 class StringFile
 {
     public:
-	StringFile(ArcIOStream& stream);
+	StringFile(std::istream& stream);
 	~StringFile();
 
 	/*!
@@ -56,7 +56,7 @@ class StringFile
 	 */
 	void readHeader();
 	std::string decodeString(uint16_t offset);
-	ArcIOStream& _stream;
+	IStream& _stream;
 	std::vector<std::string> _strings;
 	bool _compressed;
 };
