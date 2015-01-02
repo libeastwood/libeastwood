@@ -18,15 +18,13 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     _decodedFrames(0), _deltaBufferSize(0), _framesPer1024ms(0)
 {
     uint32_t frameDataOffs = 0;
-    int offsetadjust = 0;
     bool newformat;
 
     _decodedFrames.resize(_stream.getU16LE());
-    LOG_INFO("numframes = %zu", _decodedFrames.size());
+    LOG_DEBUG("WsaFile numframes = %d", _decodedFrames.size());
 
     _width = _stream.getU16LE();
     _height = _stream.getU16LE();
-    LOG_INFO("size %d x %d", _width, _height);
     
     //These shorts will be 0 if a new format wsa for x and y pos
     if(!_width && !_height){
@@ -36,13 +34,21 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
         newformat = true;
     }
     
-    _deltaBufferSize = _stream.getU16LE();
+    LOG_DEBUG("WsaFile size %d x %d", _width, _height);
     
     if(newformat){
-        PalFile pal(_stream);
-        _palette = pal.getPalette();
-        offsetadjust = 0x0300;
+        _deltaBufferSize = _stream.getU32LE();
+        
+        _frameOffsTable.resize(_decodedFrames.size()+2);
+        for (uint32_t i = 0; i < _frameOffsTable.size(); ++i) {
+            _frameOffsTable[i] = _stream.getU32LE();
+            if (_frameOffsTable[i])
+                _frameOffsTable[i] += 768; //offset to account for palette;
+        }
+        
     } else {
+        
+        _deltaBufferSize = _stream.getU16LE();
         
         // "Regular" WSA files shipped with the Dune 2 demo version does not have
         // 2 bytes padding here...
@@ -59,18 +65,22 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
             frameDataOffs = _stream.getU32LE();
             _decodedFrames.pop_back();
         }
-    }
-
     _frameOffsTable.resize(_decodedFrames.size()+2);
     for (auto i = 1; i < _frameOffsTable.size(); ++i) {
 	_frameOffsTable[i] = _stream.getU32LE() + offsetadjust;
 	if (_frameOffsTable[i])
 	    _frameOffsTable[i] -= frameDataOffs;
+        }
     }
     
     _framesPer1024ms = _deltaBufferSize / 1024.0f;
 
-    LOG_INFO("_framesPer1024ms = %d", _framesPer1024ms);
+    LOG_DEBUG("WsaFile _framesPer1024ms = %d", _framesPer1024ms);
+
+    if(newformat){
+        PalFile pal(_stream);
+        _palette = pal.getPalette();
+    }
 
     _decodedFrames.front() = firstFrame ? firstFrame : Surface(_width, _height, 8, _palette);
 
