@@ -5,6 +5,7 @@
 #include "eastwood/StdDef.h"
 
 #include "eastwood/WsaFile.h"
+#include "eastwood/PalFile.h"
 
 #include "eastwood/Exception.h"
 #include "eastwood/Log.h"
@@ -16,6 +17,9 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     Decode(stream, 0, 0, palette), _frameOffsTable(0),
     _decodedFrames(0), _deltaBufferSize(0), _framesPer1024ms(0)
 {
+    uint32_t frameDataOffs = 0;
+    int offsetadjust = 0;
+    bool newformat;
 
     _decodedFrames.resize(_stream.getU16LE());
     LOG_INFO("numframes = %zu", _decodedFrames.size());
@@ -23,31 +27,47 @@ WsaFile::WsaFile(std::istream &stream, Palette palette,
     _width = _stream.getU16LE();
     _height = _stream.getU16LE();
     LOG_INFO("size %d x %d", _width, _height);
-
+    
+    //These shorts will be 0 if a new format wsa for x and y pos
+    if(!_width && !_height){
+        //following shorts are actual dimensions
+        _width = _stream.getU16LE();
+        _height = _stream.getU16LE();
+        newformat = true;
+    }
+    
     _deltaBufferSize = _stream.getU16LE();
-    // "Regular" WSA files shipped with the Dune 2 demo version does not have
-    // 2 bytes padding here...
-    if(_stream.getU16LE())
-	_stream.seekg(-2, std::ios::cur);
+    
+    if(newformat){
+        PalFile pal(_stream);
+        _palette = pal.getPalette();
+        offsetadjust = 0x0300;
+    } else {
+        
+        // "Regular" WSA files shipped with the Dune 2 demo version does not have
+        // 2 bytes padding here...
+        if(_stream.getU16LE())
+            _stream.seekg(-2, std::ios::cur);
 
-    auto frameDataOffs = _stream.getU16LE();
-    // "Continue" WSA files shipped with the Dune 2 demo version does not have
-    // 2 bytes padding here...
-    if(_stream.getU16LE())
-	_stream.seekg(-2, std::ios::cur);
-
-    if (frameDataOffs == 0) {
-	frameDataOffs = _stream.getU32LE();
-	_decodedFrames.pop_back();
+        frameDataOffs = _stream.getU16LE();
+        // "Continue" WSA files shipped with the Dune 2 demo version does not have
+        // 2 bytes padding here...
+        if(_stream.getU16LE())
+            _stream.seekg(-2, std::ios::cur);
+        
+        if (frameDataOffs == 0) {
+            frameDataOffs = _stream.getU32LE();
+            _decodedFrames.pop_back();
+        }
     }
 
     _frameOffsTable.resize(_decodedFrames.size()+2);
     for (auto i = 1; i < _frameOffsTable.size(); ++i) {
-	_frameOffsTable[i] = _stream.getU32LE();
+	_frameOffsTable[i] = _stream.getU32LE() + offsetadjust;
 	if (_frameOffsTable[i])
 	    _frameOffsTable[i] -= frameDataOffs;
     }
-
+    
     _framesPer1024ms = _deltaBufferSize / 1024.0f;
 
     LOG_INFO("_framesPer1024ms = %d", _framesPer1024ms);

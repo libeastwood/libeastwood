@@ -50,12 +50,9 @@ Decode(stream, 0, 0), _format(V30_STD)
     _height = (y_max - y_min) + 1;
     _width = linebytes;
     
-    LOG_DEBUG("Height is %d and Width is %d", _height, _width);
-    
     _stream.seekg(_stream.sizeg() - 768, std::ios_base::beg);
-    PalFile pal(_stream, false);
+    PalFile pal(_stream, true);
     _palette = pal.getPalette();
-    LOG_DEBUG("Palette size %d", _palette.size());
 }
 
 Surface PcxFile::getSurface()

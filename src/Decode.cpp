@@ -297,4 +297,33 @@ void Decode::encode2(const uint8_t *source, int len, int slices, std::ostream &d
     }
 }
 
+void Decode::encodeRLE(const uint8_t *source, int len, std::ostream &dest)
+{
+    uint8_t pixel = source[0];
+    uint8_t count = 1;
+    uint8_t next = source[0];
+    
+    for(int i = 1; i < len; i++){
+        next = source[i];
+        if(pixel == next) {
+            count++;
+            pixel = next;
+        }
+        
+        if(count == 63 || pixel != next) {
+            if(pixel < 0xC0 && count == 1){
+                dest.put(pixel);
+            } else {
+                dest.put(count & 0xC0);
+                while(count){
+                    dest.put(pixel);
+                    count--;
+                }
+            }
+            pixel = next;
+            count = 1;
+        }
+    }
+}
+
 }
