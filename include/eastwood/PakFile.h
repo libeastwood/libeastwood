@@ -39,6 +39,10 @@ class PakFile : public IOStream
         // If negative, file needs to be truncated
         int32_t sizediff();
 
+        int32_t currentFileSize() noexcept {
+            return _currentFile->second.second;
+        }
+
     private:
         void readIndex();
         void writeIndex(uint32_t firstOffset);
