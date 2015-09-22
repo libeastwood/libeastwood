@@ -10,7 +10,7 @@ SET(LIBEASTWOOD_PATCH "0")
 SET(VERSION "0.3.1")
 
 
-SET ( CMAKE_CXX_FLAGS -std=gnu++1y)
+SET ( CMAKE_CXX_FLAGS -std=gnu++14)
 
 IF(NOT MSVC)
   SET( WARN_FLAGS "-Wall -Wno-variadic-macros" )
