@@ -112,7 +112,6 @@ void PakFile::open(std::string fileName, std::ios::openmode mode)
         std::ios::init(new std::stringbuf(_mode));
     } else
         throw(FileNotFoundException(LOG_ERROR, fileName));
-
 }
 
 bool PakFile::erase(std::string fileName)

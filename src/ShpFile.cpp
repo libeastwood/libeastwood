@@ -331,7 +331,7 @@ void ShpFile::decodeCnC(uint16_t fileIndex, uint8_t* imageOut)
             decode80(imageOut, 0);
             break;
         case 0x40:{
-            uint32_t refimage = getIndex(_index.at(fileIndex).refOffset);
+            uint32_t refimage = getCnCIndex(_index.at(fileIndex).refOffset);
             decodeCnC(refimage, imageOut);
             len = _index.at(fileIndex + 1).startOffset - _index.at(fileIndex).startOffset;
             source.resize(len);
@@ -354,14 +354,14 @@ void ShpFile::decodeCnC(uint16_t fileIndex, uint8_t* imageOut)
     //return Surface(imageOut, _width, _height, 8, _palette);
 }
 
-uint32_t ShpFile::getIndex(uint32_t offset)
+uint32_t ShpFile::getCnCIndex(uint32_t offset)
 {
     for(uint32_t i = 0; i < _index.size(); i++) {
         if(offset == _index.at(i).startOffset){
             return i;
         }
     }
-    throw(Exception(LOG_ERROR, "ShpFile", "A required offset not indexed"));
+    throw(Exception(LOG_ERROR, "ShpFile", "A required offset (%u) not indexed", offset));
 }
 
 }

@@ -3,8 +3,8 @@ INCLUDE_DIRECTORIES(${LIBEASTWOOD_SOURCE_DIR}/include)
 
 SET( LIBEASTWOOD_SRCS
   AdlFile.cpp
-  ArchiveManager.cpp
-  BlowFish.cpp
+  #  ArchiveManager.cpp
+  #BlowFish.cpp
   CpsFile.cpp
   Decode.cpp
   Dune2File.cpp
@@ -28,7 +28,7 @@ SET( LIBEASTWOOD_SRCS
   Surface.cpp
   VocFile.cpp
   WsaFile.cpp
-  WsKey.cpp
+  #WsKey.cpp
   XmiFile.cpp
   adl/adlibemu.c
   adl/analopl.cpp
@@ -51,8 +51,8 @@ SET( SDL_LIBEASTWOOD_SRCS
 )
 
 #These files break if optimization is used on 64bit, at least with GCC
-set_source_files_properties(WsKey.cpp PROPERTIES COMPILE_FLAGS "-O0 -DNDEBUG")
-set_source_files_properties(BlowFish.cpp PROPERTIES COMPILE_FLAGS "-O0 -DNDEBUG")
+#set_source_files_properties(WsKey.cpp PROPERTIES COMPILE_FLAGS "-O0 -DNDEBUG")
+#set_source_files_properties(BlowFish.cpp PROPERTIES COMPILE_FLAGS "-O0 -DNDEBUG")
 
 
 ADD_LIBRARY( eastwood SHARED ${LIBEASTWOOD_SRCS} )
