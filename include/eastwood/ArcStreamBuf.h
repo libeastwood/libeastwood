@@ -206,17 +206,24 @@ protected:
     
     virtual std::streamsize xsgetn(char* dest, std::streamsize n)
     {
-        unsigned int nread = 0;
-
         if(ftell(_fp) >= _eoffset) return 0;
 
-        if((ftell(_fp) + n) < _eoffset) {
+	// XXX: Not really sure what's intended here, but whatever it is,
+	// it breaks reading final byte of stream, so let's just do it the
+	// standard way in stead for now...
+#if 0
+        unsigned int nread = 0;
+	if((ftell(_fp) + n) < _eoffset) {
             nread = fread(dest, 1, n, _fp);
         } else {
             nread = fread(dest, 1, (ftell(_fp) + n) - _eoffset, _fp);
         }
 
         return nread;
+#else
+	return fread(dest, 1, n, _fp);
+#endif
+
     }
     
     virtual std::streamsize xsputn(const char_type* src, std::streamsize n)
