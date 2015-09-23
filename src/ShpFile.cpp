@@ -254,7 +254,7 @@ Surface ShpFile::decodeDune(uint16_t fileIndex)
     auto imageOutSize = width*height;
     auto imageOut = new uint8_t[imageOutSize];
 
-    LOG_INFO("File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
+    LOG_DEBUG("File Nr.: %d (Size: %dx%d)",fileIndex,width,height);
 
     switch(flags) {
 	case 0:

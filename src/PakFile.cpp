@@ -208,7 +208,7 @@ void PakFile::readIndex()
                  size;
 
 	_stream.getline(name, 256, 0);
-        LOG_INFO("Found file %s", name);
+        LOG_DEBUG("Found file %s", name);
 
         size = ((offset = _stream.getU32LE()) != 0 ? offset : _stream.sizeg()) - start;
         _fileEntries.insert(make_pair(name, FileEntry(start, size)));
