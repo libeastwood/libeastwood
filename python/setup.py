@@ -53,7 +53,7 @@ compile_args = []
 link_args = []
 libraries = ['eastwood']
 if get_default_compiler() in ('cygwin', 'emx', 'mingw32', 'unix'):
-    compile_args.extend(['-fno-strict-aliasing', '-I../include', '-std=gnu++1y'])
+    compile_args.extend(['-fno-strict-aliasing', '-I../include', '-std=gnu++14'])
     warnflags = ['-Wall', '-Wextra', '-pedantic', '-Weffc++']
     compile_args.extend(warnflags)
     # rpath is really lame, but whatever...
