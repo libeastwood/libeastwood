@@ -71,7 +71,7 @@ setup(
     author = 'Per Øyvind Karlsen',
     author_email = 'peroyvind@mandriva.org',
     url = 'https://launchpad.net/libeastwood',
-    license = 'GPL 3',
+    license = 'GPL 2',
     keywords = 'westwood game data format',
     long_description = long_descr,
     platforms = sys.platform,

@@ -6,7 +6,7 @@ Summary:	Game data library
 Name:		libeastwood
 Version:	0.1
 Release:	1
-License:	GPLv3
+License:	LGPLv2.1
 Group:		System/Libraries
 URL:		http://launchpad.net/doonlunacy
 Source0:	%{name}-%{version}.tar.xz
