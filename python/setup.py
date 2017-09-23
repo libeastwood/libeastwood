@@ -70,7 +70,7 @@ setup(
     description = descr,
     author = 'Per Øyvind Karlsen',
     author_email = 'proyvind@moondrake.org',
-    url = 'https://launchpad.net/libeastwood',
+    url = 'https://github.com/libeastwood/libeastwood',
     license = 'GPL 2',
     keywords = 'westwood game data format',
     long_description = long_descr,
